@@ -1,8 +1,30 @@
 #!/usr/bin/env python
+""" Yet Another Time Series Model
+
+Usage:
+    yatsm.py [options] <location> <px> <py>
+
+Options:
+    --consecutive=<n>       Consecutive observations to find change [default: 5]
+    --threshold=<T>         Threshold for change [default: 2.56]
+    --min_obs=<n>           Min number of obs per model [default: 1.5 * n_coef]
+    --freq=<freq>           Sin/cosine frequencies [default: 1 2 3]
+    --lassocv               Use sklearn cross-validated LassoCV
+    --reverse               Run timeseries in reverse
+    --plot_band=<b>         Band to plot for diagnostics [default: 5]
+    -h --help               Show help
+
+Example:
+
+
+"""
 from __future__ import print_function, division
+
 from datetime import datetime as dt
 import logging
 import math
+
+from docopt import docopt
 
 import numpy as np
 import pandas as pd
