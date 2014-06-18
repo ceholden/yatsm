@@ -32,11 +32,11 @@ import pandas as pd
 import statsmodels.api as sm
 
 from glmnet.elastic_net import ElasticNet, elastic_net
-from sklearn.linear_model import Lasso, LassoCV
+from sklearn.linear_model import Lasso, LassoCV, LassoLarsCV, LassoLarsIC
 
 from ggplot import *
 
-from ts_driver.timeseries_ccdc import py2mldate, ml2pydate
+from ts_driver.timeseries_ccdc import py2mldate, ml2pydate, CCDCTimeSeries
 
 from IPython.core.debugger import Pdb
 
@@ -70,7 +70,7 @@ class GLMLasso(ElasticNet):
 
         # Create external friendly coefficients
         self.coef = np.copy(self.coef_)
-        self.coef[0] = intercept_
+        self.coef[0] += intercept_
 
         # Store number of observations
         self.nobs = y.size
@@ -86,19 +86,43 @@ class GLMLasso(ElasticNet):
 
         return self
 
-def make_X(x):
+def make_X(x, freq, intercept=True):
+    """ Create X matrix of Fourier series style independent variables
+
+    Args:
+        x               base of independent variables - dates
+        freq            frequency of cosine/sin waves
+        intercept       include intercept in X matrix
+
+    Output:
+        X               matrix X of independent variables
+
+    Example:
+        call:
+            make_X(np.array([1, 2, 3]), [1, 2])
+        returns:
+            array([[ 1.        ,  1.        ,  1.        ],
+                   [ 1.        ,  2.        ,  3.        ],
+                   [ 0.99985204,  0.99940821,  0.99866864],
+                   [ 0.01720158,  0.03439806,  0.05158437],
+                   [ 0.99940821,  0.99763355,  0.99467811],
+                   [ 0.03439806,  0.06875541,  0.10303138]])
+
+    """
     w = 2 * np.pi / ndays
 
-    return np.array([
-        np.ones_like(x),
-        x,
-        np.cos(w * x),
-        np.sin(w * x),
-        np.cos(2 * w * x),
-        np.sin(2 * w * x),
-        np.cos(3 * w * x),
-        np.sin(3 * w * x)
-    ])
+    if intercept:
+        X = np.array([np.ones_like(x), x])
+    else:
+        X = x
+
+    for f in freq:
+        X = np.vstack([X, np.array([
+            np.cos(f * w * x),
+            np.sin(f * w * x)])
+        ])
+
+    return X
 
 
 def multitemp_mask(x, Y, n_year, crit=400, green=1, swir1=4):
@@ -132,7 +156,8 @@ class YATSM(object):
 
     """ docstring """
 
-    def __init__(self, X, Y, consecutive=5, threshold=2.56, min_obs=None):
+    def __init__(self, X, Y, consecutive=5, threshold=2.56, min_obs=None,
+                 lassocv=False):
         """
         :param df: Pandas dataframe of model and observations
         :param consecutive: consecutive observations for change
@@ -141,6 +166,15 @@ class YATSM(object):
         """
         logging.basicConfig(level=logging.DEBUG)
         self.logger = logging.getLogger()
+
+        # Configure which implementation of LASSO we're using
+        self.lassocv = lassocv
+        if self.lassocv:
+            self.fit_models = self.fit_models_LassoCV
+            self.logger.debug('Using LassoCV from sklearn')
+        else:
+            self.fit_models = self.fit_models_GLMnet
+            self.logger.debug('Using Lasso from GLMnet (lambda = 20)')
 
         # Store data
         self._X = X
@@ -179,9 +213,9 @@ class YATSM(object):
 
         self.n_record = 0
         self.record_template = np.zeros(1, dtype=[
-            ('start', 'u4'),
-            ('end', 'u4'),
-            ('break', 'u4'),
+            ('start', 'i4'),
+            ('end', 'i4'),
+            ('break', 'i4'),
             ('coef', 'float32', (self.n_coef, len(self.fit_indices))),
             ('rmse', 'float32', len(self.fit_indices)),
             ('px', 'u2'),
@@ -192,7 +226,7 @@ class YATSM(object):
     @property
     def span_time(self):
         """ Return time span (in days) between start and end of model """
-        return (self.X[self.here, 1] - self.X[self.start, 1])
+        return abs(self.X[self.here, 1] - self.X[self.start, 1])
 
 
     @property
@@ -218,12 +252,11 @@ class YATSM(object):
         # Record date of last time model was trained
         self.trained_date = 0
 
-        while self.can_monitor:
+        while self.running:
 
-            while not self.monitoring:
+            while not self.monitoring and self.can_monitor:
                 self.train()
                 self.here += 1
-                self.log_debug('Updated here')
 
             while self.monitoring and self.can_monitor:
                 # Update model if required
@@ -232,24 +265,10 @@ class YATSM(object):
                 self.monitor()
                 # Iterate forward
                 self.here += 1
-                self.log_debug('Updated here')
 
-#            if self.here >= self.X[:, 1].size - self.consecutive - 1:
+            self.here += 1
 
-
-    def train_plot_debug(self, mask, index):
-        cols = np.repeat('clear', index.shape[0])
-        cols[mask[index] == 0] = 'noise'
-        df = pd.DataFrame({'X': self.X[index, 1],
-                           'Y': self.Y[4, index],
-                           'mask': cols
-                           })
-        print(ggplot(aes('X', 'Y', color='mask'), df) +
-              geom_point() +
-              xlab('Ordinal Date') +
-              ylab('B5 Reflectance') +
-              ggtitle('Cloud Screening - segment: {i}'.format(i=self.n_record)))
-
+        # Deal with end of time series
 
     def train(self):
         """ Train time series model """
@@ -272,8 +291,8 @@ class YATSM(object):
         # Check if there are enough observations for model with noise removed
         span_index = mask[index][:-self.consecutive].sum().astype(np.uint8)
 
-        span_time = (self.X[mask == 1, 1][index[-self.consecutive]] -
-                     self.X[mask == 1, 1][index[0]])
+        span_time = abs(self.X[mask == 1, 1][index[-self.consecutive]] -
+                        self.X[mask == 1, 1][index[0]])
 
         self.log_debug('span_index: {si}, span_time: {st}'.format(
             si=span_index, st=span_time))
@@ -340,7 +359,7 @@ class YATSM(object):
 
     def update_model(self):
         # Only train once a year
-        if self.X[self.here, 1] - self.trained_date > self.ndays:
+        if abs(self.X[self.here, 1] - self.trained_date) > self.ndays:
             print('DEBUG TRAINING\%\%\%\%\%\%\%\%')
 
             self.log_debug('Monitoring - retraining ({n} days since last)'.
@@ -362,34 +381,6 @@ class YATSM(object):
         else:
             # Update record with new end date
             self.record[self.n_record]['end'] = self.X[self.here, 1]
-
-
-    def monitor_plot_debug(self, index, model, i_buffer=10):
-        """ Monitoring debug plot """
-        # Show before/after current timeseries
-        before_buffer = max(0, index[0] - i_buffer)
-        after_buffer = min(self.X[:, 1].size - 1, index[-1] + i_buffer)
-
-        plt.plot(self.X[before_buffer:after_buffer, 1],
-                 self.Y[4, before_buffer:after_buffer], 'ko')
-
-        pred_x = np.arange(self.X[before_buffer, 1],
-                           self.X[after_buffer, 1])
-        pred_X = make_X(pred_x).T
-        plt.plot(pred_x, model.predict(pred_X), '--', color='0.75')
-
-        # Show monitoring prediction
-        pred_x = np.arange(self.X[index[0], 1], self.X[index[-1], 1])
-        pred_X = make_X(pred_x).T
-        plt.plot(pred_x, model.predict(pred_X))
-
-        # Show currently considered obs
-        plt.plot(self.X[index, 1], self.Y[4, index], 'ro')
-
-        plt.title('Model {i} - RMSE: {rmse}'.format(i=self.n_record,
-                                                    rmse=round(model.rmse, 3)))
-
-        plt.show()
 
 
     def monitor(self):
@@ -426,7 +417,7 @@ class YATSM(object):
 
             self.monitoring = False
 
-    def fit_models(self, X, Y, index=None, bands=None):
+    def fit_models_GLMnet(self, X, Y, index=None, bands=None):
         """ Try to fit models to training period time series """
         if bands is None:
             bands = self.fit_indices
@@ -437,13 +428,83 @@ class YATSM(object):
         models = []
 
         for b in bands:
-#            lasso = LassoCV(n_alphas=50)
             lasso = GLMLasso()
             lasso = lasso.fit(X[index, :], Y[b, index], lambdas=20)
 
             models.append(lasso)
 
         return np.array(models)
+
+    def fit_models_LassoCV(self, X, Y, index=None, bands=None):
+        """ Try to fit models to training period time series """
+        if bands is None:
+            bands = self.fit_indices
+
+        if index is None:
+            index = np.arange(self.start, self.here + 1)
+
+        models = []
+
+        for b in bands:
+            # lasso = LassoCV(n_alphas=100)
+            # lasso = LassoLarsCV(max_n_alphas=100)
+            lasso = LassoLarsIC(criterion='bic')
+            lasso = lasso.fit(X[index, :], Y[b, index])
+            lasso.nobs = Y[b, index].size
+            lasso.coef = np.copy(lasso.coef_)
+            lasso.coef[0] += lasso.intercept_
+            lasso.fittedvalues = lasso.predict(X[index, :])
+            lasso.rss = np.sum((Y[b, index] - lasso.fittedvalues) ** 2)
+            lasso.rmse = math.sqrt(lasso.rss / lasso.nobs)
+#            lasso = GLMLasso()
+#            lasso = lasso.fit(X[index, :], Y[b, index], lambdas=20)
+
+            models.append(lasso)
+
+        return np.array(models)
+
+
+    def train_plot_debug(self, mask, index):
+        cols = np.repeat('clear', index.shape[0])
+        cols[mask[index] == 0] = 'noise'
+        df = pd.DataFrame({'X': self.X[index, 1],
+                           'Y': self.Y[4, index],
+                           'mask': cols
+                           })
+        print(ggplot(aes('X', 'Y', color='mask'), df) +
+              geom_point() +
+              xlab('Ordinal Date') +
+              ylab('B5 Reflectance') +
+              ggtitle('Cloud Screening - segment: {i}'.format(i=self.n_record)))
+
+
+    def monitor_plot_debug(self, index, model, i_buffer=10):
+        """ Monitoring debug plot """
+        # Show before/after current timeseries
+        before_buffer = max(0, index[0] - i_buffer)
+        after_buffer = min(self.X[:, 1].size - 1, index[-1] + i_buffer)
+
+        plt.plot(self.X[before_buffer:after_buffer, 1],
+                 self.Y[4, before_buffer:after_buffer], 'ko')
+
+        pred_x = np.arange(self.X[before_buffer, 1],
+                           self.X[after_buffer, 1])
+        pred_X = make_X(pred_x).T
+        plt.plot(pred_x, model.predict(pred_X), '--', color='0.75')
+
+        # Show monitoring prediction
+        pred_x = np.arange(self.X[index[0], 1], self.X[index[-1], 1])
+        pred_X = make_X(pred_x).T
+        plt.plot(pred_x, model.predict(pred_X))
+
+        # Show currently considered obs
+        plt.plot(self.X[index, 1], self.Y[4, index], 'ro')
+
+        plt.title('Model {i} - RMSE: {rmse}'.format(i=self.n_record,
+                                                    rmse=round(model.rmse, 3)))
+
+        plt.show()
+
 
     def log_debug(self, message):
         """ Custom logging message """
@@ -455,50 +516,117 @@ class YATSM(object):
 
 
 if __name__ == '__main__':
-    x = np.load('sample/sample_x.npy')
-    Y = np.load('sample/px96_py91_Y.npy')
-    # Y = np.load('sample/px61_py75_Y.npy')
+    args = docopt(__doc__)
 
-    # Filter out time series
-    # Remove Fmask
+    location = args['<location>']
+    px = int(args['<px>'])
+    py = int(args['<py>'])
+
+    print('Working on: px={px}, py={py}'.format(px=px, py=py))
+
+    # Consecutive observations
+    consecutive = int(args['--consecutive'])
+    # Threshold for change
+    threshold = float(args['--threshold'])
+    # Minimum number of observations per segment
+    min_obs = args['--min_obs']
+    if min_obs == '1.5 * n_coef':
+        min_obs = None
+    else:
+        min_obs = int(args['--min_obs'])
+    # Sin/cosine frequency for independent variables
+    freq = args['--freq']
+    freq = [int(n) for n in freq.replace(' ', ',').split(',') if n != '']
+
+    # Cross-validated Lasso
+    lassocv = args['--lassocv']
+    # Reverse run?
+    reverse = args['--reverse']
+
+    # Plot band for debug
+    plot_band = int(args['--plot_band'])
+
+    # Load timeseries
+    ts = CCDCTimeSeries(location, image_pattern='L*')
+    ts.set_px(px)
+    ts.set_py(py)
+    ts.get_ts_pixel()
+
+    # Get dates (datetime)
+    x = ts.dates
+    # Get data
+    Y = ts.get_data(mask=False)
+
+    # Filter out time series and remove Fmask
     clear = Y[7, :] <= 1
     Y = Y[:, clear][:fmask, :]
     x = x[clear]
 
-    # Simulate some clouds
-    Y[4, 0] = Y[4, 0] * 0.1
-    Y[4, 4] = Y[4, 4] * 0.1
-
     # Ordinal date
     ord_x = np.array(map(dt.toordinal, x))
+    # Make X matrix
+    X = make_X(ord_x, freq).T
 
     # Create dataframe
-    df = pd.DataFrame(np.vstack((Y, make_X(ord_x))).T,
+    df = pd.DataFrame(np.vstack((Y, X.T)).T,
                       columns=['b1', 'b2', 'b3', 'b4', 'b5', 'b7', 'b6'] +
-                      ['B' + str(i) for i in range(8)],
+                      ['B' + str(i) for i in range(X.shape[1])],
                       index=x)
 
-    print(ggplot(aes('B1', 'b5'), df) + geom_point() + ylim(0, 6000))
+    print(ggplot(aes('B1', 'b5'), df) + geom_point() + ylim(500, 4000))
 
-    X = make_X(ord_x).T
-
-    yatsm = YATSM(X, Y)
+    if reverse:
+        yatsm = YATSM(np.flipud(X), np.fliplr(Y),
+                      consecutive=consecutive,
+                      threshold=threshold,
+                      min_obs=min_obs,
+                      lassocv=lassocv)
+    else:
+        yatsm = YATSM(X, Y,
+                      consecutive=consecutive,
+                      threshold=threshold,
+                      min_obs=min_obs,
+                      lassocv=lassocv)
     yatsm.run()
 
+    # Get qualitative color map
     import brewer2mpl
-    ncolors = max(3, len(yatsm.record))
-    colors = brewer2mpl.get_map('set1', 'qualitative', ncolors)
+    # Color map ncolors goes from 3 - 9
+    ncolors = min(9, max(3, len(yatsm.record)))
+    # Repeat if number of segments > 9
+    repeat = int(math.ceil(len(yatsm.record) / 9.0))
+
+    colors = brewer2mpl.get_map('set1',
+                                'qualitative',
+                                ncolors).hex_colors * repeat
+
     breakpoints = yatsm.record['break']
 
-    p = ggplot(aes('B1', 'b5'), df) + geom_point() + ylim(0, 6000)
+    if reverse:
+        i_step = -1
+    else:
+        i_step = 1
+
+    p = ggplot(aes('B1', 'b' + str(plot_band)), df) + \
+            geom_point()
 
     for i, r in enumerate(yatsm.record):
-        ts_df = pd.DataFrame({ 'x': np.arange(r['start'], r['end']) })
-        ts_df['y'] = np.dot(r['coef'][:, 4], make_X(ts_df['x']))
+        # Setup dummy dataframe for predictions
+        ts_df = pd.DataFrame({ 'x': np.arange(r['start'], r['end'], i_step) })
+        # Get predictions
+        ts_df['y'] = np.dot(r['coef'][:, plot_band - 1],
+                            make_X(ts_df['x'], freq))
 
-        p = p + geom_line(aes('x', 'y'), ts_df, color=colors.hex_colors[i])
-
+        # Add line to ggplot
+        p = p + geom_line(aes('x', 'y'), ts_df, color=colors[i])
+        # If there is a break in this timeseries, add it as vertical line
         if r['break'] != 0:
             p = p + geom_vline(xintercept=r['break'], color='red')
 
-    print(p)
+    # Show graph
+    if reverse:
+        title = 'Reverse'
+    else:
+        title = 'Forward'
+    print(p + ylim(500, 4000) + ggtitle(title))
+
