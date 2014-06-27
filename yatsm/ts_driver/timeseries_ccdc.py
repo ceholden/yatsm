@@ -37,7 +37,7 @@ import timeseries
 from timeseries import mat2dict, ml2pydate, py2mldate
 
 class CCDCTimeSeries(timeseries.AbstractTimeSeries):
-    """Class holding data and methods for time series used by CCDC 
+    """Class holding data and methods for time series used by CCDC
     (Change Detection and Classification). Useful for QGIS plugin 'TSTools'.
 
     More doc TODO
@@ -58,7 +58,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
     result = []
 
     has_results = False
-    
+
     x_size = 0
     y_size = 0
     geo_transform = None
@@ -76,14 +76,14 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
     results_folder = 'TSFitMap'
     results_pattern = 'record_change*'
 
-    def __init__(self, location, 
-                 image_pattern=image_pattern, 
+    def __init__(self, location,
+                 image_pattern=image_pattern,
                  stack_pattern=stack_pattern,
                  results_folder=results_folder,
                  results_pattern=results_pattern,
                  cache_folder='.cache'):
-        
-        super(CCDCTimeSeries, self).__init__(location, 
+
+        super(CCDCTimeSeries, self).__init__(location,
                                              image_pattern,
                                              stack_pattern)
         self.results_folder = results_folder
@@ -103,15 +103,15 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
         self._data = np.zeros([self.n_band, self.length], dtype=self.datatype)
 
     def get_ts_pixel(self, use_cache=True, do_cache=True):
-        """ Fetch pixel data for the current pixel and set to self._data 
-        
+        """ Fetch pixel data for the current pixel and set to self._data
+
         Uses:
             self._px, self._py
 
         Args:
             use_cache               allow for retrieval of data from cache
             do_cache                enable caching of retrieved results
-                 
+
         """
         read_data = False
         wrote_data = False
@@ -141,7 +141,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
 
     def retrieve_pixel(self, index):
         """ Retrieve pixel data for a given x/y and index in time series
-    
+
         Uses:
             self._px, self._py
 
@@ -157,7 +157,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
             self._py, self._px)
         self._data[:, index] = self.readers[index].get_pixel(
             self._py, self._px)
-        
+
         if index == self.length - 1:
             print 'Last result coming in!'
             self._data = self._tmp_data
@@ -177,7 +177,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
         # Check for existence of output
         record = self.results_pattern.replace('*', str(self._py + 1)) + '.mat'
         record = os.path.join(self.location, self.results_folder, record)
-        
+
         print 'Opening: {r}'.format(r=record)
 
         if not os.path.exists(record):
@@ -191,7 +191,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
         print '    position: {p}'.format(p=pos)
 
         # Read .mat file as ndarray of scipy.io.matlab.mio5_params.mat_struct
-        mat = scipy.io.loadmat(record, squeeze_me=True, 
+        mat = scipy.io.loadmat(record, squeeze_me=True,
                                struct_as_record=False)['rec_cg']
 
         # Loop through to find correct x, y
@@ -215,7 +215,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
             usermx          optional - can specify MATLAB datenum dates as list
 
         Returns:
-            [(mx, my)]      list of data points for time series fit where 
+            [(mx, my)]      list of data points for time series fit where
                                 length of list is equal to number of time
                                 segments
 
@@ -231,13 +231,13 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
             for rec in self.result:
                 if band >= rec['coefs'].shape[1]:
                     break
-                
+
                 ### Setup x values (dates)
                 # Use user specified values, if possible
                 if has_mx:
-                    _mx = usermx[np.where((usermx >= rec['t_start']) & 
+                    _mx = usermx[np.where((usermx >= rec['t_start']) &
                                       (usermx <= rec['t_end']))]
-                    if len(_mx) == 0: 
+                    if len(_mx) == 0:
                         # User didn't ask for dates in this range
                         continue
                 else:
@@ -246,7 +246,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
                                       rec['t_end'],
                                       rec['t_end'] - rec['t_start'])
                 coef = rec['coefs'][:, band]
-                
+
                 ### Calculate model predictions
                 # HACK: adjust w based on existence of parameter file
                 if os.path.isfile(os.path.join(
@@ -263,9 +263,9 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
                             coef[3] * np.sin(w * _mx))
                 elif coef.shape[0] == 6:
                     # 6 coefficient model
-                    _my = (coef[0] + 
-                           coef[1] * _mx + 
-                           coef[2] * np.cos(w * _mx) + 
+                    _my = (coef[0] +
+                           coef[1] * _mx +
+                           coef[2] * np.cos(w * _mx) +
                            coef[3] * np.sin(w * _mx) +
                            coef[4] * np.cos(2 * w * _mx) +
                            coef[5] * np.sin(2 * w * _mx))
@@ -300,7 +300,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
                 bx.append(dt.datetime.fromordinal(int(rec['t_break'])) -
                       dt.timedelta(days = 366))
                 print 'Break: %s' % str(bx)
-                index = [i for i, date in 
+                index = [i for i, date in
                         enumerate(self.dates) if date == bx[-1]][0]
                 print 'Index: %s' % str(index)
                 if index < self._data.shape[1]:
@@ -354,16 +354,16 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
         self._data = np.ma.MaskedArray(self._data, mask=mask)
 
     def retrieve_from_cache(self):
-        """ Try retrieving a pixel timeseries from cache 
-        
+        """ Try retrieving a pixel timeseries from cache
+
         Return True, False or Exception depending on success
 
         """
         # Test caching for retrieval
-        cache = self.cache_name_lookup(self._px, self._py) 
+        cache = self.cache_name_lookup(self._px, self._py)
         if self.has_cache is True and os.path.exists(cache):
             try:
-                _read_data = np.load(cache) 
+                _read_data = np.load(cache)
             except:
                 print 'Error: could not open pixel {x}/{y} from cache ' \
                         'file'.format(x=self._px, y=self._py)
@@ -379,7 +379,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
 
                 # We've read data, apply mask and return True
                 self.apply_mask()
-                
+
                 return True
 
         return False
@@ -389,7 +389,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
 
         Return True, False, or Exception depending on success
 
-        Note:   writing of NumPy masked arrays is not implemented, so stick to 
+        Note:   writing of NumPy masked arrays is not implemented, so stick to
                 regular ndarray
 
         """
@@ -453,7 +453,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
         """ Fetch image stack attributes including number of rows, columns,
         bands, the geographic transform, projection, file format, data type,
         and band names
-        
+
         """
         # Based on first stack image
         stack = self.filepaths[0]
@@ -492,7 +492,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
         # Band names
         for i in range(ds.RasterCount):
             band = ds.GetRasterBand(i + 1)
-            if (band.GetDescription() is not None and 
+            if (band.GetDescription() is not None and
                 len(band.GetDescription()) > 0):
                 self.band_names.append(band.GetDescription())
             else:
@@ -524,17 +524,17 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
     def _check_results(self):
         """ Checks for results """
         results = os.path.join(self.location, self.results_folder)
-        if (os.path.exists(results) and os.path.isdir(results) and 
+        if (os.path.exists(results) and os.path.isdir(results) and
             os.access(results, os.R_OK)):
             # Check for any results
             for root, dname, fname in os.walk(results):
                 for f in fnmatch.filter(fname, self.results_pattern):
                     self.has_results = True
-                    self.results_folder = root 
+                    self.results_folder = root
                     return
 
     def _check_cache(self):
-        """ Checks location of time series for a cache to read/write 
+        """ Checks location of time series for a cache to read/write
         time series
         """
         cache = os.path.join(self.location, self.cache_folder)
@@ -543,7 +543,7 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
                 self.has_cache = True
             else:
                 self.has_cache = False
-            
+
             if os.access(cache, os.W_OK):
                 self.can_cache = True
             else:
@@ -557,17 +557,17 @@ class CCDCTimeSeries(timeseries.AbstractTimeSeries):
                 self.has_cache = True
                 self.can_cache = True
 
-        print 'Has cache?: {b}'.format(b=self.has_cache)
-        print 'Can cache?: {b}'.format(b=self.can_cache)
+        # print 'Has cache?: {b}'.format(b=self.has_cache)
+        # print 'Can cache?: {b}'.format(b=self.can_cache)
 
     def _open_ts(self):
         """ Open timeseries as list of CCDCBinaryReaders """
         self.readers = []
-        if (self.fformat == 'ENVI' or self.fformat == 'BIP' or self.fformat == 
+        if (self.fformat == 'ENVI' or self.fformat == 'BIP' or self.fformat ==
                 'BSQ'):
             for stack in self.filepaths:
                 self.readers.append(
-                    CCDCBinaryReader(stack, self.fformat, self.datatype, 
+                    CCDCBinaryReader(stack, self.fformat, self.datatype,
                                      (self.y_size, self.x_size), self.n_band))
 
 
