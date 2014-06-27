@@ -11,7 +11,13 @@ Options:
     --freq=<freq>           Sin/cosine frequencies [default: 1 2 3]
     --lassocv               Use sklearn cross-validated LassoCV
     --reverse               Run timeseries in reverse
-    --plot_band=<b>         Band to plot for diagnostics [default: 5]
+    --plot_band=<b>         Band to plot for diagnostics [default: None]
+    --plot_ylim=<lim>       Plot y-limits [default: None]
+    --ensemble=<n>          Number of change runs [default: 1]
+    --threshvar=<n>         Threshold variance [default: 0.5]
+    --consecvar=<n>         Consecutive observation variance [default: 1]
+    --ensemble_order        Run ensemble forward and reverse
+    --debug                 Show verbose debugging messages
     -h --help               Show help
 
 Example:
@@ -157,24 +163,24 @@ class YATSM(object):
     """ docstring """
 
     def __init__(self, X, Y, consecutive=5, threshold=2.56, min_obs=None,
-                 lassocv=False):
+                 lassocv=False, loglevel=logging.DEBUG):
         """
         :param df: Pandas dataframe of model and observations
         :param consecutive: consecutive observations for change
         :threshold: "t-statistic-like" threshold for magnitude of change
         :min_obs: minimum number of observations for time series initialization
         """
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=loglevel)
         self.logger = logging.getLogger()
 
         # Configure which implementation of LASSO we're using
         self.lassocv = lassocv
         if self.lassocv:
             self.fit_models = self.fit_models_LassoCV
-            self.logger.debug('Using LassoCV from sklearn')
+            self.logger.info('Using LassoCV from sklearn')
         else:
             self.fit_models = self.fit_models_GLMnet
-            self.logger.debug('Using Lasso from GLMnet (lambda = 20)')
+            self.logger.info('Using Lasso from GLMnet (lambda = 20)')
 
         # Store data
         self._X = X
@@ -222,6 +228,12 @@ class YATSM(object):
             ('py', 'u2')
         ])
         self.record = np.copy(self.record_template)
+
+    def reset(self):
+        """ Resets 'start' and 'here' indices """
+        self.start = 0
+        self.here = self.min_obs
+        self._here = self.here
 
     @property
     def span_time(self):
@@ -360,8 +372,6 @@ class YATSM(object):
     def update_model(self):
         # Only train once a year
         if abs(self.X[self.here, 1] - self.trained_date) > self.ndays:
-            print('DEBUG TRAINING\%\%\%\%\%\%\%\%')
-
             self.log_debug('Monitoring - retraining ({n} days since last)'.
                            format(n=self.X[self.here, 1] - self.trained_date))
 
@@ -447,7 +457,7 @@ class YATSM(object):
 
         for b in bands:
             # lasso = LassoCV(n_alphas=100)
-            # lasso = LassoLarsCV(max_n_alphas=100)
+            # lasso = LassoLarsCV(masx_n_alphas=100)
             lasso = LassoLarsIC(criterion='bic')
             lasso = lasso.fit(X[index, :], Y[b, index])
             lasso.nobs = Y[b, index].size
@@ -514,6 +524,30 @@ class YATSM(object):
             trained=self.monitoring) +
             message)
 
+def preprocess(location, px, py):
+    """ Read and preprocess Landsat data before analysis """
+    # Load timeseries
+    ts = CCDCTimeSeries(location, image_pattern='L*')
+    ts.set_px(px)
+    ts.set_py(py)
+    ts.get_ts_pixel()
+
+    # Get dates (datetime)
+    x = ts.dates
+    # Get data
+    Y = ts.get_data(mask=False)
+
+    # Filter out time series and remove Fmask
+    clear = Y[7, :] <= 1
+    Y = Y[:, clear][:fmask, :]
+    x = x[clear]
+
+    # Ordinal date
+    ord_x = np.array(map(dt.toordinal, x))
+    # Make X matrix
+    X = make_X(ord_x, freq).T
+
+    return (ts, X, Y, clear)
 
 if __name__ == '__main__':
     args = docopt(__doc__)
@@ -544,89 +578,113 @@ if __name__ == '__main__':
     reverse = args['--reverse']
 
     # Plot band for debug
-    plot_band = int(args['--plot_band'])
+    plot_band = args['--plot_band']
+    if plot_band == 'None':
+        plot_band = None
+    else:
+        plot_band = int(plot_band)
 
-    # Load timeseries
-    ts = CCDCTimeSeries(location, image_pattern='L*')
-    ts.set_px(px)
-    ts.set_py(py)
-    ts.get_ts_pixel()
+    plot_ylim = args['--plot_ylim']
+    if plot_ylim == 'None':
+        plot_ylim = None
+    else:
+        plot_ylim = [int(n) for n in
+                     plot_ylim.replace(' ', ',').split(',') if n != '']
 
-    # Get dates (datetime)
-    x = ts.dates
-    # Get data
-    Y = ts.get_data(mask=False)
+    # Ensemble runs
+    ensemble = args['--ensemble']
+    if ensemble == '1':
+        ensemble = None
+    else:
+        ensemble = int(ensemble)
+    ensemble_order = args['--ensemble_order']
 
-    # Filter out time series and remove Fmask
-    clear = Y[7, :] <= 1
-    Y = Y[:, clear][:fmask, :]
-    x = x[clear]
+    # Debug level
+    debug = args['--debug']
+    if debug:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.WARNING
 
-    # Ordinal date
-    ord_x = np.array(map(dt.toordinal, x))
-    # Make X matrix
-    X = make_X(ord_x, freq).T
+
+    # Get data and mask clouds
+    ts, X, Y, clear = preprocess(location, px, py)
 
     # Create dataframe
     df = pd.DataFrame(np.vstack((Y, X.T)).T,
                       columns=['b1', 'b2', 'b3', 'b4', 'b5', 'b7', 'b6'] +
-                      ['B' + str(i) for i in range(X.shape[1])],
-                      index=x)
+                      ['B' + str(i) for i in range(X.shape[1])])
+    df.index = df['B1']
+    df['date'] = ts.dates[clear]
 
-    print(ggplot(aes('B1', 'b5'), df) + geom_point() + ylim(500, 4000))
+    if plot_band:
+        p = ggplot(aes('date', 'b' + str(plot_band)), df) + geom_point()
+        if plot_ylim:
+            p = p + ylim(plot_ylim[0], plot_ylim[1])
+        print(p)
 
     if reverse:
         yatsm = YATSM(np.flipud(X), np.fliplr(Y),
                       consecutive=consecutive,
                       threshold=threshold,
                       min_obs=min_obs,
-                      lassocv=lassocv)
+                      lassocv=lassocv,
+                      loglevel=loglevel)
     else:
         yatsm = YATSM(X, Y,
                       consecutive=consecutive,
                       threshold=threshold,
                       min_obs=min_obs,
-                      lassocv=lassocv)
+                      lassocv=lassocv,
+                      loglevel=loglevel)
     yatsm.run()
-
-    # Get qualitative color map
-    import brewer2mpl
-    # Color map ncolors goes from 3 - 9
-    ncolors = min(9, max(3, len(yatsm.record)))
-    # Repeat if number of segments > 9
-    repeat = int(math.ceil(len(yatsm.record) / 9.0))
-
-    colors = brewer2mpl.get_map('set1',
-                                'qualitative',
-                                ncolors).hex_colors * repeat
 
     breakpoints = yatsm.record['break']
 
-    if reverse:
-        i_step = -1
-    else:
-        i_step = 1
+    print('Found {n} breakpoints'.format(n=breakpoints.size))
+    print(breakpoints)
 
-    p = ggplot(aes('B1', 'b' + str(plot_band)), df) + \
-            geom_point()
+    if plot_band:
+        # Get qualitative color map
+        import brewer2mpl
+        # Color map ncolors goes from 3 - 9
+        ncolors = min(9, max(3, len(yatsm.record)))
+        # Repeat if number of segments > 9
+        repeat = int(math.ceil(len(yatsm.record) / 9.0))
 
-    for i, r in enumerate(yatsm.record):
-        # Setup dummy dataframe for predictions
-        ts_df = pd.DataFrame({ 'x': np.arange(r['start'], r['end'], i_step) })
-        # Get predictions
-        ts_df['y'] = np.dot(r['coef'][:, plot_band - 1],
-                            make_X(ts_df['x'], freq))
+        colors = brewer2mpl.get_map('set1',
+                                    'qualitative',
+                                    ncolors).hex_colors * repeat
 
-        # Add line to ggplot
-        p = p + geom_line(aes('x', 'y'), ts_df, color=colors[i])
-        # If there is a break in this timeseries, add it as vertical line
-        if r['break'] != 0:
-            p = p + geom_vline(xintercept=r['break'], color='red')
+        if reverse:
+            i_step = -1
+        else:
+            i_step = 1
 
-    # Show graph
-    if reverse:
-        title = 'Reverse'
-    else:
-        title = 'Forward'
-    print(p + ylim(500, 4000) + ggtitle(title))
+        p = ggplot(aes('date', 'b' + str(plot_band)), df) + \
+                geom_point()
+
+        for i, r in enumerate(yatsm.record):
+            # Setup dummy dataframe for predictions
+            ts_df = pd.DataFrame({ 'x': np.arange(r['start'], r['end'], i_step) })
+            # Get predictions
+            ts_df['y'] = np.dot(r['coef'][:, plot_band - 1],
+                                make_X(ts_df['x'], freq))
+            ts_df['date'] = np.array([dt.fromordinal(int(_d)) for _d in ts_df['x']])
+
+            # Add line to ggplot
+            p = p + geom_line(aes('date', 'y'), ts_df, color=colors[i])
+            # If there is a break in this timeseries, add it as vertical line
+            if r['break'] != 0:
+                p = p + geom_vline(xintercept=dt.fromordinal(r['break']), color='red')
+
+        if plot_ylim:
+            p = p + ylim(plot_ylim[0], plot_ylim[1])
+
+        # Show graph
+        if reverse:
+            title = 'Reverse'
+        else:
+            title = 'Forward'
+        print(p + ggtitle(title))
 
