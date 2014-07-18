@@ -127,19 +127,20 @@ def multitemp_mask(x, Y, n_year, crit=400, green=1, swir1=4):
 
 
 class YATSM(object):
-
-    """ docstring """
+    """Yet Another Time Series Model (YATSM)
+    """
 
     def __init__(self, X, Y, consecutive=5, threshold=2.56, min_obs=None,
+                 fit_indicies=None, test_indices=None,
                  lassocv=False, loglevel=logging.DEBUG):
+        """Initialize a YATSM model for data X (spectra) and Y (dates)
+
+        Initialize a
         """
-        :param df: Pandas dataframe of model and observations
-        :param consecutive: consecutive observations for change
-        :threshold: "t-statistic-like" threshold for magnitude of change
-        :min_obs: minimum number of observations for time series initialization
-        """
-        logging.basicConfig(level=loglevel)
+        # Setup logger
+        logging.basicConfig()
         self.logger = logging.getLogger()
+        self.logger.setLevel(loglevel)
 
         # Configure which implementation of LASSO we're using
         self.lassocv = lassocv
@@ -151,17 +152,31 @@ class YATSM(object):
             self.logger.info('Using Lasso from GLMnet (lambda = 20)')
 
         # Store data
-        self._X = X
-        self._Y = Y
-        self.X = X
-        self.Y = Y
+        self._X = X.copy()
+        self._Y = Y.copy()
+        self.X = X.copy()
+        self.Y = Y.copy()
+
+        # Default fitted and tested indices to all, except last band
+        if fit_indicies is None:
+            self.fit_indices = np.arange(Y.shape[0] - 1)
+        else:
+            if max(fit_indices) < Y.shape[0]:
+                self.fit_indices = fit_indices
+            else:
+                raise IndexError('Specified fit_indices larger than Y matrix')
+
+        if test_indices is None:
+            self.test_indices = np.arange(Y.shape[0] - 1)
+        else:
+            if max(test_indices) < Y.shape[0]:
+                self.test_indices = test_indices
+            else:
+                raise IndexError('Specified test_indices larger than Y matrix')
+
         # Store parameters
         self.consecutive = consecutive
         self.threshold = threshold
-
-        self.fit_indices = np.array([0, 1, 2, 3, 4, 5, 6])
-        self.test_indices = np.array([2, 3, 4])
-
         self.ndays = 365.25
         self.n_band = Y.shape[0]
         self.n_coef = X.shape[1]
@@ -282,8 +297,6 @@ class YATSM(object):
                            format(t=span_time))
             return
 
-        # self.train_plot_debug(mask, index)
-
         # There is enough time in train period to fit - remove noise
         self._X = self.X[mask == 1, :]
         self._Y = self.Y[:, mask == 1]
@@ -317,14 +330,6 @@ class YATSM(object):
             self.start += 1
             self.here = self._here
             return
-
-#        df = pd.DataFrame({
-#            'X': self._X[self.start:self.here + 1, 1],
-#            'Y': self._Y[4, self.start:self.here + 1],
-#            'pred': m.predict(self._X[self.start:self.here + 1, :])
-#        })
-#        print(ggplot(aes('X', 'Y'), df) + geom_point() +
-#              geom_line(aes('X', 'pred'), df, color='red'))
 
         self.X = self._X
         self.Y = self._Y
@@ -478,4 +483,3 @@ class YATSM(object):
             si=self.span_index, st=self.span_time,
             trained=self.monitoring) +
             message)
-
