@@ -248,6 +248,9 @@ class YATSM(object):
                 # Find nonzero
                 nonzero = np.where(robust_record[i]['coef'][:, i_b] != 0)[0]
 
+                if nonzero.size == 0:
+                    continue
+
                 # Setup model
                 rirls_model = sm.RLM(_Y[b, :], _X[:, nonzero],
                                      M=sm.robust.norms.TukeyBiweight())
