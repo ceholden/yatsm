@@ -214,6 +214,16 @@ class YATSM(object):
         ])
         self.record = np.copy(self.record_template)
 
+# POST-PROCESSING
+    def merge_record(self, critF):
+        """ Merge adjacent records based on nested F test """
+        pass
+
+    def omission_test(self, crit):
+        """ Add omitted breakpoint into records based on residual stationarity
+        """
+        pass
+
     @property
     def robust_record(self):
         """ Returns a copy of YATSM record output with robustly fitted models
