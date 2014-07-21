@@ -45,7 +45,7 @@ ndays = 365.25
 fmask = 7
 
 
-def preprocess(location, px, py):
+def preprocess(location, px, py, freq):
     """ Read and preprocess Landsat data before analysis """
     # Load timeseries
     ts = CCDCTimeSeries(location, image_pattern='L*')
