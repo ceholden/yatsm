@@ -196,6 +196,8 @@ class YATSM(object):
 
         # Record if model has been trained
         self.monitoring = False
+        # Record if model has been ran
+        self.ran = False
 
         # Store array of time series model (GLMnet or LassoCV)
         self.models = []
@@ -212,11 +214,63 @@ class YATSM(object):
         ])
         self.record = np.copy(self.record_template)
 
+    @property
+    def robust_record(self):
+        """ Returns a copy of YATSM record output with robustly fitted models
+
+        After YATSM has been run, take each time segment and re-fit the model
+        using robust iteratively reweighted least squares (RIRLS) regression.
+        RIRLS will only be performed using non-zero coefficients from original
+        regression.
+
+        The returned model results should be more representative of the
+        signal found because it will remove influence of outlying observations,
+        such as clouds or shadows.
+
+        If YATSM has not yet been run, returns None
+        """
+        if not self.ran:
+            return None
+
+        # Copy normal records
+        robust_record = np.copy(self.record)
+        # Update to robust model
+        for i, record in enumerate(robust_record):
+            # Find matching X and Y in data
+            index = np.where((self.X[:, 1] >= record['start']) &
+                             (self.X[:, 1] <= record['end']))[0]
+            # Grab matching X and Y
+            _X = self.X[index, :]
+            _Y = self.Y[:, index]
+
+            # Refit each band
+            for i_b, b in enumerate(self.fit_indices):
+                # Find nonzero
+                nonzero = np.where(robust_record[i]['coef'][:, i_b] != 0)[0]
+
+                # Setup model
+                rirls_model = sm.RLM(_Y[b, :], _X[:, nonzero],
+                                     M=sm.robust.norms.TukeyBiweight())
+                # Fit
+                fit = rirls_model.fit()
+                # Store updated coefficients
+                robust_record[i]['coef'][nonzero, i_b] = fit.params
+
+                # Update RMSE
+                rss = np.sum((fit.resid) ** 2)
+                robust_record[i]['rmse'][i_b] = math.sqrt(rss / index.size)
+
+            self.logger.debug('Updated record {i} to robust results'.
+                              format(i=i))
+
+        return robust_record
+
     def reset(self):
         """ Resets 'start' and 'here' indices """
         self.start = 0
         self.here = self.min_obs
         self._here = self.here
+        self.ran = False
 
     @property
     def span_time(self):
@@ -259,6 +313,7 @@ class YATSM(object):
 
             self.here += 1
 
+        self.ran = True
         # Deal with end of time series
 
     def train(self):
