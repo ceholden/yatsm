@@ -156,7 +156,7 @@ class YATSM(object):
 
         # Default fitted and tested indices to all, except last band
         if fit_indices is None:
-            self.fit_indices = np.arange(Y.shape[0] - 1)
+            self.fit_indices = np.arange(Y.shape[0])
         else:
             if max(fit_indices) < Y.shape[0]:
                 self.fit_indices = fit_indices
