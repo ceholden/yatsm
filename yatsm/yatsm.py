@@ -131,7 +131,7 @@ class YATSM(object):
     """
 
     def __init__(self, X, Y, consecutive=5, threshold=2.56, min_obs=None,
-                 fit_indicies=None, test_indices=None,
+                 fit_indices=None, test_indices=None,
                  lassocv=False, loglevel=logging.DEBUG):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
 
@@ -158,7 +158,7 @@ class YATSM(object):
         self.Y = Y.copy()
 
         # Default fitted and tested indices to all, except last band
-        if fit_indicies is None:
+        if fit_indices is None:
             self.fit_indices = np.arange(Y.shape[0] - 1)
         else:
             if max(fit_indices) < Y.shape[0]:
