@@ -165,7 +165,7 @@ class YATSM(object):
                 raise IndexError('Specified fit_indices larger than Y matrix')
 
         if test_indices is None:
-            self.test_indices = np.arange(Y.shape[0] - 1)
+            self.test_indices = np.arange(Y.shape[0])
         else:
             if max(test_indices) < Y.shape[0]:
                 self.test_indices = test_indices
