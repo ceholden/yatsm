@@ -14,8 +14,6 @@ from sklearn.linear_model import Lasso, LassoCV, LassoLarsCV, LassoLarsIC
 
 # Some constants
 ndays = 365.25
-fmask = 7
-
 
 class GLMLasso(ElasticNet):
 
