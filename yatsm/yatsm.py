@@ -149,10 +149,8 @@ class YATSM(object):
             self.logger.info('Using Lasso from GLMnet (lambda = 20)')
 
         # Store data
-        self._X = X.copy()
-        self._Y = Y.copy()
-        self.X = X.copy()
-        self.Y = Y.copy()
+        self.X = X
+        self.Y = Y
 
         # Default fitted and tested indices to all, except last band
         if fit_indices is None:
