@@ -300,7 +300,7 @@ class YATSM(object):
     @property
     def can_monitor(self):
         """ Determine if timeseries can monitor the future consecutive obs """
-        return self.here <= self.X.shape[0] - self.consecutive - 1
+        return self.here < self.X.shape[0] - self.consecutive - 1
 
     def run(self):
         """ Run timeseries model """
