@@ -12,8 +12,6 @@ import statsmodels.api as sm
 from glmnet.elastic_net import ElasticNet, elastic_net
 from sklearn.linear_model import Lasso, LassoCV, LassoLarsCV, LassoLarsIC
 
-from ggplot import *
-
 # Some constants
 ndays = 365.25
 fmask = 7
@@ -504,6 +502,9 @@ class YATSM(object):
         return np.array(models)
 
     def train_plot_debug(self, mask, index):
+        """ Training / historical period multitemporal cloud masking debug """
+        from ggplot import ggplot, geom_point, xlab, ylab, ggtitle, aes
+
         cols = np.repeat('clear', index.shape[0])
         cols[mask[index] == 0] = 'noise'
         df = pd.DataFrame({'X': self.X[index, 1],
@@ -519,6 +520,7 @@ class YATSM(object):
 
     def monitor_plot_debug(self, index, model, i_buffer=10):
         """ Monitoring debug plot """
+        import matplotlib.pyplot as plt
         # Show before/after current timeseries
         before_buffer = max(0, index[0] - i_buffer)
         after_buffer = min(self.X[:, 1].size - 1, index[-1] + i_buffer)
