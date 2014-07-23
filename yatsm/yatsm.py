@@ -282,6 +282,8 @@ class YATSM(object):
 
     def reset(self):
         """ Resets 'start' and 'here' indices """
+        self.n_record = 0
+        self.record = np.copy(self.record_template)
         self.start = 0
         self.here = self.min_obs
         self._here = self.here
@@ -329,7 +331,8 @@ class YATSM(object):
             self.here += 1
 
         self.ran = True
-        # Deal with end of time series
+
+        # Deal with end of time series #TODO
 
     def train(self):
         """ Train time series model """
@@ -498,8 +501,6 @@ class YATSM(object):
             lasso.fittedvalues = lasso.predict(X[index, :])
             lasso.rss = np.sum((Y[b, index] - lasso.fittedvalues) ** 2)
             lasso.rmse = math.sqrt(lasso.rss / lasso.nobs)
-#            lasso = GLMLasso()
-#            lasso = lasso.fit(X[index, :], Y[b, index], lambdas=20)
 
             models.append(lasso)
 
