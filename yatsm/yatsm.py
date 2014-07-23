@@ -99,6 +99,9 @@ def make_X(x, freq, intercept=True):
 def multitemp_mask(x, Y, n_year, crit=400, green=1, swir1=4):
     """ Multi-temporal cloud/shadow masking using RLM
 
+    Taken directly from CCDC (Zhu and Woodcock, 2014). This "temporal masking"
+    procedure was ported from CCDC v9.3.
+
     Returns np.array of booleans. False indicate failed mask test and should be
     masked
     """
@@ -132,7 +135,11 @@ class YATSM(object):
                  lassocv=False, loglevel=logging.DEBUG):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
 
-        Initialize a
+        YATSM model based off of tests for structural changes from the
+        econometrics literature including the MOSUM or CUMSUM (Chu et al,
+        Zeileis, and others) as implemented in a remote sensing context by
+        BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This
+        effort is not intended as a direct port of either algorithms.
         """
         # Setup logger
         logging.basicConfig()
