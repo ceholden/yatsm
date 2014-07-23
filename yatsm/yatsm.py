@@ -3,6 +3,7 @@ from __future__ import print_function, division
 
 import logging
 import math
+import sys
 
 import numpy as np
 import pandas as pd
@@ -130,7 +131,8 @@ class YATSM(object):
     """Yet Another Time Series Model (YATSM)
     """
 
-    def __init__(self, X, Y, consecutive=5, threshold=2.56, min_obs=None,
+    def __init__(self, X, Y,
+                 consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  fit_indices=None, test_indices=None,
                  lassocv=False, loglevel=logging.DEBUG):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
@@ -176,18 +178,30 @@ class YATSM(object):
             else:
                 raise IndexError('Specified test_indices larger than Y matrix')
 
-        # Store parameters
-        self.consecutive = consecutive
-        self.threshold = threshold
+        # Attributes
         self.ndays = 365.25
         self.n_band = Y.shape[0]
         self.n_coef = X.shape[1]
+
+        # Store parameters
+        self.consecutive = consecutive
+        self.threshold = threshold
 
         if min_obs is None:
             self.min_obs = int(self.n_coef * 1.5)
         else:
             self.min_obs = min_obs
 
+        # Minimum RMSE to prevent being overly sensitive to changes
+        if min_rmse:
+            self.min_rmse = min_rmse
+        else:
+            # if None, set to max float size so it never is minimum
+            self.min_rmse = sys.float_info.min
+
+        self.log_parameters()
+
+        # Index of time segment location
         self.start = 0
         self.here = self.min_obs
         self._here = self.here
@@ -266,6 +280,7 @@ class YATSM(object):
                 # Setup model
                 rirls_model = sm.RLM(_Y[b, :], _X[:, nonzero],
                                      M=sm.robust.norms.TukeyBiweight())
+
                 # Fit
                 fit = rirls_model.fit()
                 # Store updated coefficients
@@ -388,13 +403,16 @@ class YATSM(object):
         # After noise removal, try to fit models
         models = self.fit_models(self._X, self._Y, bands=self.test_indices)
 
+        #
         start_resid = np.zeros(len(self.test_indices))
         end_resid = np.zeros(len(self.test_indices))
         for i, (b, m) in enumerate(zip(self.test_indices, models)):
-            start_resid[i] = np.abs(self._Y[b, self.start] -
-                                    m.predict(self._X[self.start, :])) / m.rmse
-            end_resid[i] = np.abs(self._Y[b, self.here] -
-                                  m.predict(self._X[self.here, :])) / m.rmse
+            start_resid[i] = (np.abs(self._Y[b, self.start] -
+                                     m.predict(self._X[self.start, :])) /
+                              max(self.min_rmse, m.rmse))
+            end_resid[i] = (np.abs(self._Y[b, self.here] -
+                                   m.predict(self._X[self.here, :])) /
+                            max(self.min_rmse, m.rmse))
 
         if np.linalg.norm(start_resid) > self.threshold or \
                 np.linalg.norm(end_resid) > self.threshold:
@@ -446,7 +464,7 @@ class YATSM(object):
                 # Get test score for future observations
                 scores[i, i_b] = (np.abs(self.Y[b, self.here + i] -
                                          m.predict(self.X[self.here + i, :])) /
-                                  m.rmse)
+                                  max(self.min_rmse, m.rmse))
 
         # Check for scores above critical value
         mag = np.linalg.norm(scores, axis=1)
@@ -598,7 +616,6 @@ class YATSM(object):
 
         plt.show()
 
-
     def log_debug(self, message):
         """ Custom logging message """
         self.logger.debug('{start},{here} ({si},{st}) : ({trained}) : '.format(
@@ -606,3 +623,12 @@ class YATSM(object):
             si=self.span_index, st=self.span_time,
             trained=self.monitoring) +
             message)
+
+    def log_parameters(self):
+        """ Log parameters being used """
+        p = ['consecutive', 'threshold', 'min_obs', 'min_rmse', 'n_coef']
+        self.logger.info('Using parameters:')
+        for _p in p:
+            self.logger.info('    {param}: {value}'.
+                             format(param=_p,
+                                    value=getattr(self, _p)))
