@@ -247,10 +247,10 @@ class YATSM(object):
         # Copy normal records
         robust_record = np.copy(self.record)
         # Update to robust model
-        for i, record in enumerate(robust_record):
+        for i, r in enumerate(robust_record):
             # Find matching X and Y in data
-            index = np.where((self.X[:, 1] >= record['start']) &
-                             (self.X[:, 1] <= record['end']))[0]
+            index = np.where((self.X[:, 1] >= min(r['start'], r['end'])) &
+                             (self.X[:, 1] <= max(r['end'], r['start'])))[0]
             # Grab matching X and Y
             _X = self.X[index, :]
             _Y = self.Y[:, index]
