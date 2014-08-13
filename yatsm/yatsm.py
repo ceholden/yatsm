@@ -6,7 +6,6 @@ import math
 import sys
 
 import numpy as np
-import pandas as pd
 
 import statsmodels.api as sm
 
@@ -523,23 +522,6 @@ class YATSM(object):
             models.append(lasso)
 
         return np.array(models)
-
-    def train_plot_debug(self, mask, index):
-        """ Training / historical period multitemporal cloud masking debug """
-        from ggplot import ggplot, geom_point, xlab, ylab, ggtitle, aes
-
-        cols = np.repeat('clear', index.shape[0])
-        cols[mask[index] == 0] = 'noise'
-        df = pd.DataFrame({'X': self.X[index, 1],
-                           'Y': self.Y[4, index],
-                           'mask': cols
-                           })
-        print(ggplot(aes('X', 'Y', color='mask'), df) +
-              geom_point() +
-              xlab('Ordinal Date') +
-              ylab('B5 Reflectance') +
-              ggtitle('Cloud Screening - segment: {i}'.format(i=self.n_record))
-              )
 
     def monitor_plot_debug(self, index, model, i_buffer=10):
         """ Monitoring debug plot """
