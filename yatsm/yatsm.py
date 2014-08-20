@@ -24,7 +24,7 @@ class GLMLasso(ElasticNet):
     def fit(self, X, y, lambdas=None):
         if lambdas is None:
             lambdas = [self.alpha]
-        elif not isinstance(type(lambdas), list):
+        elif not isinstance(lambdas, list):
             lambdas = [lambdas]
 
         n_lambdas, intercept_, coef_, ia, nin, rsquared_, lambdas, _, jerr = \
