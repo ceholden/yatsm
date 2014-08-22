@@ -162,8 +162,12 @@ if __name__ == '__main__':
     try:
         job_number = int(args['<job_number>'])
     except:
-        print('Error - <job_number> must be an integer')
+        print('Error - <job_number> must be an integer greater than 0')
         sys.exit(1)
+    if job_number <= 0:
+        print('Error - <job_number> cannot be less than or equal to 0')
+        sys.exit(1)
+    job_number -= 1
 
     try:
         total_jobs = int(args['<total_jobs>'])
