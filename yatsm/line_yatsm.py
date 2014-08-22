@@ -26,12 +26,34 @@ from docopt import docopt
 
 import numpy as np
 from osgeo import gdal
+from osgeo import gdal_array
 
 
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
                     level=logging.INFO,
                     datefmt='%H:%M:%S')
 logger = logging.getLogger(__name__)
+
+
+# JOB SPECIFIC FUNCTIONS
+def calculate_lines(nrow):
+    """ Calculate the lines this job processes given nrow, njobs, and job ID
+
+    Args:
+      nrow (int)                Number of rows in image
+
+    Returns:
+      rows (ndarray)            np.array of rows to be processed
+
+    """
+    assigned = 0
+    rows = []
+
+    while job_number + total_jobs * assigned < nrow:
+        rows.append(job_number + total_jobs * assigned)
+        assigned += 1
+
+    return np.array(rows)
 
 
 # IMAGE DATASET READING
@@ -87,6 +109,31 @@ def find_images(input_file, date_format='%Y-%j'):
             images.append(row[i_image])
 
         return (np.array(dates), np.array(images))
+
+def get_image_attribute(image_filename):
+    """ Use GDAL to open image and return some attributes
+
+    Args:
+      image_filename (string)           Image filename
+
+    Returns:
+      tuple (int, int, int, type)       nrow, ncol, nband, NumPy datatype
+
+    """
+    try:
+        image_ds = gdal.Open(image_filename, gdal.GA_ReadOnly)
+    except:
+        logger.error('Could not open example image dataset ({f})'.format(
+            f=image_filename))
+        sys.exit(1)
+
+    nrow = image_ds.RasterYSize
+    ncol = image_ds.RasterXSize
+    nband = image_ds.RasterCount
+    dtype = gdal_array.GDALTypeCodeToNumericTypeCode(
+        image_ds.GetRasterBand(1).DataType)
+
+    return (nrow, ncol, nband, dtype)
 
 
 # CONFIG FILE PARSING
@@ -147,6 +194,16 @@ def main(dataset_config, yatsm_config, check=False):
             logger.warning('Removing {n} images'.format(n=len(to_delete)))
             dates = np.delete(dates, np.array(to_delete))
             images = np.delete(images, np.array(to_delete))
+
+    # Get attributes of one of the images
+    nrow, ncol, nband, dtype = get_image_attribute(images[0])
+
+    # Calculate the lines this job ID works on
+    job_lines = calculate_lines(nrow)
+    logger.debug('Responsible for lines: {l}'.format(l=job_lines))
+
+    # Start running YATSM
+    # for job_line in job_lines:
 
 
 if __name__ == '__main__':
