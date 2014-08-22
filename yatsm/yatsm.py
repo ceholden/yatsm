@@ -133,7 +133,7 @@ class YATSM(object):
     def __init__(self, X, Y,
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  fit_indices=None, test_indices=None,
-                 lassocv=False, loglevel=logging.DEBUG):
+                 lassocv=False, logger=None):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
 
         YATSM model based off of tests for structural changes from the
@@ -141,11 +141,22 @@ class YATSM(object):
         Zeileis, and others) as implemented in a remote sensing context by
         BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This
         effort is not intended as a direct port of either algorithms.
+
+        Args:
+          X (ndarray)               Independent variable matrix
+          Y (ndarray)               Dependent variable matrix
+          consecutive (int)         Consecutive observations to trigger change
+          threshold (float)         Test statistic threshold for change
+          min_obs (int)             Minimum observations in model
+          min_rmse (float)          Minimum RMSE for models during testing
+          fit_indices (ndarray)     Indices of Y to fit models for
+          test_indices (ndarray)    Indces of Y to test for change with
+          lassocv (bool)            Use scikit-learn LarsLassoCV over glmnet
+          logger (logging)          Specific logger to use, else get one
+
         """
         # Setup logger
-        logging.basicConfig()
-        self.logger = logging.getLogger()
-        self.logger.setLevel(loglevel)
+        self.logger = logger or logging.getLogger(__name__)
 
         # Configure which implementation of LASSO we're using
         self.lassocv = lassocv
