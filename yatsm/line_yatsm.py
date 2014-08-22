@@ -4,6 +4,7 @@
 Usage: line_yatsm.py [options] <config_file> <job_number> <total_jobs>
 
 Options:
+    --check                     Check that images exist
     -v --verbose                Show verbose debugging messages
     -h --help                   Show help
 
@@ -82,12 +83,8 @@ def find_images(input_file, date_format='%Y-%j'):
 
         logger.debug('Reading in image date and filenames')
         for row in reader:
-            if os.path.isfile(row[i_image]):
-                dates.append(dt.strptime(row[i_date], date_format).toordinal())
-                images.append(row[i_image])
-            else:
-                logger.warning('Could not find file {f} from dataset file'.
-                               format(f=row[i_image]))
+            dates.append(dt.strptime(row[i_date], date_format).toordinal())
+            images.append(row[i_image])
 
         return (np.array(dates), np.array(images))
 
@@ -127,14 +124,29 @@ def parse_config_file(config):
     return (dataset_config, yatsm_config)
 
 
-def main(dataset_config, yatsm_config):
+def main(dataset_config, yatsm_config, check=False):
     """ Read in dataset and YATSM for a complete line """
     print(dataset_config)
     print(yatsm_config)
+
     # Read in dataset
     dates, images = find_images(dataset_config['input_file'])
-    print(dates)
-    print(images)
+
+    # Check for existence of files and remove missing
+    if check:
+        to_delete = []
+        for i, img in enumerate(images):
+            if not os.path.isfile(img):
+                logger.warning('Could not find file {f} -- removing'.
+                    format(f=img))
+                to_delete.append(i)
+
+        if len(to_delete) == 0:
+            logger.debug('Checked and found all input images')
+        else:
+            logger.warning('Removing {n} images'.format(n=len(to_delete)))
+            dates = np.delete(dates, np.array(to_delete))
+            images = np.delete(images, np.array(to_delete))
 
 
 if __name__ == '__main__':
@@ -159,6 +171,9 @@ if __name__ == '__main__':
         print('Error - <total_jobs> must be an integer')
         sys.exit(1)
 
+    # Check for existence of images?
+    check = args['--check']
+
     # Setup logger
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
@@ -172,4 +187,4 @@ if __name__ == '__main__':
     dataset_config, yatsm_config = parse_config_file(config)
 
     # Run YATSM
-    main(dataset_config, yatsm_config)
+    main(dataset_config, yatsm_config, check=check)
