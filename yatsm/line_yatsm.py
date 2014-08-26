@@ -6,6 +6,7 @@ Usage: line_yatsm.py [options] <config_file> <job_number> <total_jobs>
 Options:
     --check                     Check that images exist
     -v --verbose                Show verbose debugging messages
+    --verbose-yatsm             Show verbose debugging messages in YATSM
     -h --help                   Show help
 
 """
@@ -28,11 +29,18 @@ import numpy as np
 from osgeo import gdal
 from osgeo import gdal_array
 
+from version import __version__
+from yatsm import make_X, YATSM
 
+
+# Log setup for runner
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
                     level=logging.INFO,
                     datefmt='%H:%M:%S')
 logger = logging.getLogger(__name__)
+
+# Logging level for YATSM
+loglevel_YATSM = logging.WARNING
 
 
 # JOB SPECIFIC FUNCTIONS
@@ -40,10 +48,10 @@ def calculate_lines(nrow):
     """ Calculate the lines this job processes given nrow, njobs, and job ID
 
     Args:
-      nrow (int)                Number of rows in image
+      nrow (int): number of rows in image
 
     Returns:
-      rows (ndarray)            np.array of rows to be processed
+      rows (ndarray): np.array of rows to be processed
 
     """
     assigned = 0
@@ -61,11 +69,11 @@ def find_images(input_file, date_format='%Y-%j'):
     """ Return sorted filenames of images from input text file
 
     Args:
-      input_file (string)       Text file of dates and files
-      date_format (string)      Format of dates in file
+      input_file (str): text file of dates and files
+      date_format (str): format of dates in file
 
     Returns:
-      (ndarray, ndarray)        Paired dates and filenames of stacked images
+      (ndarray, ndarray): paired dates and filenames of stacked images
 
     """
     # Store index of date and image
@@ -110,14 +118,15 @@ def find_images(input_file, date_format='%Y-%j'):
 
         return (np.array(dates), np.array(images))
 
+
 def get_image_attribute(image_filename):
     """ Use GDAL to open image and return some attributes
 
     Args:
-      image_filename (string)           Image filename
+      image_filename (string): image filename
 
     Returns:
-      tuple (int, int, int, type)       nrow, ncol, nband, NumPy datatype
+      tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype
 
     """
     try:
@@ -139,18 +148,31 @@ def get_image_attribute(image_filename):
 # CONFIG FILE PARSING
 def _parse_config_v_zero_pt_one(config):
     """ Parses config file for version 0.1.x """
-
+    # Configuration for dataset
     dataset_config = dict.fromkeys(['input_file', 'date_format',
                                     'output',
                                     'n_bands', 'mask_band',
                                     'green_band', 'swir1_band',
                                     'use_bip_reader'])
-
     for k in dataset_config:
         dataset_config[k] = config.get('dataset', k)
 
-    yatsm_config = dict.fromkeys(['consecutive', 'threshold', 'min_obs',
-                                  'freq', 'lassocv', 'reverse'])
+    dataset_config['n_bands'] = int(dataset_config['n_bands'])
+    dataset_config['mask_band'] = int(dataset_config['mask_band']) - 1
+    dataset_config['green_band'] = int(dataset_config['green_band']) - 1
+    dataset_config['swir1_band'] = int(dataset_config['swir1_band']) - 1
+
+    # Configuration for YATSM algorithm
+    yatsm_config = {}
+
+    yatsm_config['consecutive'] = int(config.get('YATSM', 'consecutive'))
+    yatsm_config['threshold'] = int(config.get('YATSM', 'threshold'))
+    yatsm_config['min_obs'] = int(config.get('YATSM', 'min_obs'))
+    yatsm_config['freq'] = config.get('YATSM', 'freq').replace(',', ' ').split(' ')
+    yatsm_config['freq'] = [int(v) for v in yatsm_config['freq']
+                            if v != '']
+    yatsm_config['lassocv'] = config.get('YATSM', 'lassocv').lower() == 'true'
+    yatsm_config['reverse'] = config.get('YATSM', 'reverse').lower() == 'true'
 
     return (dataset_config, yatsm_config)
 
@@ -171,11 +193,105 @@ def parse_config_file(config):
     return (dataset_config, yatsm_config)
 
 
+# Runner
+def run_line(line, X, images,
+             dataset_config, yatsm_config,
+             nrow, ncol, nband, dtype,
+             use_BIP=False):
+    """ Runs YATSM for a line
+
+    Args:
+      line (int): line to be run from image
+      dates (ndarray): np.array of X feature from ordinal dates
+      images (ndarray): np.array of image filenames
+      dataset_config (dict): dict of dataset configuration options
+      yatsm_config (dict): dict of YATSM algorithm options
+      nrow (int): number of rows
+      ncol (int): number of columns
+      nband (int): number of bands
+      dtype (type): NumPy datatype
+      use_BIP (bool, optional): use BIP line reader
+
+    """
+    from IPython.core.debugger import Pdb
+
+    # Setup output
+    output = []
+
+    # Read in Y
+    Y = np.zeros((nband, len(images), ncol), dtype=dtype)
+
+    # TODO: implement BIP reader
+    if use_BIP:
+        pass
+
+    # Read in data just using GDAL
+    logger.debug('    reading in data')
+    for i, image in enumerate(images):
+        ds = gdal.Open(image, gdal.GA_ReadOnly)
+        for b in xrange(ds.RasterCount):
+            Y[b, i, :] = ds.GetRasterBand(b + 1).ReadAsArray(0, line, ncol, 1)
+
+    # About to run YATSM
+    logger.debug('    running YATSM')
+    # Raise or lower logging level for YATSM
+    _level = logger.level
+    logger.setLevel(loglevel_YATSM)
+
+    for c in xrange(Y.shape[-1]):
+        result = run_pixel(X, Y[..., c], dataset_config, yatsm_config)
+        output.extend(result)
+
+    # Return logging level
+    logger.setLevel(_level)
+
+    # Save output
+    outfile = os.path.join(dataset_config['output'],
+                           'yatsm_r{line}.npy'.format(line=line))
+    logger.debug('    saving YATSM output to {f}'.format(f=outfile))
+
+    np.savez(outfile,
+             version=__version__,
+             record=np.array(output))
+
+
+def run_pixel(X, Y, dataset_config, yatsm_config):
+    """ Run a single pixel through YATSM
+
+    Args:
+      X (ndarray): 2D (nimage x nband) feature input from ordinal date
+      Y (ndarray): 2D (nband x nimage) image input
+      dataset_config (dict): dict of dataset configuration options
+      yatsm_config (dict): dict of YATSM algorithm options
+
+    Returns:
+      model_result (ndarray): NumPy array of model results from YATSM
+
+    """
+    # Mask
+    mask_band = dataset_config['mask_band']
+    clear = Y[mask_band, :] <= 1
+    Y = Y[:mask_band, clear]
+    X = X[clear, :]
+
+    if yatsm_config['reverse']:
+        # TODO: do this earlier
+        X = np.flipud(X)
+        Y = np.fliplr(Y)
+
+    yatsm = YATSM(X, Y,
+                  consecutive=yatsm_config['consecutive'],
+                  threshold=yatsm_config['threshold'],
+                  min_obs=yatsm_config['min_obs'],
+                  lassocv=yatsm_config['lassocv'],
+                  logger=logger)
+    yatsm.run()
+
+    return yatsm.record
+
+
 def main(dataset_config, yatsm_config, check=False):
     """ Read in dataset and YATSM for a complete line """
-    print(dataset_config)
-    print(yatsm_config)
-
     # Read in dataset
     dates, images = find_images(dataset_config['input_file'])
 
@@ -202,13 +318,27 @@ def main(dataset_config, yatsm_config, check=False):
     job_lines = calculate_lines(nrow)
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
+    # Calculate X feature input
+    X = make_X(dates, yatsm_config['freq']).T
+
     # Start running YATSM
-    # for job_line in job_lines:
+    logger.info('Starting to run lines')
+    for job_line in job_lines:
+        try:
+            logger.debug('Running line {l}'.format(l=job_line))
+            run_line(job_line, X, images,
+                     dataset_config, yatsm_config,
+                     nrow, ncol, nband, dtype,
+                     use_BIP=dataset_config['use_bip_reader'])
+        except:
+            logger.error('Could not process line {l}'.format(l=job_line))
+            raise
 
 
 if __name__ == '__main__':
     # Get arguments
-    args = docopt(__doc__)
+    args = docopt(__doc__,
+                  version=__version__)
 
     # Validate input arguments
     config_file = args['<config_file>']
@@ -238,8 +368,9 @@ if __name__ == '__main__':
     # Setup logger
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.DEBUG)
+
+    if args['--verbose-yatsm']:
+        loglevel_YATSM = logging.DEBUG
 
     # Parse and validate configuration file
     config = configparser.ConfigParser()
