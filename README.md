@@ -3,6 +3,19 @@ Yet Another Timeseries Model (YATSM)
 ## About
 YATSM model based off of tests for structural changes from the econometrics literature including the MOSUM or CUMSUM (Chu et al, Zeileis, and others) as implemented in a remote sensing context by BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This effort is not intended as a direct port of either algorithm. The "YATSM" name intends to refer to these two algorithms without claiming 1 to 1 functionality of either.
 
+## Example
+The simplest way of using YATSM would be the pixel-by-pixel command line interface - `run_yatsm.py`.
+
+We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ceholden/landsat_stack) for this demonstration:
+
+    yatsm/run_yatsm.py --consecutive=5 --threshold=3 \
+        --min_obs=16 --freq="1, 2" \
+        --plot_band=5 --plot_ylim "1000 4000" \
+        ../landsat_stack/p022r049/images/ 50 50
+        
+Produces:
+    ![Example output](https://raw.githubusercontent.com/ceholden/yatsm/master/plots/landsat_stack_example_b5.png)
+
 ## Requirements
 #### Main dependencies:
 
