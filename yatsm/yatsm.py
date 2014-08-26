@@ -364,52 +364,41 @@ class YATSM(object):
         """ Train time series model """
         # Test if we can train yet
         if self.span_time <= self.ndays or self.span_index < self.n_coef:
-            self.log_debug('could not train - moving forward')
+            self.logger.debug('could not train - moving forward')
             return
 
         # Multitemporal noise removal
-        mask = np.ones(self.X.shape[0], dtype=np.uint8)
-        index = np.arange(self.start, self.here + self.consecutive + 1,
+        mask = np.ones(self.X.shape[0], dtype=np.bool)
+        index = np.arange(self.start, self.here + self.consecutive,
                           dtype=np.uint16)
         mask[index] = multitemp_mask(self.X[index, 1], self.Y[:, index],
                                      self.span_time)
 
-        self.log_debug('Multitemporal masking - {i} / {n} masked'.format(
-            i=(mask[index] == 0).sum(),
-            n=mask[index].shape[0]))
-
         # Check if there are enough observations for model with noise removed
-        span_index = mask[index][:-self.consecutive].sum().astype(np.uint8)
+        _span_index = mask[index][:-self.consecutive].sum()
 
-        span_time = abs(self.X[mask == 1, 1][index[-self.consecutive]] -
-                        self.X[mask == 1, 1][index[0]])
-
-        self.log_debug('span_index: {si}, span_time: {st}'.format(
-            si=span_index, st=span_time))
-
-        if span_index < self.min_obs:
-            self.log_debug('Multitemporal masking - not enough obs ({n})'.
-                           format(n=span_index))
-            return
-        if span_time < self.ndays:
-            self.log_debug('Multitemporal masking - not enough time ({t})'.
-                           format(t=span_time))
+        # Return if not enough observations
+        if _span_index < self.min_obs:
+            self.logger.debug('    multitemp masking - not enough obs')
             return
 
-        # There is enough time in train period to fit - remove noise
-        self._X = self.X[mask == 1, :]
-        self._Y = self.Y[:, mask == 1]
-
-        self.log_debug('Removed multitemporal noise ({b} to {n})'.format(
-            b=self.X.shape[0], n=self._X.shape[0]))
+        # There is enough observations in train period to fit - remove noise
+        self._X = self.X[mask, :]
+        self._Y = self.Y[:, mask]
 
         # record our current position
         #   important for next iteration of noise removal
         self._here = self.here
 
-        self.log_debug('span index {si}'.format(si=span_index))
-        self.here = self.start + span_index - 1
-        self.log_debug('Updated "here"')
+        # Go forward after noise removal
+        self.here = self.start + _span_index - 1
+
+        if self.span_time < self.ndays:
+            self.logger.debug('    multitemp masking - not enough time')
+            self.here = self._here
+            return
+
+        self.logger.debug('Updated "here"')
 
         # After noise removal, try to fit models
         models = self.fit_models(self._X, self._Y, bands=self.test_indices)
@@ -427,8 +416,7 @@ class YATSM(object):
 
         if np.linalg.norm(start_resid) > self.threshold or \
                 np.linalg.norm(end_resid) > self.threshold:
-            self.log_debug('Training period unstable')
-
+            self.logger.debug('Training period unstable')
             self.start += 1
             self.here = self._here
             return
@@ -436,14 +424,14 @@ class YATSM(object):
         self.X = self._X
         self.Y = self._Y
 
-        self.log_debug('Entering monitoring period')
+        self.logger.debug('Entering monitoring period')
 
         self.monitoring = True
 
     def update_model(self):
         # Only train once a year
         if abs(self.X[self.here, 1] - self.trained_date) > self.ndays:
-            self.log_debug('Monitoring - retraining ({n} days since last)'.
+            self.logger.debug('Monitoring - retraining ({n} days since last)'.
                            format(n=self.X[self.here, 1] - self.trained_date))
 
             # Fit timeseries models
@@ -453,10 +441,9 @@ class YATSM(object):
             self.record[self.n_record]['start'] = self.X[self.start, 1]
             self.record[self.n_record]['end'] = self.X[self.here, 1]
             for i, m in enumerate(self.models):
-#                Pdb().set_trace()
                 self.record[self.n_record]['coef'][:, i] = m.coef
                 self.record[self.n_record]['rmse'][i] = m.rmse
-            self.log_debug('Monitoring - updated ')
+            self.logger.debug('Monitoring - updated ')
 
             self.trained_date = self.X[self.here, 1]
         else:
@@ -481,7 +468,7 @@ class YATSM(object):
         mag = np.linalg.norm(scores, axis=1)
 
         if np.all(mag > self.threshold):
-            self.log_debug('CHANGE DETECTED')
+            self.logger.debug('CHANGE DETECTED')
 
             self.record[self.n_record]['break'] = self.X[self.here + 1, 1]
 
@@ -609,14 +596,6 @@ class YATSM(object):
                          'ro', mec='r', mfc='none', ms=10, mew=5)
 
         plt.show()
-
-    def log_debug(self, message):
-        """ Custom logging message """
-        self.logger.debug('{start},{here} ({si},{st}) : ({trained}) : '.format(
-            start=self.start, here=self.here,
-            si=self.span_index, st=self.span_time,
-            trained=self.monitoring) +
-            message)
 
     def log_parameters(self):
         """ Log parameters being used """
