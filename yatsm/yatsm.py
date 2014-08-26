@@ -14,7 +14,8 @@ from sklearn.linear_model import Lasso, LassoCV, LassoLarsCV, LassoLarsIC
 
 # Some constants
 ndays = 365.25
-
+green_band = 1
+swir1_band = 4
 
 class GLMLasso(ElasticNet):
 
@@ -96,7 +97,7 @@ def make_X(x, freq, intercept=True):
     return X
 
 
-def multitemp_mask(x, Y, n_year, crit=400, green=1, swir1=4):
+def multitemp_mask(x, Y, n_year, crit=400, green=green_band, swir1=swir1_band):
     """ Multi-temporal cloud/shadow masking using RLM
 
     Taken directly from CCDC (Zhu and Woodcock, 2014). This "temporal masking"
