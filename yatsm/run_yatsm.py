@@ -13,15 +13,20 @@ Options:
     --reverse               Run timeseries in reverse
     --plot_band=<b>         Band to plot for diagnostics [default: None]
     --plot_ylim=<lim>       Plot y-limits [default: None]
-    --ensemble=<n>          Number of change runs [default: 1]
-    --threshvar=<n>         Threshold variance [default: 0.5]
-    --consecvar=<n>         Consecutive observation variance [default: 1]
-    --ensemble_order        Run ensemble forward and reverse
-    --debug                 Show verbose debugging messages
+    -v --verbose            Show verbose debugging messages
     -h --help               Show help
 
 Example:
 
+    Display the results plotted with Band 5 for a pixel using 5 consecutive
+        observations and 3 threshold for break detection. Each model's "trim"
+        or minimum number of observations is 16 and we use one seaosnal
+        harmonic per year.
+
+    run_yatsm.py --consecutive=5 --threshold=3 \
+        --min_obs=16 --freq=1 \
+        --plot_band=5 --plot_ylim "1000 4000" \
+        ../landsat_stack/p022r049/images/ 125 125
 
 """
 from __future__ import print_function, division
@@ -43,6 +48,11 @@ from ts_driver.timeseries_ccdc import CCDCTimeSeries
 # Some constants
 ndays = 365.25
 fmask = 7
+
+logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
+                    level=logging.INFO,
+                    datefmt='%H:%M:%S')
+logger = logging.getLogger(__name__)
 
 
 def preprocess(location, px, py, freq):
@@ -112,23 +122,15 @@ if __name__ == '__main__':
         plot_ylim = [int(n) for n in
                      plot_ylim.replace(' ', ',').split(',') if n != '']
 
-    # Ensemble runs
-    ensemble = args['--ensemble']
-    if ensemble == '1':
-        ensemble = None
-    else:
-        ensemble = int(ensemble)
-    ensemble_order = args['--ensemble_order']
-
     # Debug level
-    debug = args['--debug']
+    debug = args['--verbose']
     if debug:
-        loglevel = logging.DEBUG
+        logger.setLevel(logging.DEBUG)
     else:
-        loglevel = logging.WARNING
+        logger.setLevel(logging.INFO)
 
     # Get data and mask clouds
-    ts, X, Y, clear = preprocess(location, px, py)
+    ts, X, Y, clear = preprocess(location, px, py, freq)
 
     # Create dataframe
     df = pd.DataFrame(np.vstack((Y, X.T)).T,
@@ -149,14 +151,14 @@ if __name__ == '__main__':
                       threshold=threshold,
                       min_obs=min_obs,
                       lassocv=lassocv,
-                      loglevel=loglevel)
+                      logger=logger)
     else:
         yatsm = YATSM(X, Y,
                       consecutive=consecutive,
                       threshold=threshold,
                       min_obs=min_obs,
                       lassocv=lassocv,
-                      loglevel=loglevel)
+                      logger=logger)
     yatsm.run()
 
     breakpoints = yatsm.record['break']
