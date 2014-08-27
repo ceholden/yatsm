@@ -135,6 +135,77 @@ def multitemp_mask(x, Y, n_year, crit=400, green=green_band, swir1=swir1_band):
     return np.logical_and(green_RLM.fit().resid < crit,
                           swir1_RLM.fit().resid > -crit)
 
+def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
+    """ Multi-temporal masking using LOWESS
+
+    Taken directly from newer version of CCDC than Zhu and Woodcock, 2014. This
+    "temporal masking" replaced the older method which used robust linear
+    models. This version uses a regular LOWESS instead of robust LOWESS
+
+    Note:   "span" argument is the inverse of "frac" from statsmodels and is
+            actually 'k' in their code:
+
+        `n = x.shape[0]`
+        `k = int(frac * n + 1e-10)`
+
+    Args:
+      x (ndarray): array of ordinal dates
+      Y (ndarray): matrix of observed spectra
+      span (int): span of LOWESS
+      crit (float, optional): critical value for masking clouds/shadows
+      green (int, optional): 0 indexed value for green band in Y
+      swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
+
+    Returns:
+      mask (ndarray): mask where False indicates values to be masked
+
+    """
+    # Reverse span to get frac
+    frac = span / x.shape[0] / 4
+    # Estimate delta as "good choice": delta = 0.01 * range(exog)
+    #delta = (x.max() - x.min()) * 0.01
+    delta = 0
+
+    print(frac)
+    print(x.shape[0])
+
+    print(x)
+    print(Y[swir1, :])
+
+    green_lowess = sm.nonparametric.lowess(x, Y[green, :],
+                                           frac=frac, delta=delta)
+    swir1_lowess = sm.nonparametric.lowess(x, Y[swir1, :],
+                                           frac=frac, delta=delta)
+
+    mask = np.logical_and((green_lowess[:, 0] - Y[green, :]) < -crit,
+                          (swir1_lowess[:, 0] - Y[swir1, :]) > crit)
+
+    train_plot_debug(x, Y, mask, swir1_lowess[:, 0])
+
+    return mask
+
+def train_plot_debug(x, Y, mask, fit):
+    """ Training / historical period multitemporal cloud masking debug """
+    from ggplot import ggplot, geom_point, xlab, ylab, ggtitle, aes, geom_line
+    import pandas as pd
+
+    cols = np.repeat('clear', x.shape[0])
+
+    cols[mask == 0] = 'noise'
+
+    df = pd.DataFrame({'X': x,
+        'Y': Y[4, :],
+        'mask': cols,
+        'fit': fit
+    })
+
+    print(ggplot(aes('X', 'Y', color='mask'), df) +
+        geom_point() +
+        geom_line(aes(y='fit')) +
+        xlab('Ordinal Date') +
+        ylab('B5 Reflectance') #+
+        #ggtitle('Cloud Screening - segment: {i}'.format(i=self.n_record))
+    )
 
 class YATSM(object):
     """Yet Another Time Series Model (YATSM)
@@ -382,6 +453,8 @@ class YATSM(object):
                           dtype=np.uint16)
         mask[index] = multitemp_mask(self.X[index, 1], self.Y[:, index],
                                      self.span_time)
+#        mask[index] = smooth_mask(self.X[index, 1], self.Y[:, index],
+#                                  2 * self.consecutive + 1)
 
         # Check if there are enough observations for model with noise removed
         _span_index = mask[index][:-self.consecutive].sum()
