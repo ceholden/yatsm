@@ -98,13 +98,22 @@ def make_X(x, freq, intercept=True):
 
 
 def multitemp_mask(x, Y, n_year, crit=400, green=green_band, swir1=swir1_band):
-    """ Multi-temporal cloud/shadow masking using RLM
+    """ Multi-temporal masking using RLM
 
     Taken directly from CCDC (Zhu and Woodcock, 2014). This "temporal masking"
     procedure was ported from CCDC v9.3.
 
-    Returns np.array of booleans. False indicate failed mask test and should be
-    masked
+    Args:
+      x (ndarray): array of ordinal dates
+      Y (ndarray): matrix of observed spectra
+      n_year (float): "number of years to mask"
+      crit (float, optional): critical value for masking clouds/shadows
+      green (int, optional): 0 indexed value for green band in Y
+      swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
+
+    Returns:
+      mask (ndarray): mask where False indicates values to be masked
+
     """
     n_year = np.ceil(n_year)
 
