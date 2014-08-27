@@ -5,8 +5,10 @@ Usage: line_yatsm.py [options] <config_file> <job_number> <total_jobs>
 
 Options:
     --check                     Check that images exist
+    --resume                    Do not overwrite pre-existing results
     -v --verbose                Show verbose debugging messages
     --verbose-yatsm             Show verbose debugging messages in YATSM
+    -q --quiet                  Show only error messages
     -h --help                   Show help
 
 """
@@ -365,12 +367,20 @@ if __name__ == '__main__':
     # Check for existence of images?
     check = args['--check']
 
+    # Resume?
+    if args['--resume']:
+        raise NotImplementedError('TODO: add resume feature')
+
     # Setup logger
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
 
     if args['--verbose-yatsm']:
         loglevel_YATSM = logging.DEBUG
+
+    if args['--quiet']:
+        loglevel_YATSM = logging.WARNING
+        logger.setLevel(logging.WARNING)
 
     # Parse and validate configuration file
     config = configparser.ConfigParser()
