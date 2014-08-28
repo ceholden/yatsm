@@ -170,6 +170,7 @@ def _parse_config_v_zero_pt_one(config):
     yatsm_config['consecutive'] = int(config.get('YATSM', 'consecutive'))
     yatsm_config['threshold'] = int(config.get('YATSM', 'threshold'))
     yatsm_config['min_obs'] = int(config.get('YATSM', 'min_obs'))
+    yatsm_config['min_rmse'] = float(config.get('YATSM', 'min_rmse'))
     yatsm_config['freq'] = config.get('YATSM', 'freq').replace(',', ' ').split(' ')
     yatsm_config['freq'] = [int(v) for v in yatsm_config['freq']
                             if v != '']
@@ -215,8 +216,6 @@ def run_line(line, X, images,
       use_BIP (bool, optional): use BIP line reader
 
     """
-    from IPython.core.debugger import Pdb
-
     # Setup output
     output = []
 
@@ -285,6 +284,7 @@ def run_pixel(X, Y, dataset_config, yatsm_config):
                   consecutive=yatsm_config['consecutive'],
                   threshold=yatsm_config['threshold'],
                   min_obs=yatsm_config['min_obs'],
+                  min_rmse=yatsm_config['min_rmse'],
                   lassocv=yatsm_config['lassocv'],
                   logger=logger)
     yatsm.run()
