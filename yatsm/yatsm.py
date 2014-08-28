@@ -212,6 +212,7 @@ class YATSM(object):
     def __init__(self, X, Y,
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  fit_indices=None, test_indices=None,
+                 px=0, py=0,
                  lassocv=False, logger=None):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
 
@@ -230,6 +231,8 @@ class YATSM(object):
           min_rmse (float)          Minimum RMSE for models during testing
           fit_indices (ndarray)     Indices of Y to fit models for
           test_indices (ndarray)    Indces of Y to test for change with
+          px (int, optional):       X (column) pixel reference
+          py (int, optional):       Y (row) pixel reference
           lassocv (bool)            Use scikit-learn LarsLassoCV over glmnet
           logger (logging)          Specific logger to use, else get one
 
@@ -317,6 +320,8 @@ class YATSM(object):
             ('px', 'u2'),
             ('py', 'u2')
         ])
+        self.record_template['px'][0] = px
+        self.record_template['py'][0] = py
         self.record = np.copy(self.record_template)
 
 # POST-PROCESSING

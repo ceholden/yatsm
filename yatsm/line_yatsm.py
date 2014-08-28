@@ -240,7 +240,8 @@ def run_line(line, X, images,
     logger.setLevel(loglevel_YATSM)
 
     for c in xrange(Y.shape[-1]):
-        result = run_pixel(X, Y[..., c], dataset_config, yatsm_config)
+        result = run_pixel(X, Y[..., c], dataset_config, yatsm_config,
+                           px=c, py=line)
         output.extend(result)
 
     # Return logging level
@@ -256,7 +257,7 @@ def run_line(line, X, images,
              record=np.array(output))
 
 
-def run_pixel(X, Y, dataset_config, yatsm_config):
+def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
     """ Run a single pixel through YATSM
 
     Args:
@@ -264,6 +265,8 @@ def run_pixel(X, Y, dataset_config, yatsm_config):
       Y (ndarray): 2D (nband x nimage) image input
       dataset_config (dict): dict of dataset configuration options
       yatsm_config (dict): dict of YATSM algorithm options
+      px (int, optional):       X (column) pixel reference
+      py (int, optional):       Y (row) pixel reference
 
     Returns:
       model_result (ndarray): NumPy array of model results from YATSM
@@ -286,6 +289,8 @@ def run_pixel(X, Y, dataset_config, yatsm_config):
                   min_obs=yatsm_config['min_obs'],
                   min_rmse=yatsm_config['min_rmse'],
                   lassocv=yatsm_config['lassocv'],
+                  px=px,
+                  py=py,
                   logger=logger)
     yatsm.run()
 
