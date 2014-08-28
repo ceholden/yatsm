@@ -97,7 +97,9 @@ def make_X(x, freq, intercept=True):
     return X
 
 
-def multitemp_mask(x, Y, n_year, crit=400, green=green_band, swir1=swir1_band):
+def multitemp_mask(x, Y, n_year, crit=400,
+                   green=green_band, swir1=swir1_band,
+                   maxiter=10):
     """ Multi-temporal masking using RLM
 
     Taken directly from CCDC (Zhu and Woodcock, 2014). This "temporal masking"
@@ -110,6 +112,7 @@ def multitemp_mask(x, Y, n_year, crit=400, green=green_band, swir1=swir1_band):
       crit (float, optional): critical value for masking clouds/shadows
       green (int, optional): 0 indexed value for green band in Y
       swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
+      maxiter (int, optional): maximum iterations for RLM fit
 
     Returns:
       mask (ndarray): mask where False indicates values to be masked
@@ -132,8 +135,8 @@ def multitemp_mask(x, Y, n_year, crit=400, green=green_band, swir1=swir1_band):
     swir1_RLM = sm.RLM(Y[swir1, :], X.T,
                        M=sm.robust.norms.TukeyBiweight())
 
-    return np.logical_and(green_RLM.fit().resid < crit,
-                          swir1_RLM.fit().resid > -crit)
+    return np.logical_or(green_RLM.fit(maxiter=maxiter).resid < crit,
+                          swir1_RLM.fit(maxiter=maxiter).resid > -crit)
 
 def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     """ Multi-temporal masking using LOWESS
