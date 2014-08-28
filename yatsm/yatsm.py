@@ -162,28 +162,23 @@ def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     Returns:
       mask (ndarray): mask where False indicates values to be masked
 
+    #TODO - We need to put the data on a regular period since span changes as
+            is right now. Statsmodels will only allow for dropna, so we would
+            need to impute missing data somehow...
+
     """
     # Reverse span to get frac
-    frac = span / x.shape[0] / 4
+    frac = span / x.shape[0]
     # Estimate delta as "good choice": delta = 0.01 * range(exog)
-    #delta = (x.max() - x.min()) * 0.01
-    delta = 0
-
-    print(frac)
-    print(x.shape[0])
-
-    print(x)
-    print(Y[swir1, :])
+    delta = (x.max() - x.min()) * 0.01
 
     green_lowess = sm.nonparametric.lowess(x, Y[green, :],
                                            frac=frac, delta=delta)
     swir1_lowess = sm.nonparametric.lowess(x, Y[swir1, :],
                                            frac=frac, delta=delta)
 
-    mask = np.logical_and((green_lowess[:, 0] - Y[green, :]) < -crit,
+    mask = np.logical_or((green_lowess[:, 0] - Y[green, :]) < -crit,
                           (swir1_lowess[:, 0] - Y[swir1, :]) > crit)
-
-    train_plot_debug(x, Y, mask, swir1_lowess[:, 0])
 
     return mask
 
