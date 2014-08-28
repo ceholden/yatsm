@@ -388,5 +388,14 @@ if __name__ == '__main__':
 
     dataset_config, yatsm_config = parse_config_file(config)
 
+    # Make output directory
+    try:
+        os.makedirs(dataset_config['output'])
+    except:
+        if os.path.isdir(dataset_config['output']):
+            pass
+        else:
+            raise
+
     # Run YATSM
     main(dataset_config, yatsm_config, check=check)
