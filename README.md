@@ -12,7 +12,7 @@ We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ce
         --min_obs=16 --freq="1, 2" \
         --plot_band=5 --plot_ylim "1000 4000" \
         ../landsat_stack/p022r049/images/ 50 50
-        
+
 Produces:
     ![Example output](https://raw.githubusercontent.com/ceholden/yatsm/master/plots/landsat_stack_example_b5.png)
 
@@ -25,10 +25,11 @@ Produces:
 #### Python dependencies:
 Listed below are the Python library requirements for running YATSM. The version numbers listed are the versions I've used for development, but I suspect the versions are flexible.
 
-    numpy=1.8.1
-    pandas=0.13.1
-    statsmodels=0.5.0
-    glmnet=1.1-5 (see: https://github.com/dwf/glmnet-python)
-    scikit-learn=0.14.1
-    ggplot=0.5.8
-    docopt=0.6.1
+    cython >= 0.20.1
+    numpy >= 1.8.1
+    pandas >= 0.13.1
+    statsmodels >= 0.5.0
+    glmnet = 1.1-5 (see: https://github.com/dwf/glmnet-python)
+    scikit-learn >= 0.15.1
+    ggplot >= 0.5.8
+    docopt >= 0.6.1
