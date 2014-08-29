@@ -9,8 +9,10 @@ with open('yatsm/version.py') as f:
 
 scripts = ['yatsm/line_yatsm.py', 'yatsm/run_yatsm.py']
 
-ext = Extension('yatsm.cyatsm', ['yatsm.cyatsm.pyx'],
-                include_dirs=[np.get_include()])
+ext = [Extension('yatsm.cyatsm', ['yatsm/cyatsm.pyx'],
+                 include_dirs=[np.get_include()])]
+
+cmdclass = {'build_ext': build_ext}
 
 setup(
     name='yatsm',
