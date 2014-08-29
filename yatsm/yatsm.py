@@ -10,12 +10,15 @@ import numpy as np
 import statsmodels.api as sm
 
 from glmnet.elastic_net import ElasticNet, elastic_net
-from sklearn.linear_model import Lasso, LassoCV, LassoLarsCV, LassoLarsIC
+from sklearn.linear_model import LassoLarsIC  # , Lasso, LassoCV, LassoLarsCV
+
+from cyatsm import multitemp_mask as cymultitemp_mask
 
 # Some constants
 ndays = 365.25
 green_band = 1
 swir1_band = 4
+
 
 class GLMLasso(ElasticNet):
 
@@ -457,8 +460,10 @@ class YATSM(object):
         mask = np.ones(self.X.shape[0], dtype=np.bool)
         index = np.arange(self.start, self.here + self.consecutive,
                           dtype=np.uint16)
-        mask[index] = multitemp_mask(self.X[index, 1], self.Y[:, index],
-                                     self.span_time)
+        mask[index] = cymultitemp_mask(self.X[index, 1], self.Y[:, index],
+                                       self.span_time)
+#        mask[index] = multitemp_mask(self.X[index, 1], self.Y[:, index],
+#                                     self.span_time)
 #        mask[index] = smooth_mask(self.X[index, 1], self.Y[:, index],
 #                                  2 * self.consecutive + 1)
 
