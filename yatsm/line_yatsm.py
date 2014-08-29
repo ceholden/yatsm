@@ -171,7 +171,8 @@ def _parse_config_v_zero_pt_one(config):
     yatsm_config['threshold'] = int(config.get('YATSM', 'threshold'))
     yatsm_config['min_obs'] = int(config.get('YATSM', 'min_obs'))
     yatsm_config['min_rmse'] = float(config.get('YATSM', 'min_rmse'))
-    yatsm_config['freq'] = config.get('YATSM', 'freq').replace(',', ' ').split(' ')
+    yatsm_config['freq'] = config.get(
+        'YATSM', 'freq').replace(',', ' ').split(' ')
     yatsm_config['freq'] = [int(v) for v in yatsm_config['freq']
                             if v != '']
     yatsm_config['lassocv'] = config.get('YATSM', 'lassocv').lower() == 'true'
@@ -308,7 +309,7 @@ def main(dataset_config, yatsm_config, check=False):
         for i, img in enumerate(images):
             if not os.path.isfile(img):
                 logger.warning('Could not find file {f} -- removing'.
-                    format(f=img))
+                               format(f=img))
                 to_delete.append(i)
 
         if len(to_delete) == 0:

@@ -136,7 +136,8 @@ def multitemp_mask(x, Y, n_year, crit=400,
                        M=sm.robust.norms.TukeyBiweight())
 
     return np.logical_or(green_RLM.fit(maxiter=maxiter).resid < crit,
-                          swir1_RLM.fit(maxiter=maxiter).resid > -crit)
+                         swir1_RLM.fit(maxiter=maxiter).resid > -crit)
+
 
 def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     """ Multi-temporal masking using LOWESS
@@ -178,9 +179,10 @@ def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
                                            frac=frac, delta=delta)
 
     mask = np.logical_or((green_lowess[:, 0] - Y[green, :]) < -crit,
-                          (swir1_lowess[:, 0] - Y[swir1, :]) > crit)
+                         (swir1_lowess[:, 0] - Y[swir1, :]) > crit)
 
     return mask
+
 
 def train_plot_debug(x, Y, mask, fit):
     """ Training / historical period multitemporal cloud masking debug """
@@ -192,18 +194,19 @@ def train_plot_debug(x, Y, mask, fit):
     cols[mask == 0] = 'noise'
 
     df = pd.DataFrame({'X': x,
-        'Y': Y[4, :],
-        'mask': cols,
-        'fit': fit
+                       'Y': Y[4, :],
+                       'mask': cols,
+                       'fit': fit
     })
 
     print(ggplot(aes('X', 'Y', color='mask'), df) +
-        geom_point() +
-        geom_line(aes(y='fit')) +
-        xlab('Ordinal Date') +
-        ylab('B5 Reflectance') #+
-        #ggtitle('Cloud Screening - segment: {i}'.format(i=self.n_record))
-    )
+          geom_point() +
+          geom_line(aes(y='fit')) +
+          xlab('Ordinal Date') +
+          ylab('B5 Reflectance')  # +
+          #ggtitle('Cloud Screening - segment: {i}'.format(i=self.n_record))
+          )
+
 
 class YATSM(object):
     """Yet Another Time Series Model (YATSM)
@@ -517,7 +520,8 @@ class YATSM(object):
         # Only train once a year
         if abs(self.X[self.here, 1] - self.trained_date) > self.ndays:
             self.logger.debug('Monitoring - retraining ({n} days since last)'.
-                           format(n=self.X[self.here, 1] - self.trained_date))
+                              format(n=self.X[self.here, 1] -
+                                     self.trained_date))
 
             # Fit timeseries models
             self.models = self.fit_models(self.X, self.Y)
