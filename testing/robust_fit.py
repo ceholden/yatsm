@@ -9,6 +9,7 @@ Reference:
 
 import numpy as np
 
+
 def mad_sigma(resid, p, c=0.6745):
     """
     Returns Median-Absolute-Deviation (MAD) for residuals of rank p.
@@ -16,9 +17,9 @@ def mad_sigma(resid, p, c=0.6745):
     Inputs:
         resid       residuals
         p           rank of X
-        c           scale factor to get to ~standard normal 
+        c           scale factor to get to ~standard normal
                         (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)
-    
+
     Returns:
         mad_s        'robust' variance estimate
 
@@ -30,35 +31,41 @@ def mad_sigma(resid, p, c=0.6745):
     # Return median absolute deviation adjusted sigma
     return np.median(resid_sorted[max(1, p):-1]) / c
 
+
 def bisquare(resid):
     """
     Returns weighting for each residual using bisquare weight function
 
-    Inputs:
-        resid       residuals to be weighted
+    Args:
+      resid (ndarray): residuals to be weighted
 
     Returns:
-        weight      weights for residuals
-    
+        weight (ndarray): weights for residuals
+
     Reference:
         http://www.weizmann.ac.il/matlab/toolbox/curvefit/ch_fitt5.html
     """
     # Weight where abs(resid) < 1; otherwise 0
     return (np.abs(resid) < 1) * (1 - resid ** 2) ** 2
 
-def weight_fit(y, X, w, rank):
+
+def weight_fit(y, X, w):
     """
     Apply a weighted OLS fit to data
-   
-    # TODO
+
+    Args:
+      y (ndarray): dependent variable
+      X (ndarray): independent variables
+      w (ndarray): observation weights
     """
     # Get square root of weights
     sw = np.sqrt(w)
     # Apply weights
     yw = y * sw
     Xw = X * sw
-    # Get coefficients & residuals 
+    # Get coefficients & residuals
     return np.linalg.lstsq(Xw, yw)[0]
+
 
 def robust_fit(x, y, weight_fun=bisquare, tune=4.685):
     """
