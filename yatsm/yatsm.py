@@ -138,8 +138,8 @@ def multitemp_mask(x, Y, n_year, crit=400,
     swir1_RLM = sm.RLM(Y[swir1, :], X.T,
                        M=sm.robust.norms.TukeyBiweight())
 
-    return np.logical_or(green_RLM.fit(maxiter=maxiter).resid < crit,
-                         swir1_RLM.fit(maxiter=maxiter).resid > -crit)
+    return np.logical_and(green_RLM.fit(maxiter=maxiter).resid < crit,
+                          swir1_RLM.fit(maxiter=maxiter).resid > -crit)
 
 
 def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
@@ -181,8 +181,8 @@ def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     swir1_lowess = sm.nonparametric.lowess(x, Y[swir1, :],
                                            frac=frac, delta=delta)
 
-    mask = np.logical_or((green_lowess[:, 0] - Y[green, :]) < -crit,
-                         (swir1_lowess[:, 0] - Y[swir1, :]) > crit)
+    mask = np.logical_and((Y[green, :] - green_lowess[:, 0]) < crit,
+                          (Y[swir1, :] - swir1_lowess[:, 0]) > -crit)
 
     return mask
 
