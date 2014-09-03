@@ -138,9 +138,12 @@ def multitemp_mask(x, Y, n_year, crit=400,
     swir1_RLM = sm.RLM(Y[swir1, :], X.T,
                        M=sm.robust.norms.TukeyBiweight())
 
-    return np.logical_and(green_RLM.fit(maxiter=maxiter).resid < crit,
+    mask = np.logical_and(green_RLM.fit(maxiter=maxiter).resid < crit,
                           swir1_RLM.fit(maxiter=maxiter).resid > -crit)
 
+    # train_plot_debug(x, Y, mask, swir1_RLM.fit(maxiter=maxiter).predict(X.T))
+
+    return mask
 
 def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     """ Multi-temporal masking using LOWESS
@@ -176,13 +179,15 @@ def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     # Estimate delta as "good choice": delta = 0.01 * range(exog)
     delta = (x.max() - x.min()) * 0.01
 
-    green_lowess = sm.nonparametric.lowess(x, Y[green, :],
+    green_lowess = sm.nonparametric.lowess(Y[green, :], x,
                                            frac=frac, delta=delta)
-    swir1_lowess = sm.nonparametric.lowess(x, Y[swir1, :],
+    swir1_lowess = sm.nonparametric.lowess(Y[swir1, :], x,
                                            frac=frac, delta=delta)
 
-    mask = np.logical_and((Y[green, :] - green_lowess[:, 0]) < crit,
-                          (Y[swir1, :] - swir1_lowess[:, 0]) > -crit)
+    mask = np.logical_and((Y[green, :] - green_lowess[:, 1]) < crit,
+                          (Y[swir1, :] - swir1_lowess[:, 1]) > -crit)
+
+    # train_plot_debug(x, Y, mask, green_lowess[:, 1])
 
     return mask
 
@@ -215,9 +220,13 @@ class YATSM(object):
     """Yet Another Time Series Model (YATSM)
     """
 
+    ndays = 365.25
+    screening_types = ['RLM', 'LOWESS']
+
     def __init__(self, X, Y,
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  fit_indices=None, test_indices=None,
+                 screening='RLM',
                  px=0, py=0,
                  lassocv=False, logger=None):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
@@ -236,7 +245,9 @@ class YATSM(object):
           min_obs (int)             Minimum observations in model
           min_rmse (float)          Minimum RMSE for models during testing
           fit_indices (ndarray)     Indices of Y to fit models for
-          test_indices (ndarray)    Indces of Y to test for change with
+          test_indices (ndarray)    Indices of Y to test for change with
+          screening (str, optional): Style of prescreening of the timeseries
+            for noise. Options are 'RLM' or 'LOWESS'
           px (int, optional):       X (column) pixel reference
           py (int, optional):       Y (row) pixel reference
           lassocv (bool)            Use scikit-learn LarsLassoCV over glmnet
@@ -276,8 +287,20 @@ class YATSM(object):
             else:
                 raise IndexError('Specified test_indices larger than Y matrix')
 
+        # Type of noise screening
+        if screening not in self.screening_types:
+            raise TypeError('Unknown screening type')
+        # Define method according to type
+        if screening == 'RLM':
+            self.screen_timeseries = self.screen_timeseries_RLM
+            self.logger.debug('Using RLM for screening')
+        elif screening == 'LOWESS':
+            self.screen_timeseries = self.screen_timeseries_LOWESS
+            self.logger.debug('Using LOWESS for screening')
+        # Keep track if timeseries has been screened for full-TS LOWESS
+        self.screened = False
+
         # Attributes
-        self.ndays = 365.25
         self.n_band = Y.shape[0]
         self.n_coef = X.shape[1]
 
@@ -296,8 +319,6 @@ class YATSM(object):
         else:
             # if None, set to max float size so it never is minimum
             self.min_rmse = sys.float_info.min
-
-        self.log_parameters()
 
         # Index of time segment location
         self.start = 0
@@ -404,6 +425,7 @@ class YATSM(object):
         self._here = self.here
         self.ran = False
 
+# HELPER PROPERTIES
     @property
     def span_time(self):
         """ Return time span (in days) between start and end of model """
@@ -424,6 +446,7 @@ class YATSM(object):
         """ Determine if timeseries can monitor the future consecutive obs """
         return self.here < self.X.shape[0] - self.consecutive - 1
 
+# MAIN LOOP
     def run(self):
         """ Run timeseries model """
         # Record date of last time model was trained
@@ -690,12 +713,3 @@ class YATSM(object):
                          'ro', mec='r', mfc='none', ms=10, mew=5)
 
         plt.show()
-
-    def log_parameters(self):
-        """ Log parameters being used """
-        p = ['consecutive', 'threshold', 'min_obs', 'min_rmse', 'n_coef']
-        self.logger.info('Using parameters:')
-        for _p in p:
-            self.logger.info('    {param}: {value}'.
-                             format(param=_p,
-                                    value=getattr(self, _p)))
