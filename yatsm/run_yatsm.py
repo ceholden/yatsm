@@ -5,7 +5,7 @@ Usage:
     yatsm.py [options] <location> <px> <py>
 
 Options:
-    --consecutive=<n>       Consecutive observations to find change [default: 5]
+    --consecutive=<n>       Consecutive observations for change [default: 5]
     --threshold=<T>         Threshold for change [default: 2.56]
     --min_obs=<n>           Min number of obs per model [default: 1.5 * n_coef]
     --freq=<freq>           Sin/cosine frequencies [default: 1 2 3]
@@ -20,13 +20,13 @@ Example:
 
     Display the results plotted with Band 5 for a pixel using 5 consecutive
         observations and 3 threshold for break detection. Each model's "trim"
-        or minimum number of observations is 16 and we use one seaosnal
+        or minimum number of observations is 16 and we use one seasonal
         harmonic per year.
 
-    run_yatsm.py --consecutive=5 --threshold=3 \
-        --min_obs=16 --freq=1 \
-        --plot_band=5 --plot_ylim "1000 4000" \
-        ../landsat_stack/p022r049/images/ 125 125
+        > run_yatsm.py --consecutive=5 --threshold=3
+        ...     --min_obs=16 --freq=1
+        ...     --plot_band=5 --plot_ylim "1000 4000"
+        ...     ../../landsat_stack/p022r049/images/ 125 125
 
 """
 from __future__ import print_function, division
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         plot_band = int(plot_band)
 
     plot_ylim = args['--plot_ylim']
-    if plot_ylim == 'None':
+    if plot_ylim.lower() == 'none':
         plot_ylim = None
     else:
         plot_ylim = [int(n) for n in
