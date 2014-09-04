@@ -473,7 +473,7 @@ class YATSM(object):
 
         # Deal with start and end of time series #TODO
 
-    def screen_timeseries_LOWESS(self, span=9):
+    def screen_timeseries_LOWESS(self, span=None):
         """ Screen entire dataset for noise before training using LOWESS
 
         Args:
@@ -484,6 +484,9 @@ class YATSM(object):
             False
         """
         if not self.screened:
+            if not span:
+                span = self.consecutive * 2 + 1
+
             mask = smooth_mask(self.X[:, 1], self.Y, span)
 
             # Apply mask to X and Y
