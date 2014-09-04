@@ -496,6 +496,8 @@ class YATSM(object):
             self._X = self.X
             self._Y = self.Y
 
+            self.screened = True
+
         return True
 
     def screen_timeseries_RLM(self):
