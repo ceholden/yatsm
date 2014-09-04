@@ -145,6 +145,7 @@ def multitemp_mask(x, Y, n_year, crit=400,
 
     return mask
 
+
 def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     """ Multi-temporal masking using LOWESS
 
@@ -470,15 +471,37 @@ class YATSM(object):
 
         self.ran = True
 
-        # Deal with end of time series #TODO
+        # Deal with start and end of time series #TODO
 
-    def train(self):
-        """ Train time series model """
-        # Test if we can train yet
-        if self.span_time <= self.ndays or self.span_index < self.n_coef:
-            self.logger.debug('could not train - moving forward')
-            return
+    def screen_timeseries_LOWESS(self, span=9):
+        """ Screen entire dataset for noise before training using LOWESS
 
+        Args:
+          span (int, optional): span for LOWESS
+
+        Returns:
+          screened (bool): True if timeseries is screened and we can train else
+            False
+        """
+        if not self.screened:
+            mask = smooth_mask(self.X[:, 1], self.Y, span)
+
+            # Apply mask to X and Y
+            self.X = self.X[mask, :]
+            self.Y = self.Y[:, mask]
+            # Also apply to _X and _Y for training purposes
+            self._X = self.X
+            self._Y = self.Y
+
+        return True
+
+    def screen_timeseries_RLM(self):
+        """ Screen training period for noise with IRWLS RLM
+
+        Returns:
+          screened (bool): True if timeseries is screened and we can train else
+            False
+        """
         # Multitemporal noise removal
         mask = np.ones(self.X.shape[0], dtype=np.bool)
         index = np.arange(self.start, self.here + self.consecutive,
@@ -496,7 +519,7 @@ class YATSM(object):
         # Return if not enough observations
         if _span_index < self.min_obs:
             self.logger.debug('    multitemp masking - not enough obs')
-            return
+            return False
 
         # There is enough observations in train period to fit - remove noise
         self._X = self.X[mask, :]
@@ -512,14 +535,27 @@ class YATSM(object):
         if self.span_time < self.ndays:
             self.logger.debug('    multitemp masking - not enough time')
             self.here = self._here
-            return
+            return False
 
         self.logger.debug('Updated "here"')
+
+        return True
+
+    def train(self):
+        """ Train time series model """
+        # Test if we can train yet
+        if self.span_time <= self.ndays or self.span_index < self.n_coef:
+            self.logger.debug('could not train - moving forward')
+            return
+
+        # Check if screening was OK
+        if not self.screen_timeseries():
+            return
 
         # After noise removal, try to fit models
         models = self.fit_models(self._X, self._Y, bands=self.test_indices)
 
-        #
+        # Ensure first and last points aren't unusual
         start_resid = np.zeros(len(self.test_indices))
         end_resid = np.zeros(len(self.test_indices))
         for i, (b, m) in enumerate(zip(self.test_indices, models)):
