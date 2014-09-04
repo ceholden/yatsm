@@ -9,7 +9,9 @@ Options:
     --threshold=<T>         Threshold for change [default: 2.56]
     --min_obs=<n>           Min number of obs per model [default: 1.5 * n_coef]
     --freq=<freq>           Sin/cosine frequencies [default: 1 2 3]
-    --lassocv               Use sklearn cross-validated LassoCV
+    --min_rmse=<rmse>       Minimum RMSE used in detection [default: None]
+    --screening=<method>    Multi-temporal screening method [default: RLM]
+    --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
     --plot_band=<b>         Band to plot for diagnostics [default: None]
     --plot_ylim=<lim>       Plot y-limits [default: None]
@@ -80,6 +82,66 @@ def preprocess(location, px, py, freq):
 
     return (ts, X, Y, clear)
 
+
+def make_plot():
+    if plot_band:
+        # Get qualitative color map
+        import brewer2mpl
+        # Color map ncolors goes from 3 - 9
+        ncolors = min(9, max(3, len(yatsm.record)))
+        # Repeat if number of segments > 9
+        repeat = int(math.ceil(len(yatsm.record) / 9.0))
+
+        colors = brewer2mpl.get_map('set1',
+                                    'qualitative',
+                                    ncolors).hex_colors * repeat
+
+        if reverse:
+            i_step = -1
+        else:
+            i_step = 1
+
+        #p = ggplot(aes('date', 'b' + str(plot_band)), df) + \
+        #    geom_point()
+        #from IPython.core.debugger import Pdb
+        #Pdb().set_trace()
+        # Add in deleted obs
+        deleted = np.in1d(Y[plot_band, :], yatsm.Y[plot_band, :]) == False
+        point_colors = np.repeat('black', X.shape[0])
+        point_colors[deleted] = 'red'
+
+        p = ggplot(aes('date', 'b' + str(plot_band)), df) + \
+            geom_point(color=point_colors)
+
+        for i, r in enumerate(yatsm.record):
+            # Setup dummy dataframe for predictions
+            ts_df = pd.DataFrame(
+                {'x': np.arange(r['start'], r['end'], i_step)})
+            # Get predictions
+            ts_df['y'] = np.dot(r['coef'][:, plot_band - 1],
+                                make_X(ts_df['x'], freq))
+            ts_df['date'] = np.array(
+                [dt.fromordinal(int(_d)) for _d in ts_df['x']])
+
+            # Add line to ggplot
+            p = p + geom_line(aes('date', 'y'), ts_df, color=colors[i])
+            # If there is a break in this timeseries, add it as vertical line
+            if r['break'] != 0:
+                p = p + \
+                    geom_vline(
+                        xintercept=dt.fromordinal(r['break']), color='red')
+
+        if plot_ylim:
+            p = p + ylim(plot_ylim[0], plot_ylim[1])
+
+        # Show graph
+        if reverse:
+            title = 'Reverse'
+        else:
+            title = 'Forward'
+        print(p + ggtitle(title))
+
+
 if __name__ == '__main__':
     args = docopt(__doc__)
 
@@ -87,21 +149,36 @@ if __name__ == '__main__':
     px = int(args['<px>'])
     py = int(args['<py>'])
 
-    print('Working on: px={px}, py={py}'.format(px=px, py=py))
+    logger.info('Working on: px={px}, py={py}'.format(px=px, py=py))
 
     # Consecutive observations
     consecutive = int(args['--consecutive'])
+
     # Threshold for change
     threshold = float(args['--threshold'])
+
     # Minimum number of observations per segment
     min_obs = args['--min_obs']
     if min_obs == '1.5 * n_coef':
         min_obs = None
     else:
         min_obs = int(args['--min_obs'])
+
     # Sin/cosine frequency for independent variables
     freq = args['--freq']
     freq = [int(n) for n in freq.replace(' ', ',').split(',') if n != '']
+
+    # Minimum RMSE
+    min_rmse = args['--min_rmse']
+    if min_rmse.lower() == 'none':
+        min_rmse = None
+    else:
+        min_rmse = float(min_rmse)
+
+    # Multi-temporal screening method
+    screening = args['--screening']
+    if screening not in YATSM.screening_types:
+        raise TypeError('Unknown multi-temporal cloud screening type')
 
     # Cross-validated Lasso
     lassocv = args['--lassocv']
@@ -150,6 +227,8 @@ if __name__ == '__main__':
                       consecutive=consecutive,
                       threshold=threshold,
                       min_obs=min_obs,
+                      min_rmse=min_rmse,
+                      screening=screening,
                       lassocv=lassocv,
                       logger=logger)
     else:
@@ -157,6 +236,8 @@ if __name__ == '__main__':
                       consecutive=consecutive,
                       threshold=threshold,
                       min_obs=min_obs,
+                      min_rmse=min_rmse,
+                      screening=screening,
                       lassocv=lassocv,
                       logger=logger)
     yatsm.run()
@@ -166,50 +247,4 @@ if __name__ == '__main__':
     print('Found {n} breakpoints'.format(n=breakpoints.size))
     print(breakpoints)
 
-    if plot_band:
-        # Get qualitative color map
-        import brewer2mpl
-        # Color map ncolors goes from 3 - 9
-        ncolors = min(9, max(3, len(yatsm.record)))
-        # Repeat if number of segments > 9
-        repeat = int(math.ceil(len(yatsm.record) / 9.0))
-
-        colors = brewer2mpl.get_map('set1',
-                                    'qualitative',
-                                    ncolors).hex_colors * repeat
-
-        if reverse:
-            i_step = -1
-        else:
-            i_step = 1
-
-        p = ggplot(aes('date', 'b' + str(plot_band)), df) + \
-            geom_point()
-
-        for i, r in enumerate(yatsm.record):
-            # Setup dummy dataframe for predictions
-            ts_df = pd.DataFrame(
-                {'x': np.arange(r['start'], r['end'], i_step)})
-            # Get predictions
-            ts_df['y'] = np.dot(r['coef'][:, plot_band - 1],
-                                make_X(ts_df['x'], freq))
-            ts_df['date'] = np.array(
-                [dt.fromordinal(int(_d)) for _d in ts_df['x']])
-
-            # Add line to ggplot
-            p = p + geom_line(aes('date', 'y'), ts_df, color=colors[i])
-            # If there is a break in this timeseries, add it as vertical line
-            if r['break'] != 0:
-                p = p + \
-                    geom_vline(
-                        xintercept=dt.fromordinal(r['break']), color='red')
-
-        if plot_ylim:
-            p = p + ylim(plot_ylim[0], plot_ylim[1])
-
-        # Show graph
-        if reverse:
-            title = 'Reverse'
-        else:
-            title = 'Forward'
-        print(p + ggtitle(title))
+    make_plot()
