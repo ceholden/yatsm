@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-""" Make map of CCDC output for a given date
+""" Make map of YATSM output for a given date
 
 Usage:
-    ccdc_map.py [options] ( coef | predict | class ) <date> <output>
+    yatsm_map.py [options] ( coef | predict | class ) <date> <output>
 
 Option:
     --band <bands>          Bands to export [default: all]
@@ -10,122 +10,77 @@ Option:
     --after                 Find next time segment if <date> is transition
     --ndv <NoDataValue>     No data value for classifications [default: 0]
     -d --directory <dir>    Root time series directory [default: ./]
-    -r --result <dir>       Directory of CCDC results [default: TSFitMap]
+    -r --result <dir>       Directory of results [default: YATSM]
     -i --image <image>      Example image [default: example_img]
     --date <format>         Date format [default: %Y-%m-%d]
     -f --format <format>    Output raster format [default: GTiff]
-    --days <days in year>   Days in year [default: 365.25]
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
 
 Examples:
-    ccdc_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
-    2000-01-01 coef_map.gtif
+    yatsm_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
+        2000-01-01 coef_map.gtif
 
-    ccdc_map.py --after --date "%Y-%j" predict 2000-001 prediction.gtif
+    yatsm_map.py --after --date "%Y-%j" predict 2000-001 prediction.gtif
 
-    ccdc_map.py --result "TSFitMap_new" --after class 2000-01-01 LCmap.gtif
+    yatsm_map.py --result "YATSM_new" --after class 2000-01-01 LCmap.gtif
 
 """
-from __future__ import division
-from docopt import docopt
+from __future__ import division, print_function
 
 import datetime as dt
 import fnmatch
 import itertools
+import logging
 import os
 import sys
 
-from osgeo import gdal
-from osgeo import gdal_array
+from docopt import docopt
 import numpy as np
-import scipy.io as spio
-
-VERBOSE = False
-
-# Possible coefficients
-_coefs = ['all', 'intercept', 'slope', 'seasonality', 'rmse']
-# Filters for CCDC results
-_rec_cg = 'record_change*'
-_tsfitmapmat = 'TSFitMapMat*'
-# number of days in year
-_days = 365.25
-w = 2 * np.pi / _days
+from osgeo import gdal, gdal_array
 
 gdal.UseExceptions()
 gdal.AllRegister()
 
-def mat2dict(matlabobj):
-    """
-    Utility function:
-    Converts a scipy.io.matlab.mio5_params.mat_struct to a dictionary
-    """
-    d = {}
-    for field in matlabobj._fieldnames:
-        value = matlabobj.__dict__[field]
-        if isinstance(value, spio.matlab.mio5_params.mat_struct):
-            d[field] = mat2dict(value)
-        else:
-            d[field] = value
-    return d
+logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
+                    level=logging.INFO,
+                    datefmt='%H:%M:%S')
+logger = logging.getLogger(__name__)
 
-def ml2pydate(ml_date):
-    """
-    Utility function:
-    Returns Python datetime for MATLAB date
-    """
-    if ml_date == 0:
-        return 0
-    else:
-        return (dt.datetime.fromordinal(int(ml_date)) -
-                dt.timedelta(days = 366)).strftime('%Y-%j')
+# Possible coefficients
+_coefs = ['all', 'intercept', 'slope', 'seasonality', 'rmse']
+# Filters for CCDC results
+_record = 'yatsm_*'
+_directory = 'YATSM*'
+# number of days in year
+_days = 365.25
+w = 2 * np.pi / _days
 
-def py2mldate(py_date):
-    """
-    Utility function:
-    Returns MATLAB datenum for Python datetime
-    """
-    return (py_date + dt.timedelta(days = 366)).toordinal()
 
+# UTILITY FUNCTIONS
 def find_results(location, pattern):
-    """
-    Utility funtion:
-    Create list of result files and return sorted
+    """ Create list of result files and return sorted
+
+    Args:
+      location (str): directory location to search
+      pattern (str): glob style search pattern for results
+
+    Returns:
+      results (list): list of file paths for results found
+
     """
     # Note: already checked for location existence in main()
-    mats = []
+    records = []
     for root, dirnames, filenames in os.walk(location):
         for filename in fnmatch.filter(filenames, pattern):
-            mats.append(os.path.join(root, filename))
+            records.append(os.path.join(root, filename))
 
-    if len(mats) == 0:
-        print 'Error: could not find any CCDC output in:\n{0}'.format(location)
+    if len(records) == 0:
+        logger.error('Error: could not find results in: {0}'.format(location))
         sys.exit(1)
 
-    mats.sort()
+    return records.sort()
 
-    if len(mats) == 0:
-        raise Exception, 'Could not find results'
-
-    return mats
-
-def make_X4(date):
-    """ return 4 coefficient X array for a given date integer """
-    return(np.array([1, date,
-        np.cos(w * date), np.sin(w * date)]))
-
-def make_X6(date):
-    """ return 6 coefficient X array for a given date integer """
-    return(np.array([1, date,
-        np.cos(w * date), np.sin(w * date),
-        np.cos(2 * w * date), np.sin(2 * w * date)]))
-
-def make_X8(date):
-    """ return 8 coefficient X array for a given date integer """
-    return(np.array([1, date,
-        np.cos(w * date), np.sin(w * date),
-        np.cos(2 * w * date), np.sin(2 * w * date),
-        np.cos(3 * w * date), np.sin(3 * w * date)]))
 
 def get_classification(date, after, results, image_ds):
     """ Output raster with classification results
@@ -143,7 +98,7 @@ def get_classification(date, after, results, image_ds):
     """
     # Init output raster
     raster = np.zeros((image_ds.RasterYSize, image_ds.RasterXSize),
-        dtype=np.uint8)
+                      dtype=np.uint8)
 
     mats = find_results(results, _tsfitmapmat)
     n_mat = len(mats)
@@ -151,9 +106,8 @@ def get_classification(date, after, results, image_ds):
     # If we 'after' is True, we can also use first segment after a change
     if after is True:
         for i, m in enumerate(mats):
-            if VERBOSE:
-                if np.mod(i, 100) == 0:
-                    print '{0:.0f}%'.format(i / n_mat * 100)
+            if np.mod(i, 100) == 0:
+                logger.debug('{0:.0f}%'.format(i / n_mat * 100))
 
             mat = spio.loadmat(m)['Map']
 
@@ -165,14 +119,14 @@ def get_classification(date, after, results, image_ds):
             if index.shape[0] == 0:
                 continue
 
-            [r, c] = np.unravel_index(mat[2, index] - 1, (raster.shape), order='C')
+            [r, c] = np.unravel_index(mat[2, index] - 1, (raster.shape),
+                                      order='C')
 
             raster[r, c] = mat[3, index]
     else:
         for i, m in enumerate(mats):
-            if VERBOSE:
-                if np.mod(i, 100) == 0:
-                    print '{0:.0f}%'.format(i / n_mat * 100)
+            if np.mod(i, 100) == 0:
+                logger.debug('{0:.0f}%'.format(i / n_mat * 100))
 
             mat = spio.loadmat(m)
 
@@ -182,7 +136,8 @@ def get_classification(date, after, results, image_ds):
             if index.shape[0] == 0:
                 continue
 
-            [r, c] = np.unravel_index(mat[2, index] - 1, (raster.shape), order='C')
+            [r, c] = np.unravel_index(mat[2, index] - 1, (raster.shape),
+                                      order='C')
 
             raster[r, c] = mat[3, index]
 
@@ -194,7 +149,7 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
 
     Args:
         date (int):     MATLAB datenum for prediction image
-        after (bool):   If date intersects a disturbed period, use next segment?
+        after (bool):   If date intersects a disturbed period, use next segment
         bands (list):   Bands to predict
         coefs (list):   List of coefficients to output
         results (str):  Location of the CCDC results
@@ -216,7 +171,8 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
     n_band = None
     for i, m in enumerate(mats):
         try:
-            mat = spio.loadmat(m, squeeze_me=True, struct_as_record=True)['rec_cg']
+            mat = spio.loadmat(m, squeeze_me=True,
+                               struct_as_record=True)['rec_cg']
         except:
             continue
 
@@ -226,8 +182,10 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
             continue
         else:
             break
+
     if n_coef is None or n_band is None:
-        raise Exception, 'Could not determine the number of coefficients'
+        logger.error('Could not determine the number of coefficients')
+        sys.exit(1)
 
     # Find how many bands are used in output
     i_bands = []
@@ -237,7 +195,9 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
         # numpy index on 0; GDAL index on 1 so subtract 1
         i_bands = [b - 1 for b in bands]
         if any([b > n_band for b in i_bands]):
-            raise Exception, 'Bands specified exceed size of coefficients in results'
+            logger.error('Bands specified exceed size of coefficients \
+                         in results')
+            sys.exit(1)
 
     # Determine indices for the coefficients desired
     i_coefs = []
@@ -262,16 +222,14 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
     if use_rmse is True:
         n_rmse = n_bands
 
-    if VERBOSE:
-        print 'Indices for bands and coefficients:'
-        print i_bands
-        print i_coefs
+    logger.debug('Indices for bands and coefficients:')
+    logger.debug(i_bands)
+    logger.debug(i_coefs)
 
-    if VERBOSE:
-        print 'Allocating memory...'
+    logger.debug('Allocating memory...')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize,
-        n_bands * n_coefs + n_rmse),
-        dtype=np.float32) * -9999
+                     n_bands * n_coefs + n_rmse),
+                     dtype=np.float32) * -9999
 
     # Setup output band names
     band_names = []
@@ -281,20 +239,18 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
         if use_rmse is True:
             band_names.append('B' + str(_b + 1) + '_RMSE')
 
-    if VERBOSE:
-        print 'Processing results'
+    logger.debug('Processing results')
 
     for _i, m in enumerate(mats):
-        # Verbose progress
-        if VERBOSE:
-            if np.mod(_i, 100) == 0:
-                print '{0:.0f}%'.format(_i / n_mat * 100)
+        if np.mod(_i, 100) == 0:
+            logger.debug('{0:.0f}%'.format(_i / n_mat * 100))
 
         # Open MATLAB output
         try:
-            mat = spio.loadmat(m, squeeze_me=True, struct_as_record=True)['rec_cg']
-        except ValueError, AssertionError:
-            print 'Error reading {f}. May be corrupted'.format(f=m)
+            mat = spio.loadmat(m, squeeze_me=True,
+                               struct_as_record=True)['rec_cg']
+        except (ValueError, AssertionError):
+            logger.warning('Error reading {f}. May be corrupted'.format(f=m))
             continue
 
         if mat.ndim == 0:
@@ -307,14 +263,17 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
             _, _index = np.unique(mat['pos'][index], return_index=True)
             index = index[_index]
         else:
-            index = np.where((mat['t_start'] <= date) & (mat['t_end'] >= date))[0]
+            index = np.where((mat['t_start'] <= date) &
+                             (mat['t_end'] >= date))[0]
 
         if index.shape[0] == 0:
             continue
 
         # Locate entries in the map
-        [rows, cols] = np.unravel_index(mat['pos'][index].astype(int) - 1,
-            (image_ds.RasterYSize, image_ds.RasterXSize), order='C')
+        [rows, cols] = np.unravel_index(
+            mat['pos'][index].astype(int) - 1,
+            (image_ds.RasterYSize, image_ds.RasterXSize),
+            order='C')
 
         for i, r, c in itertools.izip(index, rows, cols):
             # Normalize intercept to mid-point in time segment
@@ -338,7 +297,7 @@ def get_prediction(date, after, bands, results, image_ds):
 
     Args:
         date (int):     MATLAB datenum for prediction image
-        after (bool):   If date intersects a disturbed period, use next segment?
+        after (bool):   If date intersects a disturbed period, use next segment
         bands (list):   Bands to predict
         results (str):  Location of the CCDC results
         image_ds (gdal.Dataset):    Example dataset
@@ -356,7 +315,8 @@ def get_prediction(date, after, bands, results, image_ds):
     n_band = None
     for i, m in enumerate(mats):
         try:
-            mat = spio.loadmat(m, squeeze_me=True, struct_as_record=True)['rec_cg']
+            mat = spio.loadmat(m, squeeze_me=True,
+                               struct_as_record=True)['rec_cg']
         except:
             continue
 
@@ -367,7 +327,7 @@ def get_prediction(date, after, bands, results, image_ds):
         else:
             break
     if n_coef is None or n_band is None:
-        raise Exception, 'Could not determine the number of bands'
+        raise Exception('Could not determine the number of bands')
 
     # Alias make_X to corresponding make_X# where # is n_coef
     if n_coef == 4:
@@ -377,7 +337,7 @@ def get_prediction(date, after, bands, results, image_ds):
     elif n_coef == 8:
         make_X = make_X8
     else:
-        raise NotImplementedError, 'Supports 4/6/8 coefficients only'
+        raise NotImplementedError('Supports 4/6/8 coefficients only')
 
     # Create X matrix from date
     X = make_X(date)
@@ -390,23 +350,25 @@ def get_prediction(date, after, bands, results, image_ds):
         # numpy index on 0; GDAL index on 1 so subtract 1
         i_bands = [b - 1 for b in bands]
         if any([b > n_band for b in i_bands]):
-            raise Exception, 'Bands specified exceed size of coefficients in results'
+            logger.error('Bands specified exceed size of coefficients \
+                         in results')
+            sys.exit(1)
 
     n_band = len(i_bands)
 
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_band),
-        dtype=np.int16) * -9999
+                     dtype=np.int16) * -9999
 
     for _i, m in enumerate(mats):
         # Verbose progress
-        if VERBOSE:
-            if np.mod(_i, 100) == 0:
-                print '{0:.0f}%'.format(_i / n_mat * 100)
+        if np.mod(_i, 100) == 0:
+            logger.debug('{0:.0f}%'.format(_i / n_mat * 100))
         # Open MATLAB output
         try:
-            mat = spio.loadmat(m, squeeze_me=True, struct_as_record=True)['rec_cg']
-        except ValueError, AssertionError:
-            print 'Error reading {f}. May be corrupted'.format(f=m)
+            mat = spio.loadmat(m, squeeze_me=True,
+                               struct_as_record=True)['rec_cg']
+        except (ValueError, AssertionError):
+            logger.warning('Error reading {f}. May be corrupted'.format(f=m))
             continue
 
         if mat.ndim == 0:
@@ -419,14 +381,18 @@ def get_prediction(date, after, bands, results, image_ds):
             _, _index = np.unique(mat['pos'][index], return_index=True)
             index = index[_index]
         else:
-            index = np.where((mat['t_start'] <= date) & (mat['t_end'] >= date))[0]
+            index = np.where((mat['t_start'] <= date) &
+                             (mat['t_end'] >= date))[0]
 
         if index.shape[0] == 0:
             continue
 
         # Locate entries in the map
-        [rows, cols] = np.unravel_index(mat['pos'][index].astype(int) - 1,
-            (image_ds.RasterYSize, image_ds.RasterXSize), order='C')
+        [rows, cols] = np.unravel_index(
+            mat['pos'][index].astype(int) - 1,
+            (image_ds.RasterYSize, image_ds.RasterXSize),
+            order='C'
+        )
 
         for i, r, c in itertools.izip(index, rows, cols):
             for i_b, b in enumerate(i_bands):
@@ -438,8 +404,7 @@ def get_prediction(date, after, bands, results, image_ds):
 
 def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
     """ Write raster to output file """
-    if VERBOSE:
-        print 'Writing output to disk'
+    logger.debug('Writing output to disk')
 
     driver = gdal.GetDriverByName(gdal_frmt)
 
@@ -448,26 +413,27 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
     else:
         nband = 1
 
-    ds = driver.Create(output,
+    ds = driver.Create(
+        output,
         image_ds.RasterXSize, image_ds.RasterYSize, nband,
-        gdal_array.NumericTypeCodeToGDALTypeCode(raster.dtype.type))
+        gdal_array.NumericTypeCodeToGDALTypeCode(raster.dtype.type)
+    )
 
     if band_names is not None:
-        assert len(band_names) == nband, \
-            'Error - did not get enough names for all bands'
+        if len(band_names) != nband:
+            logger.error('Did not get enough names for all bands')
+            sys.exit(1)
 
     if raster.ndim > 2:
         for b in range(nband):
-            if VERBOSE:
-                print '    writing band {b}'.format(b=b + 1)
+            logger.debug('    writing band {b}'.format(b=b + 1))
             ds.GetRasterBand(b + 1).WriteArray(raster[:, :, b])
             ds.GetRasterBand(b + 1).SetNoDataValue(ndv)
 
             if band_names is not None:
                 ds.GetRasterBand(b + 1).SetDescription(band_names[b])
     else:
-        if VERBOSE:
-                print '    writing band'
+        logger.debug('    writing band')
         ds.GetRasterBand(1).WriteArray(raster)
         ds.GetRasterBand(1).SetNoDataValue(ndv)
 
@@ -479,6 +445,7 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
     ds = None
 
+
 def main():
     """ Test input and pass to appropriate functions """
     ### Parse input
@@ -488,9 +455,9 @@ def main():
     try:
         date = dt.datetime.strptime(date, date_format)
     except:
-        print 'Error: could not parse date'
-        sys.exit(1)
-    date = py2mldate(date)
+        logger.error('Could not parse date')
+        raise
+    date = date.toordinal()
 
     # Output name
     output = os.path.abspath(args['<output>'])
@@ -498,7 +465,7 @@ def main():
         try:
             os.makedirs(os.path.dirname(output))
         except:
-            print 'Error: could not make output directory specified'
+            logger.error('Could not make output directory specified')
             raise
 
     # Output bands
@@ -508,16 +475,17 @@ def main():
         try:
             bands = [int(b) for b in bands if b != '']
         except ValueError:
-            print 'Error: band specification must be "all" or integers'
+            logger.error('Band specification must be "all" or integers')
             raise
         except:
-            print 'Error: could not parse band selection'
+            logger.error('Could not parse band selection')
             raise
 
     # Coefficient options
     coefs = [c for c in args['--coef'].replace(',', ' ').split(' ') if c != '']
-    assert all([c.lower() in _coefs for c in coefs]), \
-        'Error: unknown coefficient options'
+    if not all([c.lower() in _coefs for c in coefs]):
+        logger.error('Unknown coefficient options')
+        sys.exit(1)
 
     # Go to next time segment option
     after = args['--after']
@@ -526,12 +494,14 @@ def main():
     try:
         ndv = float(args['--ndv'])
     except ValueError:
-        print 'Error: NoDataValue must be a real number'
+        logger.error('NoDataValue must be a real number')
         raise
 
     # Root directory
     root = args['--directory']
-    assert os.path.isdir(root), 'Error: root directory is not a directory'
+    if not os.path.isdir(root):
+        logger.error('Root directory is not a directory')
+        sys.exit(1)
 
     # Results folder
     results = args['--result']
@@ -539,7 +509,7 @@ def main():
         if os.path.isdir(os.path.join(root, results)):
             results = os.path.join(root, results)
         else:
-            print 'Error: cannot find results folder'
+            logger.error('Cannot find results folder')
             sys.exit(1)
     results = os.path.abspath(results)
 
@@ -549,7 +519,7 @@ def main():
         if os.path.isfile(os.path.join(root, image)):
             image = os.path.join(root, image)
         else:
-            print 'Error: cannot find example image'
+            logger.error('Cannot find example image')
             sys.exit(1)
     image = os.path.abspath(image)
 
@@ -558,14 +528,14 @@ def main():
     try:
         _ = gdal.GetDriverByName(gdal_frmt)
     except:
-        print 'Error: unknown GDAL format specified'
-        sys.exit(1)
+        logger.error('Unknown GDAL format specified')
+        raise
 
     ### Produce output specified
     try:
         image_ds = gdal.Open(image, gdal.GA_ReadOnly)
     except:
-        print 'Error: could not open example image for reading'
+        logger.error('Could not open example image for reading')
         raise
 
     band_names = None
@@ -585,19 +555,11 @@ def main():
 
     image_ds = None
 
+
 if __name__ == '__main__':
     args = docopt(__doc__)
 
     if args['--verbose']:
-        VERBOSE = True
-
-    try:
-        _days = float(args['--days'])
-    except:
-        print 'Number of days must be a number'
-        raise
-    assert _days == 365.25 or _days == 365, 'Number of days must be 365 or 365.25'
-
-    w = 2 * np.pi / _days
+        logger.setLevel(logging.DEBUG)
 
     main()
