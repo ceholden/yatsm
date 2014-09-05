@@ -256,6 +256,14 @@ def run_line(line, X, images,
 
     np.savez(outfile,
              version=__version__,
+             consecutive=yatsm_config['consecutive'],
+             threshold=yatsm_config['threshold'],
+             min_obs=yatsm_config['min_obs'],
+             min_rmse=yatsm_config['min_rmse'],
+             screening=yatsm_config['screening'],
+             lasso_cv=yatsm_config['lasso_cv'],
+             reverse=yatsm_config['reverse'],
+             freq=yatsm_config['freq'],
              record=np.array(output))
 
 
