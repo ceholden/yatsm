@@ -251,7 +251,7 @@ def run_line(line, X, images,
 
     # Save output
     outfile = os.path.join(dataset_config['output'],
-                           'yatsm_r{line}.npy'.format(line=line))
+                           'yatsm_r{line}'.format(line=line))
     logger.debug('    saving YATSM output to {f}'.format(f=outfile))
 
     np.savez(outfile,
