@@ -7,9 +7,9 @@ Usage:
 Option:
     --band <bands>          Bands to export [default: all]
     --coef <coefs>          Coefficients to export [default: all]
-    --after                 Use time segment after <date> if needed
-    --before                Use time segment before <date> if needed
-    --ndv <NoDataValue>     No data value for classifications [default: 0]
+    --after                 Use time segment after <date> if needed for map
+    --before                Use time segment before <date> if needed for map
+    --ndv <NoDataValue>     No data value for map [default: 0]
     -d --directory <dir>    Root time series directory [default: ./]
     -r --result <dir>       Directory of results [default: YATSM]
     -i --image <image>      Example image [default: example_img]
@@ -22,7 +22,7 @@ Examples:
     yatsm_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
         2000-01-01 coef_map.gtif
 
-    yatsm_map.py --after --date "%Y-%j" predict 2000-001 prediction.gtif
+    yatsm_map.py --date "%Y-%j" predict 2000-001 prediction.gtif
 
     yatsm_map.py --result "YATSM_new" --after class 2000-01-01 LCmap.gtif
 
@@ -79,7 +79,9 @@ def find_results(location, pattern):
         logger.error('Error: could not find results in: {0}'.format(location))
         sys.exit(1)
 
-    return records.sort()
+    records.sort()
+
+    return records
 
 
 def get_classification(date, after, before, results, image_ds,
@@ -141,16 +143,17 @@ def get_classification(date, after, before, results, image_ds,
     return raster
 
 
-def get_coefficients(date, after, bands, coefs, results, image_ds):
+def get_coefficients(date, bands, coefs, results, image_ds,
+                     pattern=_result_record):
     """ Output a raster with coefficients from CCDC
 
     Args:
-        date (int):     MATLAB datenum for prediction image
-        after (bool):   If date intersects a disturbed period, use next segment
-        bands (list):   Bands to predict
-        coefs (list):   List of coefficients to output
-        results (str):  Location of the CCDC results
-        image_ds (gdal.Dataset):    Example dataset
+      date (int): Ordinal date for prediction image
+      bands (list): Bands to predict
+      coefs (list): List of coefficients to output
+      results (str): Location of the results
+      image_ds (gdal.Dataset): Example dataset
+      pattern (str, optional): filename pattern of saved record results
 
     Returns:
         (raster, band_names):   A tuple containing the 3D numpy.ndarray
@@ -159,29 +162,28 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
                                 dataset
 
     """
-    raise NotImplementedError("Haven't ported this yet...")
+    # raise NotImplementedError("Haven't ported this yet...")
     # Find results
-    mats = find_results(results, _rec_cg)
-    n_mat = len(mats)
+    records = find_results(results, pattern)
+    n_records = len(records)
 
     # Find how many coefficients there are for output
     n_coef = None
     n_band = None
-    for i, m in enumerate(mats):
+    for i, r in enumerate(records):
         try:
-            mat = spio.loadmat(m, squeeze_me=True,
-                               struct_as_record=True)['rec_cg']
+            rec = np.load(r)['record']
         except:
             continue
 
         try:
-            n_coef, n_band = mat['coefs'][0].shape
+            n_coef, n_band = rec['coef'][0].shape
         except:
             continue
         else:
             break
 
-    if n_coef is None or n_band is None:
+    if not n_coef or not n_band:
         logger.error('Could not determine the number of coefficients')
         sys.exit(1)
 
@@ -231,61 +233,52 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
 
     # Setup output band names
     band_names = []
-    for _b in i_bands:
-        for _c in i_coefs:
+    for _c in i_coefs:
+        for _b in i_bands:
             band_names.append('B' + str(_b + 1) + '_beta' + str(_c))
         if use_rmse is True:
             band_names.append('B' + str(_b + 1) + '_RMSE')
 
+    logger.debug('Band names:')
+    logger.debug(band_names)
+
     logger.debug('Processing results')
 
-    for _i, m in enumerate(mats):
+    for _i, r in enumerate(records):
         if np.mod(_i, 100) == 0:
-            logger.debug('{0:.0f}%'.format(_i / n_mat * 100))
+            logger.debug('{0:.0f}%'.format(_i / n_records * 100))
 
         # Open MATLAB output
         try:
-            mat = spio.loadmat(m, squeeze_me=True,
-                               struct_as_record=True)['rec_cg']
+            rec = np.load(r)['record']
         except (ValueError, AssertionError):
-            logger.warning('Error reading {f}. May be corrupted'.format(f=m))
+            logger.warning('Error reading {f}. May be corrupted'.format(f=r))
             continue
 
-        if mat.ndim == 0:
+        if rec.shape[0] == 0:
             # No values in this .mat file
+            logger.warning('Could not find results in {f}'.format(f=r))
             continue
 
         # Find indices for the date specified
-        if after is True:
-            index = np.where(mat['t_end'] >= date)[0]
-            _, _index = np.unique(mat['pos'][index], return_index=True)
-            index = index[_index]
-        else:
-            index = np.where((mat['t_start'] <= date) &
-                             (mat['t_end'] >= date))[0]
+        index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
 
         if index.shape[0] == 0:
             continue
 
-        # Locate entries in the map
-        [rows, cols] = np.unravel_index(
-            mat['pos'][index].astype(int) - 1,
-            (image_ds.RasterYSize, image_ds.RasterXSize),
-            order='C')
-
-        for i, r, c in itertools.izip(index, rows, cols):
+        for i in index:
             # Normalize intercept to mid-point in time segment
-            mat['coefs'][i][0, :] = mat['coefs'][i][0, :] + \
-                (mat['t_start'][i] + mat['t_end'][i]) / 2.0 * \
-                mat['coefs'][i][1, :]
+            rec['coef'][i][0, :] = rec['coef'][i][0, :] + \
+                (rec['start'][i] + rec['end'][i]) / 2.0 * rec['coef'][i][1, :]
 
             # Extract coefficients
-            raster[r, c, range(n_coefs * n_bands)] = \
-                mat['coefs'][i][i_coefs, :][:, i_bands].flatten()
+            raster[rec['px'][i], rec['py'][i], range(n_coefs * n_bands)] = \
+                rec['coef'][i][i_coefs, :][:, i_bands].flatten()
 
             # Extract RMSE
             if use_rmse is True:
-                raster[r, c, n_coefs * n_bands:] = mat['rmse'][i][i_bands]
+                raster[rec['px'][i], rec['py'][i], n_coefs * n_bands:] = \
+                    rec['rmse'][i][i_bands]
 
     return (raster, band_names)
 
@@ -544,14 +537,14 @@ def main():
         raster = get_classification(date, after, before, results, image_ds)
     elif args['coef']:
         raster, band_names = \
-            get_coefficients(date, after, bands, coefs, results, image_ds)
+            get_coefficients(date, bands, coefs, results, image_ds)
     elif args['predict']:
-        raster = get_prediction(date, after, bands, results, image_ds)
+        raster = get_prediction(date, bands, results, image_ds)
 
     if args['class']:
         write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
     else:
-        write_output(raster, output, image_ds, gdal_frmt, -9999, band_names)
+        write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
 
     image_ds = None
 
