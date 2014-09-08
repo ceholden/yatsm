@@ -4,11 +4,7 @@
 Usage:
     yatsm_map.py [options] ( coef | predict | class ) <date> <output>
 
-Option:
-    --band <bands>          Bands to export [default: all]
-    --coef <coefs>          Coefficients to export [default: all]
-    --after                 Use time segment after <date> if needed for map
-    --before                Use time segment before <date> if needed for map
+Options:
     --ndv <NoDataValue>     No data value for map [default: 0]
     -d --directory <dir>    Root time series directory [default: ./]
     -r --result <dir>       Directory of results [default: YATSM]
@@ -17,6 +13,17 @@ Option:
     -f --format <format>    Output raster format [default: GTiff]
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
+
+Coefficient options:
+    --coef <coefs>          Coefficients to export [default: all]
+    --band <bands>          Bands to export [default: all]
+
+Prediction options:
+    --freq                  Sin/cosine frequencies [default: 1 2 3]
+
+Class options:
+    --after                 Use time segment after <date> if needed for map
+    --before                Use time segment before <date> if needed for map
 
 Examples:
     yatsm_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
@@ -248,7 +255,7 @@ def get_coefficients(date, bands, coefs, results, image_ds,
         if np.mod(_i, 100) == 0:
             logger.debug('{0:.0f}%'.format(_i / n_records * 100))
 
-        # Open MATLAB output
+        # Open output
         try:
             rec = np.load(r)['record']
         except (ValueError, AssertionError):
@@ -355,7 +362,7 @@ def get_prediction(date, after, bands, results, image_ds):
         # Verbose progress
         if np.mod(_i, 100) == 0:
             logger.debug('{0:.0f}%'.format(_i / n_mat * 100))
-        # Open MATLAB output
+        # Open output
         try:
             mat = spio.loadmat(m, squeeze_me=True,
                                struct_as_record=True)['rec_cg']
