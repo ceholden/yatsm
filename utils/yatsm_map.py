@@ -19,7 +19,7 @@ Coefficient options:
     --band <bands>          Bands to export [default: all]
 
 Prediction options:
-    --freq                  Sin/cosine frequencies [default: 1 2 3]
+    --freq=<frequency>      Sin/cosine frequencies [default: 1 2 3]
 
 Class options:
     --after                 Use time segment after <date> if needed for map
@@ -38,7 +38,6 @@ from __future__ import division, print_function
 
 import datetime as dt
 import fnmatch
-import itertools
 import logging
 import os
 import sys
@@ -91,8 +90,55 @@ def find_results(location, pattern):
     return records
 
 
+def make_X(x, freq, intercept=True):
+    """ Create X matrix of Fourier series style independent variables
+
+    Args:
+        x               base of independent variables - dates
+        freq            frequency of cosine/sin waves
+        intercept       include intercept in X matrix
+
+    Output:
+        X               matrix X of independent variables
+
+    Example:
+        call:
+            make_X(np.array([1, 2, 3]), [1, 2])
+        returns:
+            array([[ 1.        ,  1.        ,  1.        ],
+                   [ 1.        ,  2.        ,  3.        ],
+                   [ 0.99985204,  0.99940821,  0.99866864],
+                   [ 0.01720158,  0.03439806,  0.05158437],
+                   [ 0.99940821,  0.99763355,  0.99467811],
+                   [ 0.03439806,  0.06875541,  0.10303138]])
+
+    """
+    if isinstance(x, int) or isinstance(x, float):
+        x = np.array(x)
+
+    if intercept:
+        X = np.array([np.ones_like(x), x])
+    else:
+        X = x
+
+    for f in freq:
+        if X.ndim == 2:
+            X = np.vstack([X, np.array([
+                np.cos(f * w * x),
+                np.sin(f * w * x)])
+            ])
+        elif X.ndim == 1:
+            X = np.concatenate((X,
+                                np.array([
+                                         np.cos(f * w * x),
+                                         np.sin(f * w * x)])
+                                ))
+
+    return X
+
+
 def get_classification(date, after, before, results, image_ds,
-                       pattern=_result_record):
+                       ndv=0, pattern=_result_record):
     """ Output raster with classification results
 
     Args:
@@ -102,6 +148,7 @@ def get_classification(date, after, before, results, image_ds,
         segment?
       results (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
+      ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
@@ -110,8 +157,8 @@ def get_classification(date, after, before, results, image_ds,
 
     """
     # Init output raster
-    raster = np.zeros((image_ds.RasterYSize, image_ds.RasterXSize),
-                      dtype=np.uint8)
+    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize),
+                     dtype=np.uint8) * ndv
 
     records = find_results(results, pattern)
     n_records = len(records)
@@ -151,7 +198,7 @@ def get_classification(date, after, before, results, image_ds,
 
 
 def get_coefficients(date, bands, coefs, results, image_ds,
-                     pattern=_result_record):
+                     ndv=-9999, pattern=_result_record):
     """ Output a raster with coefficients from CCDC
 
     Args:
@@ -160,6 +207,7 @@ def get_coefficients(date, bands, coefs, results, image_ds,
       coefs (list): List of coefficients to output
       results (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
+      ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
@@ -235,7 +283,7 @@ def get_coefficients(date, bands, coefs, results, image_ds,
     logger.debug('Allocating memory...')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize,
                      n_bands * n_coefs + n_rmse),
-                     dtype=np.float32) * -9999
+                     dtype=np.float32) * ndv
 
     # Setup output band names
     band_names = []
@@ -262,7 +310,7 @@ def get_coefficients(date, bands, coefs, results, image_ds,
             continue
 
         if rec.shape[0] == 0:
-            # No values in this .mat file
+            # No values in this file
             logger.warning('Could not find results in {f}'.format(f=r))
             continue
 
@@ -289,56 +337,51 @@ def get_coefficients(date, bands, coefs, results, image_ds,
     return (raster, band_names)
 
 
-def get_prediction(date, after, bands, results, image_ds):
+def get_prediction(date, freq, bands, results, image_ds,
+                   ndv=-9999, pattern=_result_record):
     """ Output a raster with the predictions from model fit for a given date
 
     Args:
-        date (int):     MATLAB datenum for prediction image
-        after (bool):   If date intersects a disturbed period, use next segment
-        bands (list):   Bands to predict
-        results (str):  Location of the CCDC results
-        image_ds (gdal.Dataset):    Example dataset
+      date (int): Ordinal date for prediction image
+      freq (list): Frequency of sin/cosine seasonality
+      coefs (list): List of coefficients to output
+      results (str): Location of the results
+      image_ds (gdal.Dataset): Example dataset
+      ndv (int, optional): NoDataValue
+      pattern (str, optional): filename pattern of saved record results
 
     Returns:
         A 3D numpy.ndarray containing the prediction for each band, for each
         pixel
+
     """
-    raise NotImplementedError("Haven't ported this yet...")
+    # raise NotImplementedError("Haven't ported this yet...")
     # Find results
-    mats = find_results(results, _rec_cg)
-    n_mat = len(mats)
+    records = find_results(results, pattern)
+    n_records = len(records)
 
     # Find how many coefficients there are for output
     n_coef = None
     n_band = None
-    for i, m in enumerate(mats):
+    for i, r in enumerate(records):
         try:
-            mat = spio.loadmat(m, squeeze_me=True,
-                               struct_as_record=True)['rec_cg']
+            rec = np.load(r)['record']
         except:
             continue
 
         try:
-            n_coef, n_band = mat['coefs'][0].shape
+            n_coef, n_band = rec['coef'][0].shape
         except:
             continue
         else:
             break
-    if n_coef is None or n_band is None:
-        raise Exception('Could not determine the number of bands')
 
-    # Alias make_X to corresponding make_X# where # is n_coef
-    if n_coef == 4:
-        make_X = make_X4
-    elif n_coef == 6:
-        make_X = make_X6
-    elif n_coef == 8:
-        make_X = make_X8
-    else:
-        raise NotImplementedError('Supports 4/6/8 coefficients only')
+    if not n_coef or not n_band:
+        logger.error('Could not determine the number of coefficients')
+        sys.exit(1)
 
     # Create X matrix from date
-    X = make_X(date)
+    X = make_X(date, freq)
 
     # Find how many bands are used in output
     i_bands = []
@@ -355,47 +398,35 @@ def get_prediction(date, after, bands, results, image_ds):
     n_band = len(i_bands)
 
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_band),
-                     dtype=np.int16) * -9999
+                     dtype=np.int16) * ndv
 
-    for _i, m in enumerate(mats):
+    for _i, r in enumerate(records):
         # Verbose progress
         if np.mod(_i, 100) == 0:
-            logger.debug('{0:.0f}%'.format(_i / n_mat * 100))
+            logger.debug('{0:.0f}%'.format(_i / n_records * 100))
         # Open output
         try:
-            mat = spio.loadmat(m, squeeze_me=True,
-                               struct_as_record=True)['rec_cg']
+            rec = np.load(r)['record']
         except (ValueError, AssertionError):
-            logger.warning('Error reading {f}. May be corrupted'.format(f=m))
+            logger.warning('Error reading {f}. May be corrupted'.format(f=r))
             continue
 
-        if mat.ndim == 0:
-            # No values in this .mat file
+        if rec.shape[0] == 0:
+            # No values in this file
+            logger.warning('Could not find results in {f}'.format(f=r))
             continue
 
         # Find indices for the date specified
-        if after is True:
-            index = np.where(mat['t_end'] >= date)[0]
-            _, _index = np.unique(mat['pos'][index], return_index=True)
-            index = index[_index]
-        else:
-            index = np.where((mat['t_start'] <= date) &
-                             (mat['t_end'] >= date))[0]
+        index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
 
         if index.shape[0] == 0:
             continue
 
-        # Locate entries in the map
-        [rows, cols] = np.unravel_index(
-            mat['pos'][index].astype(int) - 1,
-            (image_ds.RasterYSize, image_ds.RasterXSize),
-            order='C'
-        )
-
-        for i, r, c in itertools.izip(index, rows, cols):
+        for i in index:
             for i_b, b in enumerate(i_bands):
                 # Calculate predicted image
-                raster[r, c, i_b] = np.dot(mat['coefs'][i][:, b], X)
+                raster[rec['px'][i], rec['py'][i], i_b] = \
+                    np.dot(rec['coef'][i][:, b], X)
 
     return raster
 
@@ -550,9 +581,9 @@ def main():
         raster = get_classification(date, after, before, results, image_ds)
     elif args['coef']:
         raster, band_names = \
-            get_coefficients(date, bands, coefs, results, image_ds)
+            get_coefficients(date, bands, coefs, results, image_ds, ndv=ndv)
     elif args['predict']:
-        raster = get_prediction(date, freq, bands, results, image_ds)
+        raster = get_prediction(date, freq, bands, results, image_ds, ndv=ndv)
 
     if args['class']:
         write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
