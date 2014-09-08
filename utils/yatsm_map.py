@@ -56,7 +56,7 @@ logger = logging.getLogger(__name__)
 
 # Possible coefficients
 _coefs = ['all', 'intercept', 'slope', 'seasonality', 'rmse']
-# Filters for CCDC results
+# Filters for results
 _result_record = 'yatsm_*'
 # number of days in year
 _days = 365.25
@@ -182,7 +182,7 @@ def get_classification(date, after, before, results, image_ds,
         # Find model after segment
         if after:
             index = np.where(rec['start'] >= date)[0]
-            _, _index = np.unique(rec['px'], return_index=True)
+            _, _index = np.unique(rec['px'][index], return_index=True)
             index = index[_index]
             if index.shape[0] != 0:
                 raster[rec['py'][index],
