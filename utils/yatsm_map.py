@@ -7,7 +7,8 @@ Usage:
 Option:
     --band <bands>          Bands to export [default: all]
     --coef <coefs>          Coefficients to export [default: all]
-    --after                 Find next time segment if <date> is transition
+    --after                 Use time segment after <date> if needed
+    --before                Use time segment before <date> if needed
     --ndv <NoDataValue>     No data value for classifications [default: 0]
     -d --directory <dir>    Root time series directory [default: ./]
     -r --result <dir>       Directory of results [default: YATSM]
@@ -50,8 +51,7 @@ logger = logging.getLogger(__name__)
 # Possible coefficients
 _coefs = ['all', 'intercept', 'slope', 'seasonality', 'rmse']
 # Filters for CCDC results
-_record = 'yatsm_*'
-_directory = 'YATSM*'
+_result_record = 'yatsm_*'
 # number of days in year
 _days = 365.25
 w = 2 * np.pi / _days
@@ -82,64 +82,61 @@ def find_results(location, pattern):
     return records.sort()
 
 
-def get_classification(date, after, results, image_ds):
+def get_classification(date, after, before, results, image_ds,
+                       pattern=_result_record):
     """ Output raster with classification results
 
     Args:
-        date (int):     MATLAB datenum for prediction image
-        after (bool):   If date intersects a disturbed period, use next segment?
-        results (str):  Location of the CCDC results
-        image_ds (gdal.Dataset):    Example dataset
+      date (int): ordinal date for prediction image
+      after (bool): If date intersects a disturbed period, use next segment?
+      before (bool): If date intersects a disturbed period, use previous
+        segment?
+      results (str): Location of the results
+      image_ds (gdal.Dataset): Example dataset
+      pattern (str, optional): filename pattern of saved record results
 
     Returns:
-        A 2D numpy array containing the classification map for the date
-        specified
+      raster (np.array): 2D numpy array containing the classification map for
+        the date specified
 
     """
     # Init output raster
     raster = np.zeros((image_ds.RasterYSize, image_ds.RasterXSize),
                       dtype=np.uint8)
 
-    mats = find_results(results, _tsfitmapmat)
-    n_mat = len(mats)
+    records = find_results(results, pattern)
+    n_records = len(records)
 
-    # If we 'after' is True, we can also use first segment after a change
-    if after is True:
-        for i, m in enumerate(mats):
-            if np.mod(i, 100) == 0:
-                logger.debug('{0:.0f}%'.format(i / n_mat * 100))
+    for i, r in enumerate(records):
+        if np.mod(i, 100) == 0:
+            logger.debug('{0:.0f}%'.format(i / n_records * 100))
 
-            mat = spio.loadmat(m)['Map']
+        rec = np.load(r)['record']
 
-            # Find first matching record for the same position
-            index = np.where(mat[1, :] >= date)[0]
-            _, _index = np.unique(mat[2, index], return_index=True)
+        if not 'class' in rec.dtype.names:
+            raise ValueError('Record {r} does not have classification \
+                labels'.format(r=r))
+
+        # Find model before segment
+        if before:
+            index = np.where(rec['end'] <= date)[0]
+            if index.shape[0] != 0:
+                raster[rec['py'][index],
+                       rec['px'][index]] = rec['class'][index]
+        # Find model after segment
+        if after:
+            index = np.where(rec['start'] >= date)[0]
+            _, _index = np.unique(rec['px'], return_index=True)
             index = index[_index]
+            if index.shape[0] != 0:
+                raster[rec['py'][index],
+                       rec['px'][index]] = rec['class'][index]
 
-            if index.shape[0] == 0:
-                continue
-
-            [r, c] = np.unravel_index(mat[2, index] - 1, (raster.shape),
-                                      order='C')
-
-            raster[r, c] = mat[3, index]
-    else:
-        for i, m in enumerate(mats):
-            if np.mod(i, 100) == 0:
-                logger.debug('{0:.0f}%'.format(i / n_mat * 100))
-
-            mat = spio.loadmat(m)
-
-            # Find first matching record
-            index = np.where((mat[0, :] <= date) & (mat[1, :] >= date))
-
-            if index.shape[0] == 0:
-                continue
-
-            [r, c] = np.unravel_index(mat[2, index] - 1, (raster.shape),
-                                      order='C')
-
-            raster[r, c] = mat[3, index]
+        # Find model intersecting date
+        index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
+        if index.shape[0] != 0:
+            raster[rec['py'][index],
+                   rec['px'][index]] = rec['class'][index]
 
     return raster
 
@@ -162,6 +159,7 @@ def get_coefficients(date, after, bands, coefs, results, image_ds):
                                 dataset
 
     """
+    raise NotImplementedError("Haven't ported this yet...")
     # Find results
     mats = find_results(results, _rec_cg)
     n_mat = len(mats)
@@ -306,6 +304,7 @@ def get_prediction(date, after, bands, results, image_ds):
         A 3D numpy.ndarray containing the prediction for each band, for each
         pixel
     """
+    raise NotImplementedError("Haven't ported this yet...")
     # Find results
     mats = find_results(results, _rec_cg)
     n_mat = len(mats)
@@ -489,6 +488,7 @@ def main():
 
     # Go to next time segment option
     after = args['--after']
+    before = args['--before']
 
     # NDV
     try:
@@ -541,7 +541,7 @@ def main():
     band_names = None
 
     if args['class']:
-        raster = get_classification(date, after, results, image_ds)
+        raster = get_classification(date, after, before, results, image_ds)
     elif args['coef']:
         raster, band_names = \
             get_coefficients(date, after, bands, coefs, results, image_ds)
