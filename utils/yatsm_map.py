@@ -169,7 +169,6 @@ def get_coefficients(date, bands, coefs, results, image_ds,
                                 dataset
 
     """
-    # raise NotImplementedError("Haven't ported this yet...")
     # Find results
     records = find_results(results, pattern)
     n_records = len(records)
@@ -447,7 +446,7 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
 def main():
     """ Test input and pass to appropriate functions """
-    ### Parse input
+    ### Parse required input
     # Date for map
     date = args['<date>']
     date_format = args['--date']
@@ -467,29 +466,7 @@ def main():
             logger.error('Could not make output directory specified')
             raise
 
-    # Output bands
-    bands = args['--band']
-    if bands != 'all':
-        bands = bands.replace(',', ' ').split(' ')
-        try:
-            bands = [int(b) for b in bands if b != '']
-        except ValueError:
-            logger.error('Band specification must be "all" or integers')
-            raise
-        except:
-            logger.error('Could not parse band selection')
-            raise
-
-    # Coefficient options
-    coefs = [c for c in args['--coef'].replace(',', ' ').split(' ') if c != '']
-    if not all([c.lower() in _coefs for c in coefs]):
-        logger.error('Unknown coefficient options')
-        sys.exit(1)
-
-    # Go to next time segment option
-    after = args['--after']
-    before = args['--before']
-
+    ### Parse generic options
     # NDV
     try:
         ndv = float(args['--ndv'])
@@ -531,6 +508,35 @@ def main():
         logger.error('Unknown GDAL format specified')
         raise
 
+    ### Parse coefficient options
+    # Coefficients to output
+    coefs = [c for c in args['--coef'].replace(',', ' ').split(' ') if c != '']
+    if not all([c.lower() in _coefs for c in coefs]):
+        logger.error('Unknown coefficient options')
+        sys.exit(1)
+
+    # Bands to output
+    bands = args['--band']
+    if bands != 'all':
+        bands = bands.replace(',', ' ').split(' ')
+        try:
+            bands = [int(b) for b in bands if b != '']
+        except ValueError:
+            logger.error('Band specification must be "all" or integers')
+            raise
+        except:
+            logger.error('Could not parse band selection')
+            raise
+
+    ### Parse prediction options
+    freq = args['--freq']
+    freq = [int(n) for n in freq.replace(' ', ',').split(',') if n != '']
+
+    ### Classification outputs
+    # Go to next time segment option
+    after = args['--after']
+    before = args['--before']
+
     ### Produce output specified
     try:
         image_ds = gdal.Open(image, gdal.GA_ReadOnly)
@@ -546,7 +552,7 @@ def main():
         raster, band_names = \
             get_coefficients(date, bands, coefs, results, image_ds)
     elif args['predict']:
-        raster = get_prediction(date, bands, results, image_ds)
+        raster = get_prediction(date, freq, bands, results, image_ds)
 
     if args['class']:
         write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
