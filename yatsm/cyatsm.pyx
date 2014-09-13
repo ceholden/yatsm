@@ -47,5 +47,5 @@ def multitemp_mask(np.ndarray x, np.ndarray Y, double n_year,
     swir1_RLM = sm.RLM(Y[swir1, :], X.T,
                        M=sm.robust.norms.TukeyBiweight())
 
-    return np.logical_or(green_RLM.fit(maxiter=maxiter).resid < crit,
-                         swir1_RLM.fit(maxiter=maxiter).resid > -crit)
+    return np.logical_and(green_RLM.fit(maxiter=maxiter).resid < crit,
+                          swir1_RLM.fit(maxiter=maxiter).resid > -crit)
