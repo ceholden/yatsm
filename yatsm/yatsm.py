@@ -345,7 +345,8 @@ class YATSM(object):
             ('coef', 'float32', (self.n_coef, len(self.fit_indices))),
             ('rmse', 'float32', len(self.fit_indices)),
             ('px', 'u2'),
-            ('py', 'u2')
+            ('py', 'u2'),
+            ('magnitude', 'float32', len(self.fit_indices))
         ])
         self.record_template['px'][0] = px
         self.record_template['py'][0] = py
@@ -627,7 +628,11 @@ class YATSM(object):
         if np.all(mag > self.threshold):
             self.logger.debug('CHANGE DETECTED')
 
+            # Record break date
             self.record[self.n_record]['break'] = self.X[self.here + 1, 1]
+            # Record magnitude of difference for tested indices
+            self.record[self.n_record]['magnitude'][self.test_indices] = \
+                np.mean(scores, axis=0)
 
             self.record = np.append(self.record, self.record_template)
             self.n_record += 1
