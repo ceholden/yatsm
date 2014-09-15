@@ -175,6 +175,11 @@ def _parse_config_v_zero_pt_one(config):
         'YATSM', 'freq').replace(',', ' ').split(' ')
     yatsm_config['freq'] = [int(v) for v in yatsm_config['freq']
                             if v != '']
+    yatsm_config['test_indices'] = config.get(
+        'YATSM', 'test_indices').replace(',', ' ').split(' ')
+    yatsm_config['test_indices'] = np.array([int(b) for b in
+                                             yatsm_config['test_indices']
+                                             if b != ''])
     yatsm_config['screening'] = config.get('YATSM', 'screening')
     yatsm_config['lassocv'] = config.get('YATSM', 'lassocv').lower() == 'true'
     yatsm_config['reverse'] = config.get('YATSM', 'reverse').lower() == 'true'
@@ -298,6 +303,7 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                   threshold=yatsm_config['threshold'],
                   min_obs=yatsm_config['min_obs'],
                   min_rmse=yatsm_config['min_rmse'],
+                  test_indices=yatsm_config['test_indices'],
                   lassocv=yatsm_config['lassocv'],
                   screening=yatsm_config['screening'],
                   px=px,
