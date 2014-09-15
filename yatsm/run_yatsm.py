@@ -13,6 +13,10 @@ Options:
     --screening=<method>    Multi-temporal screening method [default: RLM]
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
+    --test_indices=<bands>  Test bands [default: ALL]
+    --omit_crit=<crit>      Critical value for omission test
+    --omit_behavior=<b>     Omission test behavior [default: ALL]
+    --omit_indices=<b>      Image indices used in omission test
     --plot_band=<b>         Band to plot for diagnostics [default: None]
     --plot_ylim=<lim>       Plot y-limits [default: None]
     -v --verbose            Show verbose debugging messages
@@ -185,6 +189,33 @@ if __name__ == '__main__':
     # Reverse run?
     reverse = args['--reverse']
 
+    # Test bands
+    test_bands = args['--test_indices']
+    if test_bands.lower() == 'all':
+        test_bands = None
+    else:
+        test_bands = np.array([int(b) for b in
+                               test_bands.replace(' ', ',').split(',')
+                               if b != ''])
+
+    # Omission test
+    omission_crit = args['--omit_crit']
+    if omission_crit:
+        omission_crit = float(omission_crit)
+        if omission_crit >= 1 or omission_crit <= 0:
+            raise ValueError(
+                'Omission test critical value must be between 0 - 1')
+
+    omission_behavior = args['--omit_behavior']
+    if omission_behavior.lower() not in ['all', 'any']:
+        raise TypeError('Unknown omission behavior type (must be ANY or ALL)')
+
+    omission_bands = args['--omit_indices']
+    if omission_bands:
+        omission_bands = [int(b) for b in
+                          omission_bands.replace(' ', ',').split(',')
+                          if b != '']
+
     # Plot band for debug
     plot_band = args['--plot_band']
     if plot_band == 'None':
@@ -222,17 +253,26 @@ if __name__ == '__main__':
             p = p + ylim(plot_ylim[0], plot_ylim[1])
         print(p)
 
+    # Run model
     if reverse:
-        yatsm = YATSM(np.flipud(X), np.fliplr(Y),
+        _X = np.flipud(X)
+        _Y = np.fliplr(Y)
+    else:
+        _X = X
+        _Y = Y
+
+    if test_bands is not None:
+        yatsm = YATSM(_X, _Y,
                       consecutive=consecutive,
                       threshold=threshold,
                       min_obs=min_obs,
                       min_rmse=min_rmse,
                       screening=screening,
+                      test_indices=test_bands,
                       lassocv=lassocv,
                       logger=logger)
     else:
-        yatsm = YATSM(X, Y,
+        yatsm = YATSM(_X, _Y,
                       consecutive=consecutive,
                       threshold=threshold,
                       min_obs=min_obs,
@@ -249,8 +289,11 @@ if __name__ == '__main__':
 
     make_plot()
 
-    print('Omission test (alpha = 0.10):')
-    print('    ANY bands?:')
-    print(yatsm.omission_test(crit=0.10, behavior='any'))
-    print('    ALL bands?:')
-    print(yatsm.omission_test(crit=0.10, behavior='all'))
+    if omission_crit:
+        print('Omission test (alpha = {a}):'.format(a=omission_crit))
+        if omission_bands or test_bands:
+            print('    {b} indices?:'.format(b=omission_bands if omission_bands
+                                             else test_bands))
+        print(yatsm.omission_test(crit=omission_crit,
+                                  behavior=omission_behavior,
+                                  indices=omission_bands))
