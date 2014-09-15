@@ -357,7 +357,8 @@ class YATSM(object):
         """ Merge adjacent records based on nested F test """
         pass
 
-    def omission_test(self, crit=0.05, behavior='ANY'):
+    def omission_test(self, crit=0.05, behavior='ANY',
+                      indices=None):
         """ Add omitted breakpoint into records based on residual stationarity
 
         Uses recursive residuals within a CUMSUM test to check if each model
@@ -366,12 +367,14 @@ class YATSM(object):
         on result from `statsmodels.stats.diagnostic.breaks_cusumolsresid`.
 
         Args:
-          crit (float, optional): critical p-value for rejection of null
+          crit (float, optional): Critical p-value for rejection of null
             hypothesis that data contain no structural change
-          behavior (str, optional): method for dealing with multiple
+          behavior (str, optional): Method for dealing with multiple
             `test_indices`. `ANY` will return True if any one test index
             rejects the null hypothesis. `ALL` will only return True if ALL
             test indices reject the null hypothesis.
+          indices (np.ndarray, optional): Array indices to test. User provided
+            indices must be a subset of `self.test_indices`.
 
         Returns:
           omission (np.ndarray): Array of True or False for each record where
@@ -383,10 +386,17 @@ class YATSM(object):
         if behavior.lower() not in ['any', 'all']:
             raise ValueError('`behavior` must be "any" or "all"')
 
+        if not indices:
+            indices = self.test_indices
+
+        if not np.all(np.in1d(indices, self.test_indices)):
+            raise ValueError('`indices` must be a subset of '
+                             '`self.test_indices`')
+
         if not self.ran:
             return np.empty(0, dtype=bool)
 
-        omission = np.zeros((self.record.size, len(self.test_indices)),
+        omission = np.zeros((self.record.size, len(indices)),
                             dtype=bool)
 
         for i, r in enumerate(self.record):
@@ -400,7 +410,7 @@ class YATSM(object):
             _X = self.X[index, :]
             _Y = self.Y[:, index]
 
-            for i_b, b in enumerate(self.test_indices):
+            for i_b, b in enumerate(indices):
                 # Create OLS regression
                 ols = sm.OLS(_Y[b, :], _X).fit()
                 # Perform CUMSUM test on residuals
