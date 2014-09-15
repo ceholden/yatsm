@@ -19,6 +19,11 @@ green_band = 1
 swir1_band = 4
 
 
+class TSLengthException(Exception):
+    """ Exception stating Timeseries length is too short """
+    pass
+
+
 class GLMLasso(ElasticNet):
 
     def __init__(self, alpha=1.0):
@@ -326,7 +331,7 @@ class YATSM(object):
         self._here = self.here
 
         if self.X.shape[0] < self.here + self.consecutive:
-            raise Exception('Not enough observations (n = {n})'.format(
+            raise TSLengthException('Not enough observations (n = {n})'.format(
                 n=self.X.shape[0]))
 
         # Record if model has been trained

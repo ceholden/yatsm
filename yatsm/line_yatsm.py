@@ -32,7 +32,7 @@ from osgeo import gdal
 from osgeo import gdal_array
 
 from version import __version__
-from yatsm import make_X, YATSM
+from yatsm import make_X, YATSM, TSLengthException
 
 
 # Log setup for runner
@@ -247,8 +247,11 @@ def run_line(line, X, images,
     logger.setLevel(loglevel_YATSM)
 
     for c in xrange(Y.shape[-1]):
-        result = run_pixel(X, Y[..., c], dataset_config, yatsm_config,
-                           px=c, py=line)
+        try:
+            result = run_pixel(X, Y[..., c], dataset_config, yatsm_config,
+                               px=c, py=line)
+        except TSLengthException:
+            continue
         output.extend(result)
 
     # Return logging level
