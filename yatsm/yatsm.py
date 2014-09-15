@@ -145,7 +145,8 @@ def multitemp_mask(x, Y, n_year, crit=400,
     return mask
 
 
-def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
+def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band,
+                maxiter=5):
     """ Multi-temporal masking using LOWESS
 
     Taken directly from newer version of CCDC than Zhu and Woodcock, 2014. This
@@ -165,6 +166,8 @@ def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
       crit (float, optional): critical value for masking clouds/shadows
       green (int, optional): 0 indexed value for green band in Y
       swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
+      maxiter (int, optional): maximum increases to span when checking for
+        NaN in LOWESS results
 
     Returns:
       mask (ndarray): mask where False indicates values to be masked
@@ -179,41 +182,38 @@ def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band):
     # Estimate delta as "good choice": delta = 0.01 * range(exog)
     delta = (x.max() - x.min()) * 0.01
 
-    green_lowess = sm.nonparametric.lowess(Y[green, :], x,
-                                           frac=frac, delta=delta)
-    swir1_lowess = sm.nonparametric.lowess(Y[swir1, :], x,
-                                           frac=frac, delta=delta)
+    # Run LOWESS checking for NaN in output
+    i = 0
+    green_lowess, swir1_lowess = np.nan, np.nan
+    while (np.any(np.isnan(green_lowess)) or
+           np.any(np.isnan(swir1_lowess))) and i < maxiter:
+        green_lowess = sm.nonparametric.lowess(Y[green, :], x,
+                                               frac=frac, delta=delta)
+        swir1_lowess = sm.nonparametric.lowess(Y[swir1, :], x,
+                                               frac=frac, delta=delta)
+        span += 1
+        frac = span / x.shape[0]
+        i += 1
 
     mask = np.logical_and((Y[green, :] - green_lowess[:, 1]) < crit,
                           (Y[swir1, :] - swir1_lowess[:, 1]) > -crit)
 
-    # train_plot_debug(x, Y, mask, green_lowess[:, 1])
-
+#    train_plot_debug(x, Y, mask, swir1_lowess)
+#    train_plot_debug(x, Y, mask, green_lowess, band=1)
     return mask
 
 
-def train_plot_debug(x, Y, mask, fit):
+def train_plot_debug(x, Y, mask, fit, band=4):
     """ Training / historical period multitemporal cloud masking debug """
-    from ggplot import ggplot, geom_point, xlab, ylab, ggtitle, aes, geom_line
-    import pandas as pd
+    import matplotlib.pyplot as plt
 
-    cols = np.repeat('clear', x.shape[0])
+    clear = np.where(mask == 1)[0]
+    cloud = np.where(mask == 0)[0]
 
-    cols[mask == 0] = 'noise'
-
-    df = pd.DataFrame({'X': x,
-                       'Y': Y[4, :],
-                       'mask': cols,
-                       'fit': fit
-    })
-
-    print(ggplot(aes('X', 'Y', color='mask'), df) +
-          geom_point() +
-          geom_line(aes(y='fit')) +
-          xlab('Ordinal Date') +
-          ylab('B5 Reflectance')  # +
-          #ggtitle('Cloud Screening - segment: {i}'.format(i=self.n_record))
-          )
+    plt.plot(x[clear], Y[band, clear], 'ko', ls='')
+    plt.plot(x[cloud], Y[band, cloud], 'rx', ls='')
+    plt.plot(fit[:, 0], fit[:, 1], 'b-')
+    plt.show()
 
 
 class YATSM(object):
