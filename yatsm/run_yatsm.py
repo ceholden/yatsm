@@ -248,3 +248,9 @@ if __name__ == '__main__':
     print(breakpoints)
 
     make_plot()
+
+    print('Omission test (alpha = 0.10):')
+    print('    ANY bands?:')
+    print(yatsm.omission_test(crit=0.10, behavior='any'))
+    print('    ALL bands?:')
+    print(yatsm.omission_test(crit=0.10, behavior='all'))

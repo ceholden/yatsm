@@ -357,10 +357,66 @@ class YATSM(object):
         """ Merge adjacent records based on nested F test """
         pass
 
-    def omission_test(self, crit):
+    def omission_test(self, crit=0.05, behavior='ANY'):
         """ Add omitted breakpoint into records based on residual stationarity
+
+        Uses recursive residuals within a CUMSUM test to check if each model
+        has omitted a "structural change" (e.g., land cover change). Returns
+        an array of True or False for each timeseries segment record depending
+        on result from `statsmodels.stats.diagnostic.breaks_cusumolsresid`.
+
+        Args:
+          crit (float, optional): critical p-value for rejection of null
+            hypothesis that data contain no structural change
+          behavior (str, optional): method for dealing with multiple
+            `test_indices`. `ANY` will return True if any one test index
+            rejects the null hypothesis. `ALL` will only return True if ALL
+            test indices reject the null hypothesis.
+
+        Returns:
+          omission (np.ndarray): Array of True or False for each record where
+            True indicates omitted break point
+
         """
-        pass
+        import statsmodels.api as sm
+
+        if behavior.lower() not in ['any', 'all']:
+            raise ValueError('`behavior` must be "any" or "all"')
+
+        if not self.ran:
+            return np.empty(0, dtype=bool)
+
+        omission = np.zeros((self.record.size, len(self.test_indices)),
+                            dtype=bool)
+
+        for i, r in enumerate(self.record):
+            # Skip if no model fit
+            if r['start'] == 0 or r['end'] == 0:
+                continue
+            # Find matching X and Y in data
+            index = np.where((self.X[:, 1] >= min(r['start'], r['end'])) &
+                             (self.X[:, 1] <= max(r['end'], r['start'])))[0]
+            # Grab matching X and Y
+            _X = self.X[index, :]
+            _Y = self.Y[:, index]
+
+            for i_b, b in enumerate(self.test_indices):
+                # Create OLS regression
+                ols = sm.OLS(_Y[b, :], _X).fit()
+                # Perform CUMSUM test on residuals
+                test = sm.stats.diagnostic.breaks_cusumolsresid(
+                    ols.resid, _X.shape[1])
+
+                if test[1] < crit:
+                    omission[i, i_b] = True
+                else:
+                    omission[i, i_b] = False
+
+        # Collapse band answers according to `behavior`
+        if behavior.lower() == 'any':
+            return np.any(omission, 1)
+        else:
+            return np.all(omission, 1)
 
     @property
     def robust_record(self):
