@@ -168,7 +168,7 @@ def _parse_config_v_zero_pt_one(config):
     yatsm_config = {}
 
     yatsm_config['consecutive'] = int(config.get('YATSM', 'consecutive'))
-    yatsm_config['threshold'] = int(config.get('YATSM', 'threshold'))
+    yatsm_config['threshold'] = float(config.get('YATSM', 'threshold'))
     yatsm_config['min_obs'] = int(config.get('YATSM', 'min_obs'))
     yatsm_config['min_rmse'] = float(config.get('YATSM', 'min_rmse'))
     yatsm_config['freq'] = config.get(
