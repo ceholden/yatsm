@@ -24,6 +24,7 @@ from datetime import datetime as dt
 import logging
 import os
 import sys
+import time
 
 from docopt import docopt
 
@@ -369,8 +370,9 @@ def main(dataset_config, yatsm_config, check=False, resume=False):
                 del z
                 logger.info('Already processed line {l}'.format(l=job_line))
                 continue
+        logger.debug('Running line {l}'.format(l=job_line))
+        start_time = time.time()
         try:
-            logger.debug('Running line {l}'.format(l=job_line))
             run_line(job_line, X, images,
                      dataset_config, yatsm_config,
                      nrow, ncol, nband, dtype,
@@ -378,6 +380,8 @@ def main(dataset_config, yatsm_config, check=False, resume=False):
         except:
             logger.error('Could not process line {l}'.format(l=job_line))
             raise
+        logger.debug('Took {s}s to run'.format(
+                s=round(time.time() - start_time, 2)))
 
 
 if __name__ == '__main__':
