@@ -291,7 +291,8 @@ if __name__ == '__main__':
 
     if omission_crit:
         print('Omission test (alpha = {a}):'.format(a=omission_crit))
-        if omission_bands or test_bands:
+        if isinstance(omission_bands, np.ndarray) or \
+                isinstance(test_bands, np.ndarray) is not None:
             print('    {b} indices?:'.format(b=omission_bands if omission_bands
                                              else test_bands))
         print(yatsm.omission_test(crit=omission_crit,
