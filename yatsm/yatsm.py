@@ -628,6 +628,13 @@ class YATSM(object):
         if not self.screen_timeseries():
             return
 
+        # Test if we can still run after noise removal
+        if self.here >= self._X.shape[0]:
+            self.logger.debug(
+                'Not enough observations to proceed after noise removal')
+            raise TSLengthException(
+                'Not enough observations after noise removal')
+
         # After noise removal, try to fit models
         models = self.fit_models(self._X, self._Y, bands=self.test_indices)
 
