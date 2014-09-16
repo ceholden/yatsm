@@ -269,7 +269,7 @@ def run_line(line, X, images,
              min_obs=yatsm_config['min_obs'],
              min_rmse=yatsm_config['min_rmse'],
              screening=yatsm_config['screening'],
-             lasso_cv=yatsm_config['lasso_cv'],
+             lassocv=yatsm_config['lassocv'],
              reverse=yatsm_config['reverse'],
              freq=yatsm_config['freq'],
              record=np.array(output))
