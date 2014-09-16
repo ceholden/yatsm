@@ -75,7 +75,8 @@ def preprocess(location, px, py, freq):
     Y = ts.get_data(mask=False)
 
     # Filter out time series and remove Fmask
-    clear = Y[7, :] <= 1
+    clear = np.logical_and(Y[fmask, :] <= 1,
+                           np.all(Y <= 10000, axis=0))
     Y = Y[:, clear][:fmask, :]
     x = x[clear]
 
