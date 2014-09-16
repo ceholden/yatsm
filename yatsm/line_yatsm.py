@@ -66,6 +66,12 @@ def calculate_lines(nrow):
     return np.array(rows)
 
 
+def get_output_name(dataset_config, line):
+    """ Returns output name for specified config and line number """
+    return os.path.join(dataset_config['output'],
+                        'yatsm_r{line}'.format(line=line) + '.npz')
+
+
 # IMAGE DATASET READING
 def find_images(input_file, date_format='%Y-%j'):
     """ Return sorted filenames of images from input text file
@@ -258,8 +264,7 @@ def run_line(line, X, images,
     logger.setLevel(_level)
 
     # Save output
-    outfile = os.path.join(dataset_config['output'],
-                           'yatsm_r{line}'.format(line=line))
+    outfile = get_output_name(dataset_config, line)
     logger.debug('    saving YATSM output to {f}'.format(f=outfile))
 
     np.savez(outfile,
@@ -321,7 +326,7 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
     return yatsm.record
 
 
-def main(dataset_config, yatsm_config, check=False):
+def main(dataset_config, yatsm_config, check=False, resume=False):
     """ Read in dataset and YATSM for a complete line """
     # Read in dataset
     dates, images = find_images(dataset_config['input_file'])
@@ -355,6 +360,15 @@ def main(dataset_config, yatsm_config, check=False):
     # Start running YATSM
     logger.info('Starting to run lines')
     for job_line in job_lines:
+        if resume:
+            try:
+                z = np.load(get_output_name(dataset_config, job_line))
+            except:
+                pass
+            else:
+                del z
+                logger.info('Already processed line {l}'.format(l=job_line))
+                continue
         try:
             logger.debug('Running line {l}'.format(l=job_line))
             run_line(job_line, X, images,
@@ -397,8 +411,9 @@ if __name__ == '__main__':
     check = args['--check']
 
     # Resume?
+    resume = False
     if args['--resume']:
-        raise NotImplementedError('TODO: add resume feature')
+        resume = True
 
     # Setup logger
     if args['--verbose']:
@@ -427,4 +442,4 @@ if __name__ == '__main__':
             raise
 
     # Run YATSM
-    main(dataset_config, yatsm_config, check=check)
+    main(dataset_config, yatsm_config, check=check, resume=resume)
