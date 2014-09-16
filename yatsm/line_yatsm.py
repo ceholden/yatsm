@@ -292,6 +292,10 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
     """
     # Mask
     mask_band = dataset_config['mask_band']
+    # Continue if clear observations are less than 50% of dataset
+    if (Y[mask_band, :] < 255).sum() < Y.shape[1] / 2.0:
+        return [None]
+    # Otherwise continue
     clear = Y[mask_band, :] <= 1
     Y = Y[:mask_band, clear]
     X = X[clear, :]
