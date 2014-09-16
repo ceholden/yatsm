@@ -259,6 +259,7 @@ def run_line(line, X, images,
                                px=c, py=line)
         except TSLengthException:
             continue
+
         output.extend(result)
 
     # Return logging level
@@ -298,9 +299,11 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
     """
     # Mask
     mask_band = dataset_config['mask_band']
+
     # Continue if clear observations are less than 50% of dataset
     if (Y[mask_band, :] < 255).sum() < Y.shape[1] / 2.0:
-        return [None]
+        raise TSLengthException('Not enough valid observations')
+
     # Otherwise continue
     clear = Y[mask_band, :] <= 1
     Y = Y[:mask_band, clear]
