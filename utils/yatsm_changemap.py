@@ -5,17 +5,22 @@ Usage:
     yatsm_changemap.py [options] <start_date> <end_date> <output>
 
 Options:
-    --out_date <format>     Output date format [default: %Y%j]
     --firstchange           Show first change instead of last
     --samechange <lut>      Use LUT to eliminate changes to/from same class
-    --ndv <NoDataValue>     No data value for map [default: 0]
-    -d --directory <dir>    Root time series directory [default: ./]
-    -r --result <dir>       Directory of results [default: YATSM]
-    -i --image <image>      Example image [default: example_img]
-    --date <format>         Date format [default: %Y-%m-%d]
-    -f --format <format>    Output raster format [default: GTiff]
+    --magnitude             Add magnitude of change as extra bands
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
+
+Input options:
+    --in_date <format>      Input date format [default: %Y-%m-%d]
+    --root <dir>            Root time series directory [default: ./]
+    --result <dir>          Directory of results [default: YATSM]
+    --image <image>         Example image [default: example_img]
+
+Output options:
+    --out_date <format>     Output date format [default: %Y%j]
+    --ndv <NoDataValue>     No data value for map [default: 0]
+    -f --format <format>    Output raster format [default: GTiff]
 
 Examples:
     # TODO
@@ -75,7 +80,8 @@ def find_results(location, pattern):
 def get_changemap(start, end, results, image_ds,
                   out_format='%Y%j',
                   first=False, lut=None,
-                  ndv=-9999, pattern=_result_record):
+                  ndv=-9999, pattern=_result_record,
+                  magnitude=False):
     """ Output raster with changemap
 
     Args:
@@ -88,10 +94,12 @@ def get_changemap(start, end, results, image_ds,
       lut (np.array): 2 column lookup table for determining "same change"
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
+      magnitude (bool, optional): output magnitude of each change?
 
     Returns:
-      raster (np.array): 2D numpy array containing the changes between the
-        start and end date
+      raster (np.array): 3D numpy array containing the changes between the
+        start and end date, and the change magnitude of each change if
+        specified
 
     """
     # Find results
@@ -184,13 +192,14 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 def main():
     """ Test input and pass to appropriate functions """
     ### Parse required input
-    date_format = args['--date']
+    date_format = args['--in_date']
     # Start date for map
     start = args['<start_date>']
     try:
         start = dt.strptime(start, date_format)
     except:
-        logger.error('Could not parse start date')
+        logger.error('Could not parse start date {d} with format f'.format(
+            d=start, f=date_format))
         raise
     start = start.toordinal()
 
@@ -199,14 +208,14 @@ def main():
     try:
         end = dt.strptime(end, date_format)
     except:
-        logger.error('Could not parse end date')
+        logger.error('Could not parse end date {d} with format f'.format(
+            d=start, f=date_format))
         raise
     end = end.toordinal()
 
     if start >= end:
         logger.error('Start date cannot be later than or equal to end')
         sys.exit(1)
-
     logger.debug('Making map of changes over {n} days'.format(n=end-start))
 
     # Output name
@@ -218,38 +227,18 @@ def main():
             logger.error('Could not make output directory specified')
             raise
 
-    ### Parse map options
-    out_format = args['--out_date']
-    if out_format != 'ordinal':
-        try:
-            test = dt.today().strftime(out_format)
-        except:
-            logger.error('Could not parse output date format')
-            raise
-        try:
-            test = int(test)
-        except ValueError:
-            logger.error('Cannot use output date format which uses characters')
-            sys.exit(1)
-        logger.debug('Outputting map using format {f}'.format(f=out_format))
-    else:
-        logger.debug('Outputting map using ordinal dates')
-
+    ### Map options
     first = args['--firstchange']
     lut = args['--samechange']
     if lut:
         raise NotImplementedError("Haven't written LUT parser")
+    magnitude = args['--magnitude']
+    if magnitude:
+        raise NotImplementedError("Haven't written magnitude parser yet")
 
-    ### Parse generic options
-    # NDV
-    try:
-        ndv = float(args['--ndv'])
-    except ValueError:
-        logger.error('NoDataValue must be a real number')
-        raise
-
+    ### Input options
     # Root directory
-    root = args['--directory']
+    root = args['--root']
     if not os.path.isdir(root):
         logger.error('Root directory is not a directory')
         sys.exit(1)
@@ -274,6 +263,30 @@ def main():
             sys.exit(1)
     image = os.path.abspath(image)
 
+    ### Output options
+    out_format = args['--out_date']
+    if out_format != 'ordinal':
+        try:
+            test = dt.today().strftime(out_format)
+        except:
+            logger.error('Could not parse output date format')
+            raise
+        try:
+            test = int(test)
+        except ValueError:
+            logger.error('Cannot use output date format which uses characters')
+            sys.exit(1)
+        logger.debug('Outputting map using format {f}'.format(f=out_format))
+    else:
+        logger.debug('Outputting map using ordinal dates')
+
+    # NDV
+    try:
+        ndv = float(args['--ndv'])
+    except ValueError:
+        logger.error('NoDataValue must be a real number')
+        raise
+
     # Raster file format
     gdal_frmt = args['--format']
     try:
@@ -293,12 +306,15 @@ def main():
     changemap = get_changemap(start, end, results, image_ds,
                               out_format=out_format,
                               first=first, lut=lut,
-                              ndv=ndv, pattern=_result_record)
+                              ndv=ndv, pattern=_result_record,
+                              magnitude=magnitude)
 
     start_txt = dt.fromordinal(start).strftime('%Y%j')
     end_txt = dt.fromordinal(end).strftime('%Y%j')
+    band_names = ['Change_s{s}-e{e}'.format(s=start_txt, e=end_txt)]
+
     write_output(changemap, output, image_ds, gdal_frmt, ndv,
-                 ['Change_s{s}-e{e}'.format(s=start_txt, e=end_txt)])
+                 band_names=band_names)
 
     image_ds = None
 
