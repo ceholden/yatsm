@@ -326,12 +326,12 @@ def get_coefficients(date, bands, coefs, results, image_ds,
                 (rec['start'][i] + rec['end'][i]) / 2.0 * rec['coef'][i][1, :]
 
             # Extract coefficients
-            raster[rec['px'][i], rec['py'][i], range(n_coefs * n_bands)] = \
+            raster[rec['py'][i], rec['px'][i], range(n_coefs * n_bands)] = \
                 rec['coef'][i][i_coefs, :][:, i_bands].flatten()
 
             # Extract RMSE
             if use_rmse is True:
-                raster[rec['px'][i], rec['py'][i], n_coefs * n_bands:] = \
+                raster[rec['py'][i], rec['px'][i], n_coefs * n_bands:] = \
                     rec['rmse'][i][i_bands]
 
     return (raster, band_names)
@@ -425,7 +425,7 @@ def get_prediction(date, freq, bands, results, image_ds,
         for i in index:
             for i_b, b in enumerate(i_bands):
                 # Calculate predicted image
-                raster[rec['px'][i], rec['py'][i], i_b] = \
+                raster[rec['py'][i], rec['px'][i], i_b] = \
                     np.dot(rec['coef'][i][:, b], X)
 
     return raster
