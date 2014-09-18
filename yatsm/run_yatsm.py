@@ -17,8 +17,8 @@ Options:
     --omit_crit=<crit>      Critical value for omission test
     --omit_behavior=<b>     Omission test behavior [default: ALL]
     --omit_indices=<b>      Image indices used in omission test
-    --plot_band=<b>         Band to plot for diagnostics [default: None]
-    --plot_ylim=<lim>       Plot y-limits [default: None]
+    --plot_index=<b>        Index of band to plot for diagnostics
+    --plot_ylim=<lim>       Plot y-limits
     -v --verbose            Show verbose debugging messages
     -h --help               Show help
 
@@ -31,7 +31,7 @@ Example:
 
         > run_yatsm.py --consecutive=5 --threshold=3
         ...     --min_obs=16 --freq=1
-        ...     --plot_band=5 --plot_ylim "1000 4000"
+        ...     --plot_index=5 --plot_ylim "1000 4000"
         ...     ../../landsat_stack/p022r049/images/ 125 125
 
 """
@@ -50,6 +50,9 @@ from ggplot import *
 
 from yatsm import YATSM, make_X
 from ts_driver.timeseries_ccdc import CCDCTimeSeries
+
+from IPython.core.debugger import Pdb
+
 
 # Some constants
 ndays = 365.25
@@ -89,62 +92,52 @@ def preprocess(location, px, py, freq):
 
 
 def make_plot():
-    if plot_band:
-        # Get qualitative color map
-        import brewer2mpl
-        # Color map ncolors goes from 3 - 9
-        ncolors = min(9, max(3, len(yatsm.record)))
-        # Repeat if number of segments > 9
-        repeat = int(math.ceil(len(yatsm.record) / 9.0))
+    # Get qualitative color map
+    import brewer2mpl
+    # Color map ncolors goes from 3 - 9
+    ncolors = min(9, max(3, len(yatsm.record)))
+    # Repeat if number of segments > 9
+    repeat = int(math.ceil(len(yatsm.record) / 9.0))
+    colors = brewer2mpl.get_map('set1',
+                                'qualitative',
+                                ncolors).hex_colors * repeat
+    if reverse:
+        i_step = -1
+    else:
+        i_step = 1
 
-        colors = brewer2mpl.get_map('set1',
-                                    'qualitative',
-                                    ncolors).hex_colors * repeat
+    # Add in deleted obs
+    deleted = ~np.in1d(Y[plot_index, :], yatsm.Y[plot_index, :])
+    point_colors = np.repeat('black', X.shape[0])
+    point_colors[deleted] = 'red'
 
-        if reverse:
-            i_step = -1
-        else:
-            i_step = 1
+    p = ggplot(aes('date', df.columns[plot_index]), df) + \
+        geom_point(color=point_colors)
 
-        #p = ggplot(aes('date', 'b' + str(plot_band)), df) + \
-        #    geom_point()
-        #from IPython.core.debugger import Pdb
-        #Pdb().set_trace()
-        # Add in deleted obs
-        deleted = np.in1d(Y[plot_band, :], yatsm.Y[plot_band, :]) == False
-        point_colors = np.repeat('black', X.shape[0])
-        point_colors[deleted] = 'red'
-
-        p = ggplot(aes('date', 'b' + str(plot_band)), df) + \
-            geom_point(color=point_colors)
-
-        for i, r in enumerate(yatsm.record):
-            # Setup dummy dataframe for predictions
-            ts_df = pd.DataFrame(
-                {'x': np.arange(r['start'], r['end'], i_step)})
-            # Get predictions
-            ts_df['y'] = np.dot(r['coef'][:, plot_band - 1],
-                                make_X(ts_df['x'], freq))
-            ts_df['date'] = np.array(
-                [dt.fromordinal(int(_d)) for _d in ts_df['x']])
-
-            # Add line to ggplot
-            p = p + geom_line(aes('date', 'y'), ts_df, color=colors[i])
-            # If there is a break in this timeseries, add it as vertical line
-            if r['break'] != 0:
-                p = p + \
-                    geom_vline(
-                        xintercept=dt.fromordinal(r['break']), color='red')
-
-        if plot_ylim:
-            p = p + ylim(plot_ylim[0], plot_ylim[1])
-
-        # Show graph
-        if reverse:
-            title = 'Reverse'
-        else:
-            title = 'Forward'
-        print(p + ggtitle(title))
+    for i, r in enumerate(yatsm.record):
+        # Setup dummy dataframe for predictions
+        ts_df = pd.DataFrame(
+            {'x': np.arange(r['start'], r['end'], i_step)})
+        # Get predictions
+        ts_df['y'] = np.dot(r['coef'][:, plot_index],
+                            make_X(ts_df['x'], freq))
+        ts_df['date'] = np.array(
+            [dt.fromordinal(int(_d)) for _d in ts_df['x']])
+        # Add line to ggplot
+        p = p + geom_line(aes('date', 'y'), ts_df, color=colors[i])
+        # If there is a break in this timeseries, add it as vertical line
+        if r['break'] != 0:
+            p = p + \
+                geom_vline(
+                    xintercept=dt.fromordinal(r['break']), color='red')
+    if plot_ylim:
+        p = p + ylim(plot_ylim[0], plot_ylim[1])
+    # Show graph
+    if reverse:
+        title = 'Reverse'
+    else:
+        title = 'Forward'
+    print(p + ggtitle(title))
 
 
 if __name__ == '__main__':
@@ -191,13 +184,13 @@ if __name__ == '__main__':
     reverse = args['--reverse']
 
     # Test bands
-    test_bands = args['--test_indices']
-    if test_bands.lower() == 'all':
-        test_bands = None
+    test_indices = args['--test_indices']
+    if test_indices.lower() == 'all':
+        test_indices = None
     else:
-        test_bands = np.array([int(b) for b in
-                               test_bands.replace(' ', ',').split(',')
-                               if b != ''])
+        test_indices = np.array([int(b) for b in
+                                test_indices.replace(' ', ',').split(',')
+                                if b != ''])
 
     # Omission test
     omission_crit = args['--omit_crit']
@@ -218,11 +211,11 @@ if __name__ == '__main__':
                           if b != '']
 
     # Plot band for debug
-    plot_band = args['--plot_band']
-    if plot_band == 'None':
-        plot_band = None
+    plot_index = args['--plot_index']
+    if plot_index == 'None':
+        plot_index = None
     else:
-        plot_band = int(plot_band)
+        plot_index = int(plot_index)
 
     plot_ylim = args['--plot_ylim']
     if plot_ylim.lower() == 'none':
@@ -248,8 +241,8 @@ if __name__ == '__main__':
     df.index = df['B1']
     df['date'] = ts.dates[clear]
 
-    if plot_band:
-        p = ggplot(aes('date', 'b' + str(plot_band)), df) + geom_point()
+    if plot_index:
+        p = ggplot(aes('date', df.columns[plot_index]), df) + geom_point()
         if plot_ylim:
             p = p + ylim(plot_ylim[0], plot_ylim[1])
         print(p)
@@ -262,40 +255,32 @@ if __name__ == '__main__':
         _X = X
         _Y = Y
 
-    if test_bands is not None:
-        yatsm = YATSM(_X, _Y,
-                      consecutive=consecutive,
-                      threshold=threshold,
-                      min_obs=min_obs,
-                      min_rmse=min_rmse,
-                      screening=screening,
-                      test_indices=test_bands,
-                      lassocv=lassocv,
-                      logger=logger)
-    else:
-        yatsm = YATSM(_X, _Y,
-                      consecutive=consecutive,
-                      threshold=threshold,
-                      min_obs=min_obs,
-                      min_rmse=min_rmse,
-                      screening=screening,
-                      lassocv=lassocv,
-                      logger=logger)
+    yatsm = YATSM(_X, _Y,
+                  consecutive=consecutive,
+                  threshold=threshold,
+                  min_obs=min_obs,
+                  min_rmse=min_rmse,
+                  screening=screening,
+                  test_indices=test_indices,
+                  lassocv=lassocv,
+                  logger=logger)
     yatsm.run()
 
-    breakpoints = yatsm.record['break']
+    breakpoints = yatsm.record['break'][yatsm.record['break'] != 0]
 
     print('Found {n} breakpoints'.format(n=breakpoints.size))
-    print(breakpoints)
+    if breakpoints.size > 0:
+        print(breakpoints)
 
-    make_plot()
+    if plot_index:
+        make_plot()
 
     if omission_crit:
         print('Omission test (alpha = {a}):'.format(a=omission_crit))
         if isinstance(omission_bands, np.ndarray) or \
-                isinstance(test_bands, np.ndarray) is not None:
+                isinstance(test_indices, np.ndarray) is not None:
             print('    {b} indices?:'.format(b=omission_bands if omission_bands
-                                             else test_bands))
+                                             else test_indices))
         print(yatsm.omission_test(crit=omission_crit,
                                   behavior=omission_behavior,
                                   indices=omission_bands))
