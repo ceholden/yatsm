@@ -6,7 +6,7 @@ Usage:
 
 Options:
     --ndv <NoDataValue>     No data value for map [default: 0]
-    -d --directory <dir>    Root time series directory [default: ./]
+    --root <dir>           Root time series directory [default: ./]
     -r --result <dir>       Directory of results [default: YATSM]
     -i --image <image>      Example image [default: example_img]
     --date <format>         Date format [default: %Y-%m-%d]
@@ -26,12 +26,12 @@ Class options:
     --before                Use time segment before <date> if needed for map
 
 Examples:
-    yatsm_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
-        2000-01-01 coef_map.gtif
+    > yatsm_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
+    ... 2000-01-01 coef_map.gtif
 
-    yatsm_map.py --date "%Y-%j" predict 2000-001 prediction.gtif
+    > yatsm_map.py --date "%Y-%j" predict 2000-001 prediction.gtif
 
-    yatsm_map.py --result "YATSM_new" --after class 2000-01-01 LCmap.gtif
+    > yatsm_map.py --result "YATSM_new" --after class 2000-01-01 LCmap.gtif
 
 """
 from __future__ import division, print_function
@@ -506,7 +506,7 @@ def main():
         raise
 
     # Root directory
-    root = args['--directory']
+    root = args['--root']
     if not os.path.isdir(root):
         logger.error('Root directory is not a directory')
         sys.exit(1)
