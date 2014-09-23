@@ -37,7 +37,7 @@ from yatsm import make_X, YATSM, TSLengthException
 
 
 # Log setup for runner
-logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
+logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                     level=logging.INFO,
                     datefmt='%H:%M:%S')
 logger = logging.getLogger(__name__)
@@ -103,7 +103,6 @@ def find_images(input_file, date_format='%Y-%j'):
             dt.strptime(row[i_date], date_format).toordinal()
         except:
             logger.debug('Could not parse first column to ordinal date')
-
             try:
                 dt.strptime(row[i_image], date_format).toordinal()
             except:
@@ -334,7 +333,8 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
 def main(dataset_config, yatsm_config, check=False, resume=False):
     """ Read in dataset and YATSM for a complete line """
     # Read in dataset
-    dates, images = find_images(dataset_config['input_file'])
+    dates, images = find_images(dataset_config['input_file'],
+                                date_format=dataset_config['date_format'])
 
     # Check for existence of files and remove missing
     if check:
