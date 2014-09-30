@@ -189,6 +189,7 @@ def _parse_config_v_zero_pt_one(config):
     yatsm_config['screening'] = config.get('YATSM', 'screening')
     yatsm_config['lassocv'] = config.get('YATSM', 'lassocv').lower() == 'true'
     yatsm_config['reverse'] = config.get('YATSM', 'reverse').lower() == 'true'
+    yatsm_config['robust'] = config.get('YATSM', 'robust').lower() == 'true'
 
     return (dataset_config, yatsm_config)
 
@@ -277,6 +278,7 @@ def run_line(line, X, images,
              screening=yatsm_config['screening'],
              lassocv=yatsm_config['lassocv'],
              reverse=yatsm_config['reverse'],
+             robust=yatsm_config['robust'],
              freq=yatsm_config['freq'],
              record=np.array(output))
 
@@ -327,7 +329,10 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                   logger=logger)
     yatsm.run()
 
-    return yatsm.record
+    if yatsm_config['robust']:
+        return yatsm.robust_record
+    else:
+        return yatsm.record
 
 
 def main(dataset_config, yatsm_config, check=False, resume=False):
