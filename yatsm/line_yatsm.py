@@ -368,6 +368,7 @@ def main(dataset_config, yatsm_config, check=False, resume=False):
     X = make_X(dates, yatsm_config['freq']).T
 
     # Start running YATSM
+    start_time_all = time.time()
     logger.info('Starting to run lines')
     for job_line in job_lines:
         if resume:
@@ -390,7 +391,12 @@ def main(dataset_config, yatsm_config, check=False, resume=False):
             logger.error('Could not process line {l}'.format(l=job_line))
             raise
         logger.debug('Took {s}s to run'.format(
-                s=round(time.time() - start_time, 2)))
+            s=round(time.time() - start_time, 2)))
+
+    logger.info('Completed {n} lines in {m} minutes'.format(
+        n=len(job_lines),
+        m=round((time.time() - start_time_all) / 60.0, 2)
+    ))
 
 
 if __name__ == '__main__':
