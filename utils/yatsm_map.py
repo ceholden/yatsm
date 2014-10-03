@@ -6,7 +6,7 @@ Usage:
 
 Options:
     --ndv <NoDataValue>     No data value for map [default: 0]
-    --root <dir>           Root time series directory [default: ./]
+    --root <dir>            Root time series directory [default: ./]
     -r --result <dir>       Directory of results [default: YATSM]
     -i --image <image>      Example image [default: example_img]
     --date <format>         Date format [default: %Y-%m-%d]
@@ -175,7 +175,8 @@ def get_classification(date, after, before, results, image_ds,
 
         # Find model before segment
         if before:
-            index = np.where(rec['end'] <= date)[0]
+            # Model before, as long as it didn't change
+            index = np.where((rec['end'] <= date) & (rec['break'] == 0))[0]
             if index.shape[0] != 0:
                 raster[rec['py'][index],
                        rec['px'][index]] = rec['class'][index]
