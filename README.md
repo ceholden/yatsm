@@ -14,7 +14,7 @@ We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ce
         ../landsat_stack/p022r049/images/ 50 50
 
 Produces:
-    ![Example output](https://raw.githubusercontent.com/ceholden/yatsm/master/examples/landsat_stack_example_b5.png)
+    ![Example output](https://raw.githubusercontent.com/ceholden/yatsm/master/docs/media/landsat_stack_example_b5.png)
 
 ## Requirements
 #### Main dependencies:

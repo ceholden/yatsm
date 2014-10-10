@@ -39,7 +39,7 @@ function main() {
     if [ $verbose -eq 1 ]; then
         echo "Found $nimages images"
     fi
-    
+
     for img in $images; do
         name=$(readlink -f $img)
         bn=$(basename $img)
