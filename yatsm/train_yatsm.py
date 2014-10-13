@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """ Yet Another Timeseries Model (YATSM) - run script for classifier training
 
-Usage: train_yatsm.py [options] <config_file> <roi_image> <output_model>
+Usage: train_yatsm.py [options] <yatsm_config> <classifier_config>
 
 Options:
     --mask=<values>             Values to mask in <roi_image> [default: 0]
@@ -28,6 +28,7 @@ from osgeo import gdal
 
 from version import __version__
 from config_parser import parse_config_file
+import classifiers
 
 gdal.AllRegister()
 gdal.UseExceptions()
@@ -38,30 +39,11 @@ logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
 logger = logging.getLogger(__name__)
 
 
-def main(dataset_config, yatsm_config, roi, output):
+def main():
     """ """
     pass
 
-
-if __name__ == '__main__':
-    # Arguments
-    args = docopt(__doc__,
-                  version=__version__)
-
-    # Validate config file input
-    config_file = args['<config_file>']
-    if not os.path.isfile(args['<config_file>']):
-        print('Error - <config_file> specified is not a file')
-        sys.exit(1)
-
-    # Validate input ROI
-    roi = args['<roi_image>']
-    try:
-        ds = gdal.Open(roi, gdal.GA_ReadOnly)
-    except:
-        print('Error - cannot open <roi_image>')
-        sys.exit(1)
-    ds = None
+def asdf():
 
     # Validate output model
     output = args['<output_model>']
@@ -79,23 +61,38 @@ if __name__ == '__main__':
         print('Error - cannot write to directory containing <output_model>')
         sys.exit(1)
 
-    # Options
-    mask = args['--mask'].replace(',', ' ').split(' ')
-    try:
-        mask = [int(m) for m in mask if m != '']
-    except:
-        print('Error - could not parse mask input option to list of integers')
+
+if __name__ == '__main__':
+    # Arguments
+    args = docopt(__doc__,
+                  version=__version__)
+
+    # Validate dataset config file input
+    yatsm_config_file = args['<yatsm_config>']
+    if not os.path.isfile(yatsm_config_file):
+        print('Error - <yatsm_config> specified is not a file')
         sys.exit(1)
 
+    # Validate classifier config file input
+    classifier_config_file = args['<classifier_config>']
+    if not os.path.isfile(classifier_config_file):
+        print('Error - <classifier_config> specified is not a file')
+        sys.exit(1)
+
+    # Options
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
     if args['--quiet']:
         logger.setLevel(logging.WARNING)
 
-    # Read in config file
-    config = configparser.ConfigParser()
-    config.read(config_file)
+    # Parse YATSM config
+    yatsm_config = configparser.ConfigParser()
+    yatsm_config.read(yatsm_config_file)
+    dataset_config, yatsm_config = parse_config_file(yatsm_config)
 
-    dataset_config, yatsm_config = parse_config_file(config)
+    # Parse classifier config
+    classifier_config = configparser.ConfigParser()
+    classifier_config.read(classifier_config_file)
+    algorithm_helper = classifiers.get_algorithm(classifier_config)
 
-    main(dataset_config, yatsm_config, roi, output)
+    main(dataset_config, algorithm_helper)
