@@ -14,20 +14,24 @@ def _parse_config_v_zero_pt_one(config_file):
         'date_format': '%Y%j',
         'output_prefix': 'yatsm_r',
         'use_bip_reader': False,
+        'training_image': None
     }
 
-    config = configparser.ConfigParser(defaults=defaults)
+    config = configparser.ConfigParser(defaults=defaults, allow_no_value=True)
     config.read(config_file)
 
     # Configuration for dataset
     dataset_config = dict.fromkeys(['input_file', 'date_format',
                                     'output', 'output_prefix',
+                                    'training_image',
                                     'n_bands', 'mask_band',
                                     'green_band', 'swir1_band',
                                     'use_bip_reader'])
     for k in dataset_config:
         dataset_config[k] = config.get('dataset', k)
 
+    if dataset_config['training_image'] == 'None':
+        dataset_config['training_image'] = None
     dataset_config['n_bands'] = int(dataset_config['n_bands'])
     dataset_config['mask_band'] = int(dataset_config['mask_band']) - 1
     dataset_config['green_band'] = int(dataset_config['green_band']) - 1
