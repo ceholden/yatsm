@@ -14,11 +14,6 @@ Options:
 """
 from __future__ import division, print_function
 
-# Support namechange in Python3
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser
 import csv
 from datetime import datetime as dt
 import logging
@@ -71,7 +66,8 @@ def calculate_lines(nrow):
 def get_output_name(dataset_config, line):
     """ Returns output name for specified config and line number """
     return os.path.join(dataset_config['output'],
-                        'yatsm_r{line}'.format(line=line) + '.npz')
+        '{pref}{line}.npz'.format(pref=dataset_config['output_prefix'],
+                                  line=line))
 
 
 # IMAGE DATASET READING
@@ -109,7 +105,7 @@ def find_images(input_file, date_format='%Y-%j'):
             except:
                 logger.debug('Could not parse second column to ordinal date')
                 logger.error('Could not parse any columns to ordinal date')
-                logger.error('Input config file: {f}'.format(f=config))
+                logger.error('Input config file: {f}'.format(f=config_file))
                 logger.error('Input dataset file: {f}'.format(f=input_file))
                 logger.error('Date format: {f}'.format(f=date_format))
                 raise
@@ -390,10 +386,7 @@ if __name__ == '__main__':
         logger.setLevel(logging.WARNING)
 
     # Parse and validate configuration file
-    config = configparser.ConfigParser()
-    config.read(config_file)
-
-    dataset_config, yatsm_config = parse_config_file(config)
+    dataset_config, yatsm_config = parse_config_file(config_file)
 
     # Make output directory
     try:
