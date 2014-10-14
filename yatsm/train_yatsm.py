@@ -39,27 +39,9 @@ logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
 logger = logging.getLogger(__name__)
 
 
-def main():
+def main(dataset_config, algo):
     """ """
     pass
-
-def asdf():
-
-    # Validate output model
-    output = args['<output_model>']
-    if os.path.isfile(output):
-        print('Error - <output_model> already exists')
-        sys.exit(1)
-    if not os.path.exists(os.path.dirname(output)):
-        try:
-            os.makedirs(os.path.dirname(output))
-        except:
-            print('Error - output directory does not exist \
-                  and cannot be created')
-            sys.exit(1)
-    elif not os.access(os.path.dirname(output), os.W_OK):
-        print('Error - cannot write to directory containing <output_model>')
-        sys.exit(1)
 
 
 if __name__ == '__main__':
@@ -91,8 +73,6 @@ if __name__ == '__main__':
     dataset_config, yatsm_config = parse_config_file(yatsm_config)
 
     # Parse classifier config
-    classifier_config = configparser.ConfigParser()
-    classifier_config.read(classifier_config_file)
-    algorithm_helper = classifiers.get_algorithm(classifier_config)
+    algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
 
     main(dataset_config, algorithm_helper)
