@@ -29,6 +29,7 @@ from osgeo import gdal
 from version import __version__
 from config_parser import parse_config_file
 import classifiers
+from utils import calculate_lines, get_output_name, find_images
 
 gdal.AllRegister()
 gdal.UseExceptions()
@@ -41,6 +42,19 @@ logger = logging.getLogger(__name__)
 
 def main(dataset_config, yatsm_config, algo):
     """ """
+    # Find and parse training data
+    try:
+        roi_ds = gdal.Open(dataset_config['training_image'], gdal.GA_ReadOnly)
+    except:
+        logger.error('Could not read in training image')
+        raise
+    logger.info('Reading in training data')
+    roi = roi_ds.GetRasterBand(1).ReadAsArray()
+
+    # Read in dataset
+    dates, images = find_images(dataset_config['input_file'],
+                                date_format=dataset_config['date_format'])
+
 
 
 
@@ -71,6 +85,12 @@ if __name__ == '__main__':
     yatsm_config = configparser.ConfigParser()
     yatsm_config.read(yatsm_config_file)
     dataset_config, yatsm_config = parse_config_file(yatsm_config)
+
+    if not dataset_config['training_image'] or \
+            not os.path.isfile(dataset_config['training_image']):
+        logger.error('Training data image {f} does not exist'.format(
+            f=dataset_config['training_image']))
+        sys.exit(1)
 
     # Parse classifier config
     algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
