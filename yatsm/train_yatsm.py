@@ -39,9 +39,9 @@ logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
 logger = logging.getLogger(__name__)
 
 
-def main(dataset_config, algo):
+def main(dataset_config, yatsm_config, algo):
     """ """
-    pass
+
 
 
 if __name__ == '__main__':
@@ -75,4 +75,4 @@ if __name__ == '__main__':
     # Parse classifier config
     algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
 
-    main(dataset_config, algorithm_helper)
+    main(dataset_config, yatsm_config, algorithm_helper)
