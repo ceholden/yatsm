@@ -16,7 +16,7 @@ def _parse_config_v_zero_pt_one(config_file):
         'use_bip_reader': False,
         'training_image': None,
         'mask_values': '0, 255',
-        'cache_X': False
+        'cache_Xy': False
     }
 
     config = configparser.ConfigParser(defaults=defaults, allow_no_value=True)
@@ -46,7 +46,13 @@ def _parse_config_v_zero_pt_one(config_file):
             int(v) for v in
             dataset_config['mask_values'].replace(' ', ',').split(',')
             if v != ','])
-    dataset_config['cache_X'] = config.get('classification', 'cache_X')
+    dataset_config['cache_Xy'] = config.get('classification', 'cache_Xy')
+    dataset_config['training_start'] = config.get('classification',
+                                                  'training_start')
+    dataset_config['training_end'] = config.get('classification',
+                                                'training_end')
+    dataset_config['training_date_format'] = config.get('classification',
+                                                        'training_date_format')
 
     # Configuration for YATSM algorithm
     yatsm_config = {}
