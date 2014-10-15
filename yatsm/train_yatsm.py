@@ -4,7 +4,6 @@
 Usage: train_yatsm.py [options] <yatsm_config> <classifier_config>
 
 Options:
-    --mask=<values>             Values to mask in <roi_image> [default: 0]
     -v --verbose                Show verbose debugging messages
     -q --quiet                  Show only error messages
     -h --help                   Show help
@@ -29,7 +28,7 @@ from osgeo import gdal
 from version import __version__
 from config_parser import parse_config_file
 import classifiers
-from utils import calculate_lines, get_output_name, find_images
+import utils
 
 gdal.AllRegister()
 gdal.UseExceptions()
@@ -41,7 +40,15 @@ logger = logging.getLogger(__name__)
 
 
 def main(dataset_config, yatsm_config, algo):
-    """ """
+    """ YATSM trainining main print_function
+
+    Args:
+      dataset_config (dict): options for the dataset
+      yatsm_config (dict): options for the change detection algorithm
+      algo (sklearn classifier): classification algorithm helper class
+
+
+    """
     # Find and parse training data
     try:
         roi_ds = gdal.Open(dataset_config['training_image'], gdal.GA_ReadOnly)
@@ -52,8 +59,8 @@ def main(dataset_config, yatsm_config, algo):
     roi = roi_ds.GetRasterBand(1).ReadAsArray()
 
     # Read in dataset
-    dates, images = find_images(dataset_config['input_file'],
-                                date_format=dataset_config['date_format'])
+    dates, images = utils.find_images(dataset_config['input_file'],
+                                      date_format=dataset_config['date_format'])
 
 
 
@@ -95,4 +102,4 @@ if __name__ == '__main__':
     # Parse classifier config
     algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
 
-    main(dataset_config, yatsm_config, algorithm_helper)
+    main(dataset_config, yatsm_config, algorithm_helper,)
