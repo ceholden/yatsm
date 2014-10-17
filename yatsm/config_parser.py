@@ -16,7 +16,7 @@ def _parse_config_v_zero_pt_one(config_file):
         'use_bip_reader': False,
         'training_image': None,
         'mask_values': '0, 255',
-        'cache_Xy': False
+        'cache_Xy': None
     }
 
     config = configparser.ConfigParser(defaults=defaults, allow_no_value=True)
@@ -47,6 +47,8 @@ def _parse_config_v_zero_pt_one(config_file):
             dataset_config['mask_values'].replace(' ', ',').split(',')
             if v != ','])
     dataset_config['cache_Xy'] = config.get('classification', 'cache_Xy')
+    if not dataset_config['cache_Xy']:
+        dataset_config['cache_Xy'] = None
     dataset_config['training_start'] = config.get('classification',
                                                   'training_start')
     dataset_config['training_end'] = config.get('classification',
