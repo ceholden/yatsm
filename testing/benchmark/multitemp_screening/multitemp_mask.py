@@ -6,16 +6,14 @@ import timeit
 
 import numpy as np
 
-root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(root, 'yatsm'))
 
-#from yatsm import multitemp_mask
-#from cyatsm import multitemp_mask as cy_multitemp_mask
+root = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(root, '../../../yatsm'))
 
 
 def test_setup():
-    x = np.load(os.path.join(root, 'examples/sample_x.npy'))
-    Y = np.load(os.path.join(root, 'examples/px96_py91_Y.npy'))
+    x = np.load(os.path.join(root, '../../data/sample_x.npy'))
+    Y = np.load(os.path.join(root, '../../data/px96_py91_Y.npy'))
 
     mask = (Y[7, :] <= 1)
 

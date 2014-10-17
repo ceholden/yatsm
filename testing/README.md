@@ -6,3 +6,6 @@ in Cython. Goal is to get it (much) faster than statsmodels version.
 
 ## benchmark
 Various speed benchmarks related to project
+
+## multitemporal_mask
+Test of accuracy/utility for various multitemporal masking algorithms
