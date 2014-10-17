@@ -46,6 +46,24 @@ class TrainingDataException(Exception):
     pass
 
 
+def is_cache_old(cache_file, training_file):
+    """ Indicates if cache file is older than training data file
+
+    Args:
+      cache_file (str): filename of the cache file
+      training_file (str): filename of the training data file_
+
+    Returns:
+      old (bool): True if the cache file is older than the training data file
+        and needs to be updated; False otherwise
+
+    """
+    if cache_file and os.path.isfile(cache_file):
+        return os.stat(cache_file).st_mtime < os.stat(training_file).st_mtime
+    else:
+        return False
+
+
 def get_training_inputs(dataset_config, exit_on_missing=False):
     """ Returns X features and y labels specified in config file
 
@@ -86,36 +104,47 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     y = roi[row, col]
 
     X = []
+    out_y = []
 
     for _row, _col, _y in izip(y, row, col):
         # Load result
-        rec = np.load(utils.get_output_name(dataset_config, _row))['record']
+        try:
+            rec = np.load(utils.get_output_name(dataset_config, _row))['record']
+        except:
+            logger.error('Could not open saved result file {f}'.format(
+                f=utils.get_output_name(dataset_config, _row)))
+            if exit_on_missing:
+                raise
+            else:
+                continue
         # Find intersecting time segment
         i = np.where((rec['start'] < training_start) &
                      (rec['end'] > training_end) &
                      (rec['px'] == _col))[0]
 
         if i.size == 0:
-            txt = ('Could not find model for label {l} at x/y {c}/{r}'.format(
-                l=_y, c=_col, r=_row))
-            if not exit_on_missing:
-                logger.debug(txt)
-                continue
-            else:
-                raise Exception(txt)
+            logger.debug(
+                'Could not find model for label {l} at x/y {c}/{r}'.format(
+                    l=_y, c=_col, r=_row))
+            continue
         elif i.size > 1:
             raise TrainingDataException('Found more than one valid model for \
                 label {l} at x/y {c}/{r}'.format(l=_y, x=_col, y=_row))
 
         # Extract coefficients with intercept term rescaled
-        coef = rec[i]['coef']
+        coef = rec[i]['coef'][0]
         coef[0, :] = (coef[0, :] +
                       coef[1, :] * (rec[i]['start'] + rec[i]['end']) / 2.0)
 
-        X.append(np.concatenate(coef.reshape(coef.size),
-                                rec[i]['rmse'][0]))
+        X.append(np.concatenate(
+            (coef.reshape(coef.size), rec[i]['rmse'][0])))
+        out_y.append(_y)
 
-    return (np.array(X), y)
+    logger.info('Found matching time segments for {m} out of {n} labels'.
+                 format(m=len(out_y), n=y.size))
+
+    return (np.array(X), np.array(out_y))
+
 
 def main(dataset_config, yatsm_config, algo):
     """ YATSM trainining main
@@ -133,19 +162,44 @@ def main(dataset_config, yatsm_config, algo):
         # If doesn't exist, retrieve it
         if not os.path.isfile(dataset_config['cache_Xy']):
             logger.info('Could not retrieve cache file for Xy')
-            logger.info('    file: {f}'.format(dataset_config['cache_Xy']))
+            logger.info('    file: {f}'.format(f=dataset_config['cache_Xy']))
         else:
             logger.info('Restoring X/y from cache file')
             has_cache = True
 
-    if not has_cache:
-        logger.info('Reading in X/y')
+    # Check if we need to regenerate the cache file because training data is
+    #   newer than the cache
+    regenerate_cache = is_cache_old(dataset_config['cache_Xy'],
+                                    dataset_config['training_image'])
+    if regenerate_cache:
+        logger.warning('Existing cache file older than training data ROI')
+        logger.warning('Regenerating cache file')
+
+    if not has_cache or regenerate_cache:
+        logger.debug('Reading in X/y')
         X, y = get_training_inputs(dataset_config)
-        logger.info('Read in X/y')
+        logger.debug('Done reading in X/y')
     else:
-        # TODO
-        logger.info('Reading in from cache file {f}'.format(
+        logger.debug('Reading in X/y from cache file {f}'.format(
             f=dataset_config['cache_Xy']))
+        with np.load(dataset_config['cache_Xy']) as f:
+            X = f['X']
+            y = f['y']
+        logger.debug('Read in X/y from cache file {f}'.format(
+            f=dataset_config['cache_Xy']))
+
+    # If cache didn't exist but is specified, create it for first time
+    if not has_cache and dataset_config['cache_Xy']:
+        logger.info('Saving X/y to cache file {f}'.format(
+            f=dataset_config['cache_Xy']))
+        try:
+            np.savez(dataset_config['cache_Xy'], X=X, y=y)
+        except:
+            logger.error('Could not save X/y to cache file')
+            raise
+
+    # Do modeling
+    logger.info('Training classifier')
 
 
 if __name__ == '__main__':
@@ -172,9 +226,7 @@ if __name__ == '__main__':
         logger.setLevel(logging.WARNING)
 
     # Parse YATSM config
-    yatsm_config = configparser.ConfigParser()
-    yatsm_config.read(yatsm_config_file)
-    dataset_config, yatsm_config = parse_config_file(yatsm_config)
+    dataset_config, yatsm_config = parse_config_file(yatsm_config_file)
 
     if not dataset_config['training_image'] or \
             not os.path.isfile(dataset_config['training_image']):
