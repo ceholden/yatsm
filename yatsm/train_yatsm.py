@@ -106,7 +106,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     X = []
     out_y = []
 
-    for _row, _col, _y in izip(y, row, col):
+    for _row, _col, _y in izip(row, col, y):
         # Load result
         try:
             rec = np.load(utils.get_output_name(dataset_config, _row))['record']
