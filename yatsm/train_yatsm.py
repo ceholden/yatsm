@@ -141,7 +141,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
         out_y.append(_y)
 
     logger.info('Found matching time segments for {m} out of {n} labels'.
-                 format(m=len(out_y), n=y.size))
+                format(m=len(out_y), n=y.size))
 
     return (np.array(X), np.array(out_y))
 
@@ -200,6 +200,15 @@ def main(dataset_config, yatsm_config, algo):
 
     # Do modeling
     logger.info('Training classifier')
+    algo.fit(X, y)
+
+    logger.info('Score on X/y: {p}'.format(p=algo.score(X, y)))
+    logger.info('OOB score: {p}'.format(p=algo.oob_score_))
+
+    # algo.predict_proba(X).sum(axis=1)
+
+    from IPython.core.debugger import Pdb
+    Pdb().set_trace()
 
 
 if __name__ == '__main__':
