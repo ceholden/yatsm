@@ -5,6 +5,7 @@ set +e
 pattern="L*stack"
 istart=9
 overwrite=0
+relative=0
 verbose=0
 
 function usage() {
@@ -19,6 +20,7 @@ function usage() {
     Options:
         -p         Filename pattern [default: $pattern]
         -s         Starting index of date within filename [default: $istart]
+        -r         Use relative paths
         -o         Overwrite <output_file> if exists
         -v         Be verbose
         -h         Show help
@@ -41,7 +43,11 @@ function main() {
     fi
 
     for img in $images; do
-        name=$(readlink -f $img)
+        if [ $relative -eq 0 ]; then
+            name=$(readlink -f $img)
+        else
+            name=$img
+        fi
         bn=$(basename $img)
         ydoy=${bn:$istart:7}
 
@@ -50,7 +56,7 @@ function main() {
 
 }
 
-while getopts "hp:s:ov" opt; do
+while getopts "hp:s:orv" opt; do
     case $opt in
     h)
         usage
@@ -64,6 +70,9 @@ while getopts "hp:s:ov" opt; do
         ;;
     o)
         overwrite=1
+        ;;
+    r)
+        relative=1
         ;;
     v)
         verbose=1
