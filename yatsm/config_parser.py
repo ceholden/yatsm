@@ -13,7 +13,8 @@ def _parse_config_v_zero_pt_one(config_file):
     defaults = {
         'date_format': '%Y%j',
         'output_prefix': 'yatsm_r',
-        'use_bip_reader': False,
+        'robust': 'False',
+        'use_bip_reader': 'False',
         'training_image': None,
         'mask_values': '0, 255',
         'cache_Xy': None
@@ -37,23 +38,24 @@ def _parse_config_v_zero_pt_one(config_file):
         'dataset', 'use_bip_reader')
 
     # Configuration for training and classification
-    dataset_config['training_image'] = config.get('classification',
-                                                  'training_image')
-    dataset_config['mask_values'] = config.get('classification',
-                                               'mask_values')
-    if dataset_config['mask_values']:
-        dataset_config['mask_values'] = np.array([
-            int(v) for v in
-            dataset_config['mask_values'].replace(' ', ',').split(',')
-            if v != ','])
-    dataset_config['cache_Xy'] = config.get('classification', 'cache_Xy')
-    if not dataset_config['cache_Xy']:
-        dataset_config['cache_Xy'] = None
-    dataset_config['training_start'] = config.get('classification',
-                                                  'training_start')
-    dataset_config['training_end'] = config.get('classification',
-                                                'training_end')
-    dataset_config['training_date_format'] = config.get('classification',
+    if config.has_section('classification'):
+        dataset_config['training_image'] = config.get('classification',
+                                                      'training_image')
+        dataset_config['mask_values'] = config.get('classification',
+                                                   'mask_values')
+        if dataset_config['mask_values']:
+            dataset_config['mask_values'] = np.array([
+                int(v) for v in
+                dataset_config['mask_values'].replace(' ', ',').split(',')
+                if v != ','])
+        dataset_config['cache_Xy'] = config.get('classification', 'cache_Xy')
+        if not dataset_config['cache_Xy']:
+            dataset_config['cache_Xy'] = None
+        dataset_config['training_start'] = config.get('classification',
+                                                      'training_start')
+        dataset_config['training_end'] = config.get('classification',
+                                                    'training_end')
+        dataset_config['training_date_format'] = config.get('classification',
                                                         'training_date_format')
 
     # Configuration for YATSM algorithm
