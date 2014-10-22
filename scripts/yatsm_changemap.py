@@ -8,6 +8,7 @@ Options:
     --firstchange           Show first change instead of last
     --samechange <lut>      Use LUT to eliminate changes to/from same class
     --magnitude             Add magnitude of change as extra bands
+    --warn-on-empty         Warn user when reading in empty result files
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
 
@@ -47,6 +48,8 @@ logger = logging.getLogger(__name__)
 
 # Filters for results
 _result_record = 'yatsm_*'
+
+WARN_ON_EMPTY = False
 
 
 # UTILITY FUNCTIONS
@@ -123,7 +126,8 @@ def get_changemap(start, end, results, image_ds,
 
         if rec.shape[0] == 0:
             # No values in this file
-            logger.warning('Could not find results in {f}'.format(f=r))
+            if WARN_ON_EMPTY:
+                logger.warning('Could not find results in {f}'.format(f=r))
             continue
 
         index = np.where((rec['break'] > 0) &
@@ -324,5 +328,7 @@ if __name__ == '__main__':
 
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
+    if args['--warn-on-empty']:
+        WARN_ON_EMPTY = True
 
     main()

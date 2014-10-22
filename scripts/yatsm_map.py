@@ -11,6 +11,7 @@ Options:
     -i --image <image>      Example image [default: example_img]
     --date <format>         Date format [default: %Y-%m-%d]
     -f --format <format>    Output raster format [default: GTiff]
+    --warn-on-empty         Warn user when reading in empty result files
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
 
@@ -61,6 +62,8 @@ _result_record = 'yatsm_*'
 # number of days in year
 _days = 365.25
 w = 2 * np.pi / _days
+
+WARN_ON_EMPTY = False
 
 
 # UTILITY FUNCTIONS
@@ -312,7 +315,8 @@ def get_coefficients(date, bands, coefs, results, image_ds,
 
         if rec.shape[0] == 0:
             # No values in this file
-            logger.warning('Could not find results in {f}'.format(f=r))
+            if WARN_ON_EMPTY:
+                logger.warning('Could not find results in {f}'.format(f=r))
             continue
 
         # Find indices for the date specified
@@ -596,5 +600,7 @@ if __name__ == '__main__':
 
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
+    if args['--warn-on-empty']:
+        WARN_ON_EMPTY = True
 
     main()
