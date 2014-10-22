@@ -20,7 +20,6 @@ Coefficient options:
     --band <bands>          Bands to export [default: all]
 
 Prediction options:
-    --freq=<frequency>      Sin/cosine frequencies [default: 1 2 3]
 
 Class options:
     --after                 Use time segment after <date> if needed for map
@@ -341,13 +340,12 @@ def get_coefficients(date, bands, coefs, results, image_ds,
     return (raster, band_names)
 
 
-def get_prediction(date, freq, bands, results, image_ds,
+def get_prediction(date, bands, results, image_ds,
                    ndv=-9999, pattern=_result_record):
     """ Output a raster with the predictions from model fit for a given date
 
     Args:
       date (int): Ordinal date for prediction image
-      freq (list): Frequency of sin/cosine seasonality
       coefs (list): List of coefficients to output
       results (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
@@ -367,9 +365,12 @@ def get_prediction(date, freq, bands, results, image_ds,
     # Find how many coefficients there are for output
     n_coef = None
     n_band = None
+    freq = None
     for i, r in enumerate(records):
         try:
-            rec = np.load(r)['record']
+            _result = np.load(r)
+            rec = _result['record']
+            freq = _result['freq']
         except:
             continue
 
@@ -382,6 +383,9 @@ def get_prediction(date, freq, bands, results, image_ds,
 
     if not n_coef or not n_band:
         logger.error('Could not determine the number of coefficients')
+        sys.exit(1)
+    if not freq:
+        logger.error('Seasonality frequency not found in results.')
         sys.exit(1)
 
     # Create X matrix from date
@@ -562,8 +566,6 @@ def main():
             raise
 
     ### Parse prediction options
-    freq = args['--freq']
-    freq = [int(n) for n in freq.replace(' ', ',').split(',') if n != '']
 
     ### Classification outputs
     # Go to next time segment option
@@ -585,7 +587,7 @@ def main():
         raster, band_names = \
             get_coefficients(date, bands, coefs, results, image_ds, ndv=ndv)
     elif args['predict']:
-        raster = get_prediction(date, freq, bands, results, image_ds, ndv=ndv)
+        raster = get_prediction(date, bands, results, image_ds, ndv=ndv)
 
     if args['class']:
         write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
