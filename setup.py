@@ -2,6 +2,8 @@ from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
+from yatsm.version import __version__
+
 import numpy as np
 
 with open('yatsm/version.py') as f:
@@ -9,7 +11,7 @@ with open('yatsm/version.py') as f:
 
 scripts = ['yatsm/line_yatsm.py', 'yatsm/run_yatsm.py']
 
-ext = [Extension('yatsm.cyatsm', ['yatsm/cyatsm.pyx'],
+ext = [Extension('yatsm.cymasking', ['yatsm/cymasking.pyx'],
                  include_dirs=[np.get_include()])]
 
 cmdclass = {'build_ext': build_ext}
