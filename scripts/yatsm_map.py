@@ -280,7 +280,9 @@ def get_coefficients(date, bands, coefs, results, image_ds,
         n_rmse = n_bands
 
     logger.debug('Indices for bands and coefficients:')
+    logger.debug('Bands:')
     logger.debug(i_bands)
+    logger.debug('Coefficients:')
     logger.debug(i_coefs)
 
     logger.debug('Allocating memory...')
@@ -293,6 +295,7 @@ def get_coefficients(date, bands, coefs, results, image_ds,
     for _c in i_coefs:
         for _b in i_bands:
             band_names.append('B' + str(_b + 1) + '_beta' + str(_c))
+    for _b in i_bands:
         if use_rmse is True:
             band_names.append('B' + str(_b + 1) + '_RMSE')
 
@@ -330,8 +333,9 @@ def get_coefficients(date, bands, coefs, results, image_ds,
             rec['coef'][index, 1, :]
 
         # Extract coefficients
-        raster[rec['py'][index], rec['px'][index], range(n_coefs * n_bands)] =\
-            rec['coef'][index][:, i_coefs, :][:, :, bands].flatten()
+        raster[rec['py'][index], rec['px'][index], :n_coefs * n_bands] =\
+            np.reshape(rec['coef'][index][:, i_coefs, :][:, :, i_bands],
+                       (index.size, n_coefs * n_bands))
 
         if use_rmse:
             raster[rec['py'][i], rec['px'][i], n_coefs * n_bands:] = \
@@ -550,6 +554,10 @@ def main():
     coefs = [c for c in args['--coef'].replace(',', ' ').split(' ') if c != '']
     if not all([c.lower() in _coefs for c in coefs]):
         logger.error('Unknown coefficient options')
+        logger.error('Options are:')
+        logger.error(_coefs)
+        logger.error('Specified were:')
+        logger.error(coefs)
         sys.exit(1)
 
     # Bands to output
