@@ -212,15 +212,11 @@ if __name__ == '__main__':
 
     # Plot band for debug
     plot_index = args['--plot_index']
-    if plot_index == 'None':
-        plot_index = None
-    else:
+    if plot_index:
         plot_index = int(plot_index)
 
     plot_ylim = args['--plot_ylim']
-    if plot_ylim.lower() == 'none':
-        plot_ylim = None
-    else:
+    if plot_ylim:
         plot_ylim = [int(n) for n in
                      plot_ylim.replace(' ', ',').split(',') if n != '']
 
