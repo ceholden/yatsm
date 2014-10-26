@@ -220,6 +220,12 @@ if __name__ == '__main__':
         plot_ylim = [int(n) for n in
                      plot_ylim.replace(' ', ',').split(',') if n != '']
 
+    if ggplot.__version__ == '0.6.5':
+        logger.warning('Will not produce plot because of bug in ggplot==0.6.5')
+        logger.warning('See: https://github.com/yhat/ggplot/issues/382')
+        plot_index = None
+        plot_ylim = None
+
     # Debug level
     debug = args['--verbose']
     if debug:
@@ -241,6 +247,8 @@ if __name__ == '__main__':
         p = ggplot(aes('date', df.columns[plot_index]), df) + geom_point()
         if plot_ylim:
             p = p + ylim(plot_ylim[0], plot_ylim[1])
+        # NOTE: this will error in ggplot == 0.6.5
+        # https://github.com/yhat/ggplot/issues/382
         print(p)
 
     # Run model
