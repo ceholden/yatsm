@@ -288,4 +288,6 @@ if __name__ == '__main__':
             raise
 
     # Run YATSM
+    logger.info('Job {i} / {n} - using config file {f}'.format(
+                i=job_number, n=total_jobs, f=config_file))
     main(dataset_config, yatsm_config, check=check, resume=resume)
