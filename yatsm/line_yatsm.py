@@ -154,6 +154,8 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                   test_indices=yatsm_config['test_indices'],
                   lassocv=yatsm_config['lassocv'],
                   screening=yatsm_config['screening'],
+                  green_band=dataset_config['green_band'] - 1,
+                  swir1_band=dataset_config['swir1_band'] - 1,
                   px=px,
                   py=py,
                   logger=logger)

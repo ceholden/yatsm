@@ -112,12 +112,14 @@ class YATSM(object):
     """
 
     ndays = 365.25
+    green_band = 1
+    swir1_band = 4
     screening_types = ['RLM', 'LOWESS']
 
     def __init__(self, X, Y,
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  fit_indices=None, test_indices=None,
-                 screening='RLM',
+                 screening='RLM', green_band=green_band, swir1_band=swir1_band,
                  px=0, py=0,
                  lassocv=False, logger=None):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
@@ -139,6 +141,10 @@ class YATSM(object):
           test_indices (ndarray)    Indices of Y to test for change with
           screening (str, optional): Style of prescreening of the timeseries
             for noise. Options are 'RLM' or 'LOWESS'
+          green_band (int, optional): Index of green band in Y for
+            multitemporal masking
+          swir1_band (int, optional): Index of first SWIR band in Y for
+            multitemporal masking
           px (int, optional):       X (column) pixel reference
           py (int, optional):       Y (row) pixel reference
           lassocv (bool)            Use scikit-learn LarsLassoCV over glmnet
@@ -190,6 +196,9 @@ class YATSM(object):
             self.logger.debug('Using LOWESS for screening')
         # Keep track if timeseries has been screened for full-TS LOWESS
         self.screened = False
+
+        self.green_band = green_band
+        self.swir1_band = swir1_band
 
         # Attributes
         self.n_band = Y.shape[0]
