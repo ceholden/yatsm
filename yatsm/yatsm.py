@@ -469,7 +469,7 @@ class YATSM(object):
         index = np.arange(self.start, self.here + self.consecutive,
                           dtype=np.uint16)
         mask[index] = multitemp_mask(self.X[index, 1], self.Y[:, index],
-                                     self.span_time)
+                                     self.span_time / self.ndays)
 
         # Check if there are enough observations for model with noise removed
         _span_index = mask[index][:-self.consecutive].sum()
