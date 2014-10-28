@@ -293,6 +293,12 @@ if __name__ == '__main__':
             print(e.strerror)
             sys.exit(1)
 
+    # Test write capability
+    if not os.access(dataset_config['output'], os.W_OK):
+        print('Error - cannot write to output directory {d}'.format(
+            d=dataset_config['output']))
+        sys.exit(1)
+
     # Run YATSM
     logger.info('Job {i} / {n} - using config file {f}'.format(
                 i=job_number, n=total_jobs, f=config_file))
