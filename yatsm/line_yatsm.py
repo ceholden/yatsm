@@ -283,11 +283,15 @@ if __name__ == '__main__':
     # Make output directory
     try:
         os.makedirs(dataset_config['output'])
-    except:
-        if os.path.isdir(dataset_config['output']):
+    except OSError as e:
+        # File exists
+        if e.errno == 17:
             pass
-        else:
-            raise
+        elif e.errno == 13:
+            print('Error - cannot create output directory {d}'.format(
+                d=dataset_config['output']))
+            print(e.strerror)
+            sys.exit(1)
 
     # Run YATSM
     logger.info('Job {i} / {n} - using config file {f}'.format(
