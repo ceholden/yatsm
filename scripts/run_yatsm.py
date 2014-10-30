@@ -71,6 +71,9 @@ fmask = 7
 
 plot_styles = mpl.style.available + [u'xkcd']
 
+# Set default size to 11" x 6.798 (golden ratio)
+mpl.rcParams['figure.figsize'] = 11, 6.798
+
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
                     level=logging.INFO,
                     datefmt='%H:%M:%S')
@@ -151,8 +154,6 @@ def plot_results():
             plt.vlines(break_date, _plot_ylim[0], _plot_ylim[1], 'r')
             plt.plot(break_date, Y[plot_index, break_i],
                      'ro', mec='r', mfc='none', ms=10, mew=5)
-
-    plt.title('Modeled Timeseries')
 
 
 if __name__ == '__main__':
@@ -259,6 +260,7 @@ if __name__ == '__main__':
         with style_context:
             plot_dataset()
             plt.title('Timeseries')
+            plt.tight_layout()
             plt.show()
 
     # Run model
@@ -295,6 +297,8 @@ if __name__ == '__main__':
     if plot_index:
         with style_context:
             plot_results()
+            plt.tight_layout()
+            plt.title('Modeled Timeseries')
             plt.show()
 
     if omission_crit:
