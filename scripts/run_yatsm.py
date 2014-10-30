@@ -34,9 +34,9 @@ Example:
         or minimum number of observations is 16 and we use two seasonal
         harmonics per year. The plot uses XKCD styling!
 
-    > run_yatsm.py --consecutive=5 --threshold=3 --min_obs=16 \
-    ... --freq="1, 2" --min_rmse 150 --test_indices "2 4 5" --screening RLM \
-    ... --plot_index=4 --plot_style xkcd \
+    > run_yatsm.py --consecutive=5 --threshold=3 --min_obs=16
+    ... --freq="1, 2" --min_rmse 150 --test_indices "2 4 5" --screening RLM
+    ... --plot_index=4 --plot_style xkcd
     ... ../landsat_stack/p022r049/images/ 150 50
 
 """
