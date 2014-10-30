@@ -17,7 +17,8 @@ def _parse_config_v_zero_pt_one(config_file):
         'use_bip_reader': 'False',
         'training_image': None,
         'mask_values': '0, 255',
-        'cache_Xy': None
+        'cache_Xy': None,
+        'cache_line_dir': None,
     }
 
     config = configparser.ConfigParser(defaults=defaults, allow_no_value=True)
@@ -36,6 +37,7 @@ def _parse_config_v_zero_pt_one(config_file):
     dataset_config['swir1_band'] = config.getint('dataset', 'swir1_band') - 1
     dataset_config['use_bip_reader'] = config.getboolean(
         'dataset', 'use_bip_reader')
+    dataset_config['cache_line_dir'] = config.get('dataset', 'cache_line_dir')
 
     # Configuration for training and classification
     if config.has_section('classification'):

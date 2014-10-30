@@ -26,7 +26,7 @@ from osgeo import gdal
 
 from version import __version__
 from config_parser import parse_config_file
-from utils import (calculate_lines, get_output_name,
+from utils import (calculate_lines, get_output_name, get_line_cache_name,
                    find_images, get_image_attribute)
 from yatsm import make_X, YATSM, TSLengthException
 
@@ -40,11 +40,104 @@ logger = logging.getLogger(__name__)
 loglevel_YATSM = logging.WARNING
 
 
+def test_cache(dataset_config):
+    """ Test cache directory for ability to read from or write to
+
+    Args:
+      dataset_config (dict): dictionary of dataset configuration options
+
+    Returns:
+      (read_cache, write_cache): tuple of bools describing ability to read from
+        and write to cache directory
+
+    """
+    # Try to find / use cache
+    read_cache = False
+    write_cache = False
+
+    cache_dir = dataset_config.get('cache_line_dir')
+    if cache_dir:
+        # Test existence
+        if os.path.isdir(cache_dir):
+            read_cache = True
+            if os.access(cache_dir, os.W_OK):
+                write_cache = True
+            else:
+                logger.warning('Cache directory exist but is not writable')
+        else:
+            # If it doesn't already exist, can we create it?
+            try:
+                os.makedirs(cache_dir)
+            except:
+                logger.warning('Could not create cache directory')
+            else:
+                read_cache = True
+                write_cache = True
+
+    logger.debug('Attempt reading in from cache directory?: {b}'.format(
+        b=read_cache))
+    logger.debug('Attempt writing to cache directory?: {b}'.format(
+        b=write_cache))
+
+    return read_cache, write_cache
+
+
+def read_line(line, images, dataset_config,
+              ncol, nband, dtype,
+              read_cache=False, write_cache=False):
+    """ Reads in dataset from cache or images if required
+
+    Args:
+      line (int): line to read in from images
+      images (list): list of image filenames to read from
+      dataset_config (dict): dictionary of dataset configuration options
+      ncol (int): number of columns
+      nband (int): number of bands
+      dtype (type): NumPy datatype
+      read_cache (bool, optional): try to read from cache directory
+      write_cache (bool, optional): to to write to cache directory
+
+    Returns:
+      Y (np.ndarray): 3D array of image data (nband, n_image, n_cols)
+
+    """
+    read_from_disk = True
+    cache_filename = get_line_cache_name(dataset_config, len(images),
+                                         line, nband)
+
+    if read_cache:
+        if os.path.isfile(cache_filename):
+            logger.debug('Reading in Y from cache file {f}'.format(
+                f=cache_filename))
+            Y = np.load(cache_filename)
+            read_from_disk = False
+
+    if read_from_disk:
+        # Read in Y
+        Y = np.zeros((nband, len(images), ncol), dtype=dtype)
+
+        # TODO: implement BIP reader
+        # Read in data just using GDAL
+        logger.debug('Reading in data from disk')
+        for i, image in enumerate(images):
+            ds = gdal.Open(image, gdal.GA_ReadOnly)
+            for b in xrange(ds.RasterCount):
+                Y[b, i, :] = ds.GetRasterBand(b + 1).ReadAsArray(
+                    0, line, ncol, 1)
+
+    if write_cache and read_from_disk:
+        logger.debug('Writing Y data to cache file {f}'.format(
+            f=cache_filename))
+        np.save(cache_filename, Y)
+
+    return Y
+
+
 # Runner
 def run_line(line, X, images,
              dataset_config, yatsm_config,
              nrow, ncol, nband, dtype,
-             use_BIP=False):
+             read_cache=False, write_cache=False):
     """ Runs YATSM for a line
 
     Args:
@@ -57,25 +150,16 @@ def run_line(line, X, images,
       ncol (int): number of columns
       nband (int): number of bands
       dtype (type): NumPy datatype
-      use_BIP (bool, optional): use BIP line reader
+      read_cache (bool, optional): try to read from cache directory
+      write_cache (bool, optional): to to write to cache directory
 
     """
     # Setup output
     output = []
 
-    # Read in Y
-    Y = np.zeros((nband, len(images), ncol), dtype=dtype)
-
-    # TODO: implement BIP reader
-    if use_BIP:
-        pass
-
-    # Read in data just using GDAL
-    logger.debug('    reading in data')
-    for i, image in enumerate(images):
-        ds = gdal.Open(image, gdal.GA_ReadOnly)
-        for b in xrange(ds.RasterCount):
-            Y[b, i, :] = ds.GetRasterBand(b + 1).ReadAsArray(0, line, ncol, 1)
+    Y = read_line(line, images, dataset_config,
+                  ncol, nband, dtype,
+                  read_cache=read_cache, write_cache=write_cache)
 
     # About to run YATSM
     logger.debug('    running YATSM')
@@ -167,8 +251,21 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
         return yatsm.record
 
 
-def main(dataset_config, yatsm_config, check=False, resume=False):
-    """ Read in dataset and YATSM for a complete line """
+def main(dataset_config, yatsm_config,
+         check=False, resume=False,
+         read_cache=False, write_cache=False):
+    """ Read in dataset and YATSM for a complete line
+
+    Args:
+      dataset_config (dict): dict of dataset configuration options
+      yatsm_config (dict): dict of YATSM algorithm options
+      check (bool, optional): check to make sure images are readible
+      resume (bool, optional): do not overwrite existing results, instead
+        continue from first non-existing result file
+      read_cache (bool, optional): try to read from cache directory
+      write_cache (bool, optional): to to write to cache directory
+
+    """
     # Read in dataset
     dates, images = find_images(dataset_config['input_file'],
                                 date_format=dataset_config['date_format'])
@@ -220,7 +317,7 @@ def main(dataset_config, yatsm_config, check=False, resume=False):
             run_line(job_line, X, images,
                      dataset_config, yatsm_config,
                      nrow, ncol, nband, dtype,
-                     use_BIP=dataset_config['use_bip_reader'])
+                     read_cache=read_cache, write_cache=write_cache)
         except Exception as e:
             logger.error('Could not process line {l}'.format(l=job_line))
             logger.error(e.message)
@@ -302,7 +399,11 @@ if __name__ == '__main__':
             d=dataset_config['output']))
         sys.exit(1)
 
+    # Test existence of cache directory
+    read_cache, write_cache = test_cache(dataset_config)
+
     # Run YATSM
     logger.info('Job {i} / {n} - using config file {f}'.format(
                 i=job_number, n=total_jobs, f=config_file))
-    main(dataset_config, yatsm_config, check=check, resume=resume)
+    main(dataset_config, yatsm_config, check=check, resume=resume,
+         read_cache=read_cache, write_cache=write_cache)
