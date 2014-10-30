@@ -4,21 +4,26 @@
 Usage:
     yatsm.py [options] <location> <px> <py>
 
-Options:
+Algorithm options:
     --consecutive=<n>       Consecutive observations for change [default: 5]
     --threshold=<T>         Threshold for change [default: 2.56]
     --min_obs=<n>           Min number of obs per model [default: 1.5 * n_coef]
     --freq=<freq>           Sin/cosine frequencies [default: 1 2 3]
-    --min_rmse=<rmse>       Minimum RMSE used in detection [default: None]
+    --min_rmse=<rmse>       Minimum RMSE used in detection
     --screening=<method>    Multi-temporal screening method [default: RLM]
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
-    --test_indices=<bands>  Test bands [default: ALL]
+    --test_indices=<bands>  Test indices [default: ALL]
     --omit_crit=<crit>      Critical value for omission test
     --omit_behavior=<b>     Omission test behavior [default: ALL]
     --omit_indices=<b>      Image indices used in omission test
+
+Plotting options:
     --plot_index=<b>        Index of band to plot for diagnostics
     --plot_ylim=<lim>       Plot y-limits
+    --plot_style=<style>    Plot style [default: ggplot]
+
+Generic options:
     -v --verbose            Show verbose debugging messages
     -h --help               Show help
 
@@ -44,6 +49,9 @@ import os
 
 from docopt import docopt
 
+import brewer2mpl
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 
 # Handle runnin as installed module or not
@@ -60,6 +68,8 @@ except ImportError:
 # Some constants
 ndays = 365.25
 fmask = 7
+
+plot_styles = mpl.style.available + [u'xkcd']
 
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
                     level=logging.INFO,
@@ -94,53 +104,55 @@ def preprocess(location, px, py, freq):
     return (ts, X, Y, clear)
 
 
-def make_plot():
-    # Get qualitative color map
-    import brewer2mpl
+def plot_dataset():
+    """ Plots just the dataset before fitting """
+    plt.plot(dates, Y[plot_index, :], 'ko')
+    plt.ylim(plot_ylim)
+    plt.xlabel('Time')
+    plt.ylabel('Band {i}'.format(i=plot_index + 1))
+
+
+def plot_results():
+    # Add in deleted obs
+    deleted = ~np.in1d(Y[plot_index, :], yatsm.Y[plot_index, :])
+
+    plot_dataset()
+    plt.plot(dates[deleted], Y[plot_index, deleted], 'ro')
+
+    # Get qualitative color map for model segment lines
     # Color map ncolors goes from 3 - 9
     ncolors = min(9, max(3, len(yatsm.record)))
     # Repeat if number of segments > 9
     repeat = int(math.ceil(len(yatsm.record) / 9.0))
-    colors = brewer2mpl.get_map('set1',
-                                'qualitative',
-                                ncolors).hex_colors * repeat
-    if reverse:
-        i_step = -1
-    else:
-        i_step = 1
+    fit_colors = brewer2mpl.get_map('set1',
+                                    'qualitative',
+                                    ncolors).hex_colors * repeat
 
-    # Add in deleted obs
-    deleted = ~np.in1d(Y[plot_index, :], yatsm.Y[plot_index, :])
-    point_colors = np.repeat('black', X.shape[0])
-    point_colors[deleted] = 'red'
-
-    p = ggplot(aes('date', df.columns[plot_index]), df) + \
-        geom_point(color=point_colors)
+    # Direction for prediction x
+    step = -1 if reverse else 1
 
     for i, r in enumerate(yatsm.record):
-        # Setup dummy dataframe for predictions
-        ts_df = pd.DataFrame(
-            {'x': np.arange(r['start'], r['end'], i_step)})
-        # Get predictions
-        ts_df['y'] = np.dot(r['coef'][:, plot_index],
-                            make_X(ts_df['x'], freq))
-        ts_df['date'] = np.array(
-            [dt.fromordinal(int(_d)) for _d in ts_df['x']])
-        # Add line to ggplot
-        p = p + geom_line(aes('date', 'y'), ts_df, color=colors[i])
-        # If there is a break in this timeseries, add it as vertical line
+        # Predict
+        mx = np.arange(r['start'], r['end'], step)
+        my = np.dot(r['coef'][:, plot_index],
+                    make_X(mx, freq))
+        mx_date = np.array([dt.fromordinal(int(_x)) for _x in mx])
+
+        plt.plot(mx_date, my, fit_colors[i])
+
         if r['break'] != 0:
-            p = p + \
-                geom_vline(
-                    xintercept=dt.fromordinal(r['break']), color='red')
-    if plot_ylim:
-        p = p + ylim(plot_ylim[0], plot_ylim[1])
-    # Show graph
-    if reverse:
-        title = 'Reverse'
-    else:
-        title = 'Forward'
-    print(p + ggtitle(title))
+            break_date = dt.fromordinal(int(r['break']))
+            break_i = np.where(X[:, 1] == r['break'])[0]
+            if not plot_ylim:
+                _plot_ylim = (Y[plot_index, :].min(), Y[plot_index, :].max())
+            else:
+                _plot_ylim = plot_ylim
+
+            plt.vlines(break_date, _plot_ylim[0], _plot_ylim[1], 'r')
+            plt.plot(break_date, Y[plot_index, break_i],
+                     'ro', mec='r', mfc='none', ms=10, mew=5)
+
+    plt.title('Modeled Timeseries')
 
 
 if __name__ == '__main__':
@@ -223,11 +235,14 @@ if __name__ == '__main__':
         plot_ylim = [int(n) for n in
                      plot_ylim.replace(' ', ',').split(',') if n != '']
 
-    if ggplot.__version__ == '0.6.5':
-        logger.warning('Will not produce plot because of bug in ggplot==0.6.5')
-        logger.warning('See: https://github.com/yhat/ggplot/issues/382')
-        plot_index = None
-        plot_ylim = None
+    plot_style = args['--plot_style']
+    if plot_style not in plot_styles:
+        raise ValueError('Unknown style. Available styles are {s}'.format(
+            s=plot_styles))
+    if plot_style == 'xkcd':
+        style_context = plt.xkcd()
+    else:
+        style_context = plt.style.context(plot_style)
 
     # Debug level
     debug = args['--verbose']
@@ -238,21 +253,13 @@ if __name__ == '__main__':
 
     # Get data and mask clouds
     ts, X, Y, clear = preprocess(location, px, py, freq)
-
-    # Create dataframe
-    df = pd.DataFrame(np.vstack((Y, X.T)).T,
-                      columns=['b1', 'b2', 'b3', 'b4', 'b5', 'b7', 'b6'] +
-                      ['B' + str(i) for i in range(X.shape[1])])
-    df.index = df['B1']
-    df['date'] = ts.dates[clear]
+    dates = np.array([dt.fromordinal(int(_x)) for _x in X[:, 1]])
 
     if plot_index:
-        p = ggplot(aes('date', df.columns[plot_index]), df) + geom_point()
-        if plot_ylim:
-            p = p + ylim(plot_ylim[0], plot_ylim[1])
-        # NOTE: this will error in ggplot == 0.6.5
-        # https://github.com/yhat/ggplot/issues/382
-        print(p)
+        with style_context:
+            plot_dataset()
+            plt.title('Timeseries')
+            plt.show()
 
     # Run model
     if reverse:
@@ -279,8 +286,16 @@ if __name__ == '__main__':
     if breakpoints.size > 0:
         print(breakpoints)
 
+    # Renew the generator for style
+    if plot_style == 'xkcd':
+        style_context = plt.xkcd()
+    else:
+        style_context = plt.style.context(plot_style)
+
     if plot_index:
-        make_plot()
+        with style_context:
+            plot_results()
+            plt.show()
 
     if omission_crit:
         print('Omission test (alpha = {a}):'.format(a=omission_crit))
