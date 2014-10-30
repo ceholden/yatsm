@@ -40,19 +40,22 @@ from __future__ import print_function, division
 from datetime import datetime as dt
 import logging
 import math
+import os
 
 from docopt import docopt
 
 import numpy as np
-import pandas as pd
 
-from ggplot import *
-
-from yatsm import YATSM, make_X
-from ts_driver.timeseries_ccdc import CCDCTimeSeries
-
-from IPython.core.debugger import Pdb
-
+# Handle runnin as installed module or not
+try:
+    from yatsm.yatsm import YATSM, make_X
+    from yatsm.ts_driver.timeseries_ccdc import CCDCTimeSeries
+except ImportError:
+    # Try adding `pwd` to PYTHONPATH
+    import sys
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    from yatsm.yatsm import YATSM, make_X
+    from yatsm.ts_driver.timeseries_ccdc import CCDCTimeSeries
 
 # Some constants
 ndays = 365.25
