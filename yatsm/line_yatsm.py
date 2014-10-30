@@ -101,6 +101,8 @@ def read_line(line, images, dataset_config,
       Y (np.ndarray): 3D array of image data (nband, n_image, n_cols)
 
     """
+    start_time = time.time()
+
     read_from_disk = True
     cache_filename = get_line_cache_name(dataset_config, len(images),
                                          line, nband)
@@ -129,6 +131,9 @@ def read_line(line, images, dataset_config,
         logger.debug('Writing Y data to cache file {f}'.format(
             f=cache_filename))
         np.save(cache_filename, Y)
+
+    logger.debug('Took {s}s to read in the data'.format(
+        s=round(time.time() - start_time, 2)))
 
     return Y
 
