@@ -212,16 +212,19 @@ def main(dataset_config, yatsm_config, check=False, resume=False):
                 del z
                 logger.info('Already processed line {l}'.format(l=job_line))
                 continue
+
         logger.debug('Running line {l}'.format(l=job_line))
         start_time = time.time()
+
         try:
             run_line(job_line, X, images,
                      dataset_config, yatsm_config,
                      nrow, ncol, nband, dtype,
                      use_BIP=dataset_config['use_bip_reader'])
-        except:
+        except Exception as e:
             logger.error('Could not process line {l}'.format(l=job_line))
-            raise
+            logger.error(e.message)
+
         logger.debug('Took {s}s to run'.format(
             s=round(time.time() - start_time, 2)))
 
