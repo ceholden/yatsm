@@ -17,3 +17,7 @@ Change to
 Should help:
     - Calculation time
     - Ability to find slow, gradual changes that might be missed if the expectation (e.g., the regression model) adapts too quickly
+
+## Timeseries Drivers
+
+Delete them! Recode into a `utils` for grabbing a single pixel
