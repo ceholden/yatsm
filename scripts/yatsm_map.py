@@ -523,13 +523,15 @@ def main():
 
     # Results folder
     results = args['--result']
-    if not os.path.isdir(results):
-        if os.path.isdir(os.path.join(root, results)):
-            results = os.path.join(root, results)
+    # First look as relative path under root folder, then from PWD
+    if not os.path.isdir(os.path.join(root, results)):
+        if os.path.isdir(results):
+            results = os.path.abspath(results)
         else:
             logger.error('Cannot find results folder')
             sys.exit(1)
-    results = os.path.abspath(results)
+    else:
+        results = os.path.abspath(os.path.join(root, results))
 
     # Example image
     image = args['--image']
