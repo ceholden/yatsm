@@ -152,7 +152,7 @@ class YATSM(object):
 
         """
         # Setup logger
-        self.logger = logger or logging.getLogger(__name__)
+        self.logger = logger or logging.getLogger('yatsm')
 
         # Configure which implementation of LASSO we're using
         self.lassocv = lassocv

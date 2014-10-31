@@ -7,7 +7,7 @@ import numpy as np
 from osgeo import gdal
 from osgeo import gdal_array
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('yatsm')
 
 
 # JOB SPECIFIC FUNCTIONS

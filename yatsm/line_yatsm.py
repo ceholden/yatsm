@@ -34,7 +34,7 @@ from yatsm import make_X, YATSM, TSLengthException
 logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
                     level=logging.INFO,
                     datefmt='%H:%M:%S')
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('yatsm')
 
 # Logging level for YATSM
 loglevel_YATSM = logging.WARNING

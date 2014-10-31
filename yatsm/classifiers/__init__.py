@@ -14,7 +14,7 @@ import scipy.ndimage
 
 from random_forest_helper import RandomForestHelper
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('yatsm')
 
 _algorithms = {
     'RandomForest': RandomForestHelper

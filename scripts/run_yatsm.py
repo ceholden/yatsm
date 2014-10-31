@@ -78,7 +78,7 @@ mpl.rcParams['figure.figsize'] = 11, 6.798
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
                     level=logging.INFO,
                     datefmt='%H:%M:%S')
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('yatsm')
 
 
 def preprocess(location, px, py, freq):
