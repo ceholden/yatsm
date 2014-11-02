@@ -38,9 +38,8 @@ from yatsm.utils import (calculate_lines, get_output_name, get_line_cache_name,
 from yatsm.yatsm import make_X, YATSM, TSLengthException
 
 # Log setup for runner
-logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
-                    level=logging.INFO,
-                    datefmt='%H:%M:%S')
+FORMAT = '%(asctime)s %(levelname)s %(module)s.%(funcName)s : %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('yatsm')
 
 # Logging level for YATSM

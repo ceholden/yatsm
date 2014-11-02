@@ -43,9 +43,8 @@ from yatsm import utils
 gdal.AllRegister()
 gdal.UseExceptions()
 
-logging.basicConfig(format='%(asctime)s %(module)s %(levelname)s: %(message)s',
-                    level=logging.INFO,
-                    datefmt='%H:%M:%S')
+FORMAT = '%(asctime)s %(levelname)s %(module)s.%(funcName)s : %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('yatsm')
 
 
