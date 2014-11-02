@@ -12,7 +12,7 @@ import logging
 import numpy as np
 import scipy.ndimage
 
-from random_forest_helper import RandomForestHelper
+from sklearn_helper import RandomForestHelper
 
 logger = logging.getLogger('yatsm')
 

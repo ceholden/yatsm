@@ -1,4 +1,5 @@
-""" Random Forest algorithm helper class """
+""" Helper classes for initializing a Scikit-Learn classifier from an INI file
+"""
 from sklearn.ensemble import RandomForestClassifier
 
 
