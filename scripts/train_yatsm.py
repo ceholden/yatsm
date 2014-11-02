@@ -27,10 +27,17 @@ from docopt import docopt
 import numpy as np
 from osgeo import gdal
 
-from version import __version__
-from config_parser import parse_config_file
-import classifiers
-import utils
+# Handle runnin as installed module or not
+try:
+    from yatsm.version import __version__
+except ImportError:
+    # Try adding `pwd` to PYTHONPATH
+    sys.path.append(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__))))
+    from yatsm.version import __version__
+from yatsm.config_parser import parse_config_file
+from yatsm import classifiers
+from yatsm import utils
 
 gdal.AllRegister()
 gdal.UseExceptions()
