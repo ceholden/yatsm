@@ -105,8 +105,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
         raise
 
     # Loop through samples in ROI extracting features
-    mask = np.logical_and.reduce([
-        roi != mv for mv in dataset_config['mask_values']]).astype(np.uint8)
+    mask = ~np.in1d(roi, dataset_config['mask_values']).reshape(roi.shape)
     row, col = np.where(mask)
     y = roi[row, col]
 
