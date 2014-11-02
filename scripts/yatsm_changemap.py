@@ -110,7 +110,7 @@ def get_changemap(start, end, results, image_ds,
     n_records = len(records)
 
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize),
-                     dtype=np.int32) * ndv
+                     dtype=np.int32) * int(ndv)
 
     logger.debug('Processing results')
     for _i, r in enumerate(records):

@@ -160,7 +160,7 @@ def get_classification(date, after, before, results, image_ds,
     """
     # Init output raster
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize),
-                     dtype=np.uint8) * ndv
+                     dtype=np.uint8) * int(ndv)
 
     records = find_results(results, pattern)
     n_records = len(records)
@@ -410,7 +410,7 @@ def get_prediction(date, bands, results, image_ds,
     n_band = len(i_bands)
 
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_band),
-                     dtype=np.int16) * ndv
+                     dtype=np.int16) * int(ndv)
 
     for _i, r in enumerate(records):
         # Verbose progress
