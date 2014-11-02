@@ -37,6 +37,7 @@ except ImportError:
     from yatsm.version import __version__
 from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
+from yatsm.classifiers.diagnostics import KFoldROI
 from yatsm import utils
 
 gdal.AllRegister()
@@ -81,6 +82,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     Returns:
       X (np.ndarray): matrix of feature inputs for each training data sample
       y (np.ndarray): array of labeled training data samples
+      roi (np.ndarray): training data matrix
 
     """
     # Find and parse training data
@@ -115,7 +117,8 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     for _row, _col, _y in izip(row, col, y):
         # Load result
         try:
-            rec = np.load(utils.get_output_name(dataset_config, _row))['record']
+            rec = np.load(utils.get_output_name(
+                dataset_config, _row))['record']
         except:
             logger.error('Could not open saved result file {f}'.format(
                 f=utils.get_output_name(dataset_config, _row)))
@@ -135,7 +138,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
             continue
         elif i.size > 1:
             raise TrainingDataException('Found more than one valid model for \
-                label {l} at x/y {c}/{r}'.format(l=_y, x=_col, y=_row))
+                label {l} at x/y {x}/{y}'.format(l=_y, x=_col, y=_row))
 
         # Extract coefficients with intercept term rescaled
         coef = rec[i]['coef'][0]
@@ -149,7 +152,27 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     logger.info('Found matching time segments for {m} out of {n} labels'.
                 format(m=len(out_y), n=y.size))
 
-    return (np.array(X), np.array(out_y))
+    return (np.array(X), np.array(out_y), roi)
+
+
+def algo_diagnostics(X, y, roi, algo):
+    """ Display algorithm diagnostics for a given X and y
+
+    Args:
+      X (np.ndarray): X feature input used in classification
+      y (np.ndarray): y labeled examples
+      roi (np.ndarray): training data matrix
+      algo (sklean classifier): classifier used from scikit-learn
+
+    """
+    # Print algorithm diagnostics without crossvalidation
+    logger.info('Score on X/y: {p}'.format(p=algo.score(X, y)))
+    logger.info('OOB score: {p}'.format(p=algo.oob_score_))
+
+    kf = KFoldROI(roi)
+
+    from IPython.core.debugger import Pdb
+    Pdb().set_trace()
 
 
 def main(dataset_config, yatsm_config, algo):
@@ -183,7 +206,7 @@ def main(dataset_config, yatsm_config, algo):
 
     if not has_cache or regenerate_cache:
         logger.debug('Reading in X/y')
-        X, y = get_training_inputs(dataset_config)
+        X, y, roi = get_training_inputs(dataset_config)
         logger.debug('Done reading in X/y')
     else:
         logger.debug('Reading in X/y from cache file {f}'.format(
@@ -208,13 +231,7 @@ def main(dataset_config, yatsm_config, algo):
     logger.info('Training classifier')
     algo.fit(X, y)
 
-    logger.info('Score on X/y: {p}'.format(p=algo.score(X, y)))
-    logger.info('OOB score: {p}'.format(p=algo.oob_score_))
-
-    # algo.predict_proba(X).sum(axis=1)
-
-    from IPython.core.debugger import Pdb
-    Pdb().set_trace()
+    algo_diagnostics(X, y, roi, algo)
 
 
 if __name__ == '__main__':
