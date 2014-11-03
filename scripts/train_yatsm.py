@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 """ Yet Another Timeseries Model (YATSM) - run script for classifier training
 
-Usage: train_yatsm.py [options] <yatsm_config> <classifier_config>
+Usage: train_yatsm.py [options] <yatsm_config> <classifier_config> <model>
+
+Train a classifier from `scikit-learn` on YATSM output and save result to
+file <model>. Dataset configuration is specified by <yatsm_config> and
+classifier and classifier parameters are specified by <classifier_config>.
 
 Options:
-    -v --verbose                Show verbose debugging messages
-    -q --quiet                  Show only error messages
-    -h --help                   Show help
+    --kfold=<n>             Number of folds in cross validation [default: 3]
+    --report=<file>         Save diagnostic information to filename
+    -v --verbose            Show verbose debugging messages
+    -q --quiet              Show only error messages
+    -h --help               Show help
 
 """
 from __future__ import division, print_function
@@ -21,11 +27,12 @@ from itertools import izip
 import logging
 import os
 import sys
-import time
 
 from docopt import docopt
 import numpy as np
 from osgeo import gdal
+
+from sklearn.cross_validation import KFold, StratifiedKFold
 
 # Handle runnin as installed module or not
 try:
@@ -37,13 +44,13 @@ except ImportError:
     from yatsm.version import __version__
 from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
-from yatsm.classifiers.diagnostics import KFoldROI
+from yatsm.classifiers.diagnostics import SpatialKFold
 from yatsm import utils
 
 gdal.AllRegister()
 gdal.UseExceptions()
 
-FORMAT = '%(asctime)s %(levelname)s %(module)s.%(funcName)s : %(message)s'
+FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('yatsm')
 
@@ -81,7 +88,8 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     Returns:
       X (np.ndarray): matrix of feature inputs for each training data sample
       y (np.ndarray): array of labeled training data samples
-      roi (np.ndarray): training data matrix
+      row (np.ndarray): row pixel locations of `y`
+      col (np.ndarray): column pixel locations of `y`
 
     """
     # Find and parse training data
@@ -112,6 +120,8 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
 
     X = []
     out_y = []
+    out_row = []
+    out_col = []
 
     for _row, _col, _y in izip(row, col, y):
         # Load result
@@ -147,32 +157,86 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
         X.append(np.concatenate(
             (coef.reshape(coef.size), rec[i]['rmse'][0])))
         out_y.append(_y)
+        out_row.append(_row)
+        out_col.append(_col)
 
     logger.info('Found matching time segments for {m} out of {n} labels'.
                 format(m=len(out_y), n=y.size))
 
-    return (np.array(X), np.array(out_y), roi)
+    return (np.array(X), np.array(out_y), np.array(out_row), np.array(out_col))
 
 
-def algo_diagnostics(X, y, roi, algo):
+def algo_diagnostics(X, y, row, col, algo):
     """ Display algorithm diagnostics for a given X and y
 
     Args:
       X (np.ndarray): X feature input used in classification
       y (np.ndarray): y labeled examples
-      roi (np.ndarray): training data matrix
+      row (np.ndarray): row pixel locations of `y`
+      col (np.ndarray): column pixel locations of `y`
       algo (sklean classifier): classifier used from scikit-learn
 
     """
     # Print algorithm diagnostics without crossvalidation
-    logger.info('Score on X/y: {p}'.format(p=algo.score(X, y)))
-    logger.info('OOB score: {p}'.format(p=algo.oob_score_))
+    logger.info('<----- DIAGNOSTICS ----->')
+    if hasattr(algo, 'oob_score_'):
+        logger.info('Out of Bag score: {p}'.format(p=algo.oob_score_))
 
-    kf = KFoldROI(roi)
+    logger.info('<----------------------->')
+    logger.info('KFold crossvalidation scores:')
+    kf = KFold(y.size, n_folds=n_fold)
+    scores = np.zeros(n_fold)
+    for i, (train, test) in enumerate(kf):
+        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
+    logger.info('Scores: {0}'.format(scores))
+    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
-    from IPython.core.debugger import Pdb
-    Pdb().set_trace()
+    logger.info('<----------------------->')
+    logger.info('Shuffled KFold crossvalidation scores:')
+    kf = KFold(y.size, n_folds=n_fold, shuffle=True)
+    scores = np.zeros(n_fold)
+    for i, (train, test) in enumerate(kf):
+        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
+    logger.info('Scores: {0}'.format(scores))
+    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
+    logger.info('<----------------------->')
+    logger.info('Stratified KFold crossvalidation scores:')
+    kf = StratifiedKFold(y, n_folds=n_fold)
+    scores = np.zeros(n_fold)
+    for i, (train, test) in enumerate(kf):
+        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
+    logger.info('Scores: {0}'.format(scores))
+    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+
+    logger.info('<----------------------->')
+    logger.info('Stratified shuffled KFold crossvalidation scores:')
+    kf = StratifiedKFold(y, n_folds=n_fold, shuffle=True)
+    scores = np.zeros(n_fold)
+    for i, (train, test) in enumerate(kf):
+        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
+    logger.info('Scores: {0}'.format(scores))
+    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+
+    logger.info('<----------------------->')
+    logger.info('Spatialized KFold crossvalidation scores:')
+    kf = SpatialKFold(y, row, col, n_folds=n_fold)
+    scores = np.zeros(n_fold)
+    for i, (train, test) in enumerate(kf):
+        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
+    logger.info('Scores: {0}'.format(scores))
+    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+
+    logger.info('<----------------------->')
+    logger.info('Spatialized shuffled KFold crossvalidation scores:')
+    kf = SpatialKFold(y, row, col, n_folds=n_fold, shuffle=True)
+    scores = np.zeros(n_fold)
+    for i, (train, test) in enumerate(kf):
+        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
+    logger.info('Scores: {0}'.format(scores))
+    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+
+    logger.info('<----------------------->')
 
 def main(dataset_config, yatsm_config, algo):
     """ YATSM trainining main
@@ -181,7 +245,6 @@ def main(dataset_config, yatsm_config, algo):
       dataset_config (dict): options for the dataset
       yatsm_config (dict): options for the change detection algorithm
       algo (sklearn classifier): classification algorithm helper class
-
 
     """
     # Cache file for training data
@@ -205,7 +268,7 @@ def main(dataset_config, yatsm_config, algo):
 
     if not has_cache or regenerate_cache:
         logger.debug('Reading in X/y')
-        X, y, roi = get_training_inputs(dataset_config)
+        X, y, row, col = get_training_inputs(dataset_config)
         logger.debug('Done reading in X/y')
     else:
         logger.debug('Reading in X/y from cache file {f}'.format(
@@ -230,7 +293,7 @@ def main(dataset_config, yatsm_config, algo):
     logger.info('Training classifier')
     algo.fit(X, y)
 
-    algo_diagnostics(X, y, roi, algo)
+    algo_diagnostics(X, y, row, col, algo)
 
 
 if __name__ == '__main__':
@@ -251,6 +314,12 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Options
+    try:
+        n_fold = int(args['--kfold'])
+    except ValueError:
+        logger.error('Must specify integer for --kfold')
+        sys.exit(1)
+
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
     if args['--quiet']:
@@ -268,4 +337,4 @@ if __name__ == '__main__':
     # Parse classifier config
     algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
 
-    main(dataset_config, yatsm_config, algorithm_helper,)
+    main(dataset_config, yatsm_config, algorithm_helper)
