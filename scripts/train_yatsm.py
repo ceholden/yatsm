@@ -10,6 +10,7 @@ classifier and classifier parameters are specified by <classifier_config>.
 Options:
     --kfold=<n>             Number of folds in cross validation [default: 3]
     --report=<file>         Save diagnostic information to filename
+    --plot                  Show diagnostic plots
     --overwrite             Overwrite output model file
     -v --verbose            Show verbose debugging messages
     -q --quiet              Show only error messages
@@ -31,6 +32,7 @@ import pickle
 import sys
 
 from docopt import docopt
+import matplotlib.pyplot as plt
 import numpy as np
 from osgeo import gdal
 
@@ -48,6 +50,7 @@ from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
 from yatsm.classifiers.diagnostics import SpatialKFold
 from yatsm import utils
+from yatsm import plots
 
 gdal.AllRegister()
 gdal.UseExceptions()
@@ -190,8 +193,8 @@ def algo_diagnostics(X, y, row, col, algo):
     scores = np.zeros(n_fold)
     for i, (train, test) in enumerate(kf):
         scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('Scores: {0}'.format(scores))
-    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    logger.info('scores: {0}'.format(scores))
+    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
     logger.info('<----------------------->')
     logger.info('Shuffled KFold crossvalidation scores:')
@@ -199,8 +202,8 @@ def algo_diagnostics(X, y, row, col, algo):
     scores = np.zeros(n_fold)
     for i, (train, test) in enumerate(kf):
         scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('Scores: {0}'.format(scores))
-    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    logger.info('scores: {0}'.format(scores))
+    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
     logger.info('<----------------------->')
     logger.info('Stratified KFold crossvalidation scores:')
@@ -208,8 +211,8 @@ def algo_diagnostics(X, y, row, col, algo):
     scores = np.zeros(n_fold)
     for i, (train, test) in enumerate(kf):
         scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('Scores: {0}'.format(scores))
-    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    logger.info('scores: {0}'.format(scores))
+    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
     logger.info('<----------------------->')
     logger.info('Stratified shuffled KFold crossvalidation scores:')
@@ -217,8 +220,8 @@ def algo_diagnostics(X, y, row, col, algo):
     scores = np.zeros(n_fold)
     for i, (train, test) in enumerate(kf):
         scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('Scores: {0}'.format(scores))
-    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    logger.info('scores: {0}'.format(scores))
+    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
     logger.info('<----------------------->')
     logger.info('Spatialized KFold crossvalidation scores:')
@@ -226,8 +229,8 @@ def algo_diagnostics(X, y, row, col, algo):
     scores = np.zeros(n_fold)
     for i, (train, test) in enumerate(kf):
         scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('Scores: {0}'.format(scores))
-    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    logger.info('scores: {0}'.format(scores))
+    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
     logger.info('<----------------------->')
     logger.info('Spatialized shuffled KFold crossvalidation scores:')
@@ -235,10 +238,18 @@ def algo_diagnostics(X, y, row, col, algo):
     scores = np.zeros(n_fold)
     for i, (train, test) in enumerate(kf):
         scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('Scores: {0}'.format(scores))
-    logger.info('Score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    logger.info('scores: {0}'.format(scores))
+    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
 
     logger.info('<----------------------->')
+    if hasattr(algo, 'feature_importances_'):
+        logger.info('Feature importance:')
+        logger.info(algo.feature_importances_)
+        if make_plots:
+            plots.plot_feature_importance(algo, dataset_config, yatsm_config)
+
+    from IPython.core.debugger import Pdb
+    Pdb().set_trace()
 
 
 def main(dataset_config, yatsm_config, algo, model_filename):
@@ -336,6 +347,11 @@ if __name__ == '__main__':
     except ValueError:
         logger.error('Must specify integer for --kfold')
         sys.exit(1)
+
+    reports = args['--report']
+
+    make_plots = args['--plot']
+    plt.style.use('ggplot')
 
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
