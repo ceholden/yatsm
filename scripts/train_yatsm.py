@@ -10,6 +10,7 @@ classifier and classifier parameters are specified by <classifier_config>.
 Options:
     --kfold=<n>             Number of folds in cross validation [default: 3]
     --report=<file>         Save diagnostic information to filename
+    --overwrite             Overwrite output model file
     -v --verbose            Show verbose debugging messages
     -q --quiet              Show only error messages
     -h --help               Show help
@@ -26,6 +27,7 @@ from datetime import datetime as dt
 from itertools import izip
 import logging
 import os
+import pickle
 import sys
 
 from docopt import docopt
@@ -238,13 +240,15 @@ def algo_diagnostics(X, y, row, col, algo):
 
     logger.info('<----------------------->')
 
-def main(dataset_config, yatsm_config, algo):
+
+def main(dataset_config, yatsm_config, algo, model_filename):
     """ YATSM trainining main
 
     Args:
       dataset_config (dict): options for the dataset
       yatsm_config (dict): options for the change detection algorithm
       algo (sklearn classifier): classification algorithm helper class
+      model_filename (str): filename for pickled algorithm object
 
     """
     # Cache file for training data
@@ -295,6 +299,11 @@ def main(dataset_config, yatsm_config, algo):
 
     algo_diagnostics(X, y, row, col, algo)
 
+    # Serialize algorithm to file
+    logger.info('Pickling classifier')
+    with open(model_filename, 'wb') as fid:
+        pickle.dump(algo, fid)
+
 
 if __name__ == '__main__':
     # Arguments
@@ -311,6 +320,14 @@ if __name__ == '__main__':
     classifier_config_file = args['<classifier_config>']
     if not os.path.isfile(classifier_config_file):
         print('Error - <classifier_config> specified is not a file')
+        sys.exit(1)
+
+    # Output filename for pickled model
+    model_filename = args['<model>']
+    if not model_filename.endswith('.pkl'):
+        model_filename += '.pkl'
+    if os.path.isfile(model_filename) and not args['--overwrite']:
+        print('Error - <model> exists and --overwrite was not specified')
         sys.exit(1)
 
     # Options
@@ -337,4 +354,4 @@ if __name__ == '__main__':
     # Parse classifier config
     algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
 
-    main(dataset_config, yatsm_config, algorithm_helper)
+    main(dataset_config, yatsm_config, algorithm_helper, model_filename)
