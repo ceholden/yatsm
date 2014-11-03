@@ -9,6 +9,7 @@ classifier and classifier parameters are specified by <classifier_config>.
 
 Options:
     --kfold=<n>             Number of folds in cross validation [default: 3]
+    --seed=<n>              Random number generator seed
     --report=<file>         Save diagnostic information to filename
     --plot                  Show diagnostic plots
     --overwrite             Overwrite output model file
@@ -347,6 +348,9 @@ if __name__ == '__main__':
     except ValueError:
         logger.error('Must specify integer for --kfold')
         sys.exit(1)
+
+    if args['--seed']:
+        np.random.seed(int(args['--seed']))
 
     reports = args['--report']
 
