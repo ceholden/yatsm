@@ -21,10 +21,9 @@ def plot_feature_importance(algo, dataset_config, yatsm_config):
     bands = range(1, dataset_config['n_bands'] + 1)
     bands.remove(dataset_config['mask_band'] + 1)  # band is now index so + 1
 
-    names = [r'$Band {b} \beta_{i}$'.format(b=b, i=i)
+    names = [r'Band {b} $\beta_{i}$'.format(b=b, i=i)
              for i in betas for b in bands]
-    names += [r'$Band {b} RMSE_{i}$'.format(b=b, i=i)
-              for i in betas for b in bands]
+    names += [r'Band {b} $RMSE$'.format(b=b) for b in bands]
 
     fig, ax = plt.subplots()
     ax.bar(ind, algo.feature_importances_, width)
@@ -34,4 +33,5 @@ def plot_feature_importance(algo, dataset_config, yatsm_config):
               algo.feature_importances_.min(),
               algo.feature_importances_.max())
     plt.title('Feature Importance')
+    plt.ylabel('Importance')
     plt.show()
