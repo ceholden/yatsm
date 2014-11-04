@@ -9,6 +9,30 @@ from sklearn.utils import check_random_state
 logger = logging.getLogger('yatsm')
 
 
+def kfold_scores(X, y, algo, kf_generator):
+    """ Performs KFold crossvalidation and reports mean/std of scores
+
+    Args:
+      X (np.ndarray): X feature input used in classification
+      y (np.ndarray): y labeled examples
+      algo (sklean classifier): classifier used from scikit-learn
+      kf_generator (sklearn crossvalidation generator): generator for indices
+        used in crossvalidation
+
+    Returns:
+      (mean, std): mean and standard deviation of crossvalidation scores
+
+    """
+    scores = np.zeros(kf_generator.n_folds)
+    for i, (train, test) in enumerate(kf_generator):
+        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
+
+    logger.info('scores: {0}'.format(scores))
+    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+
+    return scores.mean(), scores.std()
+
+
 class SpatialKFold(object):
     """ Spatial cross validation iterator
 

@@ -49,7 +49,7 @@ except ImportError:
     from yatsm.version import __version__
 from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
-from yatsm.classifiers.diagnostics import SpatialKFold
+from yatsm.classifiers import diagnostics
 from yatsm import utils
 from yatsm import plots
 
@@ -188,59 +188,56 @@ def algo_diagnostics(X, y, row, col, algo):
     if hasattr(algo, 'oob_score_'):
         logger.info('Out of Bag score: {p}'.format(p=algo.oob_score_))
 
+    kfold_summary = np.zeros((0, 2))
+
     logger.info('<----------------------->')
     logger.info('KFold crossvalidation scores:')
     kf = KFold(y.size, n_folds=n_fold)
-    scores = np.zeros(n_fold)
-    for i, (train, test) in enumerate(kf):
-        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('scores: {0}'.format(scores))
-    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    kfold_summary = np.vstack((kfold_summary,
+                              diagnostics.kfold_scores(X, y, algo, kf)
+                               ))
 
     logger.info('<----------------------->')
     logger.info('Shuffled KFold crossvalidation scores:')
     kf = KFold(y.size, n_folds=n_fold, shuffle=True)
-    scores = np.zeros(n_fold)
-    for i, (train, test) in enumerate(kf):
-        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('scores: {0}'.format(scores))
-    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    kfold_summary = np.vstack((kfold_summary,
+                              diagnostics.kfold_scores(X, y, algo, kf)
+                               ))
 
     logger.info('<----------------------->')
     logger.info('Stratified KFold crossvalidation scores:')
     kf = StratifiedKFold(y, n_folds=n_fold)
-    scores = np.zeros(n_fold)
-    for i, (train, test) in enumerate(kf):
-        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('scores: {0}'.format(scores))
-    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    kfold_summary = np.vstack((kfold_summary,
+                              diagnostics.kfold_scores(X, y, algo, kf)
+                               ))
 
     logger.info('<----------------------->')
     logger.info('Stratified shuffled KFold crossvalidation scores:')
     kf = StratifiedKFold(y, n_folds=n_fold, shuffle=True)
-    scores = np.zeros(n_fold)
-    for i, (train, test) in enumerate(kf):
-        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('scores: {0}'.format(scores))
-    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    kfold_summary = np.vstack((kfold_summary,
+                              diagnostics.kfold_scores(X, y, algo, kf)
+                               ))
 
     logger.info('<----------------------->')
     logger.info('Spatialized KFold crossvalidation scores:')
-    kf = SpatialKFold(y, row, col, n_folds=n_fold)
-    scores = np.zeros(n_fold)
-    for i, (train, test) in enumerate(kf):
-        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('scores: {0}'.format(scores))
-    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    kf = diagnostics.SpatialKFold(y, row, col, n_folds=n_fold)
+    kfold_summary = np.vstack((kfold_summary,
+                              diagnostics.kfold_scores(X, y, algo, kf)
+                               ))
 
     logger.info('<----------------------->')
     logger.info('Spatialized shuffled KFold crossvalidation scores:')
-    kf = SpatialKFold(y, row, col, n_folds=n_fold, shuffle=True)
-    scores = np.zeros(n_fold)
-    for i, (train, test) in enumerate(kf):
-        scores[i] = algo.fit(X[train, :], y[train]).score(X[test, :], y[test])
-    logger.info('scores: {0}'.format(scores))
-    logger.info('score mean/std: {0}/{1}'.format(scores.mean(), scores.std()))
+    kf = diagnostics.SpatialKFold(y, row, col, n_folds=n_fold, shuffle=True)
+    kfold_summary = np.vstack((kfold_summary,
+                              diagnostics.kfold_scores(X, y, algo, kf)
+                               ))
+
+    if make_plots:
+        test_names = ['KFold', 'KFold (shuffle)',
+                      'Stratified KFold', 'Stratified KFold (shuffle)',
+                      'Spatial KFold', 'Spatial KFold (shuffle)'
+                      ]
+        plots.plot_crossvalidation_scores(kfold_summary, test_names)
 
     logger.info('<----------------------->')
     if hasattr(algo, 'feature_importances_'):
