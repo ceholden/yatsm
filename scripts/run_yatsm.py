@@ -50,7 +50,6 @@ import os
 from docopt import docopt
 
 import brewer2mpl
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -73,7 +72,7 @@ fmask = 7
 plot_styles = mpl.style.available + [u'xkcd']
 
 # Set default size to 11" x 6.798 (golden ratio)
-mpl.rcParams['figure.figsize'] = 11, 6.798
+plt.rcParams['figure.figsize'] = 11, 6.798
 
 logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
                     level=logging.INFO,
@@ -185,9 +184,7 @@ if __name__ == '__main__':
 
     # Minimum RMSE
     min_rmse = args['--min_rmse']
-    if min_rmse.lower() == 'none':
-        min_rmse = None
-    else:
+    if min_rmse:
         min_rmse = float(min_rmse)
 
     # Multi-temporal screening method
