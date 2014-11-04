@@ -18,15 +18,31 @@ def plot_crossvalidation_scores(kfold_scores, test_labels):
     width = 0.5
 
     fig, ax = plt.subplots()
-    ax.bar(ind, kfold_scores[:, 0], width, yerr=kfold_scores[:, 1])
+    bars = ax.bar(ind, kfold_scores[:, 0], width)
+    _, caplines, _ = ax.errorbar(ind + width / 2.0, kfold_scores[:, 0],
+                                 fmt=None,
+                                 yerr=kfold_scores[:, 1],
+                                 capsize=10, elinewidth=3)
+    for capline in caplines:
+        capline.set_linewidth(10)
+        capline.set_markeredgewidth(3)
+        capline.set_color('red')
+
+    for i, bar in enumerate(bars):
+        ax.text(ind[i] + width / 2.0,
+                kfold_scores[i, 0] + kfold_scores[i, 1] * 1.1,
+                str(round(kfold_scores[i, 0], 3)),
+                ha='center', va='bottom')
+
     ax.set_xticks(ind + width / 2.0)
     ax.set_xticklabels(test_labels, ha='center')
-    plt.ylim((0, 1.0))
+    # plt.ylim((0, 1.0))
 
     plt.title('KFold Cross Validation Summary Statistics')
     plt.xlabel('Test')
     plt.ylabel(r'Accuracy ($\pm$ standard deviation)')
 
+    plt.tight_layout()
     plt.show()
 
 
