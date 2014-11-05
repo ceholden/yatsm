@@ -49,7 +49,8 @@ function main() {
             name=$img
         fi
         bn=$(basename $img)
-        ydoy=${bn:$istart:7}
+        id=$(basename $(dirname $img))
+        ydoy=${id:$istart:7}
 
         echo "$ydoy,$name"
     done | sort > $output
