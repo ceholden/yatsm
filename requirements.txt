@@ -1,0 +1,9 @@
+numpy>=1.8.0
+scipy>=0.14.0
+Cython>=0.21
+statsmodels>=0.5.0
+scikit-learn>=0.15.2
+glmnet==1.1-5
+matplotlib>=1.4.2
+docopt>=0.6.2
+brewer2mpl>=1.4.1

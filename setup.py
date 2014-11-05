@@ -29,13 +29,14 @@ setup(
     cmdclass=cmdclass,
     ext_modules=ext,
     install_requires=[
-        'cython >= 0.20.1',
-        'numpy >= 1.8.1',
-        'pandas >= 0.13.1',
-        'statsmodels >= 0.5.0',
-        'glmnet = 1.1-5',
-        'scikit-learn >= 0.15.1',
-        'ggplot >= 0.5.8',
-        'docopt >= 0.6.1'
+        'numpy',
+        'scipy',
+        'Cython',
+        'statsmodels',
+        'scikit-learn',
+        'glmnet',
+        'matplotlib',
+        'docopt',
+        'brewer2mpl'
     ]
 )
