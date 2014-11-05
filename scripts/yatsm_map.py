@@ -425,7 +425,8 @@ def get_prediction(date, bands, results, image_ds,
 
         if rec.shape[0] == 0:
             # No values in this file
-            logger.warning('Could not find results in {f}'.format(f=r))
+            if WARN_ON_EMPTY:
+                logger.warning('Could not find results in {f}'.format(f=r))
             continue
 
         # Find indices for the date specified
