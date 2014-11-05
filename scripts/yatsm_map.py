@@ -227,7 +227,7 @@ def get_coefficients(date, bands, coefs, results, image_ds,
     # Find how many coefficients there are for output
     n_coef = None
     n_band = None
-    for i, r in enumerate(records):
+    for r in records:
         try:
             rec = np.load(r)['record']
         except:
@@ -338,8 +338,8 @@ def get_coefficients(date, bands, coefs, results, image_ds,
                        (index.size, n_coefs * n_bands))
 
         if use_rmse:
-            raster[rec['py'][i], rec['px'][i], n_coefs * n_bands:] = \
-                rec['rmse'][i][i_bands]
+            raster[rec['py'][index], rec['px'][index], n_coefs * n_bands:] =\
+                rec['rmse'][index][:, i_bands]
 
     return (raster, band_names)
 
@@ -370,7 +370,7 @@ def get_prediction(date, bands, results, image_ds,
     n_coef = None
     n_band = None
     freq = None
-    for i, r in enumerate(records):
+    for r in records:
         try:
             _result = np.load(r)
             rec = _result['record']
