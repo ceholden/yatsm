@@ -69,7 +69,7 @@ except ImportError:
 ndays = 365.25
 fmask = 7
 
-plot_styles = mpl.style.available + [u'xkcd']
+plot_styles = plt.style.available + [u'xkcd']
 
 # Set default size to 11" x 6.798 (golden ratio)
 plt.rcParams['figure.figsize'] = 11, 6.798
