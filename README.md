@@ -3,7 +3,7 @@ Yet Another Timeseries Model (YATSM)
 ## About
 YATSM model based off of tests for structural changes from the econometrics literature including the MOSUM or CUMSUM (Chu et al, Zeileis, and others) as implemented in a remote sensing context by BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This effort is not intended as a direct port of either algorithm. The "YATSM" name intends to refer to these two algorithms without claiming 1 to 1 functionality of either.
 
-Documentation on how to use the scripts and utilities built for the model can be found [in the `docs` folder](docs/README.md).
+Documentation on how to use the scripts and utilities built for the model can be found [in the `_docs` folder](_docs/README.md). (UPDATE: currently working on better documentation via Sphinx, so this link will change).
 
 ## Example
 The simplest way of using YATSM would be the pixel-by-pixel command line interface - `run_yatsm.py`.
