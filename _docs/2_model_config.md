@@ -33,8 +33,8 @@ The change detection is parameterized by:
 | `min_rmse` | `float` | Minimum RMSE in test statistic for each model |
 | `freq` | `list` | Frequency of sine/cosine seasonal periods |
 | `test_indices` | `list` | Indices of Y to use in change detection |
-| `screening` | `str` | Method for screening timeseries for noise. Options are [`RLM`](http://statsmodels.sourceforge.net/stable/generated/statsmodels.robust.robust_linear_model.RLM.html) and [`LOWESS`](http://statsmodels.sourceforge.net/stable/generated/statsmodels.nonparametric.smoothers_lowess.lowess.html?highlight=lowess#statsmodels.nonparametric.smoothers_lowess.lowess) |
-| `lassocv` | `bool` | Use [`sklearn.linear_model.LassoLarsCV`](http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoLarsCV.html#sklearn.linear_model.LassoLarsCV) instead of [`glmnet`](https://github.com/dwf/glmnet-python) |
+| `screening` | `str` | Method for screening timeseries for noise. Options are `RLM` and `LOWESS` |
+| `lassocv` | `bool` | Use `sklearn.linear_model.LassoLarsCV` instead of `glmnet` |
 | `reverse` | `bool` | Run model backward in time, rather than forward |
 | `robust` | `bool` | Return coefficients and RMSE from a robust linear model for each time segment |
 
