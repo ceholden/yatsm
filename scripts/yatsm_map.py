@@ -18,6 +18,7 @@ Options:
 Coefficient options:
     --coef <coefs>          Coefficients to export [default: all]
     --band <bands>          Bands to export [default: all]
+    --robust                Use robust estimates
 
 Prediction options:
 

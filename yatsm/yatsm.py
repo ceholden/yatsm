@@ -5,6 +5,7 @@ import math
 import sys
 
 import numpy as np
+import numpy.lib.recfunctions
 
 import statsmodels.api as sm
 
@@ -346,10 +347,14 @@ class YATSM(object):
         if not self.ran:
             return None
 
-        # Copy normal records
-        robust_record = np.copy(self.record)
+        # Create new array for robust coefficients and RMSE
+        robust = np.zeros(self.record.shape[0], dtype=[
+            ('robust_coef', 'float32', (self.n_coef, len(self.fit_indices))),
+            ('robust_rmse', 'float32', len(self.fit_indices)),
+        ])
+
         # Update to robust model
-        for i, r in enumerate(robust_record):
+        for i, r in enumerate(self.record):
             # Find matching X and Y in data
             index = np.where((self.X[:, 1] >= min(r['start'], r['end'])) &
                              (self.X[:, 1] <= max(r['end'], r['start'])))[0]
@@ -360,7 +365,7 @@ class YATSM(object):
             # Refit each band
             for i_b, b in enumerate(self.fit_indices):
                 # Find nonzero
-                nonzero = np.where(robust_record[i]['coef'][:, i_b] != 0)[0]
+                nonzero = np.where(self.record[i]['coef'][:, i_b] != 0)[0]
 
                 if nonzero.size == 0:
                     continue
@@ -372,14 +377,18 @@ class YATSM(object):
                 # Fit
                 fit = rirls_model.fit()
                 # Store updated coefficients
-                robust_record[i]['coef'][nonzero, i_b] = fit.params
+                robust[i]['robust_coef'][nonzero, i_b] = fit.params
 
                 # Update RMSE
                 rss = np.sum((fit.resid) ** 2)
-                robust_record[i]['rmse'][i_b] = math.sqrt(rss / index.size)
+                robust[i]['robust_rmse'][i_b] = math.sqrt(rss / index.size)
 
             self.logger.debug('Updated record {i} to robust results'.
                               format(i=i))
+
+        # Merge
+        robust_record = np.lib.recfunctions.merge_arrays((self.record, robust),
+                                                         flatten=True)
 
         return robust_record
 
