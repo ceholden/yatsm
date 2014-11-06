@@ -12,7 +12,7 @@ We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ce
 
     > run_yatsm.py --consecutive=5 --threshold=3 --min_obs=16 \
     ... --freq=1 --min_rmse 100 --test_indices "2 4 5" --screening RLM \
-    ... --plot_index=4 --plot_style xkcd \
+    ... --plot_index=2 --plot_style xkcd \
     ... ../landsat_stack/p022r049/images/ 133 106
 
 Produces:
