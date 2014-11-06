@@ -58,11 +58,11 @@ def get_line_cache_name(dataset_config, n_images, nrow, nbands):
       nbands (int): number of bands in dataset
 
     Returns:
-      filename (str): filename of cache file
+      str: filename of cache file
 
     """
     path = dataset_config['cache_line_dir']
-    filename = 'yatsm_r{l}_n{n}_b{b}.npy'.format(
+    filename = 'yatsm_r{l}_n{n}_b{b}.npy.npz'.format(
         l=nrow, n=n_images, b=nbands)
 
     return os.path.join(path, filename)

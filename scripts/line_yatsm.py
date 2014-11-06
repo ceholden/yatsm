@@ -110,14 +110,14 @@ def read_line(line, images, dataset_config,
     start_time = time.time()
 
     read_from_disk = True
-    cache_filename = get_line_cache_name(dataset_config, len(images),
-                                         line, nband)
+    cache_filename = get_line_cache_name(
+        dataset_config, len(images), line, nband)
 
     if read_cache:
         if os.path.isfile(cache_filename):
             logger.debug('Reading in Y from cache file {f}'.format(
                 f=cache_filename))
-            Y = np.load(cache_filename)
+            Y = np.load(cache_filename)['Y']
             read_from_disk = False
 
     if read_from_disk:
@@ -136,7 +136,7 @@ def read_line(line, images, dataset_config,
     if write_cache and read_from_disk:
         logger.debug('Writing Y data to cache file {f}'.format(
             f=cache_filename))
-        np.save(cache_filename, Y)
+        np.savez_compressed(cache_filename, Y=Y)
 
     logger.debug('Took {s}s to read in the data'.format(
         s=round(time.time() - start_time, 2)))

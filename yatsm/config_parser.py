@@ -57,8 +57,8 @@ def _parse_config_v_zero_pt_one(config_file):
                                                       'training_start')
         dataset_config['training_end'] = config.get('classification',
                                                     'training_end')
-        dataset_config['training_date_format'] = config.get('classification',
-                                                        'training_date_format')
+        dataset_config['training_date_format'] = config.get(
+            'classification', 'training_date_format')
 
     # Configuration for YATSM algorithm
     yatsm_config = {}
