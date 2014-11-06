@@ -11,13 +11,13 @@ The simplest way of using YATSM would be the pixel-by-pixel command line interfa
 We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ceholden/landsat_stack) for this demonstration:
 
     > run_yatsm.py --consecutive=5 --threshold=3 --min_obs=16 \
-    ... --freq="1, 2" --min_rmse 150 --test_indices "2 4 5" --screening RLM \
+    ... --freq=1 --min_rmse 100 --test_indices "2 4 5" --screening RLM \
     ... --plot_index=4 --plot_style xkcd \
-    ... ../landsat_stack/p022r049/images/ 150 50
+    ... ../landsat_stack/p022r049/images/ 133 106
 
 Produces:
-    ![Timeseries](docs/media/example_ts_b5.png)
-    ![Modeled Timeseries](docs/media/example_ts_fitted_b5.png)
+    ![Timeseries](docs/media/double_cut_ts_b3.png)
+    ![Modeled Timeseries](docs/media/double_cut_ts_fitted_b3.png)
 
 ## Requirements
 #### Main dependencies:
