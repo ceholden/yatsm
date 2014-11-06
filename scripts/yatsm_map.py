@@ -5,24 +5,22 @@ Usage:
     yatsm_map.py [options] ( coef | predict | class ) <date> <output>
 
 Options:
-    --ndv <NoDataValue>     No data value for map [default: 0]
     --root <dir>            Root time series directory [default: ./]
     -r --result <dir>       Directory of results [default: YATSM]
     -i --image <image>      Example image [default: example_img]
-    --date <format>         Date format [default: %Y-%m-%d]
+    --ndv <NoDataValue>     No data value for map [default: 0]
     -f --format <format>    Output raster format [default: GTiff]
+    --date <format>         Date format [default: %Y-%m-%d]
     --warn-on-empty         Warn user when reading in empty result files
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
 
-Coefficient options:
-    --coef <coefs>          Coefficients to export [default: all]
+Coefficient and prediction options:
     --band <bands>          Bands to export [default: all]
     --robust                Use robust estimates
+    --coef <coefs>          Coefficients to export [default: all]
 
-Prediction options:
-
-Class options:
+Classification options:
     --after                 Use time segment after <date> if needed for map
     --before                Use time segment before <date> if needed for map
 
@@ -155,8 +153,8 @@ def get_classification(date, after, before, results, image_ds,
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
-      raster (np.array): 2D numpy array containing the classification map for
-        the date specified
+      np.ndarray: 2D numpy array containing the classification map for the date
+        specified
 
     """
     # Init output raster
@@ -168,7 +166,7 @@ def get_classification(date, after, before, results, image_ds,
 
     for i, r in enumerate(records):
         if np.mod(i, 100) == 0:
-            logger.debug('{0:.0f}%'.format(i / n_records * 100))
+            logger.debug('{0:.1f}%'.format(i / n_records * 100))
 
         rec = np.load(r)['record']
 
@@ -215,10 +213,9 @@ def get_coefficients(date, bands, coefs, results, image_ds,
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
-        (raster, band_names):   A tuple containing the 3D numpy.ndarray
-                                containing the coefficients for each band, for
-                                each pixel, and the band names for the output
-                                dataset
+      tuple: A tuple (np.ndarray, list) containing the 3D numpy.ndarray of the
+        coefficients (coefficient x band x pixel), and the band names for
+        the output dataset
 
     """
     # Find results
@@ -307,7 +304,7 @@ def get_coefficients(date, bands, coefs, results, image_ds,
 
     for _i, r in enumerate(records):
         if np.mod(_i, 100) == 0:
-            logger.debug('{0:.0f}%'.format(_i / n_records * 100))
+            logger.debug('{0:.1f}%'.format(_i / n_records * 100))
 
         # Open output
         try:
@@ -362,7 +359,6 @@ def get_prediction(date, bands, results, image_ds,
         pixel
 
     """
-    # raise NotImplementedError("Haven't ported this yet...")
     # Find results
     records = find_results(results, pattern)
     n_records = len(records)
@@ -416,7 +412,7 @@ def get_prediction(date, bands, results, image_ds,
     for _i, r in enumerate(records):
         # Verbose progress
         if np.mod(_i, 100) == 0:
-            logger.debug('{0:.0f}%'.format(_i / n_records * 100))
+            logger.debug('{0:.1f}%'.format(_i / n_records * 100))
         # Open output
         try:
             rec = np.load(r)['record']
@@ -553,7 +549,7 @@ def main():
         logger.error('Unknown GDAL format specified')
         raise
 
-    ### Parse coefficient options
+    ### Parse coefficient and prediction options
     # Coefficients to output
     coefs = [c for c in args['--coef'].replace(',', ' ').split(' ') if c != '']
     if not all([c.lower() in _coefs for c in coefs]):
