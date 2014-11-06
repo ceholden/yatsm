@@ -200,7 +200,7 @@ def get_classification(date, after, before, results, image_ds,
 
 
 def get_coefficients(date, bands, coefs, results, image_ds,
-                     ndv=-9999, pattern=_result_record):
+                     use_robust=False, ndv=-9999, pattern=_result_record):
     """ Output a raster with coefficients from CCDC
 
     Args:
@@ -209,6 +209,8 @@ def get_coefficients(date, bands, coefs, results, image_ds,
       coefs (list): List of coefficients to output
       results (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
+      use_robust (bool, optional): Map robust coefficients and RMSE instead of
+        normal ones
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
@@ -218,6 +220,13 @@ def get_coefficients(date, bands, coefs, results, image_ds,
         the output dataset
 
     """
+    if use_robust:
+        _coef = 'robust_coef'
+        _rmse = 'robust_rmse'
+    else:
+        _coef = 'coef'
+        _rmse = 'rmse'
+
     # Find results
     records = find_results(results, pattern)
     n_records = len(records)
@@ -231,8 +240,16 @@ def get_coefficients(date, bands, coefs, results, image_ds,
         except:
             continue
 
+        if _coef not in rec.dtype.names or _rmse not in rec.dtype.names:
+            logger.error('Could not find coefficients ({c}) and RMSE ({r})'
+                         'in record'.format(c=_coef, r=_rmse))
+            if use_robust:
+                logger.error('Robust coefficients and RMSE were not found'
+                             ' in results. Did you calculate them?')
+            sys.exit(1)
+
         try:
-            n_coef, n_band = rec['coef'][0].shape
+            n_coef, n_band = rec[_coef][0].shape
         except:
             continue
         else:
@@ -326,24 +343,24 @@ def get_coefficients(date, bands, coefs, results, image_ds,
             continue
 
         # Normalize intercept to mid-point in time segment
-        rec['coef'][index, 0, :] += \
+        rec[_coef][index, 0, :] += \
             ((rec['start'][index] + rec['end'][index]) / 2.0)[:, None] * \
-            rec['coef'][index, 1, :]
+            rec[_coef][index, 1, :]
 
         # Extract coefficients
         raster[rec['py'][index], rec['px'][index], :n_coefs * n_bands] =\
-            np.reshape(rec['coef'][index][:, i_coefs, :][:, :, i_bands],
+            np.reshape(rec[_coef][index][:, i_coefs, :][:, :, i_bands],
                        (index.size, n_coefs * n_bands))
 
         if use_rmse:
             raster[rec['py'][index], rec['px'][index], n_coefs * n_bands:] =\
-                rec['rmse'][index][:, i_bands]
+                rec[_rmse][index][:, i_bands]
 
     return (raster, band_names)
 
 
 def get_prediction(date, bands, results, image_ds,
-                   ndv=-9999, pattern=_result_record):
+                   use_robust=False, ndv=-9999, pattern=_result_record):
     """ Output a raster with the predictions from model fit for a given date
 
     Args:
@@ -351,6 +368,8 @@ def get_prediction(date, bands, results, image_ds,
       coefs (list): List of coefficients to output
       results (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
+      use_robust (bool, optional): Map robust coefficients and RMSE instead of
+        normal ones
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
@@ -359,6 +378,13 @@ def get_prediction(date, bands, results, image_ds,
         pixel
 
     """
+    if use_robust:
+        _coef = 'robust_coef'
+        _rmse = 'robust_rmse'
+    else:
+        _coef = 'coef'
+        _rmse = 'rmse'
+
     # Find results
     records = find_results(results, pattern)
     n_records = len(records)
@@ -374,6 +400,14 @@ def get_prediction(date, bands, results, image_ds,
             freq = _result['freq']
         except:
             continue
+
+        if _coef not in rec.dtype.names or _rmse not in rec.dtype.names:
+            logger.error('Could not find coefficients ({c}) and RMSE ({r})'
+                         'in record'.format(c=_coef, r=_rmse))
+            if use_robust:
+                logger.error('Robust coefficients and RMSE were not found'
+                             ' in results. Did you calculate them?')
+            sys.exit(1)
 
         try:
             n_coef, n_band = rec['coef'][0].shape
@@ -573,7 +607,8 @@ def main():
             logger.error('Could not parse band selection')
             raise
 
-    ### Parse prediction options
+    # Robust estimates?
+    use_robust = args['--robust']
 
     ### Classification outputs
     # Go to next time segment option
@@ -593,9 +628,11 @@ def main():
         raster = get_classification(date, after, before, results, image_ds)
     elif args['coef']:
         raster, band_names = \
-            get_coefficients(date, bands, coefs, results, image_ds, ndv=ndv)
+            get_coefficients(date, bands, coefs, results, image_ds,
+                             use_robust=use_robust, ndv=ndv)
     elif args['predict']:
-        raster = get_prediction(date, bands, results, image_ds, ndv=ndv)
+        raster = get_prediction(date, bands, results, image_ds,
+                                use_robust=use_robust, ndv=ndv)
 
     if args['class']:
         write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
