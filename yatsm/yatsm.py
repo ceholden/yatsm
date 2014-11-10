@@ -44,8 +44,9 @@ class GLMLasso(ElasticNet):
         # elastic_net will fire exception instead
         # assert jerr == 0
 
+        # LASSO returns coefs out of order... reorder them with `ia`
         self.coef_ = np.zeros(X.shape[1])
-        self.coef_[ia[:nin[0]] - 1] = coef_
+        self.coef_[ia[:nin[0]] - 1] = coef_[:nin[0], 0]
 
         self.intercept_ = intercept_
         self.rsquared_ = rsquared_
