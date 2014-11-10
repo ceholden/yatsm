@@ -331,7 +331,7 @@ def main(dataset_config, yatsm_config,
                      read_cache=read_cache, write_cache=write_cache)
         except Exception as e:
             logger.error('Could not process line {l}'.format(l=job_line))
-            logger.error(e.message)
+            logger.error(str(e))
 
         logger.debug('Took {s}s to run'.format(
             s=round(time.time() - start_time, 2)))
