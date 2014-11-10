@@ -122,6 +122,7 @@ class YATSM(object):
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  fit_indices=None, test_indices=None,
                  screening='RLM', green_band=green_band, swir1_band=swir1_band,
+                 screening_crit=400.0,
                  px=0, py=0,
                  lassocv=False, logger=None):
         """Initialize a YATSM model for data X (spectra) and Y (dates)
@@ -133,24 +134,26 @@ class YATSM(object):
         effort is not intended as a direct port of either algorithms.
 
         Args:
-          X (ndarray)               Independent variable matrix
-          Y (ndarray)               Dependent variable matrix
-          consecutive (int)         Consecutive observations to trigger change
-          threshold (float)         Test statistic threshold for change
-          min_obs (int)             Minimum observations in model
-          min_rmse (float)          Minimum RMSE for models during testing
-          fit_indices (ndarray)     Indices of Y to fit models for
-          test_indices (ndarray)    Indices of Y to test for change with
+          X (ndarray): Independent variable matrix
+          Y (ndarray): Dependent variable matrix
+          consecutive (int): Consecutive observations to trigger change
+          threshold (float): Test statistic threshold for change
+          min_obs (int): Minimum observations in model
+          min_rmse (float): Minimum RMSE for models during testing
+          fit_indices (ndarray): Indices of Y to fit models for
+          test_indices (ndarray): Indices of Y to test for change with
           screening (str, optional): Style of prescreening of the timeseries
             for noise. Options are 'RLM' or 'LOWESS'
           green_band (int, optional): Index of green band in Y for
             multitemporal masking
           swir1_band (int, optional): Index of first SWIR band in Y for
             multitemporal masking
-          px (int, optional):       X (column) pixel reference
-          py (int, optional):       Y (row) pixel reference
-          lassocv (bool)            Use scikit-learn LarsLassoCV over glmnet
-          logger (logging)          Specific logger to use, else get one
+          screening_crit (float, optional): critical value for multitemporal
+            noise screening
+          px (int, optional): X (column) pixel reference
+          py (int, optional): Y (row) pixel reference
+          lassocv (bool): Use scikit-learn LarsLassoCV over glmnet
+          logger (logging.Logger): Specific logger to use, else get one
 
         """
         # Setup logger
@@ -201,6 +204,8 @@ class YATSM(object):
 
         self.green_band = green_band
         self.swir1_band = swir1_band
+
+        self.screening_crit = screening_crit
 
         # Attributes
         self.n_band = Y.shape[0]
@@ -464,6 +469,7 @@ class YATSM(object):
                 span = self.consecutive * 2 + 1
 
             mask = smooth_mask(self.X[:, 1], self.Y, span,
+                               crit=self.screening_crit,
                                green=self.green_band, swir1=self.swir1_band)
 
             # Apply mask to X and Y
@@ -490,6 +496,7 @@ class YATSM(object):
                           dtype=np.uint16)
         mask[index] = multitemp_mask(self.X[index, 1], self.Y[:, index],
                                      self.span_time / self.ndays,
+                                     crit=self.screening_crit,
                                      green=self.green_band,
                                      swir1=self.swir1_band)
 

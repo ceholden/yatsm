@@ -11,6 +11,7 @@ Algorithm options:
     --freq=<freq>           Sin/cosine frequencies [default: 1 2 3]
     --min_rmse=<rmse>       Minimum RMSE used in detection
     --screening=<method>    Multi-temporal screening method [default: RLM]
+    --screening_crit=<t>    Screening critical value [default: 400.0]
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
     --test_indices=<bands>  Test indices [default: ALL]
@@ -191,6 +192,7 @@ if __name__ == '__main__':
     screening = args['--screening']
     if screening not in YATSM.screening_types:
         raise TypeError('Unknown multi-temporal cloud screening type')
+    screening_crit = float(args['--screening_crit'])
 
     # Cross-validated Lasso
     lassocv = args['--lassocv']
@@ -275,6 +277,7 @@ if __name__ == '__main__':
                   min_obs=min_obs,
                   min_rmse=min_rmse,
                   screening=screening,
+                  screening_crit=screening_crit,
                   test_indices=test_indices,
                   lassocv=lassocv,
                   logger=logger)

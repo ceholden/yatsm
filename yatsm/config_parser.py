@@ -17,8 +17,10 @@ def _parse_config_v_zero_pt_one(config_file):
         'use_bip_reader': 'False',
         'training_image': None,
         'mask_values': '0, 255',
-        'cache_Xy': None,
         'cache_line_dir': None,
+        'robust': False,
+        'screening_crit': 400.0,
+        'cache_Xy': None
     }
 
     config = configparser.ConfigParser(defaults=defaults, allow_no_value=True)
@@ -77,6 +79,8 @@ def _parse_config_v_zero_pt_one(config_file):
                                              yatsm_config['test_indices']
                                              if b != ''])
     yatsm_config['screening'] = config.get('YATSM', 'screening')
+    yatsm_config['screening_crit'] = config.getfloat('YATSM', 'screening_crit')
+
     yatsm_config['lassocv'] = config.getboolean('YATSM', 'lassocv')
     yatsm_config['reverse'] = config.getboolean('YATSM', 'reverse')
     yatsm_config['robust'] = config.getboolean('YATSM', 'robust')
