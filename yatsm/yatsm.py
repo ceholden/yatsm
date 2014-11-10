@@ -463,7 +463,8 @@ class YATSM(object):
             if not span:
                 span = self.consecutive * 2 + 1
 
-            mask = smooth_mask(self.X[:, 1], self.Y, span)
+            mask = smooth_mask(self.X[:, 1], self.Y, span,
+                               green=self.green_band, swir1=self.swir1_band)
 
             # Apply mask to X and Y
             self.X = self.X[mask, :]
@@ -488,7 +489,9 @@ class YATSM(object):
         index = np.arange(self.start, self.here + self.consecutive,
                           dtype=np.uint16)
         mask[index] = multitemp_mask(self.X[index, 1], self.Y[:, index],
-                                     self.span_time / self.ndays)
+                                     self.span_time / self.ndays,
+                                     green=self.green_band,
+                                     swir1=self.swir1_band)
 
         # Check if there are enough observations for model with noise removed
         _span_index = mask[index][:-self.consecutive].sum()
