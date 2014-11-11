@@ -139,7 +139,7 @@ using the batch interface, make sure you already have a parameter file
 generated as described by <a class="reference internal" href="configuration.html#model-config"><em>Model Configuration</em></a>.</p>
 <p>The batch interface which runs each line separately is
 <tt class="docutils literal"><span class="pre">line_yatsm.py</span></tt>. It&#8217;s usage is:</p>
-<div class="code sh highlight-python"><div class="highlight"><pre>$ ./yatsm/line_yatsm.py -h
+<div class="highlight-text"><div class="highlight"><pre>$ line_yatsm.py -h
  Yet Another Timeseries Model (YATSM) - run script for lines of images
 
 Usage: line_yatsm.py [options] &lt;config_file&gt; &lt;job_number&gt; &lt;total_jobs&gt;
@@ -153,12 +153,6 @@ Options:
     -h --help                   Show help
 </pre></div>
 </div>
-<ul class="simple">
-<li><tt class="docutils literal"><span class="pre">&lt;config_file&gt;</span></tt>: filename of the configuration INI file.</li>
-<li><tt class="docutils literal"><span class="pre">&lt;job_number&gt;</span></tt>: the <tt class="docutils literal"><span class="pre">i</span></tt>th job of <tt class="docutils literal"><span class="pre">n</span></tt> total jobs</li>
-<li><tt class="docutils literal"><span class="pre">&lt;total_jobs&gt;</span></tt>: the total number of jobs used to process the image
-stack</li>
-</ul>
 <p>Let&#8217;s say our image stack contains 1,000 rows. If we use 50 total CPUs
 to process the image stack, then each CPU will be responsible for only
 20 lines. To evenly distribute the number of pixels that contain

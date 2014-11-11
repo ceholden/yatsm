@@ -20,14 +20,15 @@ Detection and Classification (CCDC) :cite:`Zhu2014152` algorithm. While YATSM
 began as an extension from CCDC, it was never intended as a 1 to 1 port of
 CCDC and will continue to diverge in its own direction.
 
-Just as the theory behind CCDC is based on a style of tests for structural
-change from econometrics literature
-:cite:`Chow1960,Andrews1993,Chu1996,Zeileis2005`,
-this algorithm is also influenced by other remote sensing algorithms including
+This algorithm is also influenced by other remote sensing algorithms which,
+like CCDC, are based on theory on tests for structural change from econometrics
+literature
+:cite:`Chow1960,Andrews1993,Chu1996,Zeileis2005`.
+These other remote sensing algorithms include
 Break detection For Additive Season and Trend (BFAST) :cite:`Verbesselt201298`
-and LandTrendr :cite:`Kennedy20102897`. By combining ideas from CCDC, BFAST,
-and LandTrendr, this "Yet Another..." algorithm hopes to overcome weaknesses
-present in any single approach.
+and LandTrendr :cite:`Kennedy20102897`.
+By combining ideas from CCDC, BFAST, and LandTrendr, this "Yet Another..."
+algorithm hopes to overcome weaknesses present in any single approach.
 
 
 User Guide
@@ -60,7 +61,7 @@ Documentation for individual command line applications from YATSM:
 
 
 References
----------
+----------
 
 .. bibliography:: static/index_refs.bib
    :style: unsrt
