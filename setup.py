@@ -9,7 +9,9 @@ import numpy as np
 with open('yatsm/version.py') as f:
     exec(f.read())
 
-scripts = ['yatsm/line_yatsm.py', 'yatsm/run_yatsm.py']
+scripts = ['scripts/line_yatsm.py', 'scripts/run_yatsm.py',
+           'scripts/gen_date_file.sh', 'scripts/train_yatsm.py',
+           'scripts/yatsm_map.py', 'scripts/yatsm_changemap.py']
 
 ext = [Extension('yatsm.cymasking', ['yatsm/cymasking.pyx'],
                  include_dirs=[np.get_include()])]
