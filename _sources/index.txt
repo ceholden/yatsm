@@ -6,13 +6,34 @@ Yet Another Time Series Model (YATSM)
 About
 -----
 
-The YATSM model is based off of tests for structural changes from the
-econometrics literature including the MOSUM or CUMSUM
-(Chu et al, Zeileis, and others) as implemented in a remote sensing context
-by BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This
-effort is not intended as a direct port of either algorithm. The
-"Yet Another..." within the "YATSM" name intends to refer to these two
-algorithms without claiming 1 to 1 functionality of either.
+The Yet Another TimeSeries Model (YATSM) algorithm is designed to monitor land
+surface phenomena, including land cover and land use change, using timeseries
+of remote sensing observations. The algorithm seeks to find distinct time
+periods within the timeseries, or time segments, by monitoring for disturbances.
+These time segments may be used to infer continuous periods of stable land
+cover, with breaks separating the segments representing ephemeral disturbances
+or permanent conversions in land cover or land use.
+
+The "Yet Another..." part of the algorithm name is an acknowledgement of the
+influence a previously published timeseries algorithm - the Continuous Change
+Detection and Classification (CCDC) :cite:`Zhu2014152` algorithm. While YATSM
+began as an extension from CCDC, it was never intended as a 1 to 1 port of
+CCDC and will continue to diverge in its own direction.
+
+Just as the theory behind CCDC is based on a style of tests for structural
+change from econometrics literature
+:cite:`Chow1960,Andrews1993,Chu1996,Zeileis2005`,
+this algorithm is also influenced by other remote sensing algorithms including
+Break detection For Additive Season and Trend (BFAST) :cite:`Verbesselt201298`
+and LandTrendr :cite:`Kennedy20102897`. By combining ideas from CCDC, BFAST,
+and LandTrendr, this "Yet Another..." algorithm hope to overcome weaknesses
+present in any single approach.
+
+
+User Guide
+----------
+
+To get started with YATSM, please follow this user guide:
 
 .. toctree::
    :maxdepth: 2
@@ -27,8 +48,10 @@ algorithms without claiming 1 to 1 functionality of either.
    guide/classification
 
 
-Command Line Interface
+Command Line Utilities
 ----------------------
+
+Documentation for individual command line applications from YATSM:
 
 .. toctree::
    :maxdepth: 2
@@ -36,9 +59,17 @@ Command Line Interface
    scripts/scripts
 
 
+References
+---------
+
+.. bibliography:: static/index_refs.bib
+   :style: unsrt
+   :cited:
+
 
 Indices and tables
 ------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
+* :ref:`search`

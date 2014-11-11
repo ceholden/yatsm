@@ -73,6 +73,7 @@
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#example">Example</a></li>
 </ul>
 </li>
@@ -132,13 +133,30 @@
 <span id="index"></span><h1>Yet Another Time Series Model (YATSM)<a class="headerlink" href="#yet-another-time-series-model-yatsm" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="about">
 <h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
-<p>The YATSM model is based off of tests for structural changes from the
-econometrics literature including the MOSUM or CUMSUM
-(Chu et al, Zeileis, and others) as implemented in a remote sensing context
-by BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This
-effort is not intended as a direct port of either algorithm. The
-&#8220;Yet Another...&#8221; within the &#8220;YATSM&#8221; name intends to refer to these two
-algorithms without claiming 1 to 1 functionality of either.</p>
+<p>The Yet Another TimeSeries Model (YATSM) algorithm is designed to monitor land
+surface phenomena, including land cover and land use change, using timeseries
+of remote sensing observations. The algorithm seeks to find distinct time
+periods within the timeseries, or time segments, by monitoring for disturbances.
+These time segments may be used to infer continuous periods of stable land
+cover, with breaks separating the segments representing ephemeral disturbances
+or permanent conversions in land cover or land use.</p>
+<p>The &#8220;Yet Another...&#8221; part of the algorithm name is an acknowledgement of the
+influence a previously published timeseries algorithm - the Continuous Change
+Detection and Classification (CCDC) <a class="reference internal" href="#zhu2014152" id="id1">[1]</a> algorithm. While YATSM
+began as an extension from CCDC, it was never intended as a 1 to 1 port of
+CCDC and will continue to diverge in its own direction.</p>
+<p>Just as the theory behind CCDC is based on a style of tests for structural
+change from econometrics literature
+<a class="reference internal" href="#chow1960" id="id2">[2]</a><a class="reference internal" href="#andrews1993" id="id3">[3]</a><a class="reference internal" href="#chu1996" id="id4">[4]</a><a class="reference internal" href="#zeileis2005" id="id5">[5]</a>,
+this algorithm is also influenced by other remote sensing algorithms including
+Break detection For Additive Season and Trend (BFAST) <a class="reference internal" href="#verbesselt201298" id="id6">[6]</a>
+and LandTrendr <a class="reference internal" href="#kennedy20102897" id="id7">[7]</a>. By combining ideas from CCDC, BFAST,
+and LandTrendr, this &#8220;Yet Another...&#8221; algorithm hope to overcome weaknesses
+present in any single approach.</p>
+</div>
+<div class="section" id="user-guide">
+<h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
+<p>To get started with YATSM, please follow this user guide:</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="guide/install.html">Installation</a><ul>
@@ -157,6 +175,7 @@ algorithms without claiming 1 to 1 functionality of either.</p>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#example">Example</a></li>
 </ul>
 </li>
@@ -170,8 +189,9 @@ algorithms without claiming 1 to 1 functionality of either.</p>
 </ul>
 </div>
 </div>
-<div class="section" id="command-line-interface">
-<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="command-line-utilities">
+<h2>Command Line Utilities<a class="headerlink" href="#command-line-utilities" title="Permalink to this headline">¶</a></h2>
+<p>Documentation for individual command line applications from YATSM:</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="scripts/scripts.html">Command Line Utilities</a><ul>
@@ -186,11 +206,58 @@ algorithms without claiming 1 to 1 functionality of either.</p>
 </ul>
 </div>
 </div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p id="bibtex-bibliography-index-0"><table class="docutils citation" frame="void" id="zhu2014152" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Zhe Zhu and Curtis&nbsp;E. Woodcock. Continuous change detection and classification of land cover using all available landsat data. <em>Remote Sensing of Environment</em>, 144(0):152 – 171, 2014. <a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0034425714000248">URL: http://www.sciencedirect.com/science/article/pii/S0034425714000248</a>, <a class="reference external" href="http://dx.doi.org/http://dx.doi.org/10.1016/j.rse.2014.01.011">doi:http://dx.doi.org/10.1016/j.rse.2014.01.011</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="chow1960" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Gregory&nbsp;C. Chow. Tests of equality between sets of coefficients in two linear regressions. <em>Econometrica</em>, 28(3):pp. 591–605, 1960. <a class="reference external" href="http://www.jstor.org/stable/1910133">URL: http://www.jstor.org/stable/1910133</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="andrews1993" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Donald W.&nbsp;K. Andrews. Tests for parameter instability and structural change with unknown change point. <em>Econometrica</em>, 61(4):pp. 821–856, 1993. <a class="reference external" href="http://www.jstor.org/stable/2951764">URL: http://www.jstor.org/stable/2951764</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="chu1996" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td>Chia-Shang&nbsp;James Chu, Maxwell Stinchcombe, and Halbert White. Monitoring structural change. <em>Econometrica</em>, 64(5):pp. 1045–1065, 1996. <a class="reference external" href="http://www.jstor.org/stable/2171955">URL: http://www.jstor.org/stable/2171955</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="zeileis2005" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>Achim Zeileis. A unified approach to structural change tests based on ml scores, f statistics, and ols residuals. <em>Econometric Reviews</em>, 24(4):445–466, 2005. <a class="reference external" href="http://dx.doi.org/10.1080/07474930500406053">URL: http://dx.doi.org/10.1080/07474930500406053</a>, <a class="reference external" href="http://arxiv.org/abs/http://dx.doi.org/10.1080/07474930500406053">arXiv:http://dx.doi.org/10.1080/07474930500406053</a>, <a class="reference external" href="http://dx.doi.org/10.1080/07474930500406053">doi:10.1080/07474930500406053</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="verbesselt201298" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id6">[6]</a></td><td>Jan Verbesselt, Achim Zeileis, and Martin Herold. Near real-time disturbance detection using satellite image time series. <em>Remote Sensing of Environment</em>, 123(0):98 – 108, 2012. <a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0034425712001150">URL: http://www.sciencedirect.com/science/article/pii/S0034425712001150</a>, <a class="reference external" href="http://dx.doi.org/http://dx.doi.org/10.1016/j.rse.2012.02.022">doi:http://dx.doi.org/10.1016/j.rse.2012.02.022</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="kennedy20102897" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id7">[7]</a></td><td>Robert&nbsp;E. Kennedy, Zhiqiang Yang, and Warren&nbsp;B. Cohen. Detecting trends in forest disturbance and recovery using yearly landsat time series: 1. landtrendr — temporal segmentation algorithms. <em>Remote Sensing of Environment</em>, 114(12):2897 – 2910, 2010. <a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0034425710002245">URL: http://www.sciencedirect.com/science/article/pii/S0034425710002245</a>, <a class="reference external" href="http://dx.doi.org/http://dx.doi.org/10.1016/j.rse.2010.07.008">doi:http://dx.doi.org/10.1016/j.rse.2010.07.008</a>.</td></tr>
+</tbody>
+</table>
+</p>
+</div>
 <div class="section" id="indices-and-tables">
 <h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
 <li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
 </ul>
 </div>
 </div>

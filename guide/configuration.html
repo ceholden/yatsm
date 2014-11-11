@@ -74,6 +74,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
@@ -135,8 +136,15 @@
 <h2>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h2>
 <p>The batch running script uses an <a class="reference external" href="https://wiki.python.org/moin/ConfigParserExamples">INI
 file</a> to
-parameterize the run. The INI file uses two sections - one describing
-the dataset and another detailing the model parameters.</p>
+parameterize the run. The INI file uses three sections:</p>
+<ol class="arabic simple">
+<li><tt class="docutils literal"><span class="pre">[dataset]</span></tt> describes dataset attributes</li>
+<li><tt class="docutils literal"><span class="pre">[YATSM]</span></tt> describes model parameters</li>
+<li><tt class="docutils literal"><span class="pre">[classification]</span></tt> describes classification training data inputs</li>
+</ol>
+<p>The following tables describes the meanings of the parameter and values used
+in the configuration file used in YATSM. Any parameters left blank will be
+interpreted as <tt class="docutils literal"><span class="pre">None</span></tt> (e.g., <tt class="docutils literal"><span class="pre">cache_line_dir</span> <span class="pre">=</span></tt>).</p>
 </div>
 <div class="section" id="dataset-parameters">
 <h2>Dataset Parameters<a class="headerlink" href="#dataset-parameters" title="Permalink to this headline">¶</a></h2>
@@ -166,25 +174,33 @@ the dataset and another detailing the model parameters.</p>
 <td><tt class="docutils literal"><span class="pre">str</span></tt></td>
 <td>Output folder location for results</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">n_bands</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">output_prefix</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Output file prefix (e.g., <tt class="docutils literal"><span class="pre">[prefix]_[line].npz</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">n_bands</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">int</span></tt></td>
 <td>The number of bands in the images</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mask_band</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mask_band</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">int</span></tt></td>
 <td>Band index in each image of the mask band</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">green_band</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">green_band</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">int</span></tt></td>
 <td>Band index in each image of the green band (~520-600 nm)</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">swir1_band</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">swir1_band</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">int</span></tt></td>
 <td>Band index in each image of the shortwave-infrared band (~1550-1750 nm)</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">use_bip_reader</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">use_bip_reader</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Use <tt class="docutils literal"><span class="pre">fopen</span></tt> style read in for band interleave by pixel (BIP) files, instead of GDAL&#8217;s IO</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cache_line_dir</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Directory location for caching dataset lines</td>
 </tr>
 </tbody>
 </table>
@@ -196,9 +212,9 @@ file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.<
 <p>The change detection is parameterized by:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="18%" />
+<col width="19%" />
 <col width="11%" />
-<col width="71%" />
+<col width="70%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
@@ -235,17 +251,69 @@ file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.<
 <td><tt class="docutils literal"><span class="pre">str</span></tt></td>
 <td>Method for screening timeseries for noise. Options are <tt class="docutils literal"><span class="pre">RLM</span></tt> and <tt class="docutils literal"><span class="pre">LOWESS</span></tt></td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lassocv</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">screening_crit</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
+<td>Critical value for detecting noise in multitemporal cloud/shadow screening</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lassocv</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Use <tt class="docutils literal"><span class="pre">sklearn.linear_model.LassoLarsCV</span></tt> instead of <tt class="docutils literal"><span class="pre">glmnet</span></tt></td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">reverse</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">reverse</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Run model backward in time, rather than forward</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">robust</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">robust</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Return coefficients and RMSE from a robust linear model for each time segment</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classification">
+<h2>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h2>
+<p>The scripts included in YATSM which perform classification utilize a
+configuration INI file that specify which algorithm will be used and the
+parameters for said algorithm. The configuration details specified along
+with the dataset and YATSM algorithm options deal with the training
+data, not the algorithm details. These training data configuration
+options include:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="7%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Data Type</th>
+<th class="head">Explanation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">training_data</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Training data raster image containing labeled pixels</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mask_values</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
+<td>Values within the training data image to mask or ignore</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">training_start</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Earliest date that training data are applicable. Training data labels will be paired with models that begin at least before this date</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">training_end</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Latest date that training data are applicable. Training data labels will be paired with models that end at least after this date</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">training_date_format</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Format specification that maps <tt class="docutils literal"><span class="pre">training_start</span></tt> and <tt class="docutils literal"><span class="pre">training_end</span></tt> to a Python datetime object (e.g., <tt class="docutils literal"><span class="pre">%Y-%m-%d</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cache_Xy</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Filename used for caching paired X features and y training labels</td>
 </tr>
 </tbody>
 </table>
@@ -253,7 +321,67 @@ file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.<
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>An example template of the parameter file is located within
-<tt class="docutils literal"><span class="pre">examples/example.ini</span></tt>.</p>
+<tt class="docutils literal"><span class="pre">examples/example.ini</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre># Example configuration file for YATSM line runner
+#
+# This configuration includes details about the dataset and how YATSM should
+# run
+
+# Version of config
+[metadata]
+version = 0.1
+
+# Section for Dataset
+[dataset]
+# Text file containing dates and images
+input_file = /home/ceholden/Documents/yatsm/examples/p022r049_input.csv
+# Input date format
+date_format = %Y%j
+# Output location
+output = /home/ceholden/Documents/landsat_stack/p022r049/images/YATSM
+# Output file prefix (e.g., [prefix]_[line].npz)
+output_prefix = yatsm_r
+# Total number of bands
+n_bands = 8
+# Mask band (e.g., Fmask)
+mask_band = 8
+# Indices for multi-temporal cloud masking (indexed on 1)
+green_band = 2
+swir1_band = 5
+# Use BIP image reader? If not, use GDAL to read in
+use_bip_reader = true
+# Directory location for caching dataset lines
+cache_line_dir = /home/ceholden/Documents/landsat_stack/p022r049/images/.yatsm_cache
+
+# Section for YATSM parameters
+[YATSM]
+consecutive = 5
+threshold = 3
+min_obs = 16
+min_rmse = 150
+freq = 1
+test_indices = 2, 4, 5
+# Multitemporal cloud/shadow screening algorithm and threshold
+screening = LOWESS
+screening_crit = 400.0
+lassocv = False
+reverse = False
+robust = False
+
+# Section for training and classification
+[classification]
+# Training data file
+training_image = /home/ceholden/Documents/yatsm/examples/training_data.gtif
+# Training data masked values
+mask_values = 0,255
+# Date range
+training_start = 1999-01-01
+training_end = 2001-01-01
+training_date_format = %Y-%m-%d
+# Cache X feature input and y labels for training data image into file?
+cache_Xy =
+</pre></div>
+</div>
 </div>
 </div>
 
