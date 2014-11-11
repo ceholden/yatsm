@@ -70,6 +70,8 @@ The change detection is parameterized by:
 +----------------------+-------------+---------------------------------------------------------------------------------+
 | ``test_indices``     | ``list``    | Indices of Y to use in change detection                                         |
 +----------------------+-------------+---------------------------------------------------------------------------------+
+| ``retrain_time``     | ``float``   | Number of days between model fit updates during monitoring period               |
++----------------------+-------------+---------------------------------------------------------------------------------+
 | ``screening``        | ``str``     | Method for screening timeseries for noise. Options are ``RLM`` and ``LOWESS``   |
 +----------------------+-------------+---------------------------------------------------------------------------------+
 | ``screening_crit``   | ``float``   | Critical value for detecting noise in multitemporal cloud/shadow screening      |

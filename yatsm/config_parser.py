@@ -11,15 +11,18 @@ def _parse_config_v_zero_pt_one(config_file):
     """ Parses config file for version 0.1.x """
     # Defaults
     defaults = {
+        # [dataset]
         'date_format': '%Y%j',
         'output_prefix': 'yatsm_r',
-        'robust': 'False',
         'use_bip_reader': 'False',
+        'cache_line_dir': None,
+        # [YATSM]
+        'retrain_time': 365.25,
+        'screening_crit': 400.0,
+        'robust': False,
+        # [classification]
         'training_image': None,
         'mask_values': '0, 255',
-        'cache_line_dir': None,
-        'robust': False,
-        'screening_crit': 400.0,
         'cache_Xy': None
     }
 
@@ -78,6 +81,7 @@ def _parse_config_v_zero_pt_one(config_file):
     yatsm_config['test_indices'] = np.array([int(b) for b in
                                              yatsm_config['test_indices']
                                              if b != ''])
+    yatsm_config['retrain_time'] = config.getfloat('YATSM', 'retrain_time')
     yatsm_config['screening'] = config.get('YATSM', 'screening')
     yatsm_config['screening_crit'] = config.getfloat('YATSM', 'screening_crit')
 

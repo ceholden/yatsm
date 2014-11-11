@@ -194,12 +194,15 @@ def run_line(line, X, images,
     outfile = get_output_name(dataset_config, line)
     logger.debug('    saving YATSM output to {f}'.format(f=outfile))
 
+    sys.exit(0)
+
     np.savez(outfile,
              version=__version__,
              consecutive=yatsm_config['consecutive'],
              threshold=yatsm_config['threshold'],
              min_obs=yatsm_config['min_obs'],
              min_rmse=yatsm_config['min_rmse'],
+             retrain_time=yatsm_config['retrain_time'],
              screening=yatsm_config['screening'],
              screening_crit=yatsm_config['screening_crit'],
              lassocv=yatsm_config['lassocv'],
@@ -248,11 +251,12 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                   min_obs=yatsm_config['min_obs'],
                   min_rmse=yatsm_config['min_rmse'],
                   test_indices=yatsm_config['test_indices'],
-                  lassocv=yatsm_config['lassocv'],
+                  retrain_time=yatsm_config['retrain_time'],
                   screening=yatsm_config['screening'],
+                  screening_crit=yatsm_config['screening_crit'],
                   green_band=dataset_config['green_band'] - 1,
                   swir1_band=dataset_config['swir1_band'] - 1,
-                  screening_crit=yatsm_config['screening_crit'],
+                  lassocv=yatsm_config['lassocv'],
                   px=px,
                   py=py,
                   logger=logger)

@@ -130,18 +130,20 @@ class YATSM(object):
       min_rmse (float): Minimum RMSE for models during testing
       fit_indices (ndarray): Indices of Y to fit models for
       test_indices (ndarray): Indices of Y to test for change with
-      screening (str, optional): Style of prescreening of the timeseries
+      retrain_time (float): Number of days between model fit updates during
+        monitoring period
+      screening (str): Style of prescreening of the timeseries
         for noise. Options are 'RLM' or 'LOWESS'
-      green_band (int, optional): Index of green band in Y for
-        multitemporal masking
-      swir1_band (int, optional): Index of first SWIR band in Y for
-        multitemporal masking
       screening_crit (float, optional): critical value for multitemporal
         noise screening
+      green_band (int, optional): Index of green band in Y for
+        multitemporal masking (default: 1)
+      swir1_band (int, optional): Index of first SWIR band in Y for
+        multitemporal masking (default: 4)
+      lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet
       px (int, optional): X (column) pixel reference
       py (int, optional): Y (row) pixel reference
-      lassocv (bool): Use scikit-learn LarsLassoCV over glmnet
-      logger (logging.Logger): Specific logger to use, else get one
+      logger (logging.Logger, optional): Specific logger to use, else get one
 
     """
 
@@ -152,11 +154,12 @@ class YATSM(object):
 
     def __init__(self, X, Y,
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
-                 fit_indices=None, test_indices=None,
-                 screening='RLM', green_band=green_band, swir1_band=swir1_band,
-                 screening_crit=400.0,
+                 fit_indices=None, test_indices=None, retrain_time=ndays,
+                 screening='RLM', screening_crit=400.0,
+                 green_band=green_band, swir1_band=swir1_band,
+                 lassocv=False,
                  px=0, py=0,
-                 lassocv=False, logger=None):
+                 logger=None):
         # Setup logger
         self.logger = logger or logging.getLogger('yatsm')
 
@@ -189,6 +192,8 @@ class YATSM(object):
                 self.test_indices = test_indices
             else:
                 raise IndexError('Specified test_indices larger than Y matrix')
+
+        self.retrain_time = retrain_time
 
         # Type of noise screening
         if screening not in self.screening_types:
@@ -576,8 +581,8 @@ class YATSM(object):
         self.monitoring = True
 
     def update_model(self):
-        # Only train once a year
-        if abs(self.X[self.here, 1] - self.trained_date) > self.ndays:
+        # Only train if enough time has past
+        if abs(self.X[self.here, 1] - self.trained_date) > self.retrain_time:
             self.logger.debug('Monitoring - retraining ({n} days since last)'.
                               format(n=self.X[self.here, 1] -
                                      self.trained_date))
@@ -628,6 +633,7 @@ class YATSM(object):
             self.n_record += 1
             self.start = self.here + 1
 
+            self.trained_date = 0
             self.monitoring = False
 
     def fit_models_GLMnet(self, X, Y, index=None, bands=None):

@@ -10,6 +10,7 @@ Algorithm options:
     --min_obs=<n>           Min number of obs per model [default: 1.5 * n_coef]
     --freq=<freq>           Sin/cosine frequencies [default: 1 2 3]
     --min_rmse=<rmse>       Minimum RMSE used in detection
+    --retrain_time=<n>      Wait <n> days to update model [default: 365.25]
     --screening=<method>    Multi-temporal screening method [default: RLM]
     --screening_crit=<t>    Screening critical value [default: 400.0]
     --lassocv               Use sklearn cross-validated LassoLarsIC
@@ -188,6 +189,9 @@ if __name__ == '__main__':
     if min_rmse:
         min_rmse = float(min_rmse)
 
+    # Retraining time
+    retrain_time = float(args['--retrain_time'])
+
     # Multi-temporal screening method
     screening = args['--screening']
     if screening not in YATSM.screening_types:
@@ -276,9 +280,10 @@ if __name__ == '__main__':
                   threshold=threshold,
                   min_obs=min_obs,
                   min_rmse=min_rmse,
+                  test_indices=test_indices,
+                  retrain_time=retrain_time,
                   screening=screening,
                   screening_crit=screening_crit,
-                  test_indices=test_indices,
                   lassocv=lassocv,
                   logger=logger)
     yatsm.run()
