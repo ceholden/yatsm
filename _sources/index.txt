@@ -26,7 +26,7 @@ change from econometrics literature
 this algorithm is also influenced by other remote sensing algorithms including
 Break detection For Additive Season and Trend (BFAST) :cite:`Verbesselt201298`
 and LandTrendr :cite:`Kennedy20102897`. By combining ideas from CCDC, BFAST,
-and LandTrendr, this "Yet Another..." algorithm hope to overcome weaknesses
+and LandTrendr, this "Yet Another..." algorithm hopes to overcome weaknesses
 present in any single approach.
 
 
