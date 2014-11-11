@@ -12,25 +12,7 @@ generated as described by :ref:`model_config`.
 The batch interface which runs each line separately is
 ``line_yatsm.py``. It's usage is:
 
-.. code:: sh
-
-    $ ./yatsm/line_yatsm.py -h
-     Yet Another Timeseries Model (YATSM) - run script for lines of images
-
-    Usage: line_yatsm.py [options] <config_file> <job_number> <total_jobs>
-
-    Options:
-        --check                     Check that images exist
-        --resume                    Do not overwrite pre-existing results
-        -v --verbose                Show verbose debugging messages
-        --verbose-yatsm             Show verbose debugging messages in YATSM
-        -q --quiet                  Show only error messages
-        -h --help                   Show help
-
--  ``<config_file>``: filename of the configuration INI file.
--  ``<job_number>``: the ``i``\ th job of ``n`` total jobs
--  ``<total_jobs>``: the total number of jobs used to process the image
-   stack
+.. command-output:: line_yatsm.py -h
 
 Let's say our image stack contains 1,000 rows. If we use 50 total CPUs
 to process the image stack, then each CPU will be responsible for only
