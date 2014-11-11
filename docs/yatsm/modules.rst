@@ -1,5 +1,5 @@
-.
-=
+yatsm
+=====
 
 .. toctree::
    :maxdepth: 4

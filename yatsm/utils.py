@@ -145,3 +145,12 @@ def get_image_attribute(image_filename):
 
     return (nrow, ncol, nband, dtype)
 
+
+### Random utilities
+def is_integer(s):
+    """ Returns True if `s` is an integer """
+    try:
+        int(s)
+        return True
+    except:
+        return False

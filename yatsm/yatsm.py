@@ -24,7 +24,8 @@ ndays = 365.25
 
 
 class TSLengthException(Exception):
-    """ Exception stating Timeseries length is too short """
+    """ Exception stating timeseries does not contain enough observations
+    """
     pass
 
 
@@ -74,23 +75,25 @@ def make_X(x, freq, intercept=True):
     """ Create X matrix of Fourier series style independent variables
 
     Args:
-        x               base of independent variables - dates
-        freq            frequency of cosine/sin waves
-        intercept       include intercept in X matrix
+      x (np.ndarray): Base of independent variables - dates
+      freq (list, np.ndarray): Sequence of periods in a year for cosine/sin
+        waves
+      intercept (bool, optional): Include intercept in X matrix
 
-    Output:
-        X               matrix X of independent variables
+    Returns:
+      X (np.ndarray): Matrix X of independent variables
 
-    Example:
-        call:
-            make_X(np.array([1, 2, 3]), [1, 2])
-        returns:
-            array([[ 1.        ,  1.        ,  1.        ],
-                   [ 1.        ,  2.        ,  3.        ],
-                   [ 0.99985204,  0.99940821,  0.99866864],
-                   [ 0.01720158,  0.03439806,  0.05158437],
-                   [ 0.99940821,  0.99763355,  0.99467811],
-                   [ 0.03439806,  0.06875541,  0.10303138]])
+    Examples:
+        Return X matrix for ordinal dates 1, 2, and 3 using two sine/cosine
+        pairs oscillating once and twice a year:
+
+        >>> make_X(np.array([1, 2, 3]), [1, 2])
+        array([[ 1.        ,  1.        ,  1.        ],
+               [ 1.        ,  2.        ,  3.        ],
+               [ 0.99985204,  0.99940821,  0.99866864],
+               [ 0.01720158,  0.03439806,  0.05158437],
+               [ 0.99940821,  0.99763355,  0.99467811],
+               [ 0.03439806,  0.06875541,  0.10303138]])
 
     """
     w = 2 * np.pi / ndays
@@ -110,7 +113,36 @@ def make_X(x, freq, intercept=True):
 
 
 class YATSM(object):
-    """Yet Another Time Series Model (YATSM)
+    """Initialize a YATSM model for data X (spectra) and Y (dates)
+
+    YATSM model based off of tests for structural changes from the
+    econometrics literature including the MOSUM or CUMSUM (Chu et al,
+    Zeileis, and others) as implemented in a remote sensing context by
+    BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This
+    effort is not intended as a direct port of either algorithms.
+
+    Args:
+      X (ndarray): Independent variable matrix
+      Y (ndarray): Dependent variable matrix
+      consecutive (int): Consecutive observations to trigger change
+      threshold (float): Test statistic threshold for change
+      min_obs (int): Minimum observations in model
+      min_rmse (float): Minimum RMSE for models during testing
+      fit_indices (ndarray): Indices of Y to fit models for
+      test_indices (ndarray): Indices of Y to test for change with
+      screening (str, optional): Style of prescreening of the timeseries
+        for noise. Options are 'RLM' or 'LOWESS'
+      green_band (int, optional): Index of green band in Y for
+        multitemporal masking
+      swir1_band (int, optional): Index of first SWIR band in Y for
+        multitemporal masking
+      screening_crit (float, optional): critical value for multitemporal
+        noise screening
+      px (int, optional): X (column) pixel reference
+      py (int, optional): Y (row) pixel reference
+      lassocv (bool): Use scikit-learn LarsLassoCV over glmnet
+      logger (logging.Logger): Specific logger to use, else get one
+
     """
 
     ndays = 365.25
@@ -125,37 +157,6 @@ class YATSM(object):
                  screening_crit=400.0,
                  px=0, py=0,
                  lassocv=False, logger=None):
-        """Initialize a YATSM model for data X (spectra) and Y (dates)
-
-        YATSM model based off of tests for structural changes from the
-        econometrics literature including the MOSUM or CUMSUM (Chu et al,
-        Zeileis, and others) as implemented in a remote sensing context by
-        BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This
-        effort is not intended as a direct port of either algorithms.
-
-        Args:
-          X (ndarray): Independent variable matrix
-          Y (ndarray): Dependent variable matrix
-          consecutive (int): Consecutive observations to trigger change
-          threshold (float): Test statistic threshold for change
-          min_obs (int): Minimum observations in model
-          min_rmse (float): Minimum RMSE for models during testing
-          fit_indices (ndarray): Indices of Y to fit models for
-          test_indices (ndarray): Indices of Y to test for change with
-          screening (str, optional): Style of prescreening of the timeseries
-            for noise. Options are 'RLM' or 'LOWESS'
-          green_band (int, optional): Index of green band in Y for
-            multitemporal masking
-          swir1_band (int, optional): Index of first SWIR band in Y for
-            multitemporal masking
-          screening_crit (float, optional): critical value for multitemporal
-            noise screening
-          px (int, optional): X (column) pixel reference
-          py (int, optional): Y (row) pixel reference
-          lassocv (bool): Use scikit-learn LarsLassoCV over glmnet
-          logger (logging.Logger): Specific logger to use, else get one
-
-        """
         # Setup logger
         self.logger = logger or logging.getLogger('yatsm')
 
@@ -284,7 +285,7 @@ class YATSM(object):
             indices must be a subset of `self.test_indices`.
 
         Returns:
-          omission (np.ndarray): Array of True or False for each record where
+          np.ndarray: Array of True or False for each record where
             True indicates omitted break point
 
         """
@@ -461,8 +462,8 @@ class YATSM(object):
           span (int, optional): span for LOWESS
 
         Returns:
-          screened (bool): True if timeseries is screened and we can train else
-            False
+          bool: True if timeseries is screened and we can train, else False
+
         """
         if not self.screened:
             if not span:
@@ -487,8 +488,8 @@ class YATSM(object):
         """ Screen training period for noise with IRWLS RLM
 
         Returns:
-          screened (bool): True if timeseries is screened and we can train else
-            False
+          bool: True if timeseries is screened and we can train, else False
+
         """
         # Multitemporal noise removal
         mask = np.ones(self.X.shape[0], dtype=np.bool)

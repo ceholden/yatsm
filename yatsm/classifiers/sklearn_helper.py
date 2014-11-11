@@ -1,21 +1,27 @@
-""" Helper classes for initializing a Scikit-Learn classifier from an INI file
+""" Helper classes for initializing a Scikit-Learn classifiers from an INI file
 """
 from sklearn.ensemble import RandomForestClassifier
 
-
-def is_integer(s):
-    """ Returns True if `s` is an integer """
-    try:
-        int(s)
-        return True
-    except:
-        return False
+from ..utils import is_integer
 
 
 class RandomForestHelper(RandomForestClassifier):
+    """A random forest classifier wrapper
 
-    # Preserve __doc__
-    __doc__ += RandomForestClassifier.__doc__
+    This helper class wraps the RandomForestClassifier from `scitkit-learn`
+    so that it can initialize from an INI configuration file.
+
+    For documentation on RandomForestClassifier, see:
+
+    `sklearn.ensemble.RandomForestClassifier
+    <http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier>`_
+
+    Args:
+      config (configparser.ConfigParser): Configuration parser to retrieve
+        parameters from
+
+    """
+
     # Setup defaults for ConfigParser to use
     defaults = {
         'n_estimators': 500,
@@ -31,7 +37,6 @@ class RandomForestHelper(RandomForestClassifier):
     }
 
     def __init__(self, config):
-        """ Override __init__ to work with config file """
         super(RandomForestHelper, self).__init__(
             n_estimators=config.getint('init', 'n_estimators'),
             bootstrap=config.getboolean('init', 'bootstrap'),
