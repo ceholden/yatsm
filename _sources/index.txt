@@ -21,7 +21,7 @@ began as an extension from CCDC, it was never intended as a 1 to 1 port of
 CCDC and will continue to diverge in its own direction.
 
 This algorithm is also influenced by other remote sensing algorithms which,
-like CCDC, are based on theory on tests for structural change from econometrics
+like CCDC, are based in theory on tests for structural change from econometrics
 literature
 :cite:`Chow1960,Andrews1993,Chu1996,Zeileis2005`.
 These other remote sensing algorithms include
