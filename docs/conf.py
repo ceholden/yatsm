@@ -14,6 +14,9 @@ sys.path.insert(0, d(d(os.path.abspath(__file__))))
 
 import yatsm
 
+# Add scripts directory to PATH for sphinxcontrib.programoutput
+os.environ['PATH'] += os.pathsep + d(d(__file__)) + os.sep + 'scripts'
+
 # -- General configuration ------------------------------------------------
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -25,7 +28,8 @@ extensions = [
     'sphinxcontrib.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.graphviz',
-    'sphinx.ext.todo'
+    'sphinx.ext.todo',
+    'sphinxcontrib.programoutput'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

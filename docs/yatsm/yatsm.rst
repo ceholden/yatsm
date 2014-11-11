@@ -18,6 +18,7 @@ Submodules
    yatsm.cymasking
    yatsm.masking
    yatsm.plots
+   yatsm.reader
    yatsm.utils
    yatsm.version
    yatsm.yatsm

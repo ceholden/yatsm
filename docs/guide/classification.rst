@@ -1,2 +1,4 @@
+.. _classification:
+
 Classification
 ==============

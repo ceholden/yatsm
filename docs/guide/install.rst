@@ -79,8 +79,8 @@ Your terminal prompt will change, denoting the switch to this newly created
 isolated Python environment.
 
 
-Python Dependencies:
--------------
+Python Dependencies
+--------------------
 
 YATSM depends on many of the very common scientific Python modules. Because
 `NumPy <http://www.numpy.org/>`_ is a build dependency for some of these

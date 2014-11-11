@@ -1,3 +1,5 @@
+.. _index:
+
 Yet Another Time Series Model (YATSM)
 =====================================
 
@@ -25,8 +27,18 @@ algorithms without claiming 1 to 1 functionality of either.
    guide/classification
 
 
+Command Line Interface
+----------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   scripts/scripts
+
+
+
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
