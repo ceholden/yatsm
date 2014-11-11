@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.classifiers.sklearn_helper module &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm_map.py &mdash; YATSM 0.1.0 documentation</title>
   
 
   
@@ -28,7 +28,10 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/>
+        <link rel="up" title="Command Line Utilities" href="scripts.html"/>
+        <link rel="next" title="train_yatsm.py" href="train_yatsm.html"/>
+        <link rel="prev" title="yatsm_changemap.py" href="yatsm_changemap.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -83,14 +86,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Command Line Utilities</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href=""><cite>yatsm_map.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -116,10 +119,12 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>yatsm.classifiers.sklearn_helper module</li>
+          <li><a href="scripts.html">Command Line Utilities</a> &raquo;</li>
+      
+    <li><cite>yatsm_map.py</cite></li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.classifiers.sklearn_helper.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/scripts/yatsm_map.rst" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
@@ -127,39 +132,59 @@
 </div>
           <div role="main">
             
-  <div class="section" id="module-yatsm.classifiers.sklearn_helper">
-<span id="yatsm-classifiers-sklearn-helper-module"></span><h1>yatsm.classifiers.sklearn_helper module<a class="headerlink" href="#module-yatsm.classifiers.sklearn_helper" title="Permalink to this headline">¶</a></h1>
-<p>Helper classes for initializing a Scikit-Learn classifiers from an INI file</p>
-<dl class="class">
-<dt id="yatsm.classifiers.sklearn_helper.RandomForestHelper">
-<em class="property">class </em><tt class="descclassname">yatsm.classifiers.sklearn_helper.</tt><tt class="descname">RandomForestHelper</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="../_modules/yatsm/classifiers/sklearn_helper.html#RandomForestHelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.classifiers.sklearn_helper.RandomForestHelper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sklearn.ensemble.forest.RandomForestClassifier</span></tt></p>
-<p>A random forest classifier wrapper</p>
-<p>This helper class wraps the RandomForestClassifier from <cite>scitkit-learn</cite>
-so that it can initialize from an INI configuration file.</p>
-<p>For documentation on RandomForestClassifier, see:</p>
-<p><a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier">sklearn.ensemble.RandomForestClassifier</a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>configparser.ConfigParser</em>) &#8211; Configuration parser to retrieve
-parameters from</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults">
-<tt class="descname">defaults</tt><em class="property"> = {'n_estimators': 500, 'min_samples_split': 2, 'oob_score': True, 'n_jobs': 1, 'criterion': 'gini', 'max_features': 'auto', 'max_leaf_nodes': None, 'bootstrap': True, 'max_depth': None, 'min_samples_leaf': 1}</em><a class="headerlink" href="#yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+  <div class="section" id="yatsm-map-py">
+<span id="yatsm-map"></span><h1><cite>yatsm_map.py</cite><a class="headerlink" href="#yatsm-map-py" title="Permalink to this headline">¶</a></h1>
+<p>Create maps of coefficients, predicted images, or land cover for any given date
+from YATSM output:</p>
+<div class="highlight-text"><div class="highlight"><pre>$ yatsm_map.py -h
+ Make map of YATSM output for a given date
 
-</dd></dl>
+Usage:
+    yatsm_map.py [options] ( coef | predict | class ) &lt;date&gt; &lt;output&gt;
 
+Options:
+    --root &lt;dir&gt;            Root time series directory [default: ./]
+    -r --result &lt;dir&gt;       Directory of results [default: YATSM]
+    -i --image &lt;image&gt;      Example image [default: example_img]
+    --ndv &lt;NoDataValue&gt;     No data value for map [default: 0]
+    -f --format &lt;format&gt;    Output raster format [default: GTiff]
+    --date &lt;format&gt;         Date format [default: %Y-%m-%d]
+    --warn-on-empty         Warn user when reading in empty result files
+    -v --verbose            Show verbose debugging messages
+    -h --help               Show help messages
+
+Coefficient and prediction options:
+    --band &lt;bands&gt;          Bands to export [default: all]
+    --robust                Use robust estimates
+    --coef &lt;coefs&gt;          Coefficients to export [default: all]
+
+Classification options:
+    --after                 Use time segment after &lt;date&gt; if needed for map
+    --before                Use time segment before &lt;date&gt; if needed for map
+
+Examples:
+    &gt; yatsm_map.py --coef &quot;intercept, slope&quot; --band &quot;3, 4, 5&quot; --ndv -9999 coef
+    ... 2000-01-01 coef_map.gtif
+
+    &gt; yatsm_map.py --date &quot;%Y-%j&quot; predict 2000-001 prediction.gtif
+
+    &gt; yatsm_map.py --result &quot;YATSM_new&quot; --after class 2000-01-01 LCmap.gtif
+</pre></div>
+</div>
 </div>
 
 
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="train_yatsm.html" class="btn btn-neutral float-right" title="train_yatsm.py"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="yatsm_changemap.html" class="btn btn-neutral" title="yatsm_changemap.py"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

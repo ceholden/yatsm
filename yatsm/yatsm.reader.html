@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.classifiers.sklearn_helper module &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm.reader module &mdash; YATSM 0.1.0 documentation</title>
   
 
   
@@ -116,10 +116,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>yatsm.classifiers.sklearn_helper module</li>
+    <li>yatsm.reader module</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.classifiers.sklearn_helper.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.reader.rst" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
@@ -127,32 +127,43 @@
 </div>
           <div role="main">
             
-  <div class="section" id="module-yatsm.classifiers.sklearn_helper">
-<span id="yatsm-classifiers-sklearn-helper-module"></span><h1>yatsm.classifiers.sklearn_helper module<a class="headerlink" href="#module-yatsm.classifiers.sklearn_helper" title="Permalink to this headline">¶</a></h1>
-<p>Helper classes for initializing a Scikit-Learn classifiers from an INI file</p>
-<dl class="class">
-<dt id="yatsm.classifiers.sklearn_helper.RandomForestHelper">
-<em class="property">class </em><tt class="descclassname">yatsm.classifiers.sklearn_helper.</tt><tt class="descname">RandomForestHelper</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="../_modules/yatsm/classifiers/sklearn_helper.html#RandomForestHelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.classifiers.sklearn_helper.RandomForestHelper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">sklearn.ensemble.forest.RandomForestClassifier</span></tt></p>
-<p>A random forest classifier wrapper</p>
-<p>This helper class wraps the RandomForestClassifier from <cite>scitkit-learn</cite>
-so that it can initialize from an INI configuration file.</p>
-<p>For documentation on RandomForestClassifier, see:</p>
-<p><a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier">sklearn.ensemble.RandomForestClassifier</a></p>
+  <div class="section" id="module-yatsm.reader">
+<span id="yatsm-reader-module"></span><h1>yatsm.reader module<a class="headerlink" href="#module-yatsm.reader" title="Permalink to this headline">¶</a></h1>
+<p>Functions for reading timeseries data</p>
+<dl class="function">
+<dt id="yatsm.reader.find_stacks">
+<tt class="descclassname">yatsm.reader.</tt><tt class="descname">find_stacks</tt><big>(</big><em>location, folder_pattern='L*', image_pattern='L*stack', date_index_start=9, date_index_end=16, date_format='%Y%j', ignore=['YATSM']</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#find_stacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.find_stacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and identify dates and filenames of Landsat image stacks</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>configparser.ConfigParser</em>) &#8211; Configuration parser to retrieve
-parameters from</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>location</strong> (<em>str</em>) &#8211; Stacked image dataset location</li>
+<li><strong>folder_pattern</strong> (<em>str, optional</em>) &#8211; Filename pattern for stack image
+folders located within <cite>location</cite> (default: &#8216;L*&#8217;)</li>
+<li><strong>image_pattern</strong> (<em>str, optional</em>) &#8211; Filename pattern for stacked images
+located within each folder (default: &#8216;L*stack&#8217;)</li>
+<li><strong>date_index_start</strong> (<em>int, optional</em>) &#8211; Starting index of image date string
+within folder name (default: 9)</li>
+<li><strong>date_index_end</strong> (<em>int, optional</em>) &#8211; Ending index of image date string within
+folder name (default: 16)</li>
+<li><strong>date_format</strong> (<em>str, optional</em>) &#8211; String format of date within folder names
+(default: &#8216;%Y%j&#8217;)</li>
+<li><strong>ignore</strong> (<em>list, optional</em>) &#8211; List of folder names within <cite>location</cite> to
+ignore from search (default: [&#8216;YATSM&#8217;])</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple of lists containing the dates and filenames of all stacked
+images located</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults">
-<tt class="descname">defaults</tt><em class="property"> = {'n_estimators': 500, 'min_samples_split': 2, 'oob_score': True, 'n_jobs': 1, 'criterion': 'gini', 'max_features': 'auto', 'max_leaf_nodes': None, 'bootstrap': True, 'max_depth': None, 'min_samples_leaf': 1}</em><a class="headerlink" href="#yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </div>
