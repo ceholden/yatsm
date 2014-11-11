@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Model Configuration &mdash; YATSM 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/>
+        <link rel="next" title="Batch Interface" href="batch_interface.html"/>
+        <link rel="prev" title="Model Parameter Exploration" href="exploration.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> YATSM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv">virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#python-dependencies">Python Dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtual-machine-image">Virtual Machine Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Model Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/configuration.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="model-configuration">
+<span id="model-config"></span><h1>Model Configuration<a class="headerlink" href="#model-configuration" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="configuration-file">
+<h2>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h2>
+<p>The batch running script uses an <a class="reference external" href="https://wiki.python.org/moin/ConfigParserExamples">INI
+file</a> to
+parameterize the run. The INI file uses two sections - one describing
+the dataset and another detailing the model parameters.</p>
+</div>
+<div class="section" id="dataset-parameters">
+<h2>Dataset Parameters<a class="headerlink" href="#dataset-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The following dataset information is required:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="12%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Data Type</th>
+<th class="head">Explanation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">input_file</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">filename</span></tt></td>
+<td>The filename of a CSV file recording the date and filenames of all images in the dataset</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">date_format</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>The format of the dates specified in the <tt class="docutils literal"><span class="pre">input_file</span></tt> (e.g., <tt class="docutils literal"><span class="pre">%Y%j</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">output</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Output folder location for results</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">n_bands</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
+<td>The number of bands in the images</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mask_band</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
+<td>Band index in each image of the mask band</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">green_band</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
+<td>Band index in each image of the green band (~520-600 nm)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">swir1_band</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
+<td>Band index in each image of the shortwave-infrared band (~1550-1750 nm)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">use_bip_reader</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
+<td>Use <tt class="docutils literal"><span class="pre">fopen</span></tt> style read in for band interleave by pixel (BIP) files, instead of GDAL&#8217;s IO</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: you can use <tt class="docutils literal"><span class="pre">scripts/gen_date_file.sh</span></tt> to generate the CSV
+file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.</p>
+</div>
+<div class="section" id="model-parameters">
+<h2>Model Parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The change detection is parameterized by:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="11%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Data Type</th>
+<th class="head">Explanation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">consecutive</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
+<td>Consecutive observations to trigger change</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">threshold</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
+<td>Test statistic critical value to trigger change</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">min_obs</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
+<td>Minimum observations per time segment in model</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">min_rmse</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
+<td>Minimum RMSE in test statistic for each model</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">freq</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
+<td>Frequency of sine/cosine seasonal periods</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">test_indices</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
+<td>Indices of Y to use in change detection</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">screening</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Method for screening timeseries for noise. Options are <tt class="docutils literal"><span class="pre">RLM</span></tt> and <tt class="docutils literal"><span class="pre">LOWESS</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lassocv</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
+<td>Use <tt class="docutils literal"><span class="pre">sklearn.linear_model.LassoLarsCV</span></tt> instead of <tt class="docutils literal"><span class="pre">glmnet</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">reverse</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
+<td>Run model backward in time, rather than forward</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">robust</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
+<td>Return coefficients and RMSE from a robust linear model for each time segment</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>An example template of the parameter file is located within
+<tt class="docutils literal"><span class="pre">examples/example.ini</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="batch_interface.html" class="btn btn-neutral float-right" title="Batch Interface"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="exploration.html" class="btn btn-neutral" title="Model Parameter Exploration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Chris Holden.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

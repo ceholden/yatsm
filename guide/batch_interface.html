@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Batch Interface &mdash; YATSM 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/>
+        <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
+        <link rel="prev" title="Model Configuration" href="configuration.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> YATSM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv">virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#python-dependencies">Python Dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#virtual-machine-image">Virtual Machine Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Batch Interface</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/batch_interface.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="batch-interface">
+<span id="id1"></span><h1>Batch Interface<a class="headerlink" href="#batch-interface" title="Permalink to this headline">¶</a></h1>
+<p>The default method for running image stacks is to run each line, or row,
+separately from other lines. In a multiprocessing situation, the total
+number of lines can be broken up among the <tt class="docutils literal"><span class="pre">n</span></tt> available CPUs. Before
+using the batch interface, make sure you already have a parameter file
+generated as described by <a class="reference internal" href="configuration.html#model-config"><em>Model Configuration</em></a>.</p>
+<p>The batch interface which runs each line separately is
+<tt class="docutils literal"><span class="pre">line_yatsm.py</span></tt>. It&#8217;s usage is:</p>
+<div class="code sh highlight-python"><div class="highlight"><pre>$ ./yatsm/line_yatsm.py -h
+ Yet Another Timeseries Model (YATSM) - run script for lines of images
+
+Usage: line_yatsm.py [options] &lt;config_file&gt; &lt;job_number&gt; &lt;total_jobs&gt;
+
+Options:
+    --check                     Check that images exist
+    --resume                    Do not overwrite pre-existing results
+    -v --verbose                Show verbose debugging messages
+    --verbose-yatsm             Show verbose debugging messages in YATSM
+    -q --quiet                  Show only error messages
+    -h --help                   Show help
+</pre></div>
+</div>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&lt;config_file&gt;</span></tt>: filename of the configuration INI file.</li>
+<li><tt class="docutils literal"><span class="pre">&lt;job_number&gt;</span></tt>: the <tt class="docutils literal"><span class="pre">i</span></tt>th job of <tt class="docutils literal"><span class="pre">n</span></tt> total jobs</li>
+<li><tt class="docutils literal"><span class="pre">&lt;total_jobs&gt;</span></tt>: the total number of jobs used to process the image
+stack</li>
+</ul>
+<p>Let&#8217;s say our image stack contains 1,000 rows. If we use 50 total CPUs
+to process the image stack, then each CPU will be responsible for only
+20 lines. To evenly distribute the number of pixels that contain
+timeseries (e.g., to ignore any NODATA buffers around the images), the
+lines are divided up in sequence. Thus, job 5 of 50 total jobs would
+work on the lines:</p>
+<div class="code sh highlight-python"><div class="highlight"><pre>$ job=5
+$ n=50
+$ seq -s , $job $n 1000
+5,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
+</pre></div>
+</div>
+<div class="section" id="sun-grid-engine">
+<h2>Sun Grid Engine<a class="headerlink" href="#sun-grid-engine" title="Permalink to this headline">¶</a></h2>
+<p>In the example of the compute cluster at Boston University which
+utilizes the Sun Grid Engine scheduler, one could run an image stack as
+follows:</p>
+<div class="code sh highlight-python"><div class="highlight"><pre>$ njob=200
+$ for job in $(seq 1 $njob); do
+    qsub -j y -V -l h_rt=24:00:00 -N yatsm_$job -b y \
+        $(which python) -u line_yatsm.py --resume -v config.ini $job $njob
+  done
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="map_static.html" class="btn btn-neutral float-right" title="Mapping Derived Information"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="configuration.html" class="btn btn-neutral" title="Model Configuration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Chris Holden.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

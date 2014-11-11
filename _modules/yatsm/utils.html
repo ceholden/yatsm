@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.utils &mdash; YATSM 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="yatsm" href="../yatsm.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> YATSM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtualenv">virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#python-dependencies">Python Dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../yatsm.html">yatsm</a> &raquo;</li>
+      
+    <li>yatsm.utils</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/utils.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for yatsm.utils</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal_array</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
+
+
+<span class="c"># JOB SPECIFIC FUNCTIONS</span>
+<div class="viewcode-block" id="calculate_lines"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.calculate_lines">[docs]</a><span class="k">def</span> <span class="nf">calculate_lines</span><span class="p">(</span><span class="n">job_number</span><span class="p">,</span> <span class="n">total_jobs</span><span class="p">,</span> <span class="n">nrow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Calculate the lines this job processes given nrow, njobs, and job ID</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      nrow (int): number of rows in image</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      rows (ndarray): np.array of rows to be processed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">assigned</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">while</span> <span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span> <span class="o">&lt;</span> <span class="n">nrow</span><span class="p">:</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span><span class="p">)</span>
+        <span class="n">assigned</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_output_name"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_output_name">[docs]</a><span class="k">def</span> <span class="nf">get_output_name</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns output name for specified config and line number</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      dataset_config (dict): configuration information about the dataset</span>
+<span class="sd">      line (int): line of the dataset for output</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      filename (str): output filename</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output&#39;</span><span class="p">],</span>
+                        <span class="s">&#39;{pref}{line}.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">pref</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output_prefix&#39;</span><span class="p">],</span>
+                            <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="get_line_cache_name"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_line_cache_name">[docs]</a><span class="k">def</span> <span class="nf">get_line_cache_name</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">n_images</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">nbands</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns cache filename for specified config and line number</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      dataset_config (dict): configuration information about the dataset</span>
+<span class="sd">      n_images (int): number of images in dataset</span>
+<span class="sd">      nrow (int): line of the dataset for output</span>
+<span class="sd">      nbands (int): number of bands in dataset</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      str: filename of cache file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_line_dir&#39;</span><span class="p">]</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;yatsm_r{l}_n{n}_b{b}.npy.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">l</span><span class="o">=</span><span class="n">nrow</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_images</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">nbands</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+
+<span class="c"># IMAGE DATASET READING</span></div>
+<div class="viewcode-block" id="find_images"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.find_images">[docs]</a><span class="k">def</span> <span class="nf">find_images</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s">&#39;%Y-%j&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return sorted filenames of images from input text file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      input_file (str): text file of dates and files</span>
+<span class="sd">      date_format (str): format of dates in file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      (ndarray, ndarray): paired dates and filenames of stacked images</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Store index of date and image</span>
+    <span class="n">i_date</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">i_image</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Opening image dataset file&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="c"># Figure out which index is for what</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_date</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Could not parse first column to ordinal date&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_image</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Could not parse second column to ordinal date&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not parse any columns to ordinal date&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Input dataset file: {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">input_file</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Date format: {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">date_format</span><span class="p">))</span>
+                <span class="k">raise</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i_date</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">i_image</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in image date and filenames&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_date</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">())</span>
+            <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_image</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="get_image_attribute"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_image_attribute">[docs]</a><span class="k">def</span> <span class="nf">get_image_attribute</span><span class="p">(</span><span class="n">image_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Use GDAL to open image and return some attributes</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      image_filename (string): image filename</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">image_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_ReadOnly</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not open example image dataset ({f})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">f</span><span class="o">=</span><span class="n">image_filename</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">nrow</span> <span class="o">=</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span>
+    <span class="n">ncol</span> <span class="o">=</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span>
+    <span class="n">nband</span> <span class="o">=</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterCount</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal_array</span><span class="o">.</span><span class="n">GDALTypeCodeToNumericTypeCode</span><span class="p">(</span>
+        <span class="n">image_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nband</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+
+<span class="c">### Random utilities</span></div>
+<div class="viewcode-block" id="is_integer"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.is_integer">[docs]</a><span class="k">def</span> <span class="nf">is_integer</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns True if `s` is an integer &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Chris Holden.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; YATSM 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/>
+        <link rel="next" title="Dataset Preparation" href="dataset.html"/>
+        <link rel="prev" title="Yet Another Time Series Model (YATSM)" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> YATSM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#virtualenv">virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-dependencies">Python Dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#virtual-machine-image">Virtual Machine Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/install.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="installation">
+<span id="install"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Yet Another TimeSeries Model (YATSM) is written in
+<a class="reference external" href="https://www.python.org/">Python</a> (version 2.7)
+and utilizes several C libraries, including the
+<a class="reference external" href="http://www.gdal.org/">Geographic Data Abstraction Library</a> (GDAL).</p>
+<p>These two dependencies are usually best installed through your package manager
+on Linux, <a class="reference external" href="http://brew.sh/">Homebrew</a> on Mac OS, or through
+<a class="reference external" href="http://trac.osgeo.org/osgeo4w/">OSGEO4W</a> on Windows.</p>
+<p>For example, on Ubuntu 14.04:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install python2.7-dev
+<span class="nv">$ </span>sudo apt-get install gdal-bin libgdal-dev
+<span class="nv">$ </span>sudo apt-get install python-gdal
+</pre></div>
+</div>
+<p>This installation guide will also utilize the
+<a class="reference external" href="http://pip.readthedocs.org/en/latest/installing.html">pip</a> utility for
+installing Python modules. <cite>pip</cite> may be installed or upgraded following the
+instructions <a class="reference external" href="http://pip.readthedocs.org/en/latest/installing.html">here</a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>wget https://bootstrap.pypa.io/get-pip.py
+<span class="nv">$ </span>python get-pip.py
+</pre></div>
+</div>
+<p>On Ubuntu 14.04, it may be installed via the package manager:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install python-pip
+</pre></div>
+</div>
+</div>
+<div class="section" id="virtualenv">
+<h2>virtualenv<a class="headerlink" href="#virtualenv" title="Permalink to this headline">¶</a></h2>
+<p>Python and GDAL are usually installed on most computing environments that
+handle geographic data. If you wish to install YATSM on a system with these
+two dependencies but you don&#8217;t have installation privileges for the Python
+dependencies, you could install YATSM into a
+<a class="reference external" href="http://virtualenv.readthedocs.org/en/latest/">virtualenv</a>.</p>
+<p><cite>virtualenv</cite> creates isolated Python environments, thus enabling a user without
+root privileges to install modules. <cite>virtualenv</cite> has the added benefit of
+enabling the installation of specific module versions for single piece of
+software.</p>
+<p>To set up a <cite>virtualenv</cite>, it must first be available. With root access,</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo pip install virtualenv
+</pre></div>
+</div>
+<p>Once <cite>virtualenv</cite> is installed, users may create a <cite>virtualenv</cite> for YATSM:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>virtualenv yatsm_venv
+</pre></div>
+</div>
+<p>To activate this isolated Python environment from Bash:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">source </span>yatsm_venv/bin/activate
+</pre></div>
+</div>
+<p>Your terminal prompt will change, denoting the switch to this newly created
+isolated Python environment.</p>
+</div>
+<div class="section" id="python-dependencies">
+<h2>Python Dependencies:<a class="headerlink" href="#python-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>YATSM depends on many of the very common scientific Python modules. Because
+<a class="reference external" href="http://www.numpy.org/">NumPy</a> is a build dependency for some of these
+other modules, it must be installed first. With <cite>pip</cite>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install <span class="s1">&#39;numpy&gt;=1.9.1&#39;</span>
+</pre></div>
+</div>
+<p>With NumPy installed, the remaining requirements may be installed through
+<cite>pip</cite> from the <cite>requirements.txt</cite> file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install -r https://github.com/ceholden/yatsm/blob/master/requirements.txt
+</pre></div>
+</div>
+</div>
+<div class="section" id="quick-installation">
+<h2>Quick Installation<a class="headerlink" href="#quick-installation" title="Permalink to this headline">¶</a></h2>
+<p>YATSM may be installed from its
+<a class="reference external" href="https://github.com/ceholden/yatsm">Github repository</a>
+using <cite>pip</cite>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install git+git://github.com/ceholden/yatsm.git
+</pre></div>
+</div>
+</div>
+<div class="section" id="developer-installation">
+<h2>Developer Installation<a class="headerlink" href="#developer-installation" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;re interested in helping develop YATSM, or just forking it into your own
+direction, you can download the repository using Git and build it locally:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>git clone https://github.com/ceholden/yatsm.git
+<span class="nv">$ </span><span class="nb">cd </span>yatsm/
+<span class="nv">$ </span>python setup.py build_ext --inplace
+</pre></div>
+</div>
+<p>After the Cython extensions are built using <cite>setup.py</cite>, YATSM will be usable
+from this directory.</p>
+<p>Documentation may be built using <a class="reference external" href="http://sphinx-doc.org/">Sphinx</a> from the
+<cite>docs</cite> directory:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>docs/
+<span class="nv">$ </span>make html
+</pre></div>
+</div>
+</div>
+<div class="section" id="virtual-machine-image">
+<h2>Virtual Machine Image<a class="headerlink" href="#virtual-machine-image" title="Permalink to this headline">¶</a></h2>
+<p>A lightweight Xubuntu 14.04 virtual machine image complete with all
+dependencies and copies of YATSM and several other software useful for
+remote sensing timeseries analysis, including
+<a class="reference external" href="https://github.com/ceholden/TSTools/">TSTools</a> is available to download.</p>
+<p>The virtual machine is formatted as a
+<a class="reference external" href="https://www.virtualbox.org/">VirtualBox image</a>
+and I would recommend you to use
+<a class="reference external" href="https://www.virtualbox.org/">VirtualBox</a> to run the virtual machine.
+VirtualBox is a free and open source softare that can create and host virtual
+machines and is comparable to commercial solutions such as VMWare or Parallels.</p>
+<p>The virtual machine has been exported to a
+<a class="reference external" href="http://www.virtualbox.org/manual/ch01.html#ovf">VirtualBox appliance</a>
+and uploaded to my university department&#8217;s anonymous FTP server:</p>
+<p><a class="reference external" href="ftp://ftp-earth.bu.edu/ceholden/TSTools/">ftp://ftp-earth.bu.edu/ceholden/TSTools/</a></p>
+<p>Please see the included README for further instructions.</p>
+</div>
+<div class="section" id="platform-support">
+<h2>Platform Support<a class="headerlink" href="#platform-support" title="Permalink to this headline">¶</a></h2>
+<p>YATSM is developed on Linux (CentOS 6 and Ubuntu 14.04) and has not been
+tested on any other platforms, though I have seen it working on Mac OS. I am
+welcome to any help fixing bugs or better supporting Windows, but I will not
+try to support Windows myself.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dataset.html" class="btn btn-neutral float-right" title="Dataset Preparation"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Yet Another Time Series Model (YATSM)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Chris Holden.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

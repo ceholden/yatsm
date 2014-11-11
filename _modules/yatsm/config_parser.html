@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.config_parser &mdash; YATSM 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="yatsm" href="../yatsm.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> YATSM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtualenv">virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#python-dependencies">Python Dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../yatsm.html">yatsm</a> &raquo;</li>
+      
+    <li>yatsm.config_parser</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/config_parser.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for yatsm.config_parser</h1><div class="highlight"><pre>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">ConfigParser</span> <span class="kn">as</span> <span class="nn">configparser</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">configparser</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+
+<span class="c"># CONFIG FILE PARSING</span>
+<span class="k">def</span> <span class="nf">_parse_config_v_zero_pt_one</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parses config file for version 0.1.x &quot;&quot;&quot;</span>
+    <span class="c"># Defaults</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;date_format&#39;</span><span class="p">:</span> <span class="s">&#39;%Y%j&#39;</span><span class="p">,</span>
+        <span class="s">&#39;output_prefix&#39;</span><span class="p">:</span> <span class="s">&#39;yatsm_r&#39;</span><span class="p">,</span>
+        <span class="s">&#39;robust&#39;</span><span class="p">:</span> <span class="s">&#39;False&#39;</span><span class="p">,</span>
+        <span class="s">&#39;use_bip_reader&#39;</span><span class="p">:</span> <span class="s">&#39;False&#39;</span><span class="p">,</span>
+        <span class="s">&#39;training_image&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="s">&#39;mask_values&#39;</span><span class="p">:</span> <span class="s">&#39;0, 255&#39;</span><span class="p">,</span>
+        <span class="s">&#39;cache_line_dir&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="s">&#39;robust&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+        <span class="s">&#39;screening_crit&#39;</span><span class="p">:</span> <span class="mf">400.0</span><span class="p">,</span>
+        <span class="s">&#39;cache_Xy&#39;</span><span class="p">:</span> <span class="bp">None</span>
+    <span class="p">}</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">defaults</span><span class="o">=</span><span class="n">defaults</span><span class="p">,</span> <span class="n">allow_no_value</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="c"># Configuration for dataset</span>
+    <span class="n">dataset_config</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;input_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;input_file&#39;</span><span class="p">)</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;date_format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;date_format&#39;</span><span class="p">)</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;output&#39;</span><span class="p">)</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;output_prefix&#39;</span><span class="p">)</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;n_bands&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;n_bands&#39;</span><span class="p">)</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_band&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;mask_band&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;green_band&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;green_band&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;swir1_band&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;swir1_band&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;use_bip_reader&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span>
+        <span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;use_bip_reader&#39;</span><span class="p">)</span>
+    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_line_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span> <span class="s">&#39;cache_line_dir&#39;</span><span class="p">)</span>
+
+    <span class="c"># Configuration for training and classification</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_section</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">):</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
+                                                      <span class="s">&#39;training_image&#39;</span><span class="p">)</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
+                                                   <span class="s">&#39;mask_values&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]:</span>
+            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span>
+                <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="s">&#39;,&#39;</span><span class="p">])</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_Xy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span> <span class="s">&#39;cache_Xy&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_Xy&#39;</span><span class="p">]:</span>
+            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_Xy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
+                                                      <span class="s">&#39;training_start&#39;</span><span class="p">)</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
+                                                    <span class="s">&#39;training_end&#39;</span><span class="p">)</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_date_format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s">&#39;classification&#39;</span><span class="p">,</span> <span class="s">&#39;training_date_format&#39;</span><span class="p">)</span>
+
+    <span class="c"># Configuration for YATSM algorithm</span>
+    <span class="n">yatsm_config</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;consecutive&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;consecutive&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;threshold&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;threshold&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;min_obs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getint</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;min_obs&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;min_rmse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;min_rmse&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;freq&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;freq&#39;</span><span class="p">]</span>
+                            <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">]</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;test_indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;test_indices&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;test_indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span>
+                                             <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;test_indices&#39;</span><span class="p">]</span>
+                                             <span class="k">if</span> <span class="n">b</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">])</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;screening&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;screening&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;screening_crit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;screening_crit&#39;</span><span class="p">)</span>
+
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;lassocv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;lassocv&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;reverse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;reverse&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;robust&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;robust&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_config_file"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_file">[docs]</a><span class="k">def</span> <span class="nf">parse_config_file</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parses config file into dictionary of attributes &quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="n">dataset_config</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">yatsm_config</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c"># Parse different versions</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;metadata&#39;</span><span class="p">,</span> <span class="s">&#39;version&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+
+    <span class="c"># 0.1.x</span>
+    <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">version</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span><span class="p">:</span>
+        <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">_parse_config_v_zero_pt_one</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Chris Holden.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
