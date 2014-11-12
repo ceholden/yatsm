@@ -294,7 +294,9 @@ if __name__ == '__main__':
 
     print('Found {n} breakpoints'.format(n=breakpoints.size))
     if breakpoints.size > 0:
-        print(breakpoints)
+        for i, bp in enumerate(breakpoints):
+            print('Break {0}: {1}'.format(
+                i, dt.fromordinal(bp).strftime('%Y-%m-%d')))
 
     # Renew the generator for style
     if plot_style == 'xkcd':
