@@ -34,7 +34,8 @@ except ImportError:
     from yatsm.version import __version__
 from yatsm.config_parser import parse_config_file
 from yatsm.utils import (calculate_lines, get_output_name, get_line_cache_name,
-                         find_images, get_image_attribute)
+                         csvfile_to_dataset)
+from yatsm.reader import get_image_attribute
 from yatsm.yatsm import make_X, YATSM, TSLengthException
 
 # Log setup for runner
@@ -284,8 +285,10 @@ def main(dataset_config, yatsm_config,
 
     """
     # Read in dataset
-    dates, images = find_images(dataset_config['input_file'],
-                                date_format=dataset_config['date_format'])
+    dates, images = csvfile_to_dataset(
+        dataset_config['input_file'],
+        date_format=dataset_config['date_format']
+    )
 
     # Check for existence of files and remove missing
     if check:
@@ -350,8 +353,7 @@ def main(dataset_config, yatsm_config,
 
 if __name__ == '__main__':
     # Get arguments
-    args = docopt(__doc__,
-                  version=__version__)
+    args = docopt(__doc__, version=__version__)
 
     # Validate input arguments
     config_file = args['<config_file>']

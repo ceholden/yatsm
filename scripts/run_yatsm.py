@@ -26,6 +26,7 @@ Plotting options:
     --plot_style=<style>    Plot style [default: ggplot]
 
 Generic options:
+    --image_pattern=<p>     Stack image filename pattern [default: L*stack]
     -v --verbose            Show verbose debugging messages
     -h --help               Show help
 
@@ -48,6 +49,7 @@ from datetime import datetime as dt
 import logging
 import math
 import os
+import sys
 
 from docopt import docopt
 
@@ -57,15 +59,14 @@ import numpy as np
 
 # Handle runnin as installed module or not
 try:
-    from yatsm.yatsm import YATSM, make_X
-    from yatsm.ts_driver.timeseries_ccdc import CCDCTimeSeries
+    from yatsm.version import __version__
 except ImportError:
     # Try adding `pwd` to PYTHONPATH
-    import sys
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
-    from yatsm.yatsm import YATSM, make_X
-    from yatsm.ts_driver.timeseries_ccdc import CCDCTimeSeries
+    from yatsm.version import __version__
+from yatsm.yatsm import YATSM, make_X
+from yatsm.reader import find_stack_images, read_pixel_timeseries
 
 # Some constants
 ndays = 365.25
@@ -82,18 +83,14 @@ logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
 logger = logging.getLogger('yatsm')
 
 
-def preprocess(location, px, py, freq):
+def preprocess(location, px, py, freq,
+               image_pattern='L*stack'):
     """ Read and preprocess Landsat data before analysis """
-    # Load timeseries
-    ts = CCDCTimeSeries(location, image_pattern='L*')
-    ts.set_px(px)
-    ts.set_py(py)
-    ts.get_ts_pixel()
+    dates, files = find_stack_images(location,
+                                     image_pattern=image_pattern)
 
-    # Get dates (datetime)
-    x = ts.dates
-    # Get data
-    Y = ts.get_data(mask=False)
+    x = np.array(dates)
+    Y = read_pixel_timeseries(files, px, py)
 
     # Filter out time series and remove Fmask
     clear = np.logical_and(Y[fmask, :] <= 1,
@@ -106,7 +103,7 @@ def preprocess(location, px, py, freq):
     # Make X matrix
     X = make_X(ord_x, freq).T
 
-    return (ts, X, Y, clear)
+    return X, Y, clear
 
 
 def plot_dataset():
@@ -159,7 +156,7 @@ def plot_results():
 
 
 if __name__ == '__main__':
-    args = docopt(__doc__)
+    args = docopt(__doc__, version=__version__)
 
     location = args['<location>']
     px = int(args['<px>'])
@@ -249,6 +246,9 @@ if __name__ == '__main__':
     else:
         style_context = plt.style.context(plot_style)
 
+    # Stack image filename pattern
+    image_pattern = args['--image_pattern']
+
     # Debug level
     debug = args['--verbose']
     if debug:
@@ -256,8 +256,10 @@ if __name__ == '__main__':
     else:
         logger.setLevel(logging.INFO)
 
+### BEGIN ACTUAL WORK
     # Get data and mask clouds
-    ts, X, Y, clear = preprocess(location, px, py, freq)
+    X, Y, clear = preprocess(location, px, py, freq,
+                             image_pattern=image_pattern)
     dates = np.array([dt.fromordinal(int(_x)) for _x in X[:, 1]])
 
     if plot_index:

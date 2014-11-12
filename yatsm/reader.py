@@ -4,13 +4,72 @@ from datetime import datetime as dt
 import fnmatch
 import logging
 import os
+import sys
+
+import numpy as np
+from osgeo import gdal, gdal_array
+
+gdal.AllRegister()
+gdal.UseExceptions()
 
 logger = logging.getLogger('yatsm')
 
 
-def find_stacks(location, folder_pattern='L*', image_pattern='L*stack',
-                date_index_start=9, date_index_end=16, date_format='%Y%j',
-                ignore=['YATSM']):
+def get_image_attribute(image_filename):
+    """ Use GDAL to open image and return some attributes
+
+    Args:
+      image_filename (string): image filename
+
+    Returns:
+      tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype
+
+    """
+    try:
+        image_ds = gdal.Open(image_filename, gdal.GA_ReadOnly)
+    except:
+        logger.error('Could not open example image dataset ({f})'.format(
+            f=image_filename))
+        sys.exit(1)
+
+    nrow = image_ds.RasterYSize
+    ncol = image_ds.RasterXSize
+    nband = image_ds.RasterCount
+    dtype = gdal_array.GDALTypeCodeToNumericTypeCode(
+        image_ds.GetRasterBand(1).DataType)
+
+    return (nrow, ncol, nband, dtype)
+
+
+def read_pixel_timeseries(files, px, py):
+    """ Returns NumPy array containing timeseries values for one pixel
+
+    Args:
+      files (list): List of filenames to read from
+      px (int): Pixel X location
+      py (int): Pixel Y location
+
+    Returns:
+      np.ndarray: Array (nband x n_images) containing all timeseries data
+        from one pixel
+
+    """
+    nrow, ncol, nband, dtype = get_image_attribute(files[0])
+
+    Y = np.zeros((nband, len(files)), dtype=dtype)
+
+    for i, f in enumerate(files):
+        ds = gdal.Open(f, gdal.GA_ReadOnly)
+        for b in xrange(nband):
+            Y[b, i] = ds.GetRasterBand(b + 1).ReadAsArray(px, py, 1, 1)
+
+    return Y
+
+
+def find_stack_images(location, folder_pattern='L*', image_pattern='L*stack',
+                      date_index_start=9, date_index_end=16,
+                      date_format='%Y%j',
+                      ignore=['YATSM']):
     """ Find and identify dates and filenames of Landsat image stacks
 
     Args:
@@ -61,13 +120,15 @@ def find_stacks(location, folder_pattern='L*', image_pattern='L*stack',
         for fname in fnmatch.filter(fnames, image_pattern):
             image_filenames.append(os.path.join(root, fname))
 
-    # Check for consistency
+    # Check to see if we found anything
+    if not folder_names or not image_filenames:
+        raise Exception('Zero stack images found with image '
+                        'and folder patterns: {0}, {1}'.format(
+                            folder_pattern, image_pattern))
+
     if len(folder_names) != len(image_filenames):
         raise Exception(
             'Inconsistent number of stacks folders and stack images located')
-
-    if not folder_names or not image_filenames:
-        raise Exception('Zero stack images found')
 
     # Extract dates
     for folder in folder_names:

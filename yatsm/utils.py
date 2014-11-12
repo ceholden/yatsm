@@ -4,8 +4,6 @@ import logging
 import os
 
 import numpy as np
-from osgeo import gdal
-from osgeo import gdal_array
 
 logger = logging.getLogger('yatsm')
 
@@ -69,7 +67,7 @@ def get_line_cache_name(dataset_config, n_images, nrow, nbands):
 
 
 # IMAGE DATASET READING
-def find_images(input_file, date_format='%Y-%j'):
+def csvfile_to_dataset(input_file, date_format='%Y-%j'):
     """ Return sorted filenames of images from input text file
 
     Args:
@@ -118,32 +116,6 @@ def find_images(input_file, date_format='%Y-%j'):
             images.append(row[i_image])
 
         return (np.array(dates), np.array(images))
-
-
-def get_image_attribute(image_filename):
-    """ Use GDAL to open image and return some attributes
-
-    Args:
-      image_filename (string): image filename
-
-    Returns:
-      tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype
-
-    """
-    try:
-        image_ds = gdal.Open(image_filename, gdal.GA_ReadOnly)
-    except:
-        logger.error('Could not open example image dataset ({f})'.format(
-            f=image_filename))
-        sys.exit(1)
-
-    nrow = image_ds.RasterYSize
-    ncol = image_ds.RasterXSize
-    nband = image_ds.RasterCount
-    dtype = gdal_array.GDALTypeCodeToNumericTypeCode(
-        image_ds.GetRasterBand(1).DataType)
-
-    return (nrow, ncol, nband, dtype)
 
 
 ### Random utilities
