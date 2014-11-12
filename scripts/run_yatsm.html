@@ -148,6 +148,7 @@ Algorithm options:
     --min_obs=&lt;n&gt;           Min number of obs per model [default: 1.5 * n_coef]
     --freq=&lt;freq&gt;           Sin/cosine frequencies [default: 1 2 3]
     --min_rmse=&lt;rmse&gt;       Minimum RMSE used in detection
+    --retrain_time=&lt;n&gt;      Wait &lt;n&gt; days to update model [default: 365.25]
     --screening=&lt;method&gt;    Multi-temporal screening method [default: RLM]
     --screening_crit=&lt;t&gt;    Screening critical value [default: 400.0]
     --lassocv               Use sklearn cross-validated LassoLarsIC
@@ -163,6 +164,7 @@ Plotting options:
     --plot_style=&lt;style&gt;    Plot style [default: ggplot]
 
 Generic options:
+    --image_pattern=&lt;p&gt;     Stack image filename pattern [default: L*stack]
     -v --verbose            Show verbose debugging messages
     -h --help               Show help
 
