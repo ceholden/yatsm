@@ -2,6 +2,7 @@ try:
     import ConfigParser as configparser
 except ImportError:
     import configparser
+import StringIO
 
 import numpy as np
 
@@ -10,23 +11,24 @@ import numpy as np
 def _parse_config_v_zero_pt_one(config_file):
     """ Parses config file for version 0.1.x """
     # Defaults
-    defaults = {
-        # [dataset]
-        'date_format': '%Y%j',
-        'output_prefix': 'yatsm_r',
-        'use_bip_reader': 'False',
-        'cache_line_dir': None,
-        # [YATSM]
-        'retrain_time': 365.25,
-        'screening_crit': 400.0,
-        'robust': False,
-        # [classification]
-        'training_image': None,
-        'mask_values': '0, 255',
-        'cache_Xy': None
-    }
+    defaults = """
+[dataset]
+date_format=%Y%j
+output_prefix = yatsm_r
+use_bip_reader = false
+cache_line_dir =
+[YATSM]
+retrain_time = 365.25
+screening_crit = 400.0
+robust = false
+[classification]
+training_image = None
+mask_values = 0, 255
+cache_xy =
+    """
 
-    config = configparser.ConfigParser(defaults=defaults, allow_no_value=True)
+    config = configparser.ConfigParser(allow_no_value=True)
+    config.readfp(StringIO.StringIO(defaults))
     config.read(config_file)
 
     # Configuration for dataset
