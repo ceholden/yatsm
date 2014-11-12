@@ -165,7 +165,7 @@ email                : <a class="reference external" href="mailto:ceholden&#37;&
 </dl>
 <dl class="class">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries">
-<em class="property">class </em><tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">AbstractTimeSeries</tt><big>(</big><em>location</em>, <em>image_pattern</em>, <em>stack_pattern</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">AbstractTimeSeries</tt><big>(</big><em>location</em>, <em>image_pattern</em>, <em>stack_pattern</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>Abstract base class representing a remote sensing time series.</p>
 <p>AbstractTimeSeries class is meant to be sub-classed and its methods
@@ -205,106 +205,106 @@ write_to_cache              write retrieved dataset to cache</dd>
 </dl>
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.apply_mask">
-<tt class="descname">apply_mask</tt><big>(</big><em>mask_band=None</em>, <em>mask_val=None</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.apply_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.apply_mask" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">apply_mask</tt><big>(</big><em>mask_band=None</em>, <em>mask_val=None</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.apply_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use subclasser to set if capability is available</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.dates">
-<tt class="descname">dates</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.dates" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">dates</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.dates" title="Permalink to this definition">¶</a></dt>
 <dd><p>np.array of datetime for each image</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.filenames">
-<tt class="descname">filenames</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.filenames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.filenames" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">filenames</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.filenames" title="Permalink to this definition">¶</a></dt>
 <dd><p>File basename for each image</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.filepaths">
-<tt class="descname">filepaths</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.filepaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.filepaths" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">filepaths</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.filepaths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Full path to each image</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.geo_transform">
-<tt class="descname">geo_transform</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.geo_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.geo_transform" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">geo_transform</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.geo_transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>geo-transform for each image</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.get_breaks">
-<tt class="descname">get_breaks</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.get_breaks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_breaks" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_breaks</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_breaks" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.get_data">
-<tt class="descname">get_data</tt><big>(</big><em>mask=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_data</tt><big>(</big><em>mask=True</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.get_prediction">
-<tt class="descname">get_prediction</tt><big>(</big><em>band</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.get_prediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_prediction" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_prediction</tt><big>(</big><em>band</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_prediction" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.get_px">
-<tt class="descname">get_px</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.get_px"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_px" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_px</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_px" title="Permalink to this definition">¶</a></dt>
 <dd><p>current pixel column number</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.get_py">
-<tt class="descname">get_py</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.get_py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_py" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_py</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_py" title="Permalink to this definition">¶</a></dt>
 <dd><p>current pixel row number</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.get_ts_pixel">
-<tt class="descname">get_ts_pixel</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.get_ts_pixel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_ts_pixel" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_ts_pixel</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.get_ts_pixel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch pixel data for a given x/y and set to self.data</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.has_results">
-<tt class="descname">has_results</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.has_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.has_results" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">has_results</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.has_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>boolean indicating existence of model fit</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.image_names">
-<tt class="descname">image_names</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.image_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.image_names" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">image_names</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.image_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Common names or IDs for each image</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.length">
-<tt class="descname">length</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.length" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">length</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of the time series</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.n_band">
-<tt class="descname">n_band</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.n_band"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.n_band" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">n_band</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.n_band" title="Permalink to this definition">¶</a></dt>
 <dd><p>number of bands per image</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.projection">
-<tt class="descname">projection</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.projection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.projection" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">projection</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.projection" title="Permalink to this definition">¶</a></dt>
 <dd><p>projection for each image</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_from_cache">
-<tt class="descname">retrieve_from_cache</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.retrieve_from_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_from_cache" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">retrieve_from_cache</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_from_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use subclasser to set if capability is available</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_pixel">
-<tt class="descname">retrieve_pixel</tt><big>(</big><em>x</em>, <em>y</em>, <em>index</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.retrieve_pixel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_pixel" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">retrieve_pixel</tt><big>(</big><em>x</em>, <em>y</em>, <em>index</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_pixel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return pixel data for a given x/y and index in time series</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -318,37 +318,37 @@ write_to_cache              write retrieved dataset to cache</dd>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_result">
-<tt class="descname">retrieve_result</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.retrieve_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_result" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">retrieve_result</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.retrieve_result" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve algorithm result for a given x/y</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.set_px">
-<tt class="descname">set_px</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.set_px"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.set_px" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_px</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.set_px" title="Permalink to this definition">¶</a></dt>
 <dd><p>set current pixel column number</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.set_py">
-<tt class="descname">set_py</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.set_py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.set_py" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_py</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.set_py" title="Permalink to this definition">¶</a></dt>
 <dd><p>set current pixel row number</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.write_to_cache">
-<tt class="descname">write_to_cache</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.write_to_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.write_to_cache" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">write_to_cache</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.write_to_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use subclasser to set if capability is available</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.x_size">
-<tt class="descname">x_size</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.x_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.x_size" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">x_size</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.x_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>number of columns per image</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.ts_driver.timeseries.AbstractTimeSeries.y_size">
-<tt class="descname">y_size</tt><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#AbstractTimeSeries.y_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.y_size" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">y_size</tt><a class="headerlink" href="#yatsm.ts_driver.timeseries.AbstractTimeSeries.y_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>number of rows per image</p>
 </dd></dl>
 
@@ -356,21 +356,21 @@ write_to_cache              write retrieved dataset to cache</dd>
 
 <dl class="function">
 <dt id="yatsm.ts_driver.timeseries.mat2dict">
-<tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">mat2dict</tt><big>(</big><em>matlabobj</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#mat2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.mat2dict" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">mat2dict</tt><big>(</big><em>matlabobj</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.mat2dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Utility function:
 Converts a scipy.io.matlab.mio5_params.mat_struct to a dictionary</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="yatsm.ts_driver.timeseries.ml2pydate">
-<tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">ml2pydate</tt><big>(</big><em>ml_date</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#ml2pydate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.ml2pydate" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">ml2pydate</tt><big>(</big><em>ml_date</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.ml2pydate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Utility function:
 Returns Python datetime for MATLAB date</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="yatsm.ts_driver.timeseries.py2mldate">
-<tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">py2mldate</tt><big>(</big><em>py_date</em><big>)</big><a class="reference internal" href="../_modules/yatsm/ts_driver/timeseries.html#py2mldate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.ts_driver.timeseries.py2mldate" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">yatsm.ts_driver.timeseries.</tt><tt class="descname">py2mldate</tt><big>(</big><em>py_date</em><big>)</big><a class="headerlink" href="#yatsm.ts_driver.timeseries.py2mldate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Utility function:
 Returns MATLAB datenum for Python datetime</p>
 </dd></dl>

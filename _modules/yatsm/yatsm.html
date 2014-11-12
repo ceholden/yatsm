@@ -266,18 +266,20 @@
 <span class="sd">      min_rmse (float): Minimum RMSE for models during testing</span>
 <span class="sd">      fit_indices (ndarray): Indices of Y to fit models for</span>
 <span class="sd">      test_indices (ndarray): Indices of Y to test for change with</span>
-<span class="sd">      screening (str, optional): Style of prescreening of the timeseries</span>
+<span class="sd">      retrain_time (float): Number of days between model fit updates during</span>
+<span class="sd">        monitoring period</span>
+<span class="sd">      screening (str): Style of prescreening of the timeseries</span>
 <span class="sd">        for noise. Options are &#39;RLM&#39; or &#39;LOWESS&#39;</span>
-<span class="sd">      green_band (int, optional): Index of green band in Y for</span>
-<span class="sd">        multitemporal masking</span>
-<span class="sd">      swir1_band (int, optional): Index of first SWIR band in Y for</span>
-<span class="sd">        multitemporal masking</span>
 <span class="sd">      screening_crit (float, optional): critical value for multitemporal</span>
 <span class="sd">        noise screening</span>
+<span class="sd">      green_band (int, optional): Index of green band in Y for</span>
+<span class="sd">        multitemporal masking (default: 1)</span>
+<span class="sd">      swir1_band (int, optional): Index of first SWIR band in Y for</span>
+<span class="sd">        multitemporal masking (default: 4)</span>
+<span class="sd">      lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet</span>
 <span class="sd">      px (int, optional): X (column) pixel reference</span>
 <span class="sd">      py (int, optional): Y (row) pixel reference</span>
-<span class="sd">      lassocv (bool): Use scikit-learn LarsLassoCV over glmnet</span>
-<span class="sd">      logger (logging.Logger): Specific logger to use, else get one</span>
+<span class="sd">      logger (logging.Logger, optional): Specific logger to use, else get one</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -288,11 +290,12 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span>
                  <span class="n">consecutive</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">2.56</span><span class="p">,</span> <span class="n">min_obs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">min_rmse</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">fit_indices</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">test_indices</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">screening</span><span class="o">=</span><span class="s">&#39;RLM&#39;</span><span class="p">,</span> <span class="n">green_band</span><span class="o">=</span><span class="n">green_band</span><span class="p">,</span> <span class="n">swir1_band</span><span class="o">=</span><span class="n">swir1_band</span><span class="p">,</span>
-                 <span class="n">screening_crit</span><span class="o">=</span><span class="mf">400.0</span><span class="p">,</span>
+                 <span class="n">fit_indices</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">test_indices</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">retrain_time</span><span class="o">=</span><span class="n">ndays</span><span class="p">,</span>
+                 <span class="n">screening</span><span class="o">=</span><span class="s">&#39;RLM&#39;</span><span class="p">,</span> <span class="n">screening_crit</span><span class="o">=</span><span class="mf">400.0</span><span class="p">,</span>
+                 <span class="n">green_band</span><span class="o">=</span><span class="n">green_band</span><span class="p">,</span> <span class="n">swir1_band</span><span class="o">=</span><span class="n">swir1_band</span><span class="p">,</span>
+                 <span class="n">lassocv</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                  <span class="n">px</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">lassocv</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+                 <span class="n">logger</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="c"># Setup logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
 
@@ -325,6 +328,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">test_indices</span> <span class="o">=</span> <span class="n">test_indices</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&#39;Specified test_indices larger than Y matrix&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrain_time</span> <span class="o">=</span> <span class="n">retrain_time</span>
 
         <span class="c"># Type of noise screening</span>
         <span class="k">if</span> <span class="n">screening</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_types</span><span class="p">:</span>
@@ -712,8 +717,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">monitoring</span> <span class="o">=</span> <span class="bp">True</span>
 </div>
 <div class="viewcode-block" id="YATSM.update_model"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.update_model">[docs]</a>    <span class="k">def</span> <span class="nf">update_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c"># Only train once a year</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndays</span><span class="p">:</span>
+        <span class="c"># Only train if enough time has past</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrain_time</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Monitoring - retraining ({n} days since last)&#39;</span><span class="o">.</span>
                               <span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span><span class="p">))</span>
@@ -764,6 +769,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">n_record</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="mi">1</span>
 
+            <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">monitoring</span> <span class="o">=</span> <span class="bp">False</span>
 </div>
 <div class="viewcode-block" id="YATSM.fit_models_GLMnet"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.fit_models_GLMnet">[docs]</a>    <span class="k">def</span> <span class="nf">fit_models_GLMnet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>

@@ -247,23 +247,27 @@ file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.<
 <td><tt class="docutils literal"><span class="pre">list</span></tt></td>
 <td>Indices of Y to use in change detection</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">screening</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">retrain_time</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
+<td>Number of days between model fit updates during monitoring period</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">screening</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">str</span></tt></td>
 <td>Method for screening timeseries for noise. Options are <tt class="docutils literal"><span class="pre">RLM</span></tt> and <tt class="docutils literal"><span class="pre">LOWESS</span></tt></td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">screening_crit</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">screening_crit</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">float</span></tt></td>
 <td>Critical value for detecting noise in multitemporal cloud/shadow screening</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lassocv</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lassocv</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Use <tt class="docutils literal"><span class="pre">sklearn.linear_model.LassoLarsCV</span></tt> instead of <tt class="docutils literal"><span class="pre">glmnet</span></tt></td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">reverse</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">reverse</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Run model backward in time, rather than forward</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">robust</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">robust</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Return coefficients and RMSE from a robust linear model for each time segment</td>
 </tr>
@@ -361,6 +365,8 @@ min_obs = 16
 min_rmse = 150
 freq = 1
 test_indices = 2, 4, 5
+# Number of days between model fit updates during monitoring period
+retrain_time = 365.25
 # Multitemporal cloud/shadow screening algorithm and threshold
 screening = LOWESS
 screening_crit = 400.0

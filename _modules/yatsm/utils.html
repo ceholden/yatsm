@@ -140,8 +140,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
-<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal_array</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
 
@@ -205,7 +203,7 @@
 
 
 <span class="c"># IMAGE DATASET READING</span></div>
-<div class="viewcode-block" id="find_images"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.find_images">[docs]</a><span class="k">def</span> <span class="nf">find_images</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s">&#39;%Y-%j&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="csvfile_to_dataset"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataset">[docs]</a><span class="k">def</span> <span class="nf">csvfile_to_dataset</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s">&#39;%Y-%j&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return sorted filenames of images from input text file</span>
 
 <span class="sd">    Args:</span>
@@ -254,32 +252,6 @@
             <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_image</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
-
-</div>
-<div class="viewcode-block" id="get_image_attribute"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_image_attribute">[docs]</a><span class="k">def</span> <span class="nf">get_image_attribute</span><span class="p">(</span><span class="n">image_filename</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Use GDAL to open image and return some attributes</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      image_filename (string): image filename</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">image_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_ReadOnly</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not open example image dataset ({f})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">f</span><span class="o">=</span><span class="n">image_filename</span><span class="p">))</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="n">nrow</span> <span class="o">=</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span>
-    <span class="n">ncol</span> <span class="o">=</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span>
-    <span class="n">nband</span> <span class="o">=</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterCount</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal_array</span><span class="o">.</span><span class="n">GDALTypeCodeToNumericTypeCode</span><span class="p">(</span>
-        <span class="n">image_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nband</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
 
 <span class="c">### Random utilities</span></div>

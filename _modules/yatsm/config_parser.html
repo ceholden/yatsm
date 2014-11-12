@@ -147,15 +147,18 @@
     <span class="sd">&quot;&quot;&quot; Parses config file for version 0.1.x &quot;&quot;&quot;</span>
     <span class="c"># Defaults</span>
     <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c"># [dataset]</span>
         <span class="s">&#39;date_format&#39;</span><span class="p">:</span> <span class="s">&#39;%Y%j&#39;</span><span class="p">,</span>
         <span class="s">&#39;output_prefix&#39;</span><span class="p">:</span> <span class="s">&#39;yatsm_r&#39;</span><span class="p">,</span>
-        <span class="s">&#39;robust&#39;</span><span class="p">:</span> <span class="s">&#39;False&#39;</span><span class="p">,</span>
         <span class="s">&#39;use_bip_reader&#39;</span><span class="p">:</span> <span class="s">&#39;False&#39;</span><span class="p">,</span>
+        <span class="s">&#39;cache_line_dir&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="c"># [YATSM]</span>
+        <span class="s">&#39;retrain_time&#39;</span><span class="p">:</span> <span class="mf">365.25</span><span class="p">,</span>
+        <span class="s">&#39;screening_crit&#39;</span><span class="p">:</span> <span class="mf">400.0</span><span class="p">,</span>
+        <span class="s">&#39;robust&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+        <span class="c"># [classification]</span>
         <span class="s">&#39;training_image&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
         <span class="s">&#39;mask_values&#39;</span><span class="p">:</span> <span class="s">&#39;0, 255&#39;</span><span class="p">,</span>
-        <span class="s">&#39;cache_line_dir&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
-        <span class="s">&#39;robust&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
-        <span class="s">&#39;screening_crit&#39;</span><span class="p">:</span> <span class="mf">400.0</span><span class="p">,</span>
         <span class="s">&#39;cache_Xy&#39;</span><span class="p">:</span> <span class="bp">None</span>
     <span class="p">}</span>
 
@@ -214,6 +217,7 @@
     <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;test_indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span>
                                              <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;test_indices&#39;</span><span class="p">]</span>
                                              <span class="k">if</span> <span class="n">b</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">])</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;retrain_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;retrain_time&#39;</span><span class="p">)</span>
     <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;screening&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;screening&#39;</span><span class="p">)</span>
     <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;screening_crit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getfloat</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;screening_crit&#39;</span><span class="p">)</span>
 

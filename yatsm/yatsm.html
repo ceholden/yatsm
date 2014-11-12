@@ -143,15 +143,6 @@
 <li class="toctree-l2"><a class="reference internal" href="yatsm.classifiers.html#module-yatsm.classifiers">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.ts_driver.html">yatsm.ts_driver package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.ts_driver.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.ts_driver.timeseries.html">yatsm.ts_driver.timeseries module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.ts_driver.timeseries_ccdc.html">yatsm.ts_driver.timeseries_ccdc module</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.ts_driver.html#module-yatsm.ts_driver">Module contents</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
@@ -174,7 +165,7 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="yatsm.YATSM">
-<em class="property">class </em><tt class="descclassname">yatsm.</tt><tt class="descname">YATSM</tt><big>(</big><em>X</em>, <em>Y</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>fit_indices=None</em>, <em>test_indices=None</em>, <em>screening='RLM'</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>screening_crit=400.0</em>, <em>px=0</em>, <em>py=0</em>, <em>lassocv=False</em>, <em>logger=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">yatsm.</tt><tt class="descname">YATSM</tt><big>(</big><em>X</em>, <em>Y</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>fit_indices=None</em>, <em>test_indices=None</em>, <em>retrain_time=365.25</em>, <em>screening='RLM'</em>, <em>screening_crit=400.0</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>lassocv=False</em>, <em>px=0</em>, <em>py=0</em>, <em>logger=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>Initialize a YATSM model for data X (spectra) and Y (dates)</p>
 <p>YATSM model based off of tests for structural changes from the
@@ -195,18 +186,20 @@ effort is not intended as a direct port of either algorithms.</p>
 <li><strong>min_rmse</strong> (<em>float</em>) &#8211; Minimum RMSE for models during testing</li>
 <li><strong>fit_indices</strong> (<em>ndarray</em>) &#8211; Indices of Y to fit models for</li>
 <li><strong>test_indices</strong> (<em>ndarray</em>) &#8211; Indices of Y to test for change with</li>
-<li><strong>screening</strong> (<em>str, optional</em>) &#8211; Style of prescreening of the timeseries
+<li><strong>retrain_time</strong> (<em>float</em>) &#8211; Number of days between model fit updates during
+monitoring period</li>
+<li><strong>screening</strong> (<em>str</em>) &#8211; Style of prescreening of the timeseries
 for noise. Options are &#8216;RLM&#8217; or &#8216;LOWESS&#8217;</li>
-<li><strong>green_band</strong> (<em>int, optional</em>) &#8211; Index of green band in Y for
-multitemporal masking</li>
-<li><strong>swir1_band</strong> (<em>int, optional</em>) &#8211; Index of first SWIR band in Y for
-multitemporal masking</li>
 <li><strong>screening_crit</strong> (<em>float, optional</em>) &#8211; critical value for multitemporal
 noise screening</li>
+<li><strong>green_band</strong> (<em>int, optional</em>) &#8211; Index of green band in Y for
+multitemporal masking (default: 1)</li>
+<li><strong>swir1_band</strong> (<em>int, optional</em>) &#8211; Index of first SWIR band in Y for
+multitemporal masking (default: 4)</li>
+<li><strong>lassocv</strong> (<em>bool, optional</em>) &#8211; Use scikit-learn LarsLassoCV over glmnet</li>
 <li><strong>px</strong> (<em>int, optional</em>) &#8211; X (column) pixel reference</li>
 <li><strong>py</strong> (<em>int, optional</em>) &#8211; Y (row) pixel reference</li>
-<li><strong>lassocv</strong> (<em>bool</em>) &#8211; Use scikit-learn LarsLassoCV over glmnet</li>
-<li><strong>logger</strong> (<em>logging.Logger</em>) &#8211; Specific logger to use, else get one</li>
+<li><strong>logger</strong> (<em>logging.Logger, optional</em>) &#8211; Specific logger to use, else get one</li>
 </ul>
 </td>
 </tr>

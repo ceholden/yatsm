@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
 
     yatsm.classifiers
-    yatsm.ts_driver
 
 Submodules
 ----------
