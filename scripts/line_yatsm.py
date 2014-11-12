@@ -195,8 +195,6 @@ def run_line(line, X, images,
     outfile = get_output_name(dataset_config, line)
     logger.debug('    saving YATSM output to {f}'.format(f=outfile))
 
-    sys.exit(0)
-
     np.savez(outfile,
              version=__version__,
              consecutive=yatsm_config['consecutive'],
