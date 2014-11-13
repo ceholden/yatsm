@@ -6,6 +6,8 @@
 import sys
 import os
 
+import sphinx
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -30,10 +32,15 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.graphviz',
     'sphinx.ext.todo',
-    'sphinxcontrib.napoleon',
     'sphinxcontrib.programoutput',
     'sphinxcontrib.bibtex'
 ]
+# Napoleon extension moving to sphinx.ext.napoleon as of sphinx 1.3
+sphinx_version = sphinx.version_info
+if sphinx_version[0] >= 1 and sphinx_version[1] >= 3:
+    extensions.append('sphinx.ext.napoleon')
+else:
+    extensions.append('sphinxcontrib.napoleon')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

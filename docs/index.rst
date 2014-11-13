@@ -59,6 +59,12 @@ Documentation for individual command line applications from YATSM:
 
    scripts/scripts
 
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 References
 ----------
@@ -67,10 +73,3 @@ References
    :style: unsrt
    :cited:
 
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
