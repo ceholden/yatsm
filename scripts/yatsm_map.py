@@ -12,17 +12,18 @@ Options:
     -f --format <format>    Output raster format [default: GTiff]
     --date <format>         Date format [default: %Y-%m-%d]
     --warn-on-empty         Warn user when reading in empty result files
+    --version               Show program version
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
+
+Map options:
+    --after                 Use time segment after <date> if needed for map
+    --before                Use time segment before <date> if needed for map
 
 Coefficient and prediction options:
     --band <bands>          Bands to export [default: all]
     --robust                Use robust estimates
     --coef <coefs>          Coefficients to export [default: all]
-
-Classification options:
-    --after                 Use time segment after <date> if needed for map
-    --before                Use time segment before <date> if needed for map
 
 Examples:
     > yatsm_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
@@ -162,6 +163,41 @@ def find_result_attributes(results, output_bands, output_coefs,
     return (i_bands, i_coefs, use_rmse, freq)
 
 
+def find_indices(record, date, after=False, before=False):
+    """ Yield indices matching time segments for a given date
+
+    Args:
+      record (np.ndarray): Saved model result
+      date (int): Ordinal date to use when finding matching segments
+      after (bool, optional): If date intersects a disturbed period, use next
+        available time segment
+      before (bool, optional): If date does not intersect a model, use previous
+        non-disturbed time segment
+
+    Yields:
+      np.ndarray: The indices of `record` containing indices matching criteria.
+        If `before` or `after` are specified, indices will be yielded in order
+        of least desirability to allow overwriting -- `before` indices,
+        `after` indices, and intersecting indices.
+
+    """
+    if before:
+        # Model before, as long as it didn't change
+        index = np.where((record['end'] <= date) & (record['break'] == 0))[0]
+        yield index
+
+    if after:
+        # First model starting after date specified
+        index = np.where(record['start'] >= date)[0]
+        _, _index = np.unique(record['px'][index], return_index=True)
+        index = index[_index]
+        yield index
+
+    # Model intersecting date
+    index = np.where((record['start'] <= date) & (record['end'] >= date))[0]
+    yield index
+
+
 def make_X(x, freq, intercept=True):
     """ Create X matrix of Fourier series style independent variables
 
@@ -219,9 +255,9 @@ def get_classification(date, result_location, image_ds,
       result_location (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
       after (bool, optional): If date intersects a disturbed period, use next
-        segment?
-      before (bool, optional): If date intersects a disturbed period, use
-        previous segment?
+        available time segment
+      before (bool, optional): If date does not intersect a model, use previous
+        non-disturbed time segment
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
@@ -242,25 +278,12 @@ def get_classification(date, result_location, image_ds,
         if not 'class' in rec.dtype.names:
             raise ValueError('Results do not have classification labels')
 
-        # Find model before segment
-        if before:
-            # Model before, as long as it didn't change
-            index = np.where((rec['end'] <= date) & (rec['break'] == 0))[0]
-            if index.shape[0] != 0:
-                raster[rec['py'][index],
-                       rec['px'][index]] = rec['class'][index]
-        # Find model after segment
-        if after:
-            index = np.where(rec['start'] >= date)[0]
-            _, _index = np.unique(rec['px'][index], return_index=True)
-            index = index[_index]
-            if index.shape[0] != 0:
-                raster[rec['py'][index],
-                       rec['px'][index]] = rec['class'][index]
+        # TODO: Add in QA/QC values for the type of index that was used per
+        #       pixel
+        for index in find_indices(rec, date, after=after, before=before):
+            if index.shape[0] == 0:
+                continue
 
-        # Find model intersecting date
-        index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
-        if index.shape[0] != 0:
             raster[rec['py'][index],
                    rec['px'][index]] = rec['class'][index]
 
@@ -269,7 +292,7 @@ def get_classification(date, result_location, image_ds,
 
 def get_coefficients(date, result_location, image_ds,
                      bands, coefs,
-                     use_robust=False,
+                     use_robust=False, after=False, before=False,
                      ndv=-9999, pattern=_result_record):
     """ Output a raster with coefficients from CCDC
 
@@ -281,6 +304,10 @@ def get_coefficients(date, result_location, image_ds,
       image_ds (gdal.Dataset): Example dataset
       use_robust (bool, optional): Map robust coefficients and RMSE instead of
         normal ones
+      after (bool, optional): If date intersects a disturbed period, use next
+        available time segment
+      before (bool, optional): If date does not intersect a model, use previous
+        non-disturbed time segment
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
@@ -323,23 +350,24 @@ def get_coefficients(date, result_location, image_ds,
 
     logger.debug('Processing results')
     for rec in iter_records(records):
-        # Find indices for the date specified
-        index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
+        # TODO: Add in QA/QC values for the type of index that was used per
+        #       pixel
+        for index in find_indices(rec, date, after=after, before=before):
+            if index.shape[0] == 0:
+                continue
 
-        if index.shape[0] == 0:
-            continue
+            # Normalize intercept to mid-point in time segment
+            rec[_coef][index, 0, :] += \
+                ((rec['start'][index] + rec['end'][index]) / 2.0)[:, None] * \
+                rec[_coef][index, 1, :]
 
-        # Normalize intercept to mid-point in time segment
-        rec[_coef][index, 0, :] += \
-            ((rec['start'][index] + rec['end'][index]) / 2.0)[:, None] * \
-            rec[_coef][index, 1, :]
+            # Extract coefficients
+            raster[rec['py'][index], rec['px'][index], :n_coefs * n_bands] =\
+                np.reshape(rec[_coef][index][:, i_coefs, :][:, :, i_bands],
+                           (index.size, n_coefs * n_bands))
 
-        # Extract coefficients
-        raster[rec['py'][index], rec['px'][index], :n_coefs * n_bands] =\
-            np.reshape(rec[_coef][index][:, i_coefs, :][:, :, i_bands],
-                       (index.size, n_coefs * n_bands))
-
-        if use_rmse:
+            if not use_rmse:
+                continue
             raster[rec['py'][index], rec['px'][index], n_coefs * n_bands:] =\
                 rec[_rmse][index][:, i_bands]
 
@@ -347,7 +375,7 @@ def get_coefficients(date, result_location, image_ds,
 
 
 def get_prediction(date, result_location, image_ds,
-                   bands='all', use_robust=False,
+                   bands='all', use_robust=False, after=False, before=False,
                    ndv=-9999, pattern=_result_record):
     """ Output a raster with the predictions from model fit for a given date
 
@@ -359,6 +387,10 @@ def get_prediction(date, result_location, image_ds,
         list of bands
       use_robust (bool, optional): Map robust coefficients and RMSE instead of
         normal ones
+      after (bool, optional): If date intersects a disturbed period, use next
+        available time segment
+      before (bool, optional): If date does not intersect a model, use previous
+        non-disturbed time segment
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
@@ -385,15 +417,16 @@ def get_prediction(date, result_location, image_ds,
 
     logger.debug('Processing results')
     for rec in iter_records(records):
-        # Find indices for the date specified
-        index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
+        # TODO: Add in QA/QC values for the type of index that was used per
+        #       pixel
+        for index in find_indices(rec, date, after=after, before=before):
+            if index.shape[0] == 0:
+                continue
 
-        if index.shape[0] == 0:
-            continue
-
-        # Calculate prediction
-        raster[rec['py'][index], rec['px'][index], :] = \
-            np.tensordot(rec['coef'][index, :][:, :, i_bands], X, axes=(1, 0))
+            # Calculate prediction
+            raster[rec['py'][index], rec['px'][index], :] = \
+                np.tensordot(rec['coef'][index, :][:, :, i_bands], X,
+                             axes=(1, 0))
 
     return raster
 
@@ -562,7 +595,6 @@ def parse_args(args):
 
 def main(args):
     """ Test input and pass to appropriate functions """
-    args = parse_args(args)
     ### Produce output specified
     try:
         image_ds = gdal.Open(args['image'], gdal.GA_ReadOnly)
@@ -574,13 +606,14 @@ def main(args):
     if args['class']:
         raster = get_classification(
             args['date'], args['results'], image_ds,
-            args['after'], args['before']
+            after=args['after'], before=args['before']
         )
     elif args['coef']:
         raster, band_names = get_coefficients(
             args['date'], args['results'], image_ds,
             args['bands'], args['coefs'],
             use_robust=args['use_robust'],
+            after=args['after'], before=args['before'],
             ndv=args['ndv']
         )
     elif args['predict']:
@@ -588,6 +621,7 @@ def main(args):
             args['date'], args['results'], image_ds,
             args['bands'],
             use_robust=args['use_robust'],
+            after=args['after'], before=args['before'],
             ndv=args['ndv']
         )
 
@@ -605,4 +639,5 @@ if __name__ == '__main__':
     if args['--warn-on-empty']:
         WARN_ON_EMPTY = True
 
+    args = parse_args(args)
     main(args)
