@@ -15,7 +15,9 @@ sys.path.insert(0, d(d(os.path.abspath(__file__))))
 import yatsm
 
 # Add scripts directory to PATH for sphinxcontrib.programoutput
-os.environ['PATH'] += os.pathsep + d(d(__file__)) + os.sep + 'scripts'
+os.environ['PATH'] = '{root}{sep}{dir}{psep}{path}'.format(
+    root=d(d(__file__)), sep=os.sep, dir='scripts',
+    psep=os.pathsep, path=os.environ['PATH'])
 
 # -- General configuration ------------------------------------------------
 # Add any Sphinx extension module names here, as strings. They can be
