@@ -171,8 +171,8 @@ def get_classification(date, after, before, results, image_ds,
         rec = np.load(r)['record']
 
         if not 'class' in rec.dtype.names:
-            raise ValueError('Record {r} does not have classification \
-                labels'.format(r=r))
+            raise ValueError('Record {r} does not have classification'
+                             'labels'.format(r=r))
 
         # Find model before segment
         if before:
@@ -517,9 +517,23 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
     ds = None
 
 
-def main():
-    """ Test input and pass to appropriate functions """
+def parse_args(args):
+    """ Returns dictionary of parsed and validated command arguments
+
+    Args:
+      args (dict): Arguments from user
+
+    Returns:
+      dict: Parsed and validated arguments
+
+    """
+    parsed = {}
     ### Parse required input
+    # Type of map
+    parsed['class'] = args['class']
+    parsed['coef'] = args['coef']
+    parsed['predict'] = args['predict']
+
     # Date for map
     date = args['<date>']
     date_format = args['--date']
@@ -528,13 +542,13 @@ def main():
     except:
         logger.error('Could not parse date')
         raise
-    date = date.toordinal()
+    parsed['date'] = date.toordinal()
 
     # Output name
-    output = os.path.abspath(args['<output>'])
-    if not os.path.isdir(os.path.dirname(output)):
+    parsed['output'] = os.path.abspath(args['<output>'])
+    if not os.path.isdir(os.path.dirname(parsed['output'])):
         try:
-            os.makedirs(os.path.dirname(output))
+            os.makedirs(os.path.dirname(parsed['output']))
         except:
             logger.error('Could not make output directory specified')
             raise
@@ -542,56 +556,58 @@ def main():
     ### Parse generic options
     # NDV
     try:
-        ndv = float(args['--ndv'])
+        parsed['ndv'] = float(args['--ndv'])
     except ValueError:
         logger.error('NoDataValue must be a real number')
         raise
 
     # Root directory
-    root = args['--root']
-    if not os.path.isdir(root):
+    parsed['root'] = args['--root']
+    if not os.path.isdir(parsed['root']):
         logger.error('Root directory is not a directory')
         sys.exit(1)
 
     # Results folder
     results = args['--result']
     # First look as relative path under root folder, then from PWD
-    if not os.path.isdir(os.path.join(root, results)):
+    if not os.path.isdir(os.path.join(parsed['root'], results)):
         if os.path.isdir(results):
             results = os.path.abspath(results)
         else:
             logger.error('Cannot find results folder')
             sys.exit(1)
     else:
-        results = os.path.abspath(os.path.join(root, results))
+        results = os.path.abspath(os.path.join(parsed['root'], results))
+    parsed['results'] = results
 
     # Example image
     image = args['--image']
     if not os.path.isfile(image):
-        if os.path.isfile(os.path.join(root, image)):
-            image = os.path.join(root, image)
+        if os.path.isfile(os.path.join(parsed['root'], image)):
+            image = os.path.join(parsed['root'], image)
         else:
             logger.error('Cannot find example image')
             sys.exit(1)
-    image = os.path.abspath(image)
+    parsed['image'] = os.path.abspath(image)
 
     # Raster file format
-    gdal_frmt = args['--format']
+    parsed['gdal_frmt'] = args['--format']
     try:
-        _ = gdal.GetDriverByName(gdal_frmt)
+        _ = gdal.GetDriverByName(parsed['gdal_frmt'])
     except:
         logger.error('Unknown GDAL format specified')
         raise
 
     ### Parse coefficient and prediction options
     # Coefficients to output
-    coefs = [c for c in args['--coef'].replace(',', ' ').split(' ') if c != '']
-    if not all([c.lower() in _coefs for c in coefs]):
+    parsed['coefs'] = [c for c in
+                       args['--coef'].replace(',', ' ').split(' ') if c != '']
+    if not all([c.lower() in _coefs for c in parsed['coefs']]):
         logger.error('Unknown coefficient options')
         logger.error('Options are:')
         logger.error(_coefs)
         logger.error('Specified were:')
-        logger.error(coefs)
+        logger.error(parsed['coefs'])
         sys.exit(1)
 
     # Bands to output
@@ -606,38 +622,48 @@ def main():
         except:
             logger.error('Could not parse band selection')
             raise
+    parsed['bands'] = bands
 
     # Robust estimates?
-    use_robust = args['--robust']
+    parsed['use_robust'] = args['--robust']
 
     ### Classification outputs
     # Go to next time segment option
-    after = args['--after']
-    before = args['--before']
+    parsed['after'] = args['--after']
+    parsed['before'] = args['--before']
 
+    return parsed
+
+
+def main(args):
+    """ Test input and pass to appropriate functions """
+    args = parse_args(args)
     ### Produce output specified
     try:
-        image_ds = gdal.Open(image, gdal.GA_ReadOnly)
+        image_ds = gdal.Open(args['image'], gdal.GA_ReadOnly)
     except:
         logger.error('Could not open example image for reading')
         raise
 
     band_names = None
-
     if args['class']:
-        raster = get_classification(date, after, before, results, image_ds)
+        raster = get_classification(args['date'],
+                                    args['after'], args['before'],
+                                    args['results'], image_ds)
     elif args['coef']:
-        raster, band_names = \
-            get_coefficients(date, bands, coefs, results, image_ds,
-                             use_robust=use_robust, ndv=ndv)
+        raster, band_names = get_coefficients(args['date'],
+                                              args['bands'], args['coefs'],
+                                              args['results'], image_ds,
+                                              use_robust=args['use_robust'],
+                                              ndv=args['ndv'])
     elif args['predict']:
-        raster = get_prediction(date, bands, results, image_ds,
-                                use_robust=use_robust, ndv=ndv)
+        raster = get_prediction(args['date'],
+                                args['bands'], args['results'], image_ds,
+                                use_robust=args['use_robust'],
+                                ndv=args['ndv'])
 
-    if args['class']:
-        write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
-    else:
-        write_output(raster, output, image_ds, gdal_frmt, ndv, band_names)
+    write_output(raster, args['output'], image_ds,
+                 args['gdal_frmt'], args['ndv'], band_names)
 
     image_ds = None
 
@@ -650,4 +676,4 @@ if __name__ == '__main__':
     if args['--warn-on-empty']:
         WARN_ON_EMPTY = True
 
-    main()
+    main(args)
