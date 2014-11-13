@@ -36,7 +36,6 @@ Examples:
 from __future__ import division, print_function
 
 import datetime as dt
-import fnmatch
 import logging
 import os
 import sys
@@ -44,6 +43,16 @@ import sys
 from docopt import docopt
 import numpy as np
 from osgeo import gdal, gdal_array
+
+# Handle runnin as installed module or not
+try:
+    from yatsm.version import __version__
+except ImportError:
+    # Try adding `pwd` to PYTHONPATH
+    sys.path.append(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__))))
+    from yatsm.version import __version__
+from yatsm.utils import find_results, iter_records
 
 gdal.UseExceptions()
 gdal.AllRegister()
@@ -65,32 +74,6 @@ WARN_ON_EMPTY = False
 
 
 # UTILITY FUNCTIONS
-def find_results(location, pattern):
-    """ Create list of result files and return sorted
-
-    Args:
-      location (str): directory location to search
-      pattern (str): glob style search pattern for results
-
-    Returns:
-      results (list): list of file paths for results found
-
-    """
-    # Note: already checked for location existence in main()
-    records = []
-    for root, dirnames, filenames in os.walk(location):
-        for filename in fnmatch.filter(filenames, pattern):
-            records.append(os.path.join(root, filename))
-
-    if len(records) == 0:
-        logger.error('Error: could not find results in: {0}'.format(location))
-        sys.exit(1)
-
-    records.sort()
-
-    return records
-
-
 def find_result_attributes(results, output_bands, output_coefs,
                            use_robust=False):
     """ Returns attributes about the dataset from result files
@@ -177,38 +160,6 @@ def find_result_attributes(results, output_bands, output_coefs,
         logger.debug('Coefficients: {0}'.format(i_coefs))
 
     return (i_bands, i_coefs, use_rmse, freq)
-
-
-def iter_records(records):
-    """ Iterates over records, returning result NumPy array
-
-    Args:
-      records (list): List containing filenames of results
-
-    Yields:
-      np.ndarray: Result saved in record
-
-    """
-    n_records = len(records)
-
-    for _i, r in enumerate(records):
-        # Verbose progress
-        if np.mod(_i, 100) == 0:
-            logger.debug('{0:.1f}%'.format(_i / n_records * 100))
-        # Open output
-        try:
-            rec = np.load(r)['record']
-        except (ValueError, AssertionError):
-            logger.warning('Error reading {f}. May be corrupted'.format(f=r))
-            continue
-
-        if rec.shape[0] == 0:
-            # No values in this file
-            if WARN_ON_EMPTY:
-                logger.warning('Could not find results in {f}'.format(f=r))
-            continue
-
-        yield rec
 
 
 def make_X(x, freq, intercept=True):
@@ -647,7 +598,7 @@ def main(args):
 
 
 if __name__ == '__main__':
-    args = docopt(__doc__)
+    args = docopt(__doc__, version=__version__)
 
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)

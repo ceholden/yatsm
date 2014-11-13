@@ -1,7 +1,11 @@
+from __future__ import division
+
 import csv
 from datetime import datetime as dt
+import fnmatch
 import logging
 import os
+import sys
 
 import numpy as np
 
@@ -118,7 +122,69 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
         return (np.array(dates), np.array(images))
 
 
-### Random utilities
+# RESULT UTILITIES
+def find_results(location, pattern):
+    """ Create list of result files and return sorted
+
+    Args:
+      location (str): directory location to search
+      pattern (str): glob style search pattern for results
+
+    Returns:
+      results (list): list of file paths for results found
+
+    """
+    # Note: already checked for location existence in main()
+    records = []
+    for root, dirnames, filenames in os.walk(location):
+        for filename in fnmatch.filter(filenames, pattern):
+            records.append(os.path.join(root, filename))
+
+    if len(records) == 0:
+        logger.error('Error: could not find results in: {0}'.format(location))
+        sys.exit(1)
+
+    records.sort()
+
+    return records
+
+
+def iter_records(records, warn_on_empty=False):
+    """ Iterates over records, returning result NumPy array
+
+    Args:
+      records (list): List containing filenames of results
+      warn_on_empty (bool, optional): Log warning if result contained no
+        result records (default: False)
+
+
+    Yields:
+      np.ndarray: Result saved in record
+
+    """
+    n_records = len(records)
+
+    for _i, r in enumerate(records):
+        # Verbose progress
+        if np.mod(_i, 100) == 0:
+            logger.debug('{0:.1f}%'.format(_i / n_records * 100))
+        # Open output
+        try:
+            rec = np.load(r)['record']
+        except (ValueError, AssertionError):
+            logger.warning('Error reading {f}. May be corrupted'.format(f=r))
+            continue
+
+        if rec.shape[0] == 0:
+            # No values in this file
+            if warn_on_empty:
+                logger.warning('Could not find results in {f}'.format(f=r))
+            continue
+
+        yield rec
+
+
+# MISC UTILITIES
 def is_integer(s):
     """ Returns True if `s` is an integer """
     try:
