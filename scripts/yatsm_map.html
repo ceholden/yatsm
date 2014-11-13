@@ -149,19 +149,20 @@ Options:
     -i --image &lt;image&gt;      Example image [default: example_img]
     --ndv &lt;NoDataValue&gt;     No data value for map [default: 0]
     -f --format &lt;format&gt;    Output raster format [default: GTiff]
-    --date &lt;format&gt;         Date format [default: %Y-%m-%d]
+    --date &lt;format&gt;         Input date format [default: %Y-%m-%d]
     --warn-on-empty         Warn user when reading in empty result files
+    --version               Show program version
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
+
+Map options:
+    --after                 Use time segment after &lt;date&gt; if needed for map
+    --before                Use time segment before &lt;date&gt; if needed for map
 
 Coefficient and prediction options:
     --band &lt;bands&gt;          Bands to export [default: all]
     --robust                Use robust estimates
     --coef &lt;coefs&gt;          Coefficients to export [default: all]
-
-Classification options:
-    --after                 Use time segment after &lt;date&gt; if needed for map
-    --before                Use time segment before &lt;date&gt; if needed for map
 
 Examples:
     &gt; yatsm_map.py --coef &quot;intercept, slope&quot; --band &quot;3, 4, 5&quot; --ndv -9999 coef

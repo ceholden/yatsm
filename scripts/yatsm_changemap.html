@@ -140,26 +140,24 @@
  Make changemap of YATSM output for a given date
 
 Usage:
-    yatsm_changemap.py [options] &lt;start_date&gt; &lt;end_date&gt; &lt;output&gt;
+    yatsm_changemap.py [options] (first | last | num) &lt;start_date&gt; &lt;end_date&gt;
+        &lt;output&gt;
 
 Options:
-    --firstchange           Show first change instead of last
-    --samechange &lt;lut&gt;      Use LUT to eliminate changes to/from same class
-    --magnitude             Add magnitude of change as extra bands
+    --root &lt;dir&gt;            Root time series directory [default: ./]
+    -r --result &lt;dir&gt;       Directory of results [default: YATSM]
+    -i --image &lt;image&gt;      Example image [default: example_img]
+    --ndv &lt;NoDataValue&gt;     No data value for map [default: 0]
+    -f --format &lt;format&gt;    Output raster format [default: GTiff]
+    --date &lt;format&gt;         Input date format [default: %Y-%m-%d]
     --warn-on-empty         Warn user when reading in empty result files
+    --version               Show program version
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
 
-Input options:
-    --in_date &lt;format&gt;      Input date format [default: %Y-%m-%d]
-    --root &lt;dir&gt;            Root time series directory [default: ./]
-    --result &lt;dir&gt;          Directory of results [default: YATSM]
-    --image &lt;image&gt;         Example image [default: example_img]
-
-Output options:
+Change date options:
+    --magnitude             Add magnitude of change as extra bands
     --out_date &lt;format&gt;     Output date format [default: %Y%j]
-    --ndv &lt;NoDataValue&gt;     No data value for map [default: 0]
-    -f --format &lt;format&gt;    Output raster format [default: GTiff]
 
 Examples:
     # TODO
