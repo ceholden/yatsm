@@ -10,7 +10,7 @@ Options:
     -i --image <image>      Example image [default: example_img]
     --ndv <NoDataValue>     No data value for map [default: 0]
     -f --format <format>    Output raster format [default: GTiff]
-    --date <format>         Date format [default: %Y-%m-%d]
+    --date <format>         Input date format [default: %Y-%m-%d]
     --warn-on-empty         Warn user when reading in empty result files
     --version               Show program version
     -v --verbose            Show verbose debugging messages
@@ -274,7 +274,7 @@ def get_classification(date, result_location, image_ds,
                      dtype=np.uint8) * int(ndv)
 
     logger.debug('Processing results')
-    for rec in iter_records(records):
+    for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
         if not 'class' in rec.dtype.names:
             raise ValueError('Results do not have classification labels')
 
@@ -349,7 +349,7 @@ def get_coefficients(date, result_location, image_ds,
     _rmse = 'robust_rmse' if use_robust else 'rmse'
 
     logger.debug('Processing results')
-    for rec in iter_records(records):
+    for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
         # TODO: Add in QA/QC values for the type of index that was used per
         #       pixel
         for index in find_indices(rec, date, after=after, before=before):
@@ -416,7 +416,7 @@ def get_prediction(date, result_location, image_ds,
                      dtype=np.int16) * int(ndv)
 
     logger.debug('Processing results')
-    for rec in iter_records(records):
+    for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
         # TODO: Add in QA/QC values for the type of index that was used per
         #       pixel
         for index in find_indices(rec, date, after=after, before=before):
