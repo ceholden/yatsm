@@ -91,6 +91,126 @@ def find_results(location, pattern):
     return records
 
 
+def find_result_attributes(results, output_bands, output_coefs,
+                           use_robust=False):
+    """ Returns attributes about the dataset from result files
+
+    Args:
+      results (list): Result filenames
+      output_bands (list): Bands to describe for output
+      output_coefs (list): Coefficients to describe for output
+      use_robust (bool, optional): Search for robust results
+
+    Returns:
+      tuple: Tuple containing list of indices for output bands and output
+        coefficients, bool for outputting RMSE, and list of frequency of
+        seasonality used in fit (i_bands, i_coefs, use_rmse, freq)
+
+    """
+    _coef = 'robust_coef' if use_robust else 'coef'
+    _rmse = 'robust_rmse' if use_robust else 'rmse'
+
+    # How many coefficients and bands exist in the results?
+    result_bands = None
+    result_coefs = None
+    freq = None
+    for r in results:
+        try:
+            _result = np.load(r)
+            rec = _result['record']
+            freq = _result['freq']
+        except:
+            continue
+
+        if _coef not in rec.dtype.names or _rmse not in rec.dtype.names:
+            logger.error('Could not find coefficients ({0}) and RMSE ({1}) '
+                         'in record'.format(_coef, _rmse))
+            if use_robust:
+                logger.error('Robust coefficients and RMSE not found. Did you '
+                             'calculate them?')
+            sys.exit(1)
+
+        try:
+            result_coefs, result_bands = rec[_coef][0].shape
+        except:
+            continue
+        else:
+            break
+
+    if not result_bands or not result_coefs:
+        logger.error('Could not determine the number of coefficients or bands')
+        sys.exit(1)
+    if not freq:
+        logger.error('Seasonality frequency not found in results.')
+        sys.exit(1)
+
+    # How many bands does the user want?
+    if output_bands == 'all':
+        i_bands = range(0, result_bands)
+    else:
+        # NumPy index on 0; GDAL on 1 -- so subtract 1
+        i_bands = [b - 1 for b in output_bands]
+        if any([b > result_bands for b in i_bands]):
+            logger.error('Bands specified exceed size of bands in results')
+            sys.exit(1)
+
+    # How many coefficients did the user want?
+    use_rmse = False
+    i_coefs = []
+    if output_coefs:
+        for c in output_coefs:
+            if c == 'all':
+                i_coefs.extend(range(0, result_coefs))
+                use_rmse = True
+                break
+            elif c == 'intercept':
+                i_coefs.append(0)
+            elif c == 'slope':
+                i_coefs.append(1)
+            elif c == 'seasonality':
+                i_coefs.extend(range(2, result_coefs))
+            elif c == 'rmse':
+                use_rmse = True
+
+    logger.debug('Bands: {0}'.format(i_bands))
+    if output_coefs:
+        logger.debug('Coefficients: {0}'.format(i_coefs))
+
+    return (i_bands, i_coefs, use_rmse, freq)
+
+
+def iter_records(records):
+    """ Iterates over records, returning result NumPy array
+
+    Args:
+      records (list): List containing filenames of results
+
+    Yields:
+      np.ndarray: Result saved in record
+
+    """
+    n_records = len(records)
+
+    for _i, r in enumerate(records):
+        # Verbose progress
+        if np.mod(_i, 100) == 0:
+            logger.debug('{0:.1f}%'.format(_i / n_records * 100))
+        # Open output
+        try:
+            rec = np.load(r)['record']
+        except (ValueError, AssertionError):
+            logger.warning('Error reading {f}. May be corrupted'.format(f=r))
+            continue
+
+        if rec.shape[0] == 0:
+            # No values in this file
+            if WARN_ON_EMPTY:
+                logger.warning('Could not find results in {f}'.format(f=r))
+            continue
+
+        yield rec
+
+
 def make_X(x, freq, intercept=True):
     """ Create X matrix of Fourier series style independent variables
 
@@ -138,17 +258,19 @@ def make_X(x, freq, intercept=True):
     return X
 
 
-def get_classification(date, after, before, results, image_ds,
+def get_classification(date, result_location, image_ds,
+                       after=False, before=False,
                        ndv=0, pattern=_result_record):
     """ Output raster with classification results
 
     Args:
       date (int): ordinal date for prediction image
-      after (bool): If date intersects a disturbed period, use next segment?
-      before (bool): If date intersects a disturbed period, use previous
-        segment?
-      results (str): Location of the results
+      result_location (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
+      after (bool, optional): If date intersects a disturbed period, use next
+        segment?
+      before (bool, optional): If date intersects a disturbed period, use
+        previous segment?
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
@@ -157,22 +279,17 @@ def get_classification(date, after, before, results, image_ds,
         specified
 
     """
-    # Init output raster
+    # Find results
+    records = find_results(result_location, pattern)
+
+    logger.debug('Allocating memory...')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize),
                      dtype=np.uint8) * int(ndv)
 
-    records = find_results(results, pattern)
-    n_records = len(records)
-
-    for i, r in enumerate(records):
-        if np.mod(i, 100) == 0:
-            logger.debug('{0:.1f}%'.format(i / n_records * 100))
-
-        rec = np.load(r)['record']
-
+    logger.debug('Processing results')
+    for rec in iter_records(records):
         if not 'class' in rec.dtype.names:
-            raise ValueError('Record {r} does not have classification'
-                             'labels'.format(r=r))
+            raise ValueError('Results do not have classification labels')
 
         # Find model before segment
         if before:
@@ -199,15 +316,17 @@ def get_classification(date, after, before, results, image_ds,
     return raster
 
 
-def get_coefficients(date, bands, coefs, results, image_ds,
-                     use_robust=False, ndv=-9999, pattern=_result_record):
+def get_coefficients(date, result_location, image_ds,
+                     bands, coefs,
+                     use_robust=False,
+                     ndv=-9999, pattern=_result_record):
     """ Output a raster with coefficients from CCDC
 
     Args:
       date (int): Ordinal date for prediction image
+      result_location (str): Location of the results
       bands (list): Bands to predict
       coefs (list): List of coefficients to output
-      results (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
       use_robust (bool, optional): Map robust coefficients and RMSE instead of
         normal ones
@@ -220,85 +339,16 @@ def get_coefficients(date, bands, coefs, results, image_ds,
         the output dataset
 
     """
-    if use_robust:
-        _coef = 'robust_coef'
-        _rmse = 'robust_rmse'
-    else:
-        _coef = 'coef'
-        _rmse = 'rmse'
-
     # Find results
-    records = find_results(results, pattern)
-    n_records = len(records)
+    records = find_results(result_location, pattern)
 
-    # Find how many coefficients there are for output
-    n_coef = None
-    n_band = None
-    for r in records:
-        try:
-            rec = np.load(r)['record']
-        except:
-            continue
-
-        if _coef not in rec.dtype.names or _rmse not in rec.dtype.names:
-            logger.error('Could not find coefficients ({c}) and RMSE ({r})'
-                         'in record'.format(c=_coef, r=_rmse))
-            if use_robust:
-                logger.error('Robust coefficients and RMSE were not found'
-                             ' in results. Did you calculate them?')
-            sys.exit(1)
-
-        try:
-            n_coef, n_band = rec[_coef][0].shape
-        except:
-            continue
-        else:
-            break
-
-    if not n_coef or not n_band:
-        logger.error('Could not determine the number of coefficients')
-        sys.exit(1)
-
-    # Find how many bands are used in output
-    i_bands = []
-    if bands == 'all':
-        i_bands = range(0, n_band)
-    else:
-        # numpy index on 0; GDAL index on 1 so subtract 1
-        i_bands = [b - 1 for b in bands]
-        if any([b > n_band for b in i_bands]):
-            logger.error('Bands specified exceed size of coefficients \
-                         in results')
-            sys.exit(1)
-
-    # Determine indices for the coefficients desired
-    i_coefs = []
-    use_rmse = False
-    for c in coefs:
-        if c == 'all':
-            i_coefs.extend(range(0, n_coef))
-            use_rmse = True
-            break
-        elif c == 'intercept':
-            i_coefs.append(0)
-        elif c == 'slope':
-            i_coefs.append(1)
-        elif c == 'seasonality':
-            i_coefs.extend(range(2, n_coef))
-        elif c == 'rmse':
-            use_rmse = True
+    # Find result attributes to extract
+    i_bands, i_coefs, use_rmse, _ = find_result_attributes(
+        records, bands, coefs, use_robust=use_robust)
 
     n_bands = len(i_bands)
     n_coefs = len(i_coefs)
-    n_rmse = 0
-    if use_rmse is True:
-        n_rmse = n_bands
-
-    logger.debug('Indices for bands and coefficients:')
-    logger.debug('Bands:')
-    logger.debug(i_bands)
-    logger.debug('Coefficients:')
-    logger.debug(i_coefs)
+    n_rmse = n_bands if use_rmse else 0
 
     logger.debug('Allocating memory...')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize,
@@ -317,25 +367,11 @@ def get_coefficients(date, bands, coefs, results, image_ds,
     logger.debug('Band names:')
     logger.debug(band_names)
 
+    _coef = 'robust_coef' if use_robust else 'coef'
+    _rmse = 'robust_rmse' if use_robust else 'rmse'
+
     logger.debug('Processing results')
-
-    for _i, r in enumerate(records):
-        if np.mod(_i, 100) == 0:
-            logger.debug('{0:.1f}%'.format(_i / n_records * 100))
-
-        # Open output
-        try:
-            rec = np.load(r)['record']
-        except (ValueError, AssertionError):
-            logger.warning('Error reading {f}. May be corrupted'.format(f=r))
-            continue
-
-        if rec.shape[0] == 0:
-            # No values in this file
-            if WARN_ON_EMPTY:
-                logger.warning('Could not find results in {f}'.format(f=r))
-            continue
-
+    for rec in iter_records(records):
         # Find indices for the date specified
         index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
 
@@ -359,15 +395,17 @@ def get_coefficients(date, bands, coefs, results, image_ds,
     return (raster, band_names)
 
 
-def get_prediction(date, bands, results, image_ds,
-                   use_robust=False, ndv=-9999, pattern=_result_record):
+def get_prediction(date, result_location, image_ds,
+                   bands='all', use_robust=False,
+                   ndv=-9999, pattern=_result_record):
     """ Output a raster with the predictions from model fit for a given date
 
     Args:
       date (int): Ordinal date for prediction image
-      coefs (list): List of coefficients to output
-      results (str): Location of the results
+      result_location (str): Location of the results
       image_ds (gdal.Dataset): Example dataset
+      bands (str, list): Bands to predict - 'all' for every band, or specify a
+        list of bands
       use_robust (bool, optional): Map robust coefficients and RMSE instead of
         normal ones
       ndv (int, optional): NoDataValue
@@ -378,88 +416,24 @@ def get_prediction(date, bands, results, image_ds,
         pixel
 
     """
-    if use_robust:
-        _coef = 'robust_coef'
-        _rmse = 'robust_rmse'
-    else:
-        _coef = 'coef'
-        _rmse = 'rmse'
-
     # Find results
-    records = find_results(results, pattern)
-    n_records = len(records)
+    records = find_results(result_location, pattern)
 
-    # Find how many coefficients there are for output
-    n_coef = None
-    n_band = None
-    freq = None
-    for r in records:
-        try:
-            _result = np.load(r)
-            rec = _result['record']
-            freq = _result['freq']
-        except:
-            continue
+    # Find result attributes to extract
+    i_bands, _, _, freq = find_result_attributes(
+        records, bands, None, use_robust=use_robust)
 
-        if _coef not in rec.dtype.names or _rmse not in rec.dtype.names:
-            logger.error('Could not find coefficients ({c}) and RMSE ({r})'
-                         'in record'.format(c=_coef, r=_rmse))
-            if use_robust:
-                logger.error('Robust coefficients and RMSE were not found'
-                             ' in results. Did you calculate them?')
-            sys.exit(1)
-
-        try:
-            n_coef, n_band = rec['coef'][0].shape
-        except:
-            continue
-        else:
-            break
-
-    if not n_coef or not n_band:
-        logger.error('Could not determine the number of coefficients')
-        sys.exit(1)
-    if not freq:
-        logger.error('Seasonality frequency not found in results.')
-        sys.exit(1)
+    n_bands = len(i_bands)
 
     # Create X matrix from date
     X = make_X(date, freq)
 
-    # Find how many bands are used in output
-    i_bands = []
-    if bands == 'all':
-        i_bands = range(0, n_band)
-    else:
-        # numpy index on 0; GDAL index on 1 so subtract 1
-        i_bands = [b - 1 for b in bands]
-        if any([b > n_band for b in i_bands]):
-            logger.error('Bands specified exceed size of coefficients \
-                         in results')
-            sys.exit(1)
-
-    n_band = len(i_bands)
-
-    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_band),
+    logger.debug('Allocating memory')
+    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_bands),
                      dtype=np.int16) * int(ndv)
 
-    for _i, r in enumerate(records):
-        # Verbose progress
-        if np.mod(_i, 100) == 0:
-            logger.debug('{0:.1f}%'.format(_i / n_records * 100))
-        # Open output
-        try:
-            rec = np.load(r)['record']
-        except (ValueError, AssertionError):
-            logger.warning('Error reading {f}. May be corrupted'.format(f=r))
-            continue
-
-        if rec.shape[0] == 0:
-            # No values in this file
-            if WARN_ON_EMPTY:
-                logger.warning('Could not find results in {f}'.format(f=r))
-            continue
-
+    logger.debug('Processing results')
+    for rec in iter_records(records):
         # Find indices for the date specified
         index = np.where((rec['start'] <= date) & (rec['end'] >= date))[0]
 
@@ -647,20 +621,24 @@ def main(args):
 
     band_names = None
     if args['class']:
-        raster = get_classification(args['date'],
-                                    args['after'], args['before'],
-                                    args['results'], image_ds)
+        raster = get_classification(
+            args['date'], args['results'], image_ds,
+            args['after'], args['before']
+        )
     elif args['coef']:
-        raster, band_names = get_coefficients(args['date'],
-                                              args['bands'], args['coefs'],
-                                              args['results'], image_ds,
-                                              use_robust=args['use_robust'],
-                                              ndv=args['ndv'])
+        raster, band_names = get_coefficients(
+            args['date'], args['results'], image_ds,
+            args['bands'], args['coefs'],
+            use_robust=args['use_robust'],
+            ndv=args['ndv']
+        )
     elif args['predict']:
-        raster = get_prediction(args['date'],
-                                args['bands'], args['results'], image_ds,
-                                use_robust=args['use_robust'],
-                                ndv=args['ndv'])
+        raster = get_prediction(
+            args['date'], args['results'], image_ds,
+            args['bands'],
+            use_robust=args['use_robust'],
+            ndv=args['ndv']
+        )
 
     write_output(raster, args['output'], image_ds,
                  args['gdal_frmt'], args['ndv'], band_names)
