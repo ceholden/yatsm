@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """ Yet Another Timeseries Model (YATSM) - run script for classifier training
 
-Usage: train_yatsm.py [options] <yatsm_config> <classifier_config> <model>
+Usage:
+    train_yatsm.py [options] <yatsm_config> <classifier_config> <model>
 
 Train a classifier from `scikit-learn` on YATSM output and save result to
 file <model>. Dataset configuration is specified by <yatsm_config> and

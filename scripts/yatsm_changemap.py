@@ -28,7 +28,6 @@ Examples:
 from __future__ import division, print_function
 
 from datetime import datetime as dt
-import fnmatch
 import logging
 import os
 import sys
