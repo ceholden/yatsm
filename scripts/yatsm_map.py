@@ -106,6 +106,9 @@ def find_result_attributes(results, output_bands, output_coefs,
         except:
             continue
 
+        if not rec.dtype.names:
+            continue
+
         if _coef not in rec.dtype.names or _rmse not in rec.dtype.names:
             logger.error('Could not find coefficients ({0}) and RMSE ({1}) '
                          'in record'.format(_coef, _rmse))
