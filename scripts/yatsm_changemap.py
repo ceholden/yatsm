@@ -95,9 +95,9 @@ def get_datechangemap(start, end, result_location, image_ds,
     logger.debug('Processing results')
     for rec in iter_records(records):
 
-        index = np.where((rec['break'] > 0) &
-                         (rec['start'] >= start) &
-                         (rec['end'] <= end))[0]
+        index = np.where((rec['break'] >= start) &
+                         (rec['break'] <= end))[0]
+
         if first:
             _, _index = np.unique(rec['px'][index], return_index=True)
             index = index[_index]
