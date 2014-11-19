@@ -1,0 +1,26 @@
+language: python
+python:
+    - "2.7"
+before_install:
+    - wget http://repo.continuum.io/miniconda/Miniconda-2.2.2-Linux-x86_64.sh -O miniconda.sh
+    - chmod +x miniconda.sh
+    - ./miniconda.sh -b
+    - export PATH=$HOME/anaconda/bin:$PATH
+    # Update conda
+    - conda update --yes conda
+    # Add in Fortran compiler
+    - sudo apt-get install -y gfortran
+install:
+    # Create conda matching requirements
+    - conda create --yes -n venv python=$TRAVIS_PYTHON_VERSION pip nose numpy scipy cython gdal scikit-learn statsmodels matplotlib
+    - source activate venv
+    # Workaround for Fortran warnings -- install glmnet first and quietly
+    - "pip install -q git+git://github.com/ceholden/glmnet-python.git#egg=glmnet"
+    # Rest of dependencies
+    - "pip install -r requirements.txt"
+    - "pip install -r requirements-dev.txt"
+    - "pip install pytest"
+    # Install YATSM
+    - "pip install -e ."
+script:
+    - py.test
