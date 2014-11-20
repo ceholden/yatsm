@@ -325,7 +325,7 @@ def main(dataset_config, yatsm_config,
                 pass
             else:
                 del z
-                logger.info('Already processed line {l}'.format(l=job_line))
+                logger.debug('Already processed line {l}'.format(l=job_line))
                 continue
 
         logger.debug('Running line {l}'.format(l=job_line))

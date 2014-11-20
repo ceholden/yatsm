@@ -65,8 +65,9 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
     from yatsm.version import __version__
-from yatsm.yatsm import YATSM, make_X
+from yatsm.utils import make_X
 from yatsm.reader import find_stack_images, read_pixel_timeseries
+from yatsm.yatsm import YATSM
 
 # Some constants
 ndays = 365.25

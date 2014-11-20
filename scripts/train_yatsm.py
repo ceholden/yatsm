@@ -157,7 +157,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
                 label {l} at x/y {x}/{y}'.format(l=_y, x=_col, y=_row))
 
         # Extract coefficients with intercept term rescaled
-        coef = rec[i]['coef'][0]
+        coef = rec[i]['coef'][0, :]
         coef[0, :] = (coef[0, :] +
                       coef[1, :] * (rec[i]['start'] + rec[i]['end']) / 2.0)
 
@@ -181,7 +181,7 @@ def algo_diagnostics(X, y, row, col, algo):
       y (np.ndarray): y labeled examples
       row (np.ndarray): row pixel locations of `y`
       col (np.ndarray): column pixel locations of `y`
-      algo (sklean classifier): classifier used from scikit-learn
+      algo (sklearn classifier): classifier used from scikit-learn
 
     """
     # Print algorithm diagnostics without crossvalidation

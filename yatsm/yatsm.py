@@ -71,47 +71,6 @@ class GLMLasso(ElasticNet):
         return self
 
 
-def make_X(x, freq, intercept=True):
-    """ Create X matrix of Fourier series style independent variables
-
-    Args:
-      x (np.ndarray): Base of independent variables - dates
-      freq (list, np.ndarray): Sequence of periods in a year for cosine/sin
-        waves
-      intercept (bool, optional): Include intercept in X matrix
-
-    Returns:
-      X (np.ndarray): Matrix X of independent variables
-
-    Examples:
-        Return X matrix for ordinal dates 1, 2, and 3 using two sine/cosine
-        pairs oscillating once and twice a year:
-
-        >>> make_X(np.array([1, 2, 3]), [1, 2])
-        array([[ 1.        ,  1.        ,  1.        ],
-               [ 1.        ,  2.        ,  3.        ],
-               [ 0.99985204,  0.99940821,  0.99866864],
-               [ 0.01720158,  0.03439806,  0.05158437],
-               [ 0.99940821,  0.99763355,  0.99467811],
-               [ 0.03439806,  0.06875541,  0.10303138]])
-
-    """
-    w = 2 * np.pi / ndays
-
-    if intercept:
-        X = np.array([np.ones_like(x), x])
-    else:
-        X = x
-
-    for f in freq:
-        X = np.vstack([X, np.array([
-            np.cos(f * w * x),
-            np.sin(f * w * x)])
-        ])
-
-    return X
-
-
 class YATSM(object):
     """Initialize a YATSM model for data X (spectra) and Y (dates)
 
@@ -683,6 +642,7 @@ class YATSM(object):
     def monitor_plot_debug(self, index, model, i_buffer=10):
         """ Monitoring debug plot """
         import matplotlib.pyplot as plt
+        from utils import make_X
         # Show before/after current timeseries
         before_buffer = max(0, index[0] - i_buffer)
         after_buffer = min(self.X[:, 1].size - 1, index[-1] + i_buffer)
@@ -717,8 +677,8 @@ class YATSM(object):
 
         """
         from datetime import datetime as dt
-
         import matplotlib.pyplot as plt
+        from utils import make_X
 
         dates = map(dt.fromordinal, self.X[:, 1].astype(np.uint32))
 

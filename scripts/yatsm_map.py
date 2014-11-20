@@ -53,7 +53,7 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
     from yatsm.version import __version__
-from yatsm.utils import find_results, iter_records
+from yatsm.utils import find_results, iter_records, make_X
 
 gdal.UseExceptions()
 gdal.AllRegister()
@@ -199,53 +199,6 @@ def find_indices(record, date, after=False, before=False):
     # Model intersecting date
     index = np.where((record['start'] <= date) & (record['end'] >= date))[0]
     yield index
-
-
-def make_X(x, freq, intercept=True):
-    """ Create X matrix of Fourier series style independent variables
-
-    Args:
-        x               base of independent variables - dates
-        freq            frequency of cosine/sin waves
-        intercept       include intercept in X matrix
-
-    Output:
-        X               matrix X of independent variables
-
-    Example:
-        call:
-            make_X(np.array([1, 2, 3]), [1, 2])
-        returns:
-            array([[ 1.        ,  1.        ,  1.        ],
-                   [ 1.        ,  2.        ,  3.        ],
-                   [ 0.99985204,  0.99940821,  0.99866864],
-                   [ 0.01720158,  0.03439806,  0.05158437],
-                   [ 0.99940821,  0.99763355,  0.99467811],
-                   [ 0.03439806,  0.06875541,  0.10303138]])
-
-    """
-    if isinstance(x, int) or isinstance(x, float):
-        x = np.array(x)
-
-    if intercept:
-        X = np.array([np.ones_like(x), x])
-    else:
-        X = x
-
-    for f in freq:
-        if X.ndim == 2:
-            X = np.vstack([X, np.array([
-                np.cos(f * w * x),
-                np.sin(f * w * x)])
-            ])
-        elif X.ndim == 1:
-            X = np.concatenate((X,
-                                np.array([
-                                         np.cos(f * w * x),
-                                         np.sin(f * w * x)])
-                                ))
-
-    return X
 
 
 def get_classification(date, result_location, image_ds,

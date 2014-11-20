@@ -33,7 +33,7 @@ setup(
     version=version,
     author='Chris Holden',
     author_email='ceholden@gmail.com',
-    packages=['yatsm'],
+    packages=['yatsm', 'yatsm.classifiers'],
     scripts=scripts,
     url='https://github.com/ceholden/yatsm',
     license='LICENSE.txt',
