@@ -594,6 +594,13 @@ class YATSM(object):
 
             self.trained_date = 0
             self.monitoring = False
+        elif mag[0] > self.threshold:
+            # Masking way of deleting is faster than `np.delete`
+            m = np.ones(self.X.shape[0], dtype=bool)
+            m[self.here] = False
+            self.X = self.X[m, :]
+            self.Y = self.Y[:, m]
+            self.here -= 1
 
     def fit_models_GLMnet(self, X, Y, index=None, bands=None):
         """ Try to fit models to training period time series """
