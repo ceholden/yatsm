@@ -185,6 +185,9 @@ def iter_records(records, warn_on_empty=False):
 
 
 # CALCULATION UTILITIES
+w = 2 * np.pi / 365.25
+
+
 def make_X(x, freq, intercept=True):
     """ Create X matrix of Fourier series style independent variables
 
