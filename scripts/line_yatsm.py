@@ -6,6 +6,7 @@ Usage: line_yatsm.py [options] <config_file> <job_number> <total_jobs>
 Options:
     --check                     Check that images exist
     --resume                    Do not overwrite pre-existing results
+    --do-not-run                Don't run YATSM (useful for just caching data)
     -v --verbose                Show verbose debugging messages
     --verbose-yatsm             Show verbose debugging messages in YATSM
     -q --quiet                  Show only error messages
@@ -149,6 +150,7 @@ def read_line(line, images, dataset_config,
 def run_line(line, X, images,
              dataset_config, yatsm_config,
              nrow, ncol, nband, dtype,
+             do_not_run=False,
              read_cache=False, write_cache=False):
     """ Runs YATSM for a line
 
@@ -162,6 +164,7 @@ def run_line(line, X, images,
       ncol (int): number of columns
       nband (int): number of bands
       dtype (type): NumPy datatype
+      do_not_run (bool, optional): don't run YATSM
       read_cache (bool, optional): try to read from cache directory
       write_cache (bool, optional): to to write to cache directory
 
@@ -172,6 +175,9 @@ def run_line(line, X, images,
     Y = read_line(line, images, dataset_config,
                   ncol, nband, dtype,
                   read_cache=read_cache, write_cache=write_cache)
+
+    if do_not_run:
+        return
 
     # About to run YATSM
     logger.debug('    running YATSM')
@@ -269,6 +275,7 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
 
 def main(dataset_config, yatsm_config,
          check=False, resume=False,
+         do_not_run=False,
          read_cache=False, write_cache=False):
     """ Read in dataset and YATSM for a complete line
 
@@ -278,6 +285,7 @@ def main(dataset_config, yatsm_config,
       check (bool, optional): check to make sure images are readible
       resume (bool, optional): do not overwrite existing results, instead
         continue from first non-existing result file
+      do_not_run (bool, optional): Don't run YATSM
       read_cache (bool, optional): try to read from cache directory
       write_cache (bool, optional): to to write to cache directory
 
@@ -335,6 +343,7 @@ def main(dataset_config, yatsm_config,
             run_line(job_line, X, images,
                      dataset_config, yatsm_config,
                      nrow, ncol, nband, dtype,
+                     do_not_run=do_not_run,
                      read_cache=read_cache, write_cache=write_cache)
         except Exception as e:
             logger.error('Could not process line {l}'.format(l=job_line))
@@ -383,6 +392,8 @@ if __name__ == '__main__':
     if args['--resume']:
         resume = True
 
+    do_not_run = args['--do-not-run']
+
     # Setup logger
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
@@ -422,5 +433,7 @@ if __name__ == '__main__':
     # Run YATSM
     logger.info('Job {i} / {n} - using config file {f}'.format(
                 i=job_number, n=total_jobs, f=config_file))
-    main(dataset_config, yatsm_config, check=check, resume=resume,
+    main(dataset_config, yatsm_config,
+         check=check, resume=resume,
+         do_not_run=do_not_run,
          read_cache=read_cache, write_cache=write_cache)
