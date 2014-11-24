@@ -10,6 +10,7 @@ Options:
     -v --verbose                Show verbose debugging messages
     --verbose-yatsm             Show verbose debugging messages in YATSM
     -q --quiet                  Show only error messages
+    --version                   Print program version and exit
     -h --help                   Show help
 
 """

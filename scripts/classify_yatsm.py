@@ -7,7 +7,7 @@ Usage:
 
 Options:
     --resume                    Resume classification (don't overwrite)
-    -v --verbose                   Show verbose debugging messages
+    -v --verbose                Show verbose debugging messages
     --version                   Print program version and exit
     -h --help                   Show help and exit
 

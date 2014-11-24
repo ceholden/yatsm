@@ -28,6 +28,7 @@ Plotting options:
 Generic options:
     --image_pattern=<p>     Stack image filename pattern [default: L*stack]
     -v --verbose            Show verbose debugging messages
+    --version               Print program version and exit
     -h --help               Show help
 
 Example:

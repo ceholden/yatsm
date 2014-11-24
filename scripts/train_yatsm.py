@@ -16,6 +16,7 @@ Options:
     --overwrite             Overwrite output model file
     -v --verbose            Show verbose debugging messages
     -q --quiet              Show only error messages
+    --version               Print program version and exit
     -h --help               Show help
 
 """
