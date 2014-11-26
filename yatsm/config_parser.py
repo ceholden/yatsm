@@ -99,6 +99,7 @@ def parse_config_v0_2_x(config_file):
     dataset_config, yatsm_config = parse_config_v0_1_x(config_file)
 
     defaults = """
+[YATSM]
 remove_noise = True
     """
 
@@ -126,7 +127,7 @@ def parse_config_file(config_file):
     # 0.1.x
     if version[0] == '0' and version[1] == '1':
         dataset_config, yatsm_config = parse_config_v0_1_x(config_file)
-    if version[1] == '0' and version[1] == '2':
+    if version[0] == '0' and version[1] == '2':
         dataset_config, yatsm_config = parse_config_v0_2_x(config_file)
 
     return (dataset_config, yatsm_config)
