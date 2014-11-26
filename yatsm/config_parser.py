@@ -8,7 +8,7 @@ import numpy as np
 
 
 # CONFIG FILE PARSING
-def _parse_config_v_zero_pt_one(config_file):
+def parse_config_v0_1_x(config_file):
     """ Parses config file for version 0.1.x """
     # Defaults
     defaults = """
@@ -91,7 +91,24 @@ cache_xy =
     yatsm_config['reverse'] = config.getboolean('YATSM', 'reverse')
     yatsm_config['robust'] = config.getboolean('YATSM', 'robust')
 
-    return (dataset_config, yatsm_config)
+    return dataset_config, yatsm_config
+
+
+def parse_config_v0_2_x(config_file):
+    """ Parses config file for version 0.2.x """
+    dataset_config, yatsm_config = parse_config_v0_1_x(config_file)
+
+    defaults = """
+remove_noise = True
+    """
+
+    config = configparser.ConfigParser(allow_no_value=True)
+    config.readfp(StringIO.StringIO(defaults))
+    config.read(config_file)
+
+    yatsm_config['remove_noise'] = config.getboolean('YATSM', 'remove_noise')
+
+    return dataset_config, yatsm_config
 
 
 def parse_config_file(config_file):
@@ -108,6 +125,8 @@ def parse_config_file(config_file):
 
     # 0.1.x
     if version[0] == '0' and version[1] == '1':
-        dataset_config, yatsm_config = _parse_config_v_zero_pt_one(config_file)
+        dataset_config, yatsm_config = parse_config_v0_1_x(config_file)
+    if version[1] == '0' and version[1] == '2':
+        dataset_config, yatsm_config = parse_config_v0_2_x(config_file)
 
     return (dataset_config, yatsm_config)

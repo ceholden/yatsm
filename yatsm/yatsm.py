@@ -99,6 +99,9 @@ class YATSM(object):
         multitemporal masking (default: 1)
       swir1_band (int, optional): Index of first SWIR band in Y for
         multitemporal masking (default: 4)
+      remove_noise (bool, optional): Remove observation if change is not
+        detected but first observation is above threshold (if it looks like
+        noise) (default: True)
       lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet
       px (int, optional): X (column) pixel reference
       py (int, optional): Y (row) pixel reference
@@ -116,6 +119,7 @@ class YATSM(object):
                  fit_indices=None, test_indices=None, retrain_time=ndays,
                  screening='RLM', screening_crit=400.0,
                  green_band=green_band, swir1_band=swir1_band,
+                 remove_noise=True,
                  lassocv=False,
                  px=0, py=0,
                  logger=None):
@@ -171,6 +175,8 @@ class YATSM(object):
         self.swir1_band = swir1_band
 
         self.screening_crit = screening_crit
+
+        self.remove_noise = remove_noise
 
         # Attributes
         self.n_band = Y.shape[0]
@@ -594,7 +600,7 @@ class YATSM(object):
 
             self.trained_date = 0
             self.monitoring = False
-        elif mag[0] > self.threshold:
+        elif mag[0] > self.threshold and self.remove_noise:
             # Masking way of deleting is faster than `np.delete`
             m = np.ones(self.X.shape[0], dtype=bool)
             m[self.here] = False
