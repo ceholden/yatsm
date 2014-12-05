@@ -596,10 +596,15 @@ class YATSM(object):
 
             self.record = np.append(self.record, self.record_template)
             self.n_record += 1
+
+            # Reset _X and _Y for re-training
+            self._X = self.X
+            self._Y = self._Y
             self.start = self.here + 1
 
             self.trained_date = 0
             self.monitoring = False
+
         elif mag[0] > self.threshold and self.remove_noise:
             # Masking way of deleting is faster than `np.delete`
             m = np.ones(self.X.shape[0], dtype=bool)
