@@ -264,18 +264,18 @@ def main(dataset_config, yatsm_config, algo, model_filename):
     """
     # Cache file for training data
     has_cache = False
-    if dataset_config['cache_Xy']:
+    if dataset_config['cache_training']:
         # If doesn't exist, retrieve it
-        if not os.path.isfile(dataset_config['cache_Xy']):
+        if not os.path.isfile(dataset_config['cache_training']):
             logger.info('Could not retrieve cache file for Xy')
-            logger.info('    file: {f}'.format(f=dataset_config['cache_Xy']))
+            logger.info('    file: {f}'.format(f=dataset_config['cache_training']))
         else:
             logger.info('Restoring X/y from cache file')
             has_cache = True
 
     # Check if we need to regenerate the cache file because training data is
     #   newer than the cache
-    regenerate_cache = is_cache_old(dataset_config['cache_Xy'],
+    regenerate_cache = is_cache_old(dataset_config['cache_training'],
                                     dataset_config['training_image'])
     if regenerate_cache:
         logger.warning('Existing cache file older than training data ROI')
@@ -287,19 +287,20 @@ def main(dataset_config, yatsm_config, algo, model_filename):
         logger.debug('Done reading in X/y')
     else:
         logger.debug('Reading in X/y from cache file {f}'.format(
-            f=dataset_config['cache_Xy']))
-        with np.load(dataset_config['cache_Xy']) as f:
+            f=dataset_config['cache_training']))
+        with np.load(dataset_config['cache_training']) as f:
             X = f['X']
             y = f['y']
         logger.debug('Read in X/y from cache file {f}'.format(
-            f=dataset_config['cache_Xy']))
+            f=dataset_config['cache_training']))
 
     # If cache didn't exist but is specified, create it for first time
-    if not has_cache and dataset_config['cache_Xy']:
+    if not has_cache and dataset_config['cache_training']:
         logger.info('Saving X/y to cache file {f}'.format(
-            f=dataset_config['cache_Xy']))
+            f=dataset_config['cache_training']))
         try:
-            np.savez(dataset_config['cache_Xy'], X=X, y=y)
+            np.savez(dataset_config['cache_training'],
+                     X=X, y=y, row=row, col=col)
         except:
             logger.error('Could not save X/y to cache file')
             raise

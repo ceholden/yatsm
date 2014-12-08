@@ -24,7 +24,7 @@ robust = false
 [classification]
 training_image = None
 mask_values = 0, 255
-cache_xy =
+cache_training =
     """
 
     config = configparser.ConfigParser(allow_no_value=True)
@@ -57,9 +57,10 @@ cache_xy =
                 int(v) for v in
                 dataset_config['mask_values'].replace(' ', ',').split(',')
                 if v != ','])
-        dataset_config['cache_Xy'] = config.get('classification', 'cache_Xy')
-        if not dataset_config['cache_Xy']:
-            dataset_config['cache_Xy'] = None
+        dataset_config['cache_training'] = config.get(
+            'classification', 'cache_training')
+        if not dataset_config['cache_training']:
+            dataset_config['cache_training'] = None
         dataset_config['training_start'] = config.get('classification',
                                                       'training_start')
         dataset_config['training_end'] = config.get('classification',
