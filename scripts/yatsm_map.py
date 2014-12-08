@@ -16,9 +16,12 @@ Options:
     -v --verbose            Show verbose debugging messages
     -h --help               Show help messages
 
-Map options:
+Time segment map options:
     --after                 Use time segment after <date> if needed for map
     --before                Use time segment before <date> if needed for map
+
+Classification map options:
+    --predict_proba         Include prediction probability band (P x 10000)
 
 Coefficient and prediction options:
     --band <bands>          Bands to export [default: all]
@@ -202,7 +205,7 @@ def find_indices(record, date, after=False, before=False):
 
 
 def get_classification(date, result_location, image_ds,
-                       after=False, before=False,
+                       after=False, before=False, pred_proba=False,
                        ndv=0, pattern=_result_record):
     """ Output raster with classification results
 
@@ -214,6 +217,8 @@ def get_classification(date, result_location, image_ds,
         available time segment
       before (bool, optional): If date does not intersect a model, use previous
         non-disturbed time segment
+      pred_proba (bool, optional): Include additional band with classification
+        value probabilities
       ndv (int, optional): NoDataValue
       pattern (str, optional): filename pattern of saved record results
 
@@ -226,13 +231,22 @@ def get_classification(date, result_location, image_ds,
     records = find_results(result_location, pattern)
 
     logger.debug('Allocating memory...')
-    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize),
-                     dtype=np.uint8) * int(ndv)
+    nband = 2 if pred_proba else 1
+    dtype = np.uint16 if pred_proba else np.uint8
+    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, nband),
+                     dtype=dtype) * int(ndv)
+
+    band_names = ['Classification']
+    if pred_proba:
+        band_names = band_names + ['Pred Proba']
 
     logger.debug('Processing results')
     for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
         if not 'class' in rec.dtype.names:
             raise ValueError('Results do not have classification labels')
+        if not 'class_proba' in rec.dtype.names and pred_proba:
+            raise ValueError('Results do not have classification prediction'
+                             ' probability values')
 
         # TODO: Add in QA/QC values for the type of index that was used per
         #       pixel
@@ -241,9 +255,12 @@ def get_classification(date, result_location, image_ds,
                 continue
 
             raster[rec['py'][index],
-                   rec['px'][index]] = rec['class'][index]
+                   rec['px'][index], 0] = rec['class'][index]
+            if pred_proba:
+                raster[rec['py'][index],
+                       rec['px'][index], 0] = rec['class_proba'][index]
 
-    return raster
+    return raster, band_names
 
 
 def get_coefficients(date, result_location, image_ds,
@@ -542,6 +559,9 @@ def parse_args(args):
     parsed['use_robust'] = args['--robust']
 
     ### Classification outputs
+    parsed['pred_proba'] = args['--predict_proba']
+
+    ### Generic map options
     # Go to next time segment option
     parsed['after'] = args['--after']
     parsed['before'] = args['--before']
@@ -560,9 +580,10 @@ def main(args):
 
     band_names = None
     if args['class']:
-        raster = get_classification(
+        raster, band_names = get_classification(
             args['date'], args['results'], image_ds,
-            after=args['after'], before=args['before']
+            after=args['after'], before=args['before'],
+            pred_proba=args['pred_proba']
         )
     elif args['coef']:
         raster, band_names = get_coefficients(
