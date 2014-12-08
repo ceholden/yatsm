@@ -31,7 +31,6 @@ from datetime import datetime as dt
 from itertools import izip
 import logging
 import os
-import pickle
 import sys
 
 from docopt import docopt
@@ -40,6 +39,7 @@ import numpy as np
 from osgeo import gdal
 
 from sklearn.cross_validation import KFold, StratifiedKFold
+from sklearn.externals import joblib
 
 # Handle runnin as installed module or not
 try:
@@ -311,9 +311,8 @@ def main(dataset_config, yatsm_config, algo, model_filename,
     algo.fit(X, y)
 
     # Serialize algorithm to file
-    logger.info('Pickling classifier')
-    with open(model_filename, 'wb') as fid:
-        pickle.dump(algo, fid)
+    logger.info('Pickling classifier with sklearn.externals.joblib')
+    joblib.dump(algo, model_filename, compress=3)
 
     # Diagnostics
     if run_diagnostics:

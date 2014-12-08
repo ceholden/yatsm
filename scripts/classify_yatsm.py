@@ -16,7 +16,6 @@ from __future__ import division, print_function
 
 import logging
 import os
-import cPickle
 import sys
 import time
 
@@ -24,6 +23,8 @@ from docopt import docopt
 
 import numpy as np
 import numpy.lib.recfunctions as nprfn
+
+from sklearn.externals import joblib
 
 # Handle runnin as installed module or not
 try:
@@ -171,7 +172,7 @@ def main(args):
         logger.error('Could not open pickled classifier')
         sys.exit(1)
 
-    classifier = cPickle.load(f)
+    classifier = joblib.load(f)
 
     # Split into lines and classify
     job_lines = calculate_lines(args['job_number'] - 1, args['total_jobs'],
