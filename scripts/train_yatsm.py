@@ -98,6 +98,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
       y (np.ndarray): array of labeled training data samples
       row (np.ndarray): row pixel locations of `y`
       col (np.ndarray): column pixel locations of `y`
+      labels (np.ndarraY): label of `y` if found, else None
 
     """
     # Find and parse training data
@@ -108,6 +109,11 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
         raise
     logger.info('Reading in training data')
     roi = roi_ds.GetRasterBand(1).ReadAsArray()
+    if roi_ds.RasterCount == 2:
+        logger.info('Found labels for ROIs -- including in output')
+        labels = roi_ds.GetRasterBand(2).ReadAsArray()
+    else:
+        labels = None
 
     # Determine start and end dates of training sample relevance
     try:
@@ -171,7 +177,14 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     logger.info('Found matching time segments for {m} out of {n} labels'.
                 format(m=len(out_y), n=y.size))
 
-    return (np.array(X), np.array(out_y), np.array(out_row), np.array(out_col))
+    out_row = np.array(out_row)
+    out_col = np.array(out_col)
+
+    if labels:
+        labels = roi[out_row, out_col]
+
+    return (np.array(X), np.array(out_y),
+            out_row, out_col, labels)
 
 
 def algo_diagnostics(X, y, row, col, algo):
@@ -283,7 +296,7 @@ def main(dataset_config, yatsm_config, algo, model_filename):
 
     if not has_cache or regenerate_cache:
         logger.debug('Reading in X/y')
-        X, y, row, col = get_training_inputs(dataset_config)
+        X, y, row, col, labels = get_training_inputs(dataset_config)
         logger.debug('Done reading in X/y')
     else:
         logger.debug('Reading in X/y from cache file {f}'.format(
@@ -291,6 +304,9 @@ def main(dataset_config, yatsm_config, algo, model_filename):
         with np.load(dataset_config['cache_training']) as f:
             X = f['X']
             y = f['y']
+            row = f['row']
+            col = f['col']
+            labels = f['labels']
         logger.debug('Read in X/y from cache file {f}'.format(
             f=dataset_config['cache_training']))
 
@@ -300,7 +316,7 @@ def main(dataset_config, yatsm_config, algo, model_filename):
             f=dataset_config['cache_training']))
         try:
             np.savez(dataset_config['cache_training'],
-                     X=X, y=y, row=row, col=col)
+                     X=X, y=y, row=row, col=col, labels=labels)
         except:
             logger.error('Could not save X/y to cache file')
             raise
