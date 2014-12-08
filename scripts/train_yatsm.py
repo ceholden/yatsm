@@ -184,7 +184,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     out_row = np.array(out_row)
     out_col = np.array(out_col)
 
-    if labels:
+    if labels is not None:
         labels = roi[out_row, out_col]
 
     return (np.array(X), np.array(out_y),
