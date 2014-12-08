@@ -178,6 +178,9 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
         out_row.append(_row)
         out_col.append(_col)
 
+    if not out_y:
+        logger.error('Could not find any matching timeseries segments')
+        sys.exit(1)
     logger.info('Found matching time segments for {m} out of {n} labels'.
                 format(m=len(out_y), n=y.size))
 
