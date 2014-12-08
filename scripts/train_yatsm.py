@@ -11,8 +11,8 @@ classifier and classifier parameters are specified by <classifier_config>.
 Options:
     --kfold=<n>             Number of folds in cross validation [default: 3]
     --seed=<n>              Random number generator seed
-    --report=<file>         Save diagnostic information to filename
     --plot                  Show diagnostic plots
+    --diagnostics           Run K-Fold diagnostics
     --overwrite             Overwrite output model file
     -v --verbose            Show verbose debugging messages
     -q --quiet              Show only error messages
@@ -185,7 +185,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     out_col = np.array(out_col)
 
     if labels is not None:
-        labels = roi[out_row, out_col]
+        labels = labels[out_row, out_col]
 
     return (np.array(X), np.array(out_y),
             out_row, out_col, labels)
@@ -217,29 +217,8 @@ def algo_diagnostics(X, y, row, col, algo):
                                ))
 
     logger.info('<----------------------->')
-    logger.info('Shuffled KFold crossvalidation scores:')
-    kf = KFold(y.size, n_folds=n_fold, shuffle=True)
-    kfold_summary = np.vstack((kfold_summary,
-                              diagnostics.kfold_scores(X, y, algo, kf)
-                               ))
-
-    logger.info('<----------------------->')
     logger.info('Stratified KFold crossvalidation scores:')
     kf = StratifiedKFold(y, n_folds=n_fold)
-    kfold_summary = np.vstack((kfold_summary,
-                              diagnostics.kfold_scores(X, y, algo, kf)
-                               ))
-
-    logger.info('<----------------------->')
-    logger.info('Stratified shuffled KFold crossvalidation scores:')
-    kf = StratifiedKFold(y, n_folds=n_fold, shuffle=True)
-    kfold_summary = np.vstack((kfold_summary,
-                              diagnostics.kfold_scores(X, y, algo, kf)
-                               ))
-
-    logger.info('<----------------------->')
-    logger.info('Spatialized KFold crossvalidation scores:')
-    kf = diagnostics.SpatialKFold(y, row, col, n_folds=n_fold)
     kfold_summary = np.vstack((kfold_summary,
                               diagnostics.kfold_scores(X, y, algo, kf)
                                ))
@@ -252,9 +231,9 @@ def algo_diagnostics(X, y, row, col, algo):
                                ))
 
     if make_plots:
-        test_names = ['KFold', 'KFold (shuffle)',
-                      'Stratified KFold', 'Stratified KFold (shuffle)',
-                      'Spatial KFold', 'Spatial KFold (shuffle)'
+        test_names = ['KFold',
+                      'Stratified KFold',
+                      'Spatial KFold (shuffle)'
                       ]
         plots.plot_crossvalidation_scores(kfold_summary, test_names)
 
@@ -265,11 +244,9 @@ def algo_diagnostics(X, y, row, col, algo):
         if make_plots:
             plots.plot_feature_importance(algo, dataset_config, yatsm_config)
 
-    from IPython.core.debugger import Pdb
-    Pdb().set_trace()
 
-
-def main(dataset_config, yatsm_config, algo, model_filename):
+def main(dataset_config, yatsm_config, algo, model_filename,
+         run_diagnostics=True):
     """ YATSM trainining main
 
     Args:
@@ -277,7 +254,7 @@ def main(dataset_config, yatsm_config, algo, model_filename):
       yatsm_config (dict): options for the change detection algorithm
       algo (sklearn classifier): classification algorithm helper class
       model_filename (str): filename for pickled algorithm object
-
+      run_diagnostics (bool): Run KFold diagnostics
     """
     # Cache file for training data
     has_cache = False
@@ -285,7 +262,8 @@ def main(dataset_config, yatsm_config, algo, model_filename):
         # If doesn't exist, retrieve it
         if not os.path.isfile(dataset_config['cache_training']):
             logger.info('Could not retrieve cache file for Xy')
-            logger.info('    file: {f}'.format(f=dataset_config['cache_training']))
+            logger.info('    file: {f}'.format(
+                        f=dataset_config['cache_training']))
         else:
             logger.info('Restoring X/y from cache file')
             has_cache = True
@@ -329,12 +307,14 @@ def main(dataset_config, yatsm_config, algo, model_filename):
     logger.info('Training classifier')
     algo.fit(X, y)
 
-    algo_diagnostics(X, y, row, col, algo)
-
     # Serialize algorithm to file
     logger.info('Pickling classifier')
     with open(model_filename, 'wb') as fid:
         pickle.dump(algo, fid)
+
+    # Diagnostics
+    if run_diagnostics:
+        algo_diagnostics(X, y, row, col, algo)
 
 
 if __name__ == '__main__':
@@ -372,10 +352,10 @@ if __name__ == '__main__':
     if args['--seed']:
         np.random.seed(int(args['--seed']))
 
-    reports = args['--report']
-
     make_plots = args['--plot']
     plt.style.use('ggplot')
+
+    run_diagnostics = args['--diagnostics']
 
     if args['--verbose']:
         logger.setLevel(logging.DEBUG)
@@ -394,4 +374,5 @@ if __name__ == '__main__':
     # Parse classifier config
     algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
 
-    main(dataset_config, yatsm_config, algorithm_helper, model_filename)
+    main(dataset_config, yatsm_config, algorithm_helper, model_filename,
+         run_diagnostics=run_diagnostics)
