@@ -137,18 +137,22 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
     out_row = []
     out_col = []
 
+    rec = None
+    _row_previous = None
     for _row, _col, _y in izip(row, col, y):
         # Load result
-        try:
-            rec = np.load(utils.get_output_name(
-                dataset_config, _row))['record']
-        except:
-            logger.error('Could not open saved result file {f}'.format(
-                f=utils.get_output_name(dataset_config, _row)))
-            if exit_on_missing:
-                raise
-            else:
-                continue
+        if _row != _row_previous:
+            try:
+                rec = np.load(utils.get_output_name(
+                    dataset_config, _row))['record']
+                _row_previous = _row
+            except:
+                logger.error('Could not open saved result file {f}'.format(
+                    f=utils.get_output_name(dataset_config, _row)))
+                if exit_on_missing:
+                    raise
+                else:
+                    continue
         # Find intersecting time segment
         i = np.where((rec['start'] < training_start) &
                      (rec['end'] > training_end) &
