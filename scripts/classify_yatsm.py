@@ -97,7 +97,7 @@ def classify_line(filename, classifier):
         ('class_proba', 'float32', classes.size)
     ])
     classified['class'] = classifier.predict(X)
-    classified['class_proba'] = classifier.predict_proba(X)
+    classified['class_proba'] = classifier.predict_proba(X).max(axis=1)
 
     # Merge
     merged_rec = nprfn.merge_arrays((rec, classified), flatten=True)
