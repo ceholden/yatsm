@@ -142,3 +142,24 @@ def find_stack_images(location, folder_pattern='L*', image_pattern='L*stack',
     )
 
     return (dates, image_filenames)
+
+
+def read_row_BIP(filename, row, size, dtype):
+    """ Reads in an entire row of data from a BIP image
+
+    Args:
+      filename (str): filename to read from
+      row (int): row to read
+      size (tuple): tuple of (int, int) containing the number of columns and
+        bands in the image
+      dtype (np.dtype): NumPy datatype of the image
+
+    Returns:
+      data (np.ndarray): 2D array (nband x ncol) containing the row of data
+
+    """
+    with open(filename, 'rb') as f:
+        f.seek(np.dtype(dtype).itemsize * (row * size[0]) * size[1])
+        data = np.fromfile(f, dtype=dtype, count=size[0] * size[1])
+
+    return data.reshape(size).T

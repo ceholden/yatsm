@@ -37,7 +37,7 @@ except ImportError:
 from yatsm.config_parser import parse_config_file
 from yatsm.utils import (calculate_lines, get_output_name, get_line_cache_name,
                          csvfile_to_dataset, make_X)
-from yatsm.reader import get_image_attribute
+from yatsm.reader import get_image_attribute, read_row_BIP
 from yatsm.yatsm import YATSM, TSLengthException
 
 # Log setup for runner
@@ -127,14 +127,19 @@ def read_line(line, images, dataset_config,
         # Read in Y
         Y = np.zeros((nband, len(images), ncol), dtype=dtype)
 
-        # TODO: implement BIP reader
-        # Read in data just using GDAL
-        logger.debug('Reading in data from disk')
-        for i, image in enumerate(images):
-            ds = gdal.Open(image, gdal.GA_ReadOnly)
-            for b in xrange(ds.RasterCount):
-                Y[b, i, :] = ds.GetRasterBand(b + 1).ReadAsArray(
-                    0, line, ncol, 1)
+        if dataset_config['use_bip_reader']:
+            # Use BIP reader
+            logger.debug('Reading in data from disk using BIP reader')
+            for i, image in enumerate(images):
+                Y[:, i, :] = read_row_BIP(image, line, (ncol, nband), dtype)
+        else:
+            # Read in data just using GDAL
+            logger.debug('Reading in data from disk using GDAL')
+            for i, image in enumerate(images):
+                ds = gdal.Open(image, gdal.GA_ReadOnly)
+                for b in xrange(ds.RasterCount):
+                    Y[b, i, :] = ds.GetRasterBand(b + 1).ReadAsArray(
+                        0, line, ncol, 1)
 
     if write_cache and read_from_disk:
         logger.debug('Writing Y data to cache file {f}'.format(
