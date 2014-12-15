@@ -141,13 +141,13 @@ def read_line(line, images, dataset_config,
                     Y[b, i, :] = ds.GetRasterBand(b + 1).ReadAsArray(
                         0, line, ncol, 1)
 
+        logger.debug('Took {s}s to read in the data'.format(
+            s=round(time.time() - start_time, 2)))
+
     if write_cache and read_from_disk:
         logger.debug('Writing Y data to cache file {f}'.format(
             f=cache_filename))
         np.savez_compressed(cache_filename, Y=Y)
-
-    logger.debug('Took {s}s to read in the data'.format(
-        s=round(time.time() - start_time, 2)))
 
     return Y
 
