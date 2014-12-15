@@ -79,9 +79,8 @@ plot_styles = plt.style.available + [u'xkcd']
 # Set default size to 11" x 6.798 (golden ratio)
 plt.rcParams['figure.figsize'] = 11, 6.798
 
-logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
-                    level=logging.INFO,
-                    datefmt='%H:%M:%S')
+FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H-%M-%S')
 logger = logging.getLogger('yatsm')
 
 

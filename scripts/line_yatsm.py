@@ -41,8 +41,8 @@ from yatsm.reader import get_image_attribute, read_row_BIP
 from yatsm.yatsm import YATSM, TSLengthException
 
 # Log setup for runner
-FORMAT = '%(asctime)s %(levelname)s %(module)s.%(funcName)s : %(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
+FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H-%M-%S')
 logger = logging.getLogger('yatsm')
 
 # Logging level for YATSM

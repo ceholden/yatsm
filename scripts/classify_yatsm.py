@@ -38,8 +38,8 @@ from yatsm.config_parser import parse_config_file
 from yatsm.utils import calculate_lines, get_output_name, csvfile_to_dataset
 from yatsm.reader import get_image_attribute
 
-FORMAT = '%(asctime)s %(levelname)s: %(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
+FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H-%M-%S')
 logger = logging.getLogger('yatsm')
 
 

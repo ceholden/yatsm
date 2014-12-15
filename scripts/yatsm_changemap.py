@@ -49,9 +49,8 @@ from yatsm.utils import find_results, iter_records
 gdal.UseExceptions()
 gdal.AllRegister()
 
-logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s',
-                    level=logging.INFO,
-                    datefmt='%H:%M:%S')
+FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H-%M-%S')
 logger = logging.getLogger('yatsm')
 
 # Filters for results
