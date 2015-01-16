@@ -37,7 +37,7 @@ except ImportError:
 from yatsm.config_parser import parse_config_file
 from yatsm.utils import (calculate_lines, get_output_name, get_line_cache_name,
                          csvfile_to_dataset, make_X)
-from yatsm.reader import get_image_attribute, read_row_BIP
+from yatsm.reader import get_image_attribute, read_row_BIP, read_row_GDAL
 from yatsm.yatsm import YATSM, TSLengthException
 
 # Log setup for runner
@@ -135,11 +135,7 @@ def read_line(line, images, dataset_config,
         else:
             # Read in data just using GDAL
             logger.debug('Reading in data from disk using GDAL')
-            for i, image in enumerate(images):
-                ds = gdal.Open(image, gdal.GA_ReadOnly)
-                for b in xrange(ds.RasterCount):
-                    Y[b, i, :] = ds.GetRasterBand(b + 1).ReadAsArray(
-                        0, line, ncol, 1)
+            Y = read_row_GDAL(images, line)
 
         logger.debug('Took {s}s to read in the data'.format(
             s=round(time.time() - start_time, 2)))
@@ -354,6 +350,7 @@ def main(dataset_config, yatsm_config,
                      read_cache=read_cache, write_cache=write_cache)
         except Exception as e:
             logger.error('Could not process line {l}'.format(l=job_line))
+            logger.error(type(e))
             logger.error(str(e))
 
         logger.debug('Took {s}s to run'.format(

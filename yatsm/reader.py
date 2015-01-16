@@ -163,3 +163,90 @@ def read_row_BIP(filename, row, size, dtype):
         data = np.fromfile(f, dtype=dtype, count=size[0] * size[1])
 
     return data.reshape(size).T
+
+
+class GDALStackReader(object):
+    """ Simple class to read stacks using GDAL, keeping file objects open
+
+    Some tests have shown that we can speed up total dataset read time by
+    storing the file object references to each image as we loop over many rows
+    instead of opening once per row read. This is a simple class designed to
+    store these references.
+
+    Note that this class assumes the images are "stacked" -- that is that all
+    images contain the same number of rows, columns, and bands, and the images
+    are of the same geographic extent.
+
+    Args:
+      filenames (list): list of filenames to read from
+
+    Attributes:
+      filenames (list): list of filenames to read from
+      n_image (int): number of images
+      n_band (int): number of bands in an image
+      n_col (int): number of columns per row
+      datatype (np.dtype): NumPy datatype of images
+      datasets (list): list of GDAL datasets for all filenames
+      dataset_bands (list): list of lists containing all GDAL raster band
+        datasets, for all image filenames
+
+    """
+    def __init__(self, filenames):
+        self.filenames = filenames
+
+        self.datasets = []
+        for f in self.filenames:
+            self.datasets.append(gdal.Open(f, gdal.GA_ReadOnly))
+
+        self.n_image = len(filenames)
+        self.n_band = self.datasets[0].RasterCount
+        self.n_col = self.datasets[0].RasterXSize
+        self.datatype = gdal_array.GDALTypeCodeToNumericTypeCode(
+            self.datasets[0].GetRasterBand(1).DataType)
+
+        self.dataset_bands = []
+        for ds in self.datasets:
+            bands = []
+            for i in xrange(self.n_band):
+                bands.append(ds.GetRasterBand(i + 1))
+            self.dataset_bands.append(bands)
+
+    def read_row(self, row):
+        """ Return a 3D NumPy array (nband x nimage x ncol) of image data from
+        one row
+
+        Args:
+          row (int): row in image to return
+
+        Returns:
+          data (np.ndarray): 3D NumPy array (nband x nimage x ncol) of image
+            data for desired row
+
+        """
+        data = np.empty((self.n_band, self.n_image, self.n_col),
+                        self.datatype)
+        for i, ds_bands in enumerate(self.dataset_bands):
+            for n_b, band in enumerate(ds_bands):
+                data[n_b, i, :] = band.ReadAsArray(0, row, self.n_col, 1)
+
+        return data
+
+
+stack_reader = None
+def read_row_GDAL(filenames, row):
+    """ Reads in an entire row of data from an image using GDAL
+
+    Args:
+      filename (iterable): sequence of filenames to read from
+      row (int): row to read
+
+    Returns:
+      data (np.ndarray): 3D array (nband x nimage x ncol) containing the row
+        of data
+
+    """
+    global stack_reader
+    if stack_reader is None:
+        stack_reader = GDALStackReader(filenames)
+
+    return stack_reader.read_row(row)
