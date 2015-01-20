@@ -657,6 +657,44 @@ class YATSM(object):
 
         return np.array(models)
 
+    def get_model_rmse(self):
+        """ Return the normal RMSE of each fitted model
+
+        Returns:
+          np.ndarray: NumPy array containing RMSE of each tested model
+
+        """
+        return np.array([m.rmse for m in self.models])[self.test_indices]
+
+    def get_dynamic_rmse(self):
+        """ Return the dynamic RMSE for each model
+
+        Dynamic RMSE refers to the Root Mean Squared Error calculated using
+        `self.min_obs` number of observations closest in day of year to the
+        observation `self.consecutive` steps into the future. Goal is to
+        reduce false-positives during seasonal transitions (high variance in
+        the signal) while decreasing omission during stable times of year.
+
+        Returns:
+          np.ndarray: NumPy array containing dynamic RMSE of each tested model
+
+        """
+        # Indices of closest observations based on DOY
+        i_doy = np.argsort(np.mod(
+            self.X[self.start:self.here, 1] -
+            self.X[self.here + self.consecutive, 1],
+            self.ndays))[:self.min_obs]
+
+        rmse = np.zeros(len(self.test_indices), np.float32)
+        for i_b, b in enumerate(self.test_indices):
+            m = self.models[b]
+            rmse[i_b] = np.sqrt(np.sum(
+                (self.Y[b, :].take(i_doy) -
+                    m.predict(self.X.take(i_doy, axis=0))) ** 2)
+                / i_doy.size)
+
+        return rmse
+
     def monitor_plot_debug(self, index, model, i_buffer=10):
         """ Monitoring debug plot """
         import matplotlib.pyplot as plt
