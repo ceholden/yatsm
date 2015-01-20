@@ -13,6 +13,7 @@ Algorithm options:
     --retrain_time=<n>      Wait <n> days to update model [default: 365.25]
     --screening=<method>    Multi-temporal screening method [default: RLM]
     --screening_crit=<t>    Screening critical value [default: 400.0]
+    --dynamic_rmse          Vary RMSE as a function of day of year
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
     --test_indices=<bands>  Test indices [default: ALL]
@@ -196,6 +197,8 @@ if __name__ == '__main__':
         raise TypeError('Unknown multi-temporal cloud screening type')
     screening_crit = float(args['--screening_crit'])
 
+    dynamic_rmse = args['--dynamic_rmse']
+
     # Cross-validated Lasso
     lassocv = args['--lassocv']
     # Reverse run?
@@ -287,6 +290,7 @@ if __name__ == '__main__':
                   retrain_time=retrain_time,
                   screening=screening,
                   screening_crit=screening_crit,
+                  dynamic_rmse=dynamic_rmse,
                   lassocv=lassocv,
                   logger=logger)
     yatsm.run()

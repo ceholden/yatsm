@@ -102,6 +102,8 @@ class YATSM(object):
       remove_noise (bool, optional): Remove observation if change is not
         detected but first observation is above threshold (if it looks like
         noise) (default: True)
+      dynamic_rmse (bool, optional): Vary RMSE as a function of day of year (
+        default: False)
       lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet
       px (int, optional): X (column) pixel reference
       py (int, optional): Y (row) pixel reference
@@ -119,7 +121,7 @@ class YATSM(object):
                  fit_indices=None, test_indices=None, retrain_time=ndays,
                  screening='RLM', screening_crit=400.0,
                  green_band=green_band, swir1_band=swir1_band,
-                 remove_noise=True,
+                 remove_noise=True, dynamic_rmse=False,
                  lassocv=False,
                  px=0, py=0,
                  logger=None):
@@ -177,6 +179,11 @@ class YATSM(object):
         self.screening_crit = screening_crit
 
         self.remove_noise = remove_noise
+
+        if dynamic_rmse:
+            self.get_rmse = self.get_dynamic_rmse
+        else:
+            self.get_rmse = self.get_model_rmse
 
         # Attributes
         self.n_band = Y.shape[0]
@@ -574,13 +581,15 @@ class YATSM(object):
         scores = np.zeros((self.consecutive, len(self.test_indices)),
                           dtype=np.float32)
 
+        rmse = self.get_rmse()
+
         for i in range(self.consecutive):
             for i_b, b in enumerate(self.test_indices):
                 m = self.models[b]
                 # Get test score for future observations
                 scores[i, i_b] = (np.abs(self.Y[b, self.here + i] -
                                          m.predict(self.X[self.here + i, :])) /
-                                  max(self.min_rmse, m.rmse))
+                                  max(self.min_rmse, rmse[i_b]))
 
         # Check for scores above critical value
         mag = np.linalg.norm(scores, axis=1)

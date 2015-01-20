@@ -264,6 +264,7 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                   green_band=dataset_config['green_band'] - 1,
                   swir1_band=dataset_config['swir1_band'] - 1,
                   remove_noise=yatsm_config['remove_noise'],
+                  dynamic_rmse=yatsm_config['dynamic_rmse'],
                   lassocv=yatsm_config['lassocv'],
                   px=px,
                   py=py,

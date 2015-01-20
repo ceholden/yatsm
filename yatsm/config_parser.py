@@ -102,6 +102,7 @@ def parse_config_v0_2_x(config_file):
     defaults = """
 [YATSM]
 remove_noise = True
+dynamic_rmse = False
     """
 
     config = configparser.ConfigParser(allow_no_value=True)
@@ -109,6 +110,7 @@ remove_noise = True
     config.read(config_file)
 
     yatsm_config['remove_noise'] = config.getboolean('YATSM', 'remove_noise')
+    yatsm_config['dynamic_rmse'] = config.getboolean('YATSM', 'dynamic_rmse')
 
     return dataset_config, yatsm_config
 
