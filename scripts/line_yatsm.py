@@ -242,8 +242,11 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
         raise TSLengthException('Not enough valid observations')
 
     # Otherwise continue
-    clear = np.logical_and(Y[mask_band, :] <= 1,
-                           np.all(Y <= 10000, axis=0))
+    clear = np.logical_and.reduce([Y[mask_band, :] <= 1,
+                                   np.all(Y[:mask_band, :] > 0, axis=0),
+                                   np.all(Y[:mask_band, :] < 10000, axis=0)
+                                   ])
+
     Y = Y[:mask_band, clear]
     X = X[clear, :]
 
