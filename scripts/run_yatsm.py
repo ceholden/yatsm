@@ -2,7 +2,7 @@
 """ Yet Another Time Series Model
 
 Usage:
-    yatsm.py [options] <location> <px> <py>
+    run_yatsm.py [options] <location> <px> <py>
 
 Algorithm options:
     --consecutive=<n>       Consecutive observations for change [default: 5]

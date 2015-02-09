@@ -75,9 +75,9 @@ The change detection is parameterized by:
 | ``screening``        | ``str``     | Method for screening timeseries for noise. Options are ``RLM`` and ``LOWESS``   |
 +----------------------+-------------+---------------------------------------------------------------------------------+
 | ``screening_crit``   | ``float``   | Critical value for detecting noise in multitemporal cloud/shadow screening      |
-+----------------------------------------------------------------------------------------------------------------------+
++----------------------+-------------+---------------------------------------------------------------------------------+
 | ``remove_noise``     | ``bool``    | Delete observations during monitoring period if observation looks like noise    |
-+----------------------------------------------------------------------------------------------------------------------+
++----------------------+-------------+---------------------------------------------------------------------------------+
 | ``dynamic_rmse``     | ``bool``    | Vary RMSE as a function of day of year during monitoring phase                  |
 +----------------------+-------------+---------------------------------------------------------------------------------+
 | ``lassocv``          | ``bool``    | Use ``sklearn.linear_model.LassoLarsCV`` instead of ``glmnet``                  |

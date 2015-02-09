@@ -13,6 +13,7 @@ import sphinx
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 d = os.path.dirname
 sys.path.insert(0, d(d(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(d(d(os.path.abspath(__file__))), 'scripts'))
 
 import yatsm
 
@@ -53,10 +54,11 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'YATSM'
-copyright = u'2014, Chris Holden'
+copyright = u'2014 - 2015, Chris Holden'
 
 version = yatsm.__version__
 release = yatsm.__version__
+html_last_updated_fmt = '%c'
 
 exclude_patterns = ['_build']
 
@@ -64,7 +66,7 @@ exclude_patterns = ['_build']
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
-#modindex_common_prefix = []
+# modindex_common_prefix = []
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -95,14 +97,14 @@ html_static_path = ['_static']
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.
-#html_extra_path = []
+# html_extra_path = []
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+# html_sidebars = {}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
-#html_additional_pages = {}
+# html_additional_pages = {}
 
 # If true, links to the reST sources are added to the pages.
 html_show_sourcelink = False
@@ -110,4 +112,4 @@ html_show_sourcelink = False
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
-#html_use_opensearch = ''
+# html_use_opensearch = ''
