@@ -545,6 +545,11 @@ class YATSM(object):
 
             self.here += 1
 
+        # If we ended without being able to monitor again, delete last model
+        # since it will be empty
+        if not self.monitoring:
+            self.record = self.record[:-1]
+
         self.ran = True
 
         # Deal with start and end of time series #TODO
