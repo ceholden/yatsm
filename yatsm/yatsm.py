@@ -10,6 +10,8 @@ import numpy.lib.recfunctions
 import statsmodels.api as sm
 
 from glmnet.elastic_net import ElasticNet, elastic_net
+import scipy.linalg
+import scipy.stats
 from sklearn.linear_model import LassoLarsIC  # , Lasso, LassoCV, LassoLarsCV
 import statsmodels.api as sm
 
@@ -19,6 +21,7 @@ try:
 except:
     from masking import multitemp_mask
 from masking import smooth_mask
+from utils import date2index
 
 # Some constants
 ndays = 365.25
@@ -239,9 +242,128 @@ class YATSM(object):
         self.record = np.copy(self.record_template)
 
 # POST-PROCESSING
-    def merge_record(self, critF):
-        """ Merge adjacent records based on nested F test """
-        pass
+    def comission_test(self, alpha=0.001):
+        """ Merge adjacent records based on Chow Tests for nested models
+
+        Use Chow Test to find false positive, spurious, or unnecessary breaks
+        in the timeseries by comparing the effectiveness of two separate
+        adjacent models with one single model that spans the entire time
+        period.
+
+        Chow test is described:
+
+        .. math::
+            \\frac{[RSS_r - (RSS_1 + RSS_2)] / k}{(RSS_1 + RSS_2) / (n - 2k)}
+        where
+            - :math:`RSS_u` is the RSS of the combined, or, restricted model
+            - :math:`RSS_1` is the RSS of the first model
+            - :math:`RSS_2` is the RSS of the second model
+            - :math:`k` is the number of model parameters
+            - :math:`n` is the number of total observations
+
+        Because we look for change in multiple bands, the RSS used to compare
+        the unrestricted versus restricted models is the L2 norm of RSS
+        values from `self.test_indices`.
+
+        Args:
+          alpha (float): significance level for F-statistic (default: 0.01)
+
+        Returns:
+          list: updated copy of `self.models` with spurrious models combined
+            into unified model
+
+        """
+        k = self.n_coef
+
+        models = []
+        merged = False
+
+        for i in range(len(self.record) - 1):
+            if merged:
+                m_1 = models[-1]
+            else:
+                m_1 = self.record[i]
+            m_2 = self.record[i + 1]
+
+            m_1_start = date2index(self.X[:, 1], m_1['start'])
+            m_1_end = date2index(self.X[:, 1], m_1['end'])
+            m_2_start = date2index(self.X[:, 1], m_2['start'])
+            m_2_end = date2index(self.X[:, 1], m_2['end'])
+
+            m_r_start = m_1_start
+            m_r_end = m_2_end
+
+            n = m_r_end - m_r_start
+
+            print('M_1: {s} - {e}'.format(s=m_1_start, e=m_1_end))
+            print('M_2: {s} - {e}'.format(s=m_2_start, e=m_2_end))
+            print('M_R: {s} - {e}'.format(s=m_r_start, e=m_r_end))
+
+            F_crit = scipy.stats.f.ppf(1 - alpha, k, n - 2 * k)
+
+            m_1_rss = np.zeros(self.test_indices.size)
+            m_2_rss = np.zeros(self.test_indices.size)
+            m_r_rss = np.zeros(self.test_indices.size)
+
+            for i_b, b in enumerate(self.test_indices):
+                m_1_rss[i_b] = scipy.linalg.lstsq(
+                    self.X[m_1_start:m_1_end, :],
+                    self.Y[b, m_1_start:m_1_end])[1]
+                m_2_rss[i_b] = scipy.linalg.lstsq(
+                    self.X[m_2_start:m_2_end, :],
+                    self.Y[b, m_2_start:m_2_end])[1]
+                m_r_rss[i_b] = scipy.linalg.lstsq(
+                    self.X[m_r_start:m_r_end, :],
+                    self.Y[b, m_r_start:m_r_end])[1]
+
+            print(m_1_rss + m_2_rss, m_r_rss)
+
+            m_1_rss = np.linalg.norm(m_1_rss)
+            m_2_rss = np.linalg.norm(m_2_rss)
+            m_r_rss = np.linalg.norm(m_r_rss)
+
+            print(m_1_rss + m_2_rss, m_r_rss)
+
+            F = ((m_r_rss - (m_1_rss + m_2_rss)) / k) / \
+                ((m_1_rss + m_2_rss) / (n - 2 * k))
+
+            if F > F_crit:
+                # Reject H0 and retain change
+                print('NOT merging models')
+                # Only add in previous model if first model
+                if i == 0:
+                    models.append(m_1)
+                models.append(m_2)
+                merged = False
+            else:
+                # Fail to reject H0 -- ignore change and merge
+                print('Merging models - {f} <= {c}'.format(f=F, c=F_crit))
+                m_new = np.copy(self.record_template[0])
+
+                # Remove last previously added model from list to merge
+                del models[-1]
+
+                m_new['start'] = m_1['start']
+                m_new['end'] = m_2['end']
+                m_new['break'] = m_2['break']
+
+                _models = self.fit_models(
+                    self.X[m_r_start:m_r_end, :],
+                    self.Y[:, m_r_start:m_r_end])
+
+                for i, _m in enumerate(_models):
+                    m_new['coef'][:, i] = _m.coef
+                    m_new['rmse'][i] = _m.rmse
+
+                # Preserve magnitude from 2nd model that was merged
+                m_new['magnitude'] = m_2['magnitude']
+
+                models.append(m_new)
+
+                merged = True
+
+        return np.array(models)
+
 
     def omission_test(self, crit=0.05, behavior='ANY',
                       indices=None):
