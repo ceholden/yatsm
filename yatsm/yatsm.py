@@ -7,8 +7,6 @@ import sys
 import numpy as np
 import numpy.lib.recfunctions
 
-import statsmodels.api as sm
-
 from glmnet.elastic_net import ElasticNet, elastic_net
 import scipy.linalg
 import scipy.stats
@@ -684,8 +682,8 @@ class YATSM(object):
                                      self.trained_date))
 
             # Fit timeseries models
-            self.models = self.fit_models(self._X[self.start:self.here + 1, :],
-                                          self._Y[:, self.start:self.here + 1])
+            self.models = self.fit_models(self.X[self.start:self.here + 1, :],
+                                          self.Y[:, self.start:self.here + 1])
 
             # Update record
             self.record[self.n_record]['start'] = self.X[self.start, 1]
