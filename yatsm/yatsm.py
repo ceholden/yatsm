@@ -273,6 +273,9 @@ class YATSM(object):
             into unified model
 
         """
+        if self.record.size == 1:
+            return self.record
+
         k = self.n_coef
 
         models = []
@@ -295,10 +298,6 @@ class YATSM(object):
 
             n = m_r_end - m_r_start
 
-            print('M_1: {s} - {e}'.format(s=m_1_start, e=m_1_end))
-            print('M_2: {s} - {e}'.format(s=m_2_start, e=m_2_end))
-            print('M_R: {s} - {e}'.format(s=m_r_start, e=m_r_end))
-
             F_crit = scipy.stats.f.ppf(1 - alpha, k, n - 2 * k)
 
             m_1_rss = np.zeros(self.test_indices.size)
@@ -316,13 +315,9 @@ class YATSM(object):
                     self.X[m_r_start:m_r_end, :],
                     self.Y[b, m_r_start:m_r_end])[1]
 
-            print(m_1_rss + m_2_rss, m_r_rss)
-
             m_1_rss = np.linalg.norm(m_1_rss)
             m_2_rss = np.linalg.norm(m_2_rss)
             m_r_rss = np.linalg.norm(m_r_rss)
-
-            print(m_1_rss + m_2_rss, m_r_rss)
 
             F = ((m_r_rss - (m_1_rss + m_2_rss)) / k) / \
                 ((m_1_rss + m_2_rss) / (n - 2 * k))
@@ -341,7 +336,8 @@ class YATSM(object):
                 m_new = np.copy(self.record_template[0])
 
                 # Remove last previously added model from list to merge
-                del models[-1]
+                if i != 0:
+                    del models[-1]
 
                 m_new['start'] = m_1['start']
                 m_new['end'] = m_2['end']
