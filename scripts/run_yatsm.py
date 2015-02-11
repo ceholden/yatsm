@@ -267,7 +267,7 @@ if __name__ == '__main__':
                              image_pattern=image_pattern)
     dates = np.array([dt.fromordinal(int(_x)) for _x in X[:, 1]])
 
-    if plot_index:
+    if isinstance(plot_index, int):
         with style_context:
             plot_dataset()
             plt.title('Timeseries')
@@ -310,7 +310,7 @@ if __name__ == '__main__':
     else:
         style_context = plt.style.context(plot_style)
 
-    if plot_index:
+    if isinstance(plot_index, int):
         with style_context:
             plot_results()
             plt.tight_layout()
@@ -326,7 +326,7 @@ if __name__ == '__main__':
         else:
             style_context = plt.style.context(plot_style)
 
-        if plot_index:
+        if isinstance(plot_index, int):
             with style_context:
                 plot_results()
                 plt.tight_layout()
