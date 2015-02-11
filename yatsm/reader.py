@@ -56,6 +56,11 @@ def read_pixel_timeseries(files, px, py):
     """
     nrow, ncol, nband, dtype = get_image_attribute(files[0])
 
+    if px <= 0 or px > ncol or py <= 0 or py > nrow:
+        raise IndexError('Row/column {r}/{c} is outside of image '
+                         '(nrow/ncol: {nrow}/{ncol})'.format(
+                            r=py, c=px, nrow=nrow, ncol=ncol))
+
     Y = np.zeros((nband, len(files)), dtype=dtype)
 
     for i, f in enumerate(files):
