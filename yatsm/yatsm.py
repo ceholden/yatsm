@@ -11,6 +11,7 @@ import statsmodels.api as sm
 
 from glmnet.elastic_net import ElasticNet, elastic_net
 from sklearn.linear_model import LassoLarsIC  # , Lasso, LassoCV, LassoLarsCV
+import statsmodels.api as sm
 
 # Import standard Python version if Cython not built
 try:
@@ -37,7 +38,7 @@ class GLMLasso(ElasticNet):
     def fit(self, X, y, lambdas=None):
         if lambdas is None:
             lambdas = [self.alpha]
-        elif not isinstance(lambdas, list):
+        elif not isinstance(lambdas, (np.ndarray, list)):
             lambdas = [lambdas]
 
         n_lambdas, intercept_, coef_, ia, nin, rsquared_, lambdas, _, jerr = \
@@ -266,8 +267,6 @@ class YATSM(object):
             True indicates omitted break point
 
         """
-        import statsmodels.api as sm
-
         if behavior.lower() not in ['any', 'all']:
             raise ValueError('`behavior` must be "any" or "all"')
 
@@ -349,7 +348,7 @@ class YATSM(object):
             # Refit each band
             for i_b, b in enumerate(self.fit_indices):
                 # Find nonzero
-                nonzero = np.where(self.record[i]['coef'][:, i_b] != 0)[0]
+                nonzero = np.nonzero(self.record[i]['coef'][:, i_b])
 
                 if nonzero.size == 0:
                     continue
@@ -525,7 +524,9 @@ class YATSM(object):
                 'Not enough observations after noise removal')
 
         # After noise removal, try to fit models
-        models = self.fit_models(self._X, self._Y, bands=self.test_indices)
+        models = self.fit_models(self._X[self.start:self.here + 1, :],
+                                 self._Y[:, self.start:self.here + 1],
+                                 bands=self.test_indices)
 
         # Ensure first and last points aren't unusual
         start_resid = np.zeros(len(self.test_indices))
@@ -560,7 +561,8 @@ class YATSM(object):
                                      self.trained_date))
 
             # Fit timeseries models
-            self.models = self.fit_models(self.X, self.Y)
+            self.models = self.fit_models(self._X[self.start:self.here + 1, :],
+                                          self._Y[:, self.start:self.here + 1])
 
             # Update record
             self.record[self.n_record]['start'] = self.X[self.start, 1]
@@ -622,31 +624,25 @@ class YATSM(object):
             self.Y = self.Y[:, m]
             self.here -= 1
 
-    def fit_models_GLMnet(self, X, Y, index=None, bands=None):
+    def fit_models_GLMnet(self, X, Y, bands=None):
         """ Try to fit models to training period time series """
         if bands is None:
             bands = self.fit_indices
-
-        if index is None:
-            index = np.arange(self.start, self.here + 1)
 
         models = []
 
         for b in bands:
             lasso = GLMLasso()
-            lasso = lasso.fit(X[index, :], Y[b, index], lambdas=20)
+            lasso = lasso.fit(X, Y[b, :], lambdas=20)
 
             models.append(lasso)
 
         return np.array(models)
 
-    def fit_models_LassoCV(self, X, Y, index=None, bands=None):
+    def fit_models_LassoCV(self, X, Y, bands=None):
         """ Try to fit models to training period time series """
         if bands is None:
             bands = self.fit_indices
-
-        if index is None:
-            index = np.arange(self.start, self.here + 1)
 
         models = []
 
@@ -654,12 +650,12 @@ class YATSM(object):
             # lasso = LassoCV(n_alphas=100)
             # lasso = LassoLarsCV(masx_n_alphas=100)
             lasso = LassoLarsIC(criterion='bic')
-            lasso = lasso.fit(X[index, :], Y[b, index])
-            lasso.nobs = Y[b, index].size
+            lasso = lasso.fit(X, Y[b, :])
+            lasso.nobs = Y[b, :].size
             lasso.coef = np.copy(lasso.coef_)
             lasso.coef[0] += lasso.intercept_
-            lasso.fittedvalues = lasso.predict(X[index, :])
-            lasso.rss = np.sum((Y[b, index] - lasso.fittedvalues) ** 2)
+            lasso.fittedvalues = lasso.predict(X)
+            lasso.rss = np.sum((Y[b, :] - lasso.fittedvalues) ** 2)
             lasso.rmse = math.sqrt(lasso.rss / lasso.nobs)
 
             models.append(lasso)
