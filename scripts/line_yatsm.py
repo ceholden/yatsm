@@ -274,6 +274,9 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                   logger=logger)
     yatsm.run()
 
+    if yatsm_config['commission_alpha']:
+        yatsm.record = yatsm.commission_test(yatsm_config['commission_alpha'])
+
     if yatsm_config['robust']:
         return yatsm.robust_record
     else:

@@ -103,6 +103,7 @@ def parse_config_v0_2_x(config_file):
 [YATSM]
 remove_noise = True
 dynamic_rmse = False
+commission_alpha =
     """
 
     config = configparser.ConfigParser(allow_no_value=True)
@@ -111,6 +112,9 @@ dynamic_rmse = False
 
     yatsm_config['remove_noise'] = config.getboolean('YATSM', 'remove_noise')
     yatsm_config['dynamic_rmse'] = config.getboolean('YATSM', 'dynamic_rmse')
+    commission_alpha = config.get('YATSM', 'commission_alpha')
+    yatsm_config['commission_alpha'] = (float(commission_alpha) if
+                                        commission_alpha else None)
 
     return dataset_config, yatsm_config
 
