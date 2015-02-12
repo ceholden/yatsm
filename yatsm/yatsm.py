@@ -543,7 +543,7 @@ class YATSM(object):
 
         # If we ended without being able to monitor again, delete last model
         # since it will be empty
-        if not self.monitoring:
+        if self.record[-1]['start'] == 0 and self.record[-1]['end'] == 0:
             self.record = self.record[:-1]
 
         self.ran = True
