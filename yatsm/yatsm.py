@@ -322,7 +322,6 @@ class YATSM(object):
 
             if F > F_crit:
                 # Reject H0 and retain change
-                print('NOT merging models')
                 # Only add in previous model if first model
                 if i == 0:
                     models.append(m_1)
@@ -330,7 +329,6 @@ class YATSM(object):
                 merged = False
             else:
                 # Fail to reject H0 -- ignore change and merge
-                print('Merging models - {f} <= {c}'.format(f=F, c=F_crit))
                 m_new = np.copy(self.record_template[0])
 
                 # Remove last previously added model from list to merge

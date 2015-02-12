@@ -17,7 +17,7 @@ Algorithm options:
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
     --test_indices=<bands>  Test indices [default: ALL]
-    --commit_alpha=<alpha>  Alpha for F_crit in Chow comission test
+    --commit_alpha=<alpha>  Alpha for F_crit in Chow commission test
     --omit_crit=<crit>      Critical value for omission test
     --omit_behavior=<b>     Omission test behavior [default: ALL]
     --omit_indices=<b>      Image indices used in omission test
@@ -318,7 +318,7 @@ if __name__ == '__main__':
             plt.show()
 
     if args['--commit_alpha']:
-        yatsm.record = yatsm.comission_test(float(args['--commit_alpha']))
+        yatsm.record = yatsm.commission_test(float(args['--commit_alpha']))
 
         # Renew the generator for style
         if plot_style == 'xkcd':
