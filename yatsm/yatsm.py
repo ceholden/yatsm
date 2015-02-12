@@ -240,7 +240,7 @@ class YATSM(object):
         self.record = np.copy(self.record_template)
 
 # POST-PROCESSING
-    def comission_test(self, alpha=0.001):
+    def commission_test(self, alpha=0.001):
         """ Merge adjacent records based on Chow Tests for nested models
 
         Use Chow Test to find false positive, spurious, or unnecessary breaks
@@ -329,7 +329,7 @@ class YATSM(object):
                 merged = False
             else:
                 # Fail to reject H0 -- ignore change and merge
-                m_new = np.copy(self.record_template[0])
+                m_new = np.copy(self.record_template)[0]
 
                 # Remove last previously added model from list to merge
                 if i != 0:
@@ -343,9 +343,9 @@ class YATSM(object):
                     self.X[m_r_start:m_r_end, :],
                     self.Y[:, m_r_start:m_r_end])
 
-                for i, _m in enumerate(_models):
-                    m_new['coef'][:, i] = _m.coef
-                    m_new['rmse'][i] = _m.rmse
+                for i_m, _m in enumerate(_models):
+                    m_new['coef'][:, i_m] = _m.coef
+                    m_new['rmse'][i_m] = _m.rmse
 
                 # Preserve magnitude from 2nd model that was merged
                 m_new['magnitude'] = m_2['magnitude']
