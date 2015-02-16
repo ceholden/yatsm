@@ -35,10 +35,11 @@ except ImportError:
         os.path.abspath(__file__))))
     from yatsm.version import __version__
 from yatsm.config_parser import parse_config_file
+from yatsm.errors import TSLengthException
 from yatsm.utils import (calculate_lines, get_output_name, get_line_cache_name,
                          csvfile_to_dataset, make_X)
 from yatsm.reader import get_image_attribute, read_row_BIP, read_row_GDAL
-from yatsm.yatsm import YATSM, TSLengthException
+from yatsm.yatsm import YATSM
 
 # Log setup for runner
 FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'

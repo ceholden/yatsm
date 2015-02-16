@@ -18,17 +18,12 @@ try:
     from cymasking import multitemp_mask
 except:
     from masking import multitemp_mask
+from errors import TSLengthException
 from masking import smooth_mask
 from utils import date2index
 
 # Some constants
 ndays = 365.25
-
-
-class TSLengthException(Exception):
-    """ Exception stating timeseries does not contain enough observations
-    """
-    pass
 
 
 class GLMLasso(ElasticNet):
