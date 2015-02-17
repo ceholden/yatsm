@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     yatsm.classifiers
+    yatsm.regression
 
 Submodules
 ----------
@@ -14,7 +15,9 @@ Submodules
 .. toctree::
 
    yatsm.config_parser
+   yatsm.cyatsm
    yatsm.cymasking
+   yatsm.errors
    yatsm.masking
    yatsm.plots
    yatsm.reader

@@ -7,7 +7,6 @@ import sys
 import numpy as np
 import numpy.lib.recfunctions
 
-from glmnet.elastic_net import ElasticNet, elastic_net
 import scipy.linalg
 import scipy.stats
 from sklearn.linear_model import LassoLarsIC  # , Lasso, LassoCV, LassoLarsCV
@@ -20,52 +19,12 @@ except:
     from masking import multitemp_mask
 from errors import TSLengthException
 from masking import smooth_mask
+from regression.glmnet_fit import GLMLasso
+from regression import robust_fit as rlm
 from utils import date2index
 
 # Some constants
 ndays = 365.25
-
-
-class GLMLasso(ElasticNet):
-
-    def __init__(self, alpha=1.0):
-        super(GLMLasso, self).__init__(alpha)
-
-    def fit(self, X, y, lambdas=None):
-        if lambdas is None:
-            lambdas = [self.alpha]
-        elif not isinstance(lambdas, (np.ndarray, list)):
-            lambdas = [lambdas]
-
-        n_lambdas, intercept_, coef_, ia, nin, rsquared_, lambdas, _, jerr = \
-            elastic_net(X, y, 1, lambdas=lambdas)
-        # elastic_net will fire exception instead
-        # assert jerr == 0
-
-        # LASSO returns coefs out of order... reorder them with `ia`
-        self.coef_ = np.zeros(X.shape[1])
-        self.coef_[ia[:nin[0]] - 1] = coef_[:nin[0], 0]
-
-        self.intercept_ = intercept_
-        self.rsquared_ = rsquared_
-
-        # Create external friendly coefficients
-        self.coef = np.copy(self.coef_)
-        self.coef[0] += intercept_
-
-        # Store number of observations
-        self.nobs = y.size
-
-        # Store fitted values
-        self.fittedvalues = self.predict(X)
-
-        # Calculate the residual sum of squares
-        self.rss = np.sum((y - self.fittedvalues) ** 2)
-
-        # Calculate model RMSE
-        self.rmse = math.sqrt(self.rss / self.nobs)
-
-        return self
 
 
 class YATSM(object):
@@ -463,17 +422,17 @@ class YATSM(object):
                     continue
 
                 # Setup model
-                rirls_model = sm.RLM(_Y[b, :], _X[:, nonzero],
-                                     M=sm.robust.norms.TukeyBiweight())
+                rirls_model = rlm.RLM(_Y[b, :], _X[:, nonzero],
+                                      M=rlm.bisquare)
 
                 # Fit
                 fit = rirls_model.fit()
                 # Store updated coefficients
-                robust[i]['robust_coef'][nonzero, i_b] = fit.params
+                robust[i]['robust_coef'][nonzero, i_b] = fit.coefs
 
                 # Update RMSE
-                rss = np.sum((fit.resid) ** 2)
-                robust[i]['robust_rmse'][i_b] = math.sqrt(rss / index.size)
+                robust[i]['robust_rmse'][i_b] = \
+                    math.sqrt(rirls_model.rss / index.size)
 
             self.logger.debug('Updated record {i} to robust results'.
                               format(i=i))
