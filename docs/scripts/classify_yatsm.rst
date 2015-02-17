@@ -1,7 +1,8 @@
-classify_yatsm module
-=====================
+.. _classify_yatsm:
 
-.. automodule:: classify_yatsm
-    :members:
-    :undoc-members:
-    :show-inheritance:
+`classify_yatsm.py`
+--------------
+
+Classify all lines within an image using a trained classifier:
+
+.. command-output:: classify_yatsm.py -h

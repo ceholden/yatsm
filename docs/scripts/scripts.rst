@@ -12,4 +12,5 @@ Command Line Utilities
    yatsm_changemap
    yatsm_map
    train_yatsm
+   classify_yatsm
 
