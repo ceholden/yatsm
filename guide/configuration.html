@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Model Configuration &mdash; YATSM 0.1.0 documentation</title>
+  <title>Model Configuration &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/>
         <link rel="next" title="Batch Interface" href="batch_interface.html"/>
         <link rel="prev" title="Model Parameter Exploration" href="exploration.html"/> 
 
@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -259,6 +260,14 @@ file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.<
 <td><tt class="docutils literal"><span class="pre">float</span></tt></td>
 <td>Critical value for detecting noise in multitemporal cloud/shadow screening</td>
 </tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">remove_noise</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
+<td>Delete observations during monitoring period if observation looks like noise</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dynamic_rmse</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
+<td>Vary RMSE as a function of day of year during monitoring phase</td>
+</tr>
 <tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lassocv</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Use <tt class="docutils literal"><span class="pre">sklearn.linear_model.LassoLarsCV</span></tt> instead of <tt class="docutils literal"><span class="pre">glmnet</span></tt></td>
@@ -333,7 +342,7 @@ options include:</p>
 
 # Version of config
 [metadata]
-version = 0.1
+version = 0.2
 
 # Section for Dataset
 [dataset]
@@ -370,9 +379,15 @@ retrain_time = 365.25
 # Multitemporal cloud/shadow screening algorithm and threshold
 screening = LOWESS
 screening_crit = 400.0
+# Remove observation if no change has been detected, but first observation is
+# above threshold
+remove_noise = True
+dynamic_rmse = False
 lassocv = False
 reverse = False
 robust = False
+# Commission test alpha value for test; leave blank to ignore test
+commission_alpha =
 
 # Section for training and classification
 [classification]
@@ -385,7 +400,7 @@ training_start = 1999-01-01
 training_end = 2001-01-01
 training_date_format = %Y-%m-%d
 # Cache X feature input and y labels for training data image into file?
-cache_xy =
+cache_training =
 </pre></div>
 </div>
 </div>
@@ -409,7 +424,8 @@ cache_xy =
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -429,7 +445,7 @@ cache_xy =
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

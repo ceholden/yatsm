@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; YATSM 0.1.0 documentation</title>
+  <title>Overview: module code &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -129,18 +130,20 @@
           <div role="main">
             
   <h1>All modules for which code is available</h1>
-<ul><li><a href="yatsm.html">yatsm</a></li>
 <ul><li><a href="yatsm/classifiers.html">yatsm.classifiers</a></li>
 <ul><li><a href="yatsm/classifiers/diagnostics.html">yatsm.classifiers.diagnostics</a></li>
 <li><a href="yatsm/classifiers/sklearn_helper.html">yatsm.classifiers.sklearn_helper</a></li>
 </ul><li><a href="yatsm/config_parser.html">yatsm.config_parser</a></li>
 <li><a href="yatsm/cymasking.html">yatsm.cymasking</a></li>
+<li><a href="yatsm/errors.html">yatsm.errors</a></li>
 <li><a href="yatsm/masking.html">yatsm.masking</a></li>
 <li><a href="yatsm/plots.html">yatsm.plots</a></li>
 <li><a href="yatsm/reader.html">yatsm.reader</a></li>
+<li><a href="yatsm/regression/glmnet_fit.html">yatsm.regression.glmnet_fit</a></li>
+<li><a href="yatsm/regression/robust_fit.html">yatsm.regression.robust_fit</a></li>
 <li><a href="yatsm/utils.html">yatsm.utils</a></li>
 <li><a href="yatsm/yatsm.html">yatsm.yatsm</a></li>
-</ul></ul>
+</ul>
 
           </div>
           <footer>
@@ -150,7 +153,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -170,7 +174,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

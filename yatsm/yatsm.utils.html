@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.utils module &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm.utils module &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -164,6 +165,30 @@ np.array of rows to be processed</td>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(ndarray, ndarray): paired dates and filenames of stacked images</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.utils.date2index">
+<tt class="descclassname">yatsm.utils.</tt><tt class="descname">date2index</tt><big>(</big><em>dates</em>, <em>d</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#date2index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.date2index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns index of sorted array <cite>dates</cite> containing the date <cite>d</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dates</strong> (<em>np.ndarray</em>) &#8211; array of dates (or numbers really) in sorted order</li>
+<li><strong>d</strong> (<em>int, float</em>) &#8211; number to search for</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">index of <cite>dates</cite> containing value <cite>d</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
 </td>
 </tr>
 </tbody>
@@ -274,6 +299,31 @@ result records (default: False)</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="yatsm.utils.make_X">
+<tt class="descclassname">yatsm.utils.</tt><tt class="descname">make_X</tt><big>(</big><em>x</em>, <em>freq</em>, <em>intercept=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#make_X"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.make_X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create X matrix of Fourier series style independent variables</p>
+<dl class="docutils">
+<dt>Output:</dt>
+<dd>X               matrix X of independent variables</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl class="docutils">
+<dt>call:</dt>
+<dd>make_X(np.array([1, 2, 3]), [1, 2])</dd>
+<dt>returns:</dt>
+<dd><dl class="first last docutils">
+<dt>array([[ 1.        ,  1.        ,  1.        ],</dt>
+<dd>[ 1.        ,  2.        ,  3.        ],
+[ 0.99985204,  0.99940821,  0.99866864],
+[ 0.01720158,  0.03439806,  0.05158437],
+[ 0.99940821,  0.99763355,  0.99467811],
+[ 0.03439806,  0.06875541,  0.10303138]])</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -285,7 +335,8 @@ result records (default: False)</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -305,7 +356,7 @@ result records (default: False)</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

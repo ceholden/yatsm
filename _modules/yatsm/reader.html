@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.reader &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm.reader &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="yatsm" href="../yatsm.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -93,6 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -119,8 +120,6 @@
     <li><a href="../../index.html">Docs</a> &raquo;</li>
       
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-          <li><a href="../yatsm.html">yatsm</a> &raquo;</li>
       
     <li>yatsm.reader</li>
       <li class="wy-breadcrumbs-aside">
@@ -191,6 +190,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nband</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">get_image_attribute</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">px</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">px</span> <span class="o">&gt;=</span> <span class="n">ncol</span> <span class="ow">or</span> <span class="n">py</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">py</span> <span class="o">&gt;=</span> <span class="n">nrow</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&#39;Row/column {r}/{c} is outside of image &#39;</span>
+                         <span class="s">&#39;(nrow/ncol: {nrow}/{ncol})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">r</span><span class="o">=</span><span class="n">py</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">px</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">))</span>
 
     <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nband</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
@@ -277,7 +281,115 @@
         <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">image_filenames</span><span class="p">)))</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">image_filenames</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">image_filenames</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="read_row_BIP"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_row_BIP">[docs]</a><span class="k">def</span> <span class="nf">read_row_BIP</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reads in an entire row of data from a BIP image</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      filename (str): filename to read from</span>
+<span class="sd">      row (int): row to read</span>
+<span class="sd">      size (tuple): tuple of (int, int) containing the number of columns and</span>
+<span class="sd">        bands in the image</span>
+<span class="sd">      dtype (np.dtype): NumPy datatype of the image</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      data (np.ndarray): 2D array (nband x ncol) containing the row of data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">*</span> <span class="p">(</span><span class="n">row</span> <span class="o">*</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+</div>
+<div class="viewcode-block" id="GDALStackReader"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader">[docs]</a><span class="k">class</span> <span class="nc">GDALStackReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Simple class to read stacks using GDAL, keeping file objects open</span>
+
+<span class="sd">    Some tests have shown that we can speed up total dataset read time by</span>
+<span class="sd">    storing the file object references to each image as we loop over many rows</span>
+<span class="sd">    instead of opening once per row read. This is a simple class designed to</span>
+<span class="sd">    store these references.</span>
+
+<span class="sd">    Note that this class assumes the images are &quot;stacked&quot; -- that is that all</span>
+<span class="sd">    images contain the same number of rows, columns, and bands, and the images</span>
+<span class="sd">    are of the same geographic extent.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      filenames (list): list of filenames to read from</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">      filenames (list): list of filenames to read from</span>
+<span class="sd">      n_image (int): number of images</span>
+<span class="sd">      n_band (int): number of bands in an image</span>
+<span class="sd">      n_col (int): number of columns per row</span>
+<span class="sd">      datatype (np.dtype): NumPy datatype of images</span>
+<span class="sd">      datasets (list): list of GDAL datasets for all filenames</span>
+<span class="sd">      dataset_bands (list): list of lists containing all GDAL raster band</span>
+<span class="sd">        datasets, for all image filenames</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span> <span class="o">=</span> <span class="n">filenames</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_ReadOnly</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_image</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">RasterCount</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">RasterXSize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datatype</span> <span class="o">=</span> <span class="n">gdal_array</span><span class="o">.</span><span class="n">GDALTypeCodeToNumericTypeCode</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_bands</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">:</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_band</span><span class="p">):</span>
+                <span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset_bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GDALStackReader.read_row"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.read_row">[docs]</a>    <span class="k">def</span> <span class="nf">read_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a 3D NumPy array (nband x nimage x ncol) of image data from</span>
+<span class="sd">        one row</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          row (int): row in image to return</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          data (np.ndarray): 3D NumPy array (nband x nimage x ncol) of image</span>
+<span class="sd">            data for desired row</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n_band</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_col</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ds_bands</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_bands</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">n_b</span><span class="p">,</span> <span class="n">band</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ds_bands</span><span class="p">):</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">n_b</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_col</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+</div></div>
+<span class="n">stack_reader</span> <span class="o">=</span> <span class="bp">None</span>
+<div class="viewcode-block" id="read_row_GDAL"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_row_GDAL">[docs]</a><span class="k">def</span> <span class="nf">read_row_GDAL</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reads in an entire row of data from an image using GDAL</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      filename (iterable): sequence of filenames to read from</span>
+<span class="sd">      row (int): row to read</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      data (np.ndarray): 3D array (nband x nimage x ncol) containing the row</span>
+<span class="sd">        of data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">stack_reader</span>
+    <span class="k">if</span> <span class="n">stack_reader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">stack_reader</span> <span class="o">=</span> <span class="n">GDALStackReader</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">stack_reader</span><span class="o">.</span><span class="n">read_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -288,7 +400,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -308,7 +421,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

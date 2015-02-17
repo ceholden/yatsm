@@ -8,7 +8,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; YATSM 0.1.0 documentation</title>
+  <title>Index &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="index.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -93,6 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -134,6 +135,7 @@
 
 <div class="genindex-jumpbox">
  <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
@@ -148,6 +150,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#X"><strong>X</strong></a>
  | <a href="#Y"><strong>Y</strong></a>
  
 </div>
@@ -161,6 +164,16 @@
   </dl></td>
 </tr></table>
 
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.bisquare">bisquare() (in module yatsm.regression.robust_fit)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
@@ -169,17 +182,19 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.can_monitor">can_monitor (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.can_monitor">can_monitor (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.can_monitor">(yatsm.yatsm.YATSM attribute)</a>
+      
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.coefs">coefs (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
-      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.commission_test">commission_test() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
       
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataset">csvfile_to_dataset() (in module yatsm.utils)</a>
   </dt>
@@ -191,6 +206,24 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.dataset_bands">dataset_bands (yatsm.reader.GDALStackReader attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.datasets">datasets (yatsm.reader.GDALStackReader attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.datatype">datatype (yatsm.reader.GDALStackReader attribute)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.date2index">date2index() (in module yatsm.utils)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.classifiers.sklearn_helper.html#yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults">defaults (yatsm.classifiers.sklearn_helper.RandomForestHelper attribute)</a>
   </dt>
 
@@ -201,6 +234,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.filenames">filenames (yatsm.reader.GDALStackReader attribute)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.find_results">find_results() (in module yatsm.utils)</a>
   </dt>
 
@@ -208,38 +245,40 @@
   <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.find_stack_images">find_stack_images() (in module yatsm.reader)</a>
   </dt>
 
-      
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.GLMLasso.fit">fit() (yatsm.yatsm.GLMLasso method)</a>
-  </dt>
-
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.fit_models_GLMnet">fit_models_GLMnet() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.regression.glmnet_fit.html#yatsm.regression.glmnet_fit.GLMLasso.fit">fit() (yatsm.regression.glmnet_fit.GLMLasso method)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.fit_models_GLMnet">(yatsm.yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.fit">(yatsm.regression.robust_fit.RLM method)</a>
   </dt>
 
       </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.fit_models_LassoCV">fit_models_LassoCV() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.fit_models_GLMnet">fit_models_GLMnet() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.fit_models_LassoCV">(yatsm.yatsm.YATSM method)</a>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.fit_models_LassoCV">fit_models_LassoCV() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      </dl></dd>
   </dl></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader">GDALStackReader (class in yatsm.reader)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.get_dynamic_rmse">get_dynamic_rmse() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
       
   <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.get_image_attribute">get_image_attribute() (in module yatsm.reader)</a>
   </dt>
@@ -248,26 +287,24 @@
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.get_line_cache_name">get_line_cache_name() (in module yatsm.utils)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.get_model_rmse">get_model_rmse() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
       
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.get_output_name">get_output_name() (in module yatsm.utils)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.GLMLasso">GLMLasso (class in yatsm.yatsm)</a>
+  <dt><a href="yatsm/yatsm.regression.glmnet_fit.html#yatsm.regression.glmnet_fit.GLMLasso">GLMLasso (class in yatsm.regression.glmnet_fit)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.green_band">green_band (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.green_band">green_band (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.green_band">(yatsm.yatsm.YATSM attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -305,47 +342,27 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.make_X">make_X() (in module yatsm)</a>
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.M">M (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.make_X">(in module yatsm.yatsm)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.merge_record">merge_record() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.mad">mad() (in module yatsm.regression.robust_fit)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.merge_record">(yatsm.yatsm.YATSM method)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.monitor">monitor() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.make_X">make_X() (in module yatsm.utils)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.monitor">(yatsm.yatsm.YATSM method)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.monitor_plot_debug">monitor_plot_debug() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.monitor">monitor() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.monitor_plot_debug">(yatsm.yatsm.YATSM method)</a>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.monitor_plot_debug">monitor_plot_debug() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.cymasking.html#yatsm.cymasking.multitemp_mask">multitemp_mask() (in module yatsm.cymasking)</a>
   </dt>
@@ -363,15 +380,23 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.ndays">ndays (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.n_band">n_band (yatsm.reader.GDALStackReader attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.ndays">(yatsm.yatsm.YATSM attribute)</a>
+      
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.n_col">n_col (yatsm.reader.GDALStackReader attribute)</a>
   </dt>
 
-      </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.n_image">n_image (yatsm.reader.GDALStackReader attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.ndays">ndays (yatsm.yatsm.YATSM attribute)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -379,15 +404,9 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.omission_test">omission_test() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.omission_test">omission_test() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.omission_test">(yatsm.yatsm.YATSM method)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -399,15 +418,17 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.plot">plot() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_v0_1_x">parse_config_v0_1_x() (in module yatsm.config_parser)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.plot">(yatsm.yatsm.YATSM method)</a>
+      
+  <dt><a href="yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_v0_2_x">parse_config_v0_2_x() (in module yatsm.config_parser)</a>
   </dt>
 
-      </dl></dd>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.plot">plot() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -416,6 +437,10 @@
 
       
   <dt><a href="yatsm/yatsm.plots.html#yatsm.plots.plot_feature_importance">plot_feature_importance() (in module yatsm.plots)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.predict">predict() (yatsm.regression.robust_fit.RLM method)</a>
   </dt>
 
   </dl></td>
@@ -433,47 +458,47 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.reset">reset() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.read_row">read_row() (yatsm.reader.GDALStackReader method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.reset">(yatsm.yatsm.YATSM method)</a>
+      
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_row_BIP">read_row_BIP() (in module yatsm.reader)</a>
   </dt>
 
-      </dl></dd>
+      
+  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_row_GDAL">read_row_GDAL() (in module yatsm.reader)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.reset">reset() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.robust_record">robust_record (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.resid">resid (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.robust_record">(yatsm.yatsm.YATSM attribute)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.run">run() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM">RLM (class in yatsm.regression.robust_fit)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.run">(yatsm.yatsm.YATSM method)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.running">running (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.robust_record">robust_record (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.running">(yatsm.yatsm.YATSM attribute)</a>
+      
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.rss">rss (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
-      </dl></dd>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.run">run() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.running">running (yatsm.yatsm.YATSM attribute)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -481,35 +506,17 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.screen_timeseries_LOWESS">screen_timeseries_LOWESS() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.screen_timeseries_LOWESS">screen_timeseries_LOWESS() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.screen_timeseries_LOWESS">(yatsm.yatsm.YATSM method)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.screen_timeseries_RLM">screen_timeseries_RLM() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.screen_timeseries_RLM">screen_timeseries_RLM() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.screen_timeseries_RLM">(yatsm.yatsm.YATSM method)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.screening_types">screening_types (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.screening_types">screening_types (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.screening_types">(yatsm.yatsm.YATSM attribute)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold.shuffle">shuffle (yatsm.classifiers.diagnostics.SpatialKFold attribute)</a>
   </dt>
@@ -527,25 +534,13 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.span_index">span_index (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.span_index">span_index (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.span_index">(yatsm.yatsm.YATSM attribute)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.span_time">span_time (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.span_time">span_time (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.span_time">(yatsm.yatsm.YATSM attribute)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold">SpatialKFold (class in yatsm.classifiers.diagnostics)</a>
   </dt>
@@ -555,15 +550,9 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.swir1_band">swir1_band (yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.swir1_band">swir1_band (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.swir1_band">(yatsm.yatsm.YATSM attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -571,15 +560,9 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.train">train() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.train">train() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.train">(yatsm.yatsm.YATSM method)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.masking.html#yatsm.masking.train_plot_debug">train_plot_debug() (in module yatsm.masking)</a>
   </dt>
@@ -587,7 +570,11 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.TSLengthException">TSLengthException</a>
+  <dt><a href="yatsm/yatsm.errors.html#yatsm.errors.TSLengthException">TSLengthException</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.tune">tune (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
   </dl></td>
@@ -597,15 +584,19 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM.update_model">update_model() (yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.update_model">update_model() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.update_model">(yatsm.yatsm.YATSM method)</a>
+  </dl></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.X">X (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -613,15 +604,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.html#yatsm.YATSM">YATSM (class in yatsm)</a>
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.y">y (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM">(class in yatsm.yatsm)</a>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM">YATSM (class in yatsm.yatsm)</a>
   </dt>
 
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.html#module-yatsm">yatsm (module)</a>
   </dt>
@@ -646,6 +635,10 @@
   <dt><a href="yatsm/yatsm.cymasking.html#module-yatsm.cymasking">yatsm.cymasking (module)</a>
   </dt>
 
+      
+  <dt><a href="yatsm/yatsm.errors.html#module-yatsm.errors">yatsm.errors (module)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -658,6 +651,18 @@
 
       
   <dt><a href="yatsm/yatsm.reader.html#module-yatsm.reader">yatsm.reader (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.html#module-yatsm.regression">yatsm.regression (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.glmnet_fit.html#module-yatsm.regression.glmnet_fit">yatsm.regression.glmnet_fit (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.robust_fit.html#module-yatsm.regression.robust_fit">yatsm.regression.robust_fit (module)</a>
   </dt>
 
       
@@ -685,7 +690,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -705,7 +711,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

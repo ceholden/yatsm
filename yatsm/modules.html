@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -139,11 +140,18 @@
 <li class="toctree-l4"><a class="reference internal" href="yatsm.classifiers.html#module-yatsm.classifiers">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.html">yatsm.regression package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yatsm.regression.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="yatsm.regression.html#module-yatsm.regression">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.html#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.config_parser.html">yatsm.config_parser module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cyatsm.html">yatsm.cyatsm module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.cymasking.html">yatsm.cymasking module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.errors.html">yatsm.errors module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.masking.html">yatsm.masking module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.plots.html">yatsm.plots module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.reader.html">yatsm.reader module</a></li>
@@ -168,7 +176,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -188,7 +197,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

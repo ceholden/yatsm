@@ -39,6 +39,12 @@ On Ubuntu 14.04, it may be installed via the package manager:
 
     $ sudo apt-get install python-pip
 
+You will also need two font packages for `matplotlib` that are not installed
+with Ubuntu by default:
+
+.. code-block:: bash
+
+    $ sudo apt-get install libfreetype6-dev libxft-dev
 
 
 virtualenv

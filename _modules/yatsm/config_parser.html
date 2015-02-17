@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.config_parser &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm.config_parser &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="yatsm" href="../yatsm.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -93,6 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -120,8 +121,6 @@
       
           <li><a href="../index.html">Module code</a> &raquo;</li>
       
-          <li><a href="../yatsm.html">yatsm</a> &raquo;</li>
-      
     <li>yatsm.config_parser</li>
       <li class="wy-breadcrumbs-aside">
         
@@ -144,7 +143,7 @@
 
 
 <span class="c"># CONFIG FILE PARSING</span>
-<span class="k">def</span> <span class="nf">_parse_config_v_zero_pt_one</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_config_v0_1_x"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_v0_1_x">[docs]</a><span class="k">def</span> <span class="nf">parse_config_v0_1_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parses config file for version 0.1.x &quot;&quot;&quot;</span>
     <span class="c"># Defaults</span>
     <span class="n">defaults</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
@@ -160,7 +159,7 @@
 <span class="s">[classification]</span>
 <span class="s">training_image = None</span>
 <span class="s">mask_values = 0, 255</span>
-<span class="s">cache_xy =</span>
+<span class="s">cache_training =</span>
 <span class="s">    &quot;&quot;&quot;</span>
 
     <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">allow_no_value</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -193,9 +192,10 @@
                 <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span>
                 <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="s">&#39;,&#39;</span><span class="p">])</span>
-        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_Xy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span> <span class="s">&#39;cache_Xy&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_Xy&#39;</span><span class="p">]:</span>
-            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_Xy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s">&#39;classification&#39;</span><span class="p">,</span> <span class="s">&#39;cache_training&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]:</span>
+            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
                                                       <span class="s">&#39;training_start&#39;</span><span class="p">)</span>
         <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
@@ -227,9 +227,33 @@
     <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;reverse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;reverse&#39;</span><span class="p">)</span>
     <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;robust&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;robust&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span>
 
+</div>
+<div class="viewcode-block" id="parse_config_v0_2_x"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_v0_2_x">[docs]</a><span class="k">def</span> <span class="nf">parse_config_v0_2_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parses config file for version 0.2.x &quot;&quot;&quot;</span>
+    <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">parse_config_v0_1_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
 
+    <span class="n">defaults</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">[YATSM]</span>
+<span class="s">remove_noise = True</span>
+<span class="s">dynamic_rmse = False</span>
+<span class="s">commission_alpha =</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">allow_no_value</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">readfp</span><span class="p">(</span><span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">defaults</span><span class="p">))</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;remove_noise&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;remove_noise&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;dynamic_rmse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;dynamic_rmse&#39;</span><span class="p">)</span>
+    <span class="n">commission_alpha</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;YATSM&#39;</span><span class="p">,</span> <span class="s">&#39;commission_alpha&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;commission_alpha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">commission_alpha</span><span class="p">)</span> <span class="k">if</span>
+                                        <span class="n">commission_alpha</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span>
+
+</div>
 <div class="viewcode-block" id="parse_config_file"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_file">[docs]</a><span class="k">def</span> <span class="nf">parse_config_file</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parses config file into dictionary of attributes &quot;&quot;&quot;</span>
 
@@ -244,7 +268,9 @@
 
     <span class="c"># 0.1.x</span>
     <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">version</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;1&#39;</span><span class="p">:</span>
-        <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">_parse_config_v_zero_pt_one</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+        <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">parse_config_v0_1_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;0&#39;</span> <span class="ow">and</span> <span class="n">version</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;2&#39;</span><span class="p">:</span>
+        <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">parse_config_v0_2_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">)</span></div>
 </pre></div>
@@ -257,7 +283,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -277,7 +304,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

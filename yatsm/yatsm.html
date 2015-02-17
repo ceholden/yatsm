@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm package &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm package &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -92,6 +92,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -143,6 +144,15 @@
 <li class="toctree-l2"><a class="reference internal" href="yatsm.classifiers.html#module-yatsm.classifiers">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.regression.html">yatsm.regression package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.regression.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.glmnet_fit.html">yatsm.regression.glmnet_fit module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.robust_fit.html">yatsm.regression.robust_fit module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.regression.html#module-yatsm.regression">Module contents</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -151,7 +161,9 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.config_parser.html">yatsm.config_parser module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.cyatsm.html">yatsm.cyatsm module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.cymasking.html">yatsm.cymasking module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.errors.html">yatsm.errors module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.masking.html">yatsm.masking module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.plots.html">yatsm.plots module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.reader.html">yatsm.reader module</a></li>
@@ -163,272 +175,6 @@
 </div>
 <div class="section" id="module-yatsm">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="yatsm.YATSM">
-<em class="property">class </em><tt class="descclassname">yatsm.</tt><tt class="descname">YATSM</tt><big>(</big><em>X</em>, <em>Y</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>fit_indices=None</em>, <em>test_indices=None</em>, <em>retrain_time=365.25</em>, <em>screening='RLM'</em>, <em>screening_crit=400.0</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>lassocv=False</em>, <em>px=0</em>, <em>py=0</em>, <em>logger=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>Initialize a YATSM model for data X (spectra) and Y (dates)</p>
-<p>YATSM model based off of tests for structural changes from the
-econometrics literature including the MOSUM or CUMSUM (Chu et al,
-Zeileis, and others) as implemented in a remote sensing context by
-BFAST (Verbesselt, et al. 2012) and CCDC (Zhu and Woodcock, 2014). This
-effort is not intended as a direct port of either algorithms.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>X</strong> (<em>ndarray</em>) &#8211; Independent variable matrix</li>
-<li><strong>Y</strong> (<em>ndarray</em>) &#8211; Dependent variable matrix</li>
-<li><strong>consecutive</strong> (<em>int</em>) &#8211; Consecutive observations to trigger change</li>
-<li><strong>threshold</strong> (<em>float</em>) &#8211; Test statistic threshold for change</li>
-<li><strong>min_obs</strong> (<em>int</em>) &#8211; Minimum observations in model</li>
-<li><strong>min_rmse</strong> (<em>float</em>) &#8211; Minimum RMSE for models during testing</li>
-<li><strong>fit_indices</strong> (<em>ndarray</em>) &#8211; Indices of Y to fit models for</li>
-<li><strong>test_indices</strong> (<em>ndarray</em>) &#8211; Indices of Y to test for change with</li>
-<li><strong>retrain_time</strong> (<em>float</em>) &#8211; Number of days between model fit updates during
-monitoring period</li>
-<li><strong>screening</strong> (<em>str</em>) &#8211; Style of prescreening of the timeseries
-for noise. Options are &#8216;RLM&#8217; or &#8216;LOWESS&#8217;</li>
-<li><strong>screening_crit</strong> (<em>float, optional</em>) &#8211; critical value for multitemporal
-noise screening</li>
-<li><strong>green_band</strong> (<em>int, optional</em>) &#8211; Index of green band in Y for
-multitemporal masking (default: 1)</li>
-<li><strong>swir1_band</strong> (<em>int, optional</em>) &#8211; Index of first SWIR band in Y for
-multitemporal masking (default: 4)</li>
-<li><strong>lassocv</strong> (<em>bool, optional</em>) &#8211; Use scikit-learn LarsLassoCV over glmnet</li>
-<li><strong>px</strong> (<em>int, optional</em>) &#8211; X (column) pixel reference</li>
-<li><strong>py</strong> (<em>int, optional</em>) &#8211; Y (row) pixel reference</li>
-<li><strong>logger</strong> (<em>logging.Logger, optional</em>) &#8211; Specific logger to use, else get one</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="yatsm.YATSM.can_monitor">
-<tt class="descname">can_monitor</tt><a class="headerlink" href="#yatsm.YATSM.can_monitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine if timeseries can monitor the future consecutive obs</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.fit_models_GLMnet">
-<tt class="descname">fit_models_GLMnet</tt><big>(</big><em>X</em>, <em>Y</em>, <em>index=None</em>, <em>bands=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM.fit_models_GLMnet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Try to fit models to training period time series</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.fit_models_LassoCV">
-<tt class="descname">fit_models_LassoCV</tt><big>(</big><em>X</em>, <em>Y</em>, <em>index=None</em>, <em>bands=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM.fit_models_LassoCV" title="Permalink to this definition">¶</a></dt>
-<dd><p>Try to fit models to training period time series</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.green_band">
-<tt class="descname">green_band</tt><em class="property"> = 1</em><a class="headerlink" href="#yatsm.YATSM.green_band" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.merge_record">
-<tt class="descname">merge_record</tt><big>(</big><em>critF</em><big>)</big><a class="headerlink" href="#yatsm.YATSM.merge_record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge adjacent records based on nested F test</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.monitor">
-<tt class="descname">monitor</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.YATSM.monitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Monitor for changes in time series</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.monitor_plot_debug">
-<tt class="descname">monitor_plot_debug</tt><big>(</big><em>index</em>, <em>model</em>, <em>i_buffer=10</em><big>)</big><a class="headerlink" href="#yatsm.YATSM.monitor_plot_debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Monitoring debug plot</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.ndays">
-<tt class="descname">ndays</tt><em class="property"> = 365.25</em><a class="headerlink" href="#yatsm.YATSM.ndays" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.omission_test">
-<tt class="descname">omission_test</tt><big>(</big><em>crit=0.05</em>, <em>behavior='ANY'</em>, <em>indices=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM.omission_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add omitted breakpoint into records based on residual stationarity</p>
-<p>Uses recursive residuals within a CUMSUM test to check if each model
-has omitted a &#8220;structural change&#8221; (e.g., land cover change). Returns
-an array of True or False for each timeseries segment record depending
-on result from <cite>statsmodels.stats.diagnostic.breaks_cusumolsresid</cite>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>crit</strong> (<em>float, optional</em>) &#8211; Critical p-value for rejection of null
-hypothesis that data contain no structural change</li>
-<li><strong>behavior</strong> (<em>str, optional</em>) &#8211; Method for dealing with multiple
-<cite>test_indices</cite>. <cite>ANY</cite> will return True if any one test index
-rejects the null hypothesis. <cite>ALL</cite> will only return True if ALL
-test indices reject the null hypothesis.</li>
-<li><strong>indices</strong> (<em>np.ndarray, optional</em>) &#8211; Array indices to test. User provided
-indices must be a subset of <cite>self.test_indices</cite>.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray: Array of True or False for each record where
-True indicates omitted break point</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.plot">
-<tt class="descname">plot</tt><big>(</big><em>band</em>, <em>freq</em>, <em>ylim=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot YATSM results for a specified band</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.reset">
-<tt class="descname">reset</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.YATSM.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets &#8216;start&#8217; and &#8216;here&#8217; indices</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.robust_record">
-<tt class="descname">robust_record</tt><a class="headerlink" href="#yatsm.YATSM.robust_record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a copy of YATSM record output with robustly fitted models</p>
-<p>After YATSM has been run, take each time segment and re-fit the model
-using robust iteratively reweighted least squares (RIRLS) regression.
-RIRLS will only be performed using non-zero coefficients from original
-regression.</p>
-<p>The returned model results should be more representative of the
-signal found because it will remove influence of outlying observations,
-such as clouds or shadows.</p>
-<p>If YATSM has not yet been run, returns None</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.run">
-<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.YATSM.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run timeseries model</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.running">
-<tt class="descname">running</tt><a class="headerlink" href="#yatsm.YATSM.running" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine if timeseries can run</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.screen_timeseries_LOWESS">
-<tt class="descname">screen_timeseries_LOWESS</tt><big>(</big><em>span=None</em><big>)</big><a class="headerlink" href="#yatsm.YATSM.screen_timeseries_LOWESS" title="Permalink to this definition">¶</a></dt>
-<dd><p>Screen entire dataset for noise before training using LOWESS</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>span</strong> (<em>int, optional</em>) &#8211; span for LOWESS</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if timeseries is screened and we can train, else False</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.screen_timeseries_RLM">
-<tt class="descname">screen_timeseries_RLM</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.YATSM.screen_timeseries_RLM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Screen training period for noise with IRWLS RLM</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if timeseries is screened and we can train, else False</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.screening_types">
-<tt class="descname">screening_types</tt><em class="property"> = ['RLM', 'LOWESS']</em><a class="headerlink" href="#yatsm.YATSM.screening_types" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.span_index">
-<tt class="descname">span_index</tt><a class="headerlink" href="#yatsm.YATSM.span_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return time span (in index) between start and end of model</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.span_time">
-<tt class="descname">span_time</tt><a class="headerlink" href="#yatsm.YATSM.span_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return time span (in days) between start and end of model</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.YATSM.swir1_band">
-<tt class="descname">swir1_band</tt><em class="property"> = 4</em><a class="headerlink" href="#yatsm.YATSM.swir1_band" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.train">
-<tt class="descname">train</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.YATSM.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Train time series model</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.YATSM.update_model">
-<tt class="descname">update_model</tt><big>(</big><big>)</big><a class="headerlink" href="#yatsm.YATSM.update_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.make_X">
-<tt class="descclassname">yatsm.</tt><tt class="descname">make_X</tt><big>(</big><em>x</em>, <em>freq</em>, <em>intercept=True</em><big>)</big><a class="headerlink" href="#yatsm.make_X" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create X matrix of Fourier series style independent variables</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>np.ndarray</em>) &#8211; Base of independent variables - dates</li>
-<li><strong>freq</strong> (<em>list, np.ndarray</em>) &#8211; Sequence of periods in a year for cosine/sin
-waves</li>
-<li><strong>intercept</strong> (<em>bool, optional</em>) &#8211; Include intercept in X matrix</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X</strong> &#8211;
-Matrix X of independent variables</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Examples</p>
-<p>Return X matrix for ordinal dates 1, 2, and 3 using two sine/cosine
-pairs oscillating once and twice a year:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">make_X</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="go">array([[ 1.        ,  1.        ,  1.        ],</span>
-<span class="go">       [ 1.        ,  2.        ,  3.        ],</span>
-<span class="go">       [ 0.99985204,  0.99940821,  0.99866864],</span>
-<span class="go">       [ 0.01720158,  0.03439806,  0.05158437],</span>
-<span class="go">       [ 0.99940821,  0.99763355,  0.99467811],</span>
-<span class="go">       [ 0.03439806,  0.06875541,  0.10303138]])</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </div>
 </div>
 
@@ -441,7 +187,8 @@ pairs oscillating once and twice a year:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -461,7 +208,7 @@ pairs oscillating once and twice a year:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

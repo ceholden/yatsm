@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Interface &mdash; YATSM 0.1.0 documentation</title>
+  <title>Batch Interface &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/>
         <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
         <link rel="prev" title="Model Configuration" href="configuration.html"/> 
 
@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -147,9 +148,11 @@ Usage: line_yatsm.py [options] &lt;config_file&gt; &lt;job_number&gt; &lt;total_
 Options:
     --check                     Check that images exist
     --resume                    Do not overwrite pre-existing results
+    --do-not-run                Don&#39;t run YATSM (useful for just caching data)
     -v --verbose                Show verbose debugging messages
     --verbose-yatsm             Show verbose debugging messages in YATSM
     -q --quiet                  Show only error messages
+    --version                   Print program version and exit
     -h --help                   Show help
 </pre></div>
 </div>
@@ -198,7 +201,8 @@ $ for job in $(seq 1 $njob); do
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -218,7 +222,7 @@ $ for job in $(seq 1 $njob); do
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

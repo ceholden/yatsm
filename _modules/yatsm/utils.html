@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.utils &mdash; YATSM 0.1.0 documentation</title>
+  <title>yatsm.utils &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../../index.html"/>
-        <link rel="up" title="yatsm" href="../yatsm.html"/> 
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -93,6 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -119,8 +120,6 @@
     <li><a href="../../index.html">Docs</a> &raquo;</li>
       
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
-          <li><a href="../yatsm.html">yatsm</a> &raquo;</li>
       
     <li>yatsm.utils</li>
       <li class="wy-breadcrumbs-aside">
@@ -320,7 +319,72 @@
         <span class="k">yield</span> <span class="n">rec</span>
 
 
+<span class="c"># CALCULATION UTILITIES</span></div>
+<span class="n">w</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">365.25</span>
+
+
+<div class="viewcode-block" id="make_X"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.make_X">[docs]</a><span class="k">def</span> <span class="nf">make_X</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create X matrix of Fourier series style independent variables</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x               base of independent variables - dates</span>
+<span class="sd">        freq            frequency of cosine/sin waves</span>
+<span class="sd">        intercept       include intercept in X matrix</span>
+
+<span class="sd">    Output:</span>
+<span class="sd">        X               matrix X of independent variables</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        call:</span>
+<span class="sd">            make_X(np.array([1, 2, 3]), [1, 2])</span>
+<span class="sd">        returns:</span>
+<span class="sd">            array([[ 1.        ,  1.        ,  1.        ],</span>
+<span class="sd">                   [ 1.        ,  2.        ,  3.        ],</span>
+<span class="sd">                   [ 0.99985204,  0.99940821,  0.99866864],</span>
+<span class="sd">                   [ 0.01720158,  0.03439806,  0.05158437],</span>
+<span class="sd">                   [ 0.99940821,  0.99763355,  0.99467811],</span>
+<span class="sd">                   [ 0.03439806,  0.06875541,  0.10303138]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">intercept</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">x</span>
+
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">freq</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">)])</span>
+            <span class="p">])</span>
+        <span class="k">elif</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">X</span><span class="p">,</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                                         <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                                         <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">)])</span>
+                                <span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">X</span>
+
+
 <span class="c"># MISC UTILITIES</span></div>
+<div class="viewcode-block" id="date2index"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.date2index">[docs]</a><span class="k">def</span> <span class="nf">date2index</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns index of sorted array `dates` containing the date `d`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      dates (np.ndarray): array of dates (or numbers really) in sorted order</span>
+<span class="sd">      d (int, float): number to search for</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      int: index of `dates` containing value `d`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s">&#39;right&#39;</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="is_integer"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.is_integer">[docs]</a><span class="k">def</span> <span class="nf">is_integer</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Returns True if `s` is an integer &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -338,7 +402,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -358,7 +423,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

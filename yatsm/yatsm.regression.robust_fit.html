@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.regression.robust_fit module &mdash; YATSM 0.2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> YATSM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtualenv">virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#python-dependencies">Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#classification">Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>yatsm.regression.robust_fit module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.regression.robust_fit.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="module-yatsm.regression.robust_fit">
+<span id="yatsm-regression-robust-fit-module"></span><h1>yatsm.regression.robust_fit module<a class="headerlink" href="#module-yatsm.regression.robust_fit" title="Permalink to this headline">¶</a></h1>
+<p>Perform an iteratively re-weighted least squares &#8216;robust regression&#8217;. Basically
+a clone of <cite>statsmodels.robust.robust_linear_model.RLM</cite> without all the lovely,
+but costly, creature comforts.</p>
+<dl class="docutils">
+<dt>Reference:</dt>
+<dd><a class="reference external" href="http://statsmodels.sourceforge.net/stable/rlm.html">http://statsmodels.sourceforge.net/stable/rlm.html</a>
+<a class="reference external" href="http://cran.r-project.org/web/packages/robustreg/index.html">http://cran.r-project.org/web/packages/robustreg/index.html</a>
+<a class="reference external" href="http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf">http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf</a></dd>
+</dl>
+<dl class="class">
+<dt id="yatsm.regression.robust_fit.RLM">
+<em class="property">class </em><tt class="descclassname">yatsm.regression.robust_fit.</tt><tt class="descname">RLM</tt><big>(</big><em>y</em>, <em>X</em>, <em>M=&lt;function bisquare at 0x2ab016ef9758&gt;</em>, <em>tune=4.685</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Perform robust fitting regression via iteratively reweighted least squares
+according to weight function and tuning parameter.</p>
+<p>Basically a clone from <cite>statsmodels</cite> that should be much faster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; dependent variable vector</li>
+<li><strong>X</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix</li>
+<li><strong>scale_est</strong> (<em>callable</em>) &#8211; function for scaling residuals</li>
+<li><strong>tune</strong> (<em>float</em>) &#8211; tuning constant for scale estimate</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="yatsm.regression.robust_fit.RLM.y">
+<tt class="descname">y</tt><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.y" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em></p>
+<p>dependent variable</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.robust_fit.RLM.X">
+<tt class="descname">X</tt><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.X" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em></p>
+<p>independent variable design matrix</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.robust_fit.RLM.M">
+<tt class="descname">M</tt><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.M" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>callable</em></p>
+<p>function for scaling residuals</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.robust_fit.RLM.tune">
+<tt class="descname">tune</tt><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.tune" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>tuning constant for scale estimate</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.robust_fit.RLM.coefs">
+<tt class="descname">coefs</tt><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.coefs" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em></p>
+<p>coefficients of fitted model</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.robust_fit.RLM.resid">
+<tt class="descname">resid</tt><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.resid" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em></p>
+<p>residuals of the fitted models (y - fitted values)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.robust_fit.RLM.rss">
+<tt class="descname">rss</tt><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.rss" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Residual Sum of Squares (RSS) of model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.regression.robust_fit.RLM.fit">
+<tt class="descname">fit</tt><big>(</big><em>maxiter=50</em>, <em>tol=1e-08</em>, <em>scale_est=&lt;function mad at 0x2ab0171dc050&gt;</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit model using iteratively reweighted least squares</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>maxiter</strong> (<em>int, optional</em>) &#8211; maximum number of iterations (default: 50)</li>
+<li><strong>tol</strong> (<em>float, optional</em>) &#8211; convergence tolerance of estimate (default:
+1e-8)</li>
+<li><strong>scale_est</strong> (<em>callable</em>) &#8211; estimate used to scale the weights (default:
+<cite>mad</cite> for median absolute deviation)</li>
+<li><strong>scale_constant</strong> (<em>float</em>) &#8211; normalization constant (default: 0.6745)</li>
+<li><strong>update_scale</strong> (<em>bool, optional</em>) &#8211; update scale estimate for weights
+across iterations (default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">self</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.regression.robust_fit.RLM.predict">
+<tt class="descname">predict</tt><big>(</big><em>X=None</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return linear model prediction after it has been fitted</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>np.ndarray, optional</em>) &#8211; user provided design matrix</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">np.ndarray: yhat model predictions</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.regression.robust_fit.bisquare">
+<tt class="descclassname">yatsm.regression.robust_fit.</tt><tt class="descname">bisquare</tt><big>(</big><em>resid</em>, <em>c=4.685</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#bisquare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.bisquare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns weighting for each residual using bisquare weight function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resid</strong> (<em>np.ndarray</em>) &#8211; residuals to be weighted</li>
+<li><strong>c</strong> (<em>float</em>) &#8211; tuning constant for Tukey&#8217;s Biweight (default: 4.685)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>weight</strong> &#8211;
+weights for residuals</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Reference:</dt>
+<dd><a class="reference external" href="http://statsmodels.sourceforge.net/stable/generated/statsmodels.robust.norms.TukeyBiweight.html">http://statsmodels.sourceforge.net/stable/generated/statsmodels.robust.norms.TukeyBiweight.html</a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.regression.robust_fit.mad">
+<tt class="descclassname">yatsm.regression.robust_fit.</tt><tt class="descname">mad</tt><big>(</big><em>resid</em>, <em>c=0.6745</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#mad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.mad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns Median-Absolute-Deviation (MAD) for residuals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resid</strong> (<em>np.ndarray</em>) &#8211; residuals</li>
+<li><strong>c</strong> (<em>float</em>) &#8211; scale factor to get to ~standard normal (default: 0.6745)
+(i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">MAD &#8216;robust&#8217; variance estimate</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Reference:</dt>
+<dd><a class="reference external" href="http://en.wikipedia.org/wiki/Median_absolute_deviation">http://en.wikipedia.org/wiki/Median_absolute_deviation</a></dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

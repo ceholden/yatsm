@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>run_yatsm.py &mdash; YATSM 0.1.0 documentation</title>
+  <title>run_yatsm.py &mdash; YATSM 0.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.1.0 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/>
         <link rel="up" title="Command Line Utilities" href="scripts.html"/>
         <link rel="next" title="line_yatsm.py" href="line_yatsm.html"/>
         <link rel="prev" title="gen_date_file.sh" href="gen_date_file.html"/> 
@@ -95,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
 <li class="toctree-l2"><a class="reference internal" href="train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
 </ul>
 </li>
 </ul>
@@ -140,7 +141,7 @@
  Yet Another Time Series Model
 
 Usage:
-    yatsm.py [options] &lt;location&gt; &lt;px&gt; &lt;py&gt;
+    run_yatsm.py [options] &lt;location&gt; &lt;px&gt; &lt;py&gt;
 
 Algorithm options:
     --consecutive=&lt;n&gt;       Consecutive observations for change [default: 5]
@@ -151,9 +152,11 @@ Algorithm options:
     --retrain_time=&lt;n&gt;      Wait &lt;n&gt; days to update model [default: 365.25]
     --screening=&lt;method&gt;    Multi-temporal screening method [default: RLM]
     --screening_crit=&lt;t&gt;    Screening critical value [default: 400.0]
+    --dynamic_rmse          Vary RMSE as a function of day of year
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
     --test_indices=&lt;bands&gt;  Test indices [default: ALL]
+    --commit_alpha=&lt;alpha&gt;  Alpha for F_crit in Chow commission test
     --omit_crit=&lt;crit&gt;      Critical value for omission test
     --omit_behavior=&lt;b&gt;     Omission test behavior [default: ALL]
     --omit_indices=&lt;b&gt;      Image indices used in omission test
@@ -166,6 +169,7 @@ Plotting options:
 Generic options:
     --image_pattern=&lt;p&gt;     Stack image filename pattern [default: L*stack]
     -v --verbose            Show verbose debugging messages
+    --version               Print program version and exit
     -h --help               Show help
 
 Example:
@@ -201,7 +205,8 @@ Example:
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014, Chris Holden.
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Tue Feb 17 15:50:28 2015.
     </p>
   </div>
 
@@ -221,7 +226,7 @@ Example:
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
