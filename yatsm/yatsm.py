@@ -416,7 +416,7 @@ class YATSM(object):
             # Refit each band
             for i_b, b in enumerate(self.fit_indices):
                 # Find nonzero
-                nonzero = np.nonzero(self.record[i]['coef'][:, i_b])
+                nonzero = np.nonzero(self.record[i]['coef'][:, i_b])[0]
 
                 if nonzero.size == 0:
                     continue
