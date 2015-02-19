@@ -2,9 +2,16 @@ try:
     import ConfigParser as configparser
 except ImportError:
     import configparser
+import logging
 import StringIO
 
 import numpy as np
+
+from version import __version__
+
+FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
+logger = logging.getLogger('yatsm')
 
 
 # CONFIG FILE PARSING
@@ -130,11 +137,11 @@ def parse_config_file(config_file):
 
     # Parse different versions
     version = config.get('metadata', 'version').split('.')
+    if version != __version__:
+        logger.warning('Config file version does not match YATSM version')
+        logger.warning('    config file: v{v}'.format(v=version))
+        logger.warning('    YATSM: v{v}'.format(v=__version__))
 
-    # 0.1.x
-    if version[0] == '0' and version[1] == '1':
-        dataset_config, yatsm_config = parse_config_v0_1_x(config_file)
-    if version[0] == '0' and version[1] == '2':
-        dataset_config, yatsm_config = parse_config_v0_2_x(config_file)
+    dataset_config, yatsm_config = parse_config_v0_2_x(config_file)
 
     return (dataset_config, yatsm_config)
