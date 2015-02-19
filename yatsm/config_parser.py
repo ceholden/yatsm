@@ -107,6 +107,8 @@ def parse_config_v0_2_x(config_file):
     dataset_config, yatsm_config = parse_config_v0_1_x(config_file)
 
     defaults = """
+[dataset]
+mask_values = 2, 3, 4, 255
 [YATSM]
 remove_noise = True
 dynamic_rmse = False
@@ -116,6 +118,10 @@ commission_alpha =
     config = configparser.ConfigParser(allow_no_value=True)
     config.readfp(StringIO.StringIO(defaults))
     config.read(config_file)
+
+    mask_values = config.get('dataset', 'mask_values')
+    dataset_config['mask_values'] = [
+        int(mv) for mv in mask_values.replace(',', ' ').split(' ') if mv != '']
 
     yatsm_config['remove_noise'] = config.getboolean('YATSM', 'remove_noise')
     yatsm_config['dynamic_rmse'] = config.getboolean('YATSM', 'dynamic_rmse')
