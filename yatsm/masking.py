@@ -3,6 +3,8 @@ from __future__ import division
 import numpy as np
 import statsmodels.api as sm
 
+from regression import robust_fit as rlm
+
 ndays = 365.25
 green_band = 1
 swir1_band = 4
@@ -41,10 +43,10 @@ def multitemp_mask(x, Y, n_year, crit=400,
         np.sin(w / n_year * x)
     ])
 
-    green_RLM = sm.RLM(Y[green, :], X.T,
-                       M=sm.robust.norms.TukeyBiweight())
-    swir1_RLM = sm.RLM(Y[swir1, :], X.T,
-                       M=sm.robust.norms.TukeyBiweight())
+    green_RLM = rlm.RLM(Y[green, :], X.T,
+                        M=rlm.bisquare)
+    swir1_RLM = rlm.RLM(Y[swir1, :], X.T,
+                        M=rlm.bisquare)
 
     mask = ((green_RLM.fit(maxiter=maxiter).resid < crit) *
             (swir1_RLM.fit(maxiter=maxiter).resid > -crit))

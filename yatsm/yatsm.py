@@ -12,13 +12,8 @@ import scipy.stats
 from sklearn.linear_model import LassoLarsIC  # , Lasso, LassoCV, LassoLarsCV
 import statsmodels.api as sm
 
-# Import standard Python version if Cython not built
-try:
-    from cymasking import multitemp_mask
-except:
-    from masking import multitemp_mask
 from errors import TSLengthException
-from masking import smooth_mask
+from masking import smooth_mask, multitemp_mask
 from regression.glmnet_fit import GLMLasso
 from regression import robust_fit as rlm
 from utils import date2index
