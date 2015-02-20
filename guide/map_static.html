@@ -82,8 +82,18 @@
 <li class="toctree-l2"><a class="reference internal" href="batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Mapping Derived Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#missing-values">Missing Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="map_changes.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map_changes.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
 </ul>
 <ul>
@@ -133,6 +143,63 @@
             
   <div class="section" id="mapping-derived-information">
 <span id="map-static"></span><h1>Mapping Derived Information<a class="headerlink" href="#mapping-derived-information" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>Maps can be created based on the attributes of a timeseries segment for any date desired. These attributes include the statistical model coefficients for each band, the Root Mean Squared Error (RMSE) of the model fits for each band, and the classification value predicted. The predicted reflectance for any band may also be generated using the model coefficients. These maps may be created using the <a class="reference internal" href="../scripts/yatsm_map.html#yatsm-map"><em>yatsm_map.py</em></a> script.</p>
+</div>
+<div class="section" id="missing-values">
+<h2>Missing Values<a class="headerlink" href="#missing-values" title="Permalink to this headline">¶</a></h2>
+<p>By default, <a class="reference internal" href="../scripts/yatsm_map.html#yatsm-map"><em>yatsm_map.py</em></a> will only look for models which intersect the date given by the user. A model intersects a date if the model&#8217;s starting date is equal to or less than the date and if the model&#8217;s ending date is equal to or greater than the date. For example, a model beginning on 2000-01-01 and ending on 2002-01-01 intersects 2001-01-01, but this model does not intersect 2002-02-02.</p>
+<p>Sometimes it is desirable to produce a classification value or reflectance value even if no models intersect the date provided. For example, we wanted to produce a classification value for 2000-01-01 but the model ended in 1999 and was not re-initialized until 2000-06-01, we might be happy to know what the classification value of the next segment is (i.e., what the pixel turns into).</p>
+<p>In other circumstances, we might be okay producing a map using the segment immediately prior to the date of the map provided that there was not a change detected. This is a common case when generating classifications, coefficient maps, or reflectance predictions toward the end of the timeseries.</p>
+<p>For these two circumstances, the <a class="reference internal" href="../scripts/yatsm_map.html#yatsm-map"><em>yatsm_map.py</em></a> script provides the <tt class="docutils literal"><span class="pre">--before</span></tt> and <tt class="docutils literal"><span class="pre">--after</span></tt> flags. These flags are not mutually exclusive and will not override the default behavior of providing the timeseries segment information which intersects the date provided. Instead, these three choices operate in order of desirability. From most to least desirable:</p>
+<ol class="arabic simple">
+<li>Segment which intersects the date</li>
+<li>Segment immediately after the date, if <tt class="docutils literal"><span class="pre">-after</span></tt> is specified</li>
+<li>Segment before the date, if the segment does not contain a break and <tt class="docutils literal"><span class="pre">--before</span></tt> is specified</li>
+</ol>
+<p>The mapped output will always contain the information from the most desirable segment. Behind the scenes, it accomplishes this by providing mapped values for the least desirable option first and then overwriting with more desirable options.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>For example, consider these mapping situations:</p>
+<ol class="arabic">
+<li><p class="first">Create a map showing the image predicted for January 1st, 2000 for all bands:</p>
+<div class="highlight-python"><div class="highlight"><pre>yatsm_map.py predict 2000-01-01 predict_2000-01-01.gtif
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a map showing the image predicted for January 1st, 2000 for all bands, filling in missing values with the information from the timeseries segment immediately after January 1st, 2000, if possible:</p>
+<div class="highlight-python"><div class="highlight"><pre>yatsm_map.py --after predict 2000-01-01 predict_2000-01-01.gtif
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a map showing all the coefficients for the red band (band 3) for January 1st, 2000:</p>
+<div class="highlight-python"><div class="highlight"><pre>yatsm_map.py --band 3 coef 2000-01-01 coef_red_2000-01-01.gtif
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a map of only the time trend, or slope, coefficients for all bands for January 1st, 2000:</p>
+<div class="highlight-python"><div class="highlight"><pre>yatsm_map.py --coef slope coef 2000-01-01 coef_slope_2000-01-01.gtif
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a map of the current land cover, or the land cover that a pixel will turn into, for January 1st, 2000:</p>
+<div class="highlight-python"><div class="highlight"><pre>yatsm_map.py --after class 2000-01-01 classmap_2000-01-01.gtif
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="docs-todo">
+<h2>Docs TODO<a class="headerlink" href="#docs-todo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Example maps</li>
+<li>Images helping explain <tt class="docutils literal"><span class="pre">--after</span></tt> and <tt class="docutils literal"><span class="pre">--before</span></tt></li>
+<li>More information on CLI flags / switches</li>
+<li>Explanation of <tt class="docutils literal"><span class="pre">--root</span></tt>, <tt class="docutils literal"><span class="pre">--result</span></tt>, and <tt class="docutils literal"><span class="pre">--image</span></tt> parameters</li>
+</ul>
+</div>
 </div>
 
 
@@ -154,7 +221,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue Feb 17 15:50:28 2015.
+      Last updated on Fri Feb 20 14:30:10 2015.
     </p>
   </div>
 

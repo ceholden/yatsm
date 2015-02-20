@@ -82,8 +82,18 @@
 <li class="toctree-l2"><a class="reference internal" href="batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="map_static.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map_static.html#missing-values">Missing Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map_static.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map_static.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Mapping Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
 </ul>
 <ul>
@@ -133,6 +143,33 @@
             
   <div class="section" id="mapping-changes">
 <span id="map-changes"></span><h1>Mapping Changes<a class="headerlink" href="#mapping-changes" title="Permalink to this headline">¶</a></h1>
+<p>To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the <a class="reference internal" href="../scripts/yatsm_changemap.html#yatsm-changemap"><em>yatsm_changemap.py</em></a>.</p>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>For example, consider these mapping situations:</p>
+<ol class="arabic">
+<li><p class="first">For each year from 2000 to 2010, create a map of the first change detected within the year:</p>
+<div class="highlight-python"><div class="highlight"><pre>for y1 in $(seq 2000 2010); do
+    y2=$(expr $y1 + 1)
+    yatsm_changemap.py first $y1-01-01 $y2-01-01 change_$y1-$y2.gtif
+done
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a map of the total number of changes, per pixel, for the 2000 to 2010 decade:</p>
+<div class="highlight-python"><div class="highlight"><pre>yatsm_changemap.py num 2000-01-01 2010-01-01 changenumber_2000-2010.gtif
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="docs-todo">
+<h2>Docs TODO<a class="headerlink" href="#docs-todo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Example images</li>
+<li>Explanation of <tt class="docutils literal"><span class="pre">--root</span></tt>, <tt class="docutils literal"><span class="pre">--result</span></tt>, and <tt class="docutils literal"><span class="pre">--image</span></tt> parameters</li>
+</ul>
+</div>
 </div>
 
 
@@ -154,7 +191,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue Feb 17 15:50:28 2015.
+      Last updated on Fri Feb 20 14:30:10 2015.
     </p>
   </div>
 

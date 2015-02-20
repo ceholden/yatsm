@@ -81,8 +81,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_static.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_static.html#missing-values">Missing Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_static.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_static.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_changes.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_changes.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
 </ul>
 <ul>
@@ -409,9 +419,6 @@
             <span class="n">F</span> <span class="o">=</span> <span class="p">((</span><span class="n">m_r_rss</span> <span class="o">-</span> <span class="p">(</span><span class="n">m_1_rss</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="p">))</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> \
                 <span class="p">((</span><span class="n">m_1_rss</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
 
-            <span class="k">print</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">F_crit</span><span class="p">)</span>
-
             <span class="k">if</span> <span class="n">F</span> <span class="o">&gt;</span> <span class="n">F_crit</span><span class="p">:</span>
                 <span class="c"># Reject H0 and retain change</span>
                 <span class="c"># Only add in previous model if first model</span>
@@ -554,7 +561,7 @@
             <span class="c"># Refit each band</span>
             <span class="k">for</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_indices</span><span class="p">):</span>
                 <span class="c"># Find nonzero</span>
-                <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">i_b</span><span class="p">])</span>
+                <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">i_b</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">nonzero</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">continue</span>
@@ -997,7 +1004,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue Feb 17 15:50:28 2015.
+      Last updated on Fri Feb 20 14:30:10 2015.
     </p>
   </div>
 
