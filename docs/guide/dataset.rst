@@ -1,4 +1,5 @@
-.. _dataset_prep:
+.. _guide_dataset_prep:
 
+===================
 Dataset Preparation
 ===================

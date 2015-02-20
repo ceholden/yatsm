@@ -1,4 +1,5 @@
-.. _exploration:
+.. _guide_exploration:
 
+===========================
 Model Parameter Exploration
 ===========================

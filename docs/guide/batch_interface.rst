@@ -1,5 +1,6 @@
-.. _batch_interface:
+.. _guide_batch_interface:
 
+=================
 Batch Interface
 =================
 

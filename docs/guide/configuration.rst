@@ -1,5 +1,6 @@
-.. _model_config:
+.. _guide_model_config:
 
+===================
 Model Configuration
 ===================
 

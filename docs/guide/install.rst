@@ -1,5 +1,6 @@
-.. _install:
+.. _guide_install:
 
+============
 Installation
 ============
 

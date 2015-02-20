@@ -1,4 +1,5 @@
-.. _classification:
+.. _guide_classification:
 
+==============
 Classification
 ==============
