@@ -141,9 +141,13 @@ def parse_config_file(config_file):
     dataset_config = None
     yatsm_config = None
 
-    # Parse different versions
-    version = config.get('metadata', 'version').split('.')
-    if version != __version__:
+    version = config.get('metadata', 'version')
+
+    # Warn on difference in minor or major version
+    mm_config_version = version.split('.')[0:2]
+    mm_yatsm_version = __version__.split('.')[0:2]
+    if mm_config_version[0] != mm_yatsm_version[0] or \
+            mm_config_version[1] != mm_yatsm_version[1]:
         logger.warning('Config file version does not match YATSM version')
         logger.warning('    config file: v{v}'.format(v=version))
         logger.warning('    YATSM: v{v}'.format(v=__version__))
