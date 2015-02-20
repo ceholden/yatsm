@@ -83,7 +83,6 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Mapping Derived Information</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#missing-values">Missing Values</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docs-todo">Docs TODO</a></li>
@@ -142,11 +141,8 @@
           <div role="main">
             
   <div class="section" id="mapping-derived-information">
-<span id="map-static"></span><h1>Mapping Derived Information<a class="headerlink" href="#mapping-derived-information" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<span id="guide-map-static"></span><h1>Mapping Derived Information<a class="headerlink" href="#mapping-derived-information" title="Permalink to this headline">¶</a></h1>
 <p>Maps can be created based on the attributes of a timeseries segment for any date desired. These attributes include the statistical model coefficients for each band, the Root Mean Squared Error (RMSE) of the model fits for each band, and the classification value predicted. The predicted reflectance for any band may also be generated using the model coefficients. These maps may be created using the <a class="reference internal" href="../scripts/yatsm_map.html#yatsm-map"><em>yatsm_map.py</em></a> script.</p>
-</div>
 <div class="section" id="missing-values">
 <h2>Missing Values<a class="headerlink" href="#missing-values" title="Permalink to this headline">¶</a></h2>
 <p>By default, <a class="reference internal" href="../scripts/yatsm_map.html#yatsm-map"><em>yatsm_map.py</em></a> will only look for models which intersect the date given by the user. A model intersects a date if the model&#8217;s starting date is equal to or less than the date and if the model&#8217;s ending date is equal to or greater than the date. For example, a model beginning on 2000-01-01 and ending on 2002-01-01 intersects 2001-01-01, but this model does not intersect 2002-02-02.</p>
@@ -221,7 +217,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:30:10 2015.
+      Last updated on Fri Feb 20 14:36:00 2015.
     </p>
   </div>
 

@@ -1,11 +1,8 @@
-.. _map_static:
+.. _guide_map_static:
 
 ===========================
 Mapping Derived Information
 ===========================
-
-Description
-===========
 
 Maps can be created based on the attributes of a timeseries segment for any date desired. These attributes include the statistical model coefficients for each band, the Root Mean Squared Error (RMSE) of the model fits for each band, and the classification value predicted. The predicted reflectance for any band may also be generated using the model coefficients. These maps may be created using the :ref:`yatsm_map.py <yatsm_map>` script.
 

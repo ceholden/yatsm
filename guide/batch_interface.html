@@ -83,7 +83,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="map_static.html#description">Description</a></li>
 <li class="toctree-l2"><a class="reference internal" href="map_static.html#missing-values">Missing Values</a></li>
 <li class="toctree-l2"><a class="reference internal" href="map_static.html#examples">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="map_static.html#docs-todo">Docs TODO</a></li>
@@ -142,12 +141,12 @@
           <div role="main">
             
   <div class="section" id="batch-interface">
-<span id="id1"></span><h1>Batch Interface<a class="headerlink" href="#batch-interface" title="Permalink to this headline">¶</a></h1>
+<span id="guide-batch-interface"></span><h1>Batch Interface<a class="headerlink" href="#batch-interface" title="Permalink to this headline">¶</a></h1>
 <p>The default method for running image stacks is to run each line, or row,
 separately from other lines. In a multiprocessing situation, the total
 number of lines can be broken up among the <tt class="docutils literal"><span class="pre">n</span></tt> available CPUs. Before
 using the batch interface, make sure you already have a parameter file
-generated as described by <a class="reference internal" href="configuration.html#model-config"><em>Model Configuration</em></a>.</p>
+generated as described by <em class="xref std std-ref">model_config</em>.</p>
 <p>The batch interface which runs each line separately is
 <tt class="docutils literal"><span class="pre">line_yatsm.py</span></tt>. It&#8217;s usage is:</p>
 <div class="highlight-text"><div class="highlight"><pre>$ line_yatsm.py -h
@@ -212,7 +211,7 @@ $ for job in $(seq 1 $njob); do
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:30:10 2015.
+      Last updated on Fri Feb 20 14:36:00 2015.
     </p>
   </div>
 

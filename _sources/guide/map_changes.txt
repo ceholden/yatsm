@@ -1,4 +1,4 @@
-.. _map_changes:
+.. _guide_map_changes:
 
 ===============
 Mapping Changes
