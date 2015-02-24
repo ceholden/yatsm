@@ -46,7 +46,7 @@ import sys
 
 from docopt import docopt
 import numpy as np
-from osgeo import gdal, gdal_array
+from osgeo import gdal
 
 # Handle runnin as installed module or not
 try:
@@ -56,7 +56,7 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
     from yatsm.version import __version__
-from yatsm.utils import find_results, iter_records, make_X
+from yatsm.utils import find_results, iter_records, make_X, write_output
 
 gdal.UseExceptions()
 gdal.AllRegister()
@@ -401,50 +401,6 @@ def get_prediction(date, result_location, image_ds,
                              axes=(1, 0))
 
     return raster
-
-
-def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
-    """ Write raster to output file """
-    logger.debug('Writing output to disk')
-
-    driver = gdal.GetDriverByName(gdal_frmt)
-
-    if len(raster.shape) > 2:
-        nband = raster.shape[2]
-    else:
-        nband = 1
-
-    ds = driver.Create(
-        output,
-        image_ds.RasterXSize, image_ds.RasterYSize, nband,
-        gdal_array.NumericTypeCodeToGDALTypeCode(raster.dtype.type)
-    )
-
-    if band_names is not None:
-        if len(band_names) != nband:
-            logger.error('Did not get enough names for all bands')
-            sys.exit(1)
-
-    if raster.ndim > 2:
-        for b in range(nband):
-            logger.debug('    writing band {b}'.format(b=b + 1))
-            ds.GetRasterBand(b + 1).WriteArray(raster[:, :, b])
-            ds.GetRasterBand(b + 1).SetNoDataValue(ndv)
-
-            if band_names is not None:
-                ds.GetRasterBand(b + 1).SetDescription(band_names[b])
-    else:
-        logger.debug('    writing band')
-        ds.GetRasterBand(1).WriteArray(raster)
-        ds.GetRasterBand(1).SetNoDataValue(ndv)
-
-        if band_names is not None:
-            ds.GetRasterBand(1).SetDescription(band_names[0])
-
-    ds.SetProjection(image_ds.GetProjection())
-    ds.SetGeoTransform(image_ds.GetGeoTransform())
-
-    ds = None
 
 
 def parse_args(args):

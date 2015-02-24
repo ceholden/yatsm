@@ -122,6 +122,53 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
         return (np.array(dates), np.array(images))
 
 
+# MAPPING UTILITIES
+def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
+    """ Write raster to output file """
+    from osgeo import gdal, gdal_array
+
+    logger.debug('Writing output to disk')
+
+    driver = gdal.GetDriverByName(gdal_frmt)
+
+    if len(raster.shape) > 2:
+        nband = raster.shape[2]
+    else:
+        nband = 1
+
+    ds = driver.Create(
+        output,
+        image_ds.RasterXSize, image_ds.RasterYSize, nband,
+        gdal_array.NumericTypeCodeToGDALTypeCode(raster.dtype.type)
+    )
+
+    if band_names is not None:
+        if len(band_names) != nband:
+            logger.error('Did not get enough names for all bands')
+            sys.exit(1)
+
+    if raster.ndim > 2:
+        for b in range(nband):
+            logger.debug('    writing band {b}'.format(b=b + 1))
+            ds.GetRasterBand(b + 1).WriteArray(raster[:, :, b])
+            ds.GetRasterBand(b + 1).SetNoDataValue(ndv)
+
+            if band_names is not None:
+                ds.GetRasterBand(b + 1).SetDescription(band_names[b])
+    else:
+        logger.debug('    writing band')
+        ds.GetRasterBand(1).WriteArray(raster)
+        ds.GetRasterBand(1).SetNoDataValue(ndv)
+
+        if band_names is not None:
+            ds.GetRasterBand(1).SetDescription(band_names[0])
+
+    ds.SetProjection(image_ds.GetProjection())
+    ds.SetGeoTransform(image_ds.GetGeoTransform())
+
+    ds = None
+
+
 # RESULT UTILITIES
 def find_results(location, pattern):
     """ Create list of result files and return sorted
@@ -156,7 +203,6 @@ def iter_records(records, warn_on_empty=False):
       records (list): List containing filenames of results
       warn_on_empty (bool, optional): Log warning if result contained no
         result records (default: False)
-
 
     Yields:
       np.ndarray: Result saved in record

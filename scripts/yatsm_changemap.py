@@ -34,7 +34,7 @@ import sys
 
 from docopt import docopt
 import numpy as np
-from osgeo import gdal, gdal_array
+from osgeo import gdal
 
 # Handle runnin as installed module or not
 try:
@@ -44,14 +44,14 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
     from yatsm.version import __version__
-from yatsm.utils import find_results, iter_records
-
-gdal.UseExceptions()
-gdal.AllRegister()
+from yatsm.utils import find_results, iter_records, write_output
 
 FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('yatsm')
+
+gdal.AllRegister()
+gdal.UseExceptions()
 
 # Filters for results
 _result_record = 'yatsm_*'
@@ -153,49 +153,6 @@ def get_numchangemap(start, end, result_location, image_ds,
 
     return raster
 
-def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
-    """ Write raster to output file """
-    logger.debug('Writing output to disk')
-
-    driver = gdal.GetDriverByName(gdal_frmt)
-
-    if len(raster.shape) > 2:
-        nband = raster.shape[2]
-    else:
-        nband = 1
-
-    ds = driver.Create(
-        output,
-        image_ds.RasterXSize, image_ds.RasterYSize, nband,
-        gdal_array.NumericTypeCodeToGDALTypeCode(raster.dtype.type)
-    )
-
-    if band_names is not None:
-        if len(band_names) != nband:
-            logger.error('Did not get enough names for all bands')
-            sys.exit(1)
-
-    if raster.ndim > 2:
-        for b in range(nband):
-            logger.debug('    writing band {b}'.format(b=b + 1))
-            ds.GetRasterBand(b + 1).WriteArray(raster[:, :, b])
-            ds.GetRasterBand(b + 1).SetNoDataValue(ndv)
-
-            if band_names is not None:
-                ds.GetRasterBand(b + 1).SetDescription(band_names[b])
-    else:
-        logger.debug('    writing band')
-        ds.GetRasterBand(1).WriteArray(raster)
-        ds.GetRasterBand(1).SetNoDataValue(ndv)
-
-        if band_names is not None:
-            ds.GetRasterBand(1).SetDescription(band_names[0])
-
-    ds.SetProjection(image_ds.GetProjection())
-    ds.SetGeoTransform(image_ds.GetGeoTransform())
-
-    ds = None
-
 
 def parse_args(args):
     """ Returns dictionary of parsed and validated command arguments
@@ -207,7 +164,7 @@ def parse_args(args):
       dict: Parsed and validated arguments
 
     """
-    parsed_args = { }
+    parsed_args = {}
     ### Parse required input
     parsed_args['first'] = args['first']
     parsed_args['last'] = args['last']
