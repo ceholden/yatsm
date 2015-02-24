@@ -361,14 +361,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">dataset_bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GDALStackReader.read_row"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.read_row">[docs]</a>    <span class="k">def</span> <span class="nf">read_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Return a 3D NumPy array (nband x nimage x ncol) of image data from</span>
-<span class="sd">        one row</span>
+        <span class="sd">&quot;&quot;&quot; Return a 3D NumPy array (nband x nimage x ncol) of one row&#39;s data</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          row (int): row in image to return</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          data (np.ndarray): 3D NumPy array (nband x nimage x ncol) of image</span>
+<span class="sd">          np.ndarray: 3D NumPy array (nband x nimage x ncol) of image</span>
 <span class="sd">            data for desired row</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -390,7 +389,7 @@
 <span class="sd">      row (int): row to read</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      data (np.ndarray): 3D array (nband x nimage x ncol) containing the row</span>
+<span class="sd">      np.ndarray: 3D array (nband x nimage x ncol) containing the row</span>
 <span class="sd">        of data</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -410,7 +409,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

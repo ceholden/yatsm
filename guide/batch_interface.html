@@ -146,7 +146,7 @@
 separately from other lines. In a multiprocessing situation, the total
 number of lines can be broken up among the <tt class="docutils literal"><span class="pre">n</span></tt> available CPUs. Before
 using the batch interface, make sure you already have a parameter file
-generated as described by <em class="xref std std-ref">model_config</em>.</p>
+generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><em>Model Configuration</em></a>.</p>
 <p>The batch interface which runs each line separately is
 <tt class="docutils literal"><span class="pre">line_yatsm.py</span></tt>. It&#8217;s usage is:</p>
 <div class="highlight-text"><div class="highlight"><pre>$ line_yatsm.py -h
@@ -189,6 +189,22 @@ $ for job in $(seq 1 $njob); do
   done
 </pre></div>
 </div>
+<p>One useful tip is to optimize the use of the CPU nodes by first transforming the
+dataset from an image based format to a timeseries format by saving all
+observations for each row in a separate file. The transformed dataset will be
+much easier to read as a timeseries because each processor only needs to read
+in one file instead of finding, opening, seeking through, and reading from
+many individual image files.</p>
+<p>To accomplish this approach, the <tt class="docutils literal"><span class="pre">--do-not-run</span></tt> flag can be combined with a
+specific request for computer nodes with fast ethernet speeds,
+<tt class="docutils literal"><span class="pre">-l</span> <span class="pre">eth_speed</span> <span class="pre">10</span></tt>:</p>
+<div class="code sh highlight-python"><div class="highlight"><pre>$ njob=16
+$ for job in $(seq 1 $njob); do
+    qsub -j y -V -l h_rt=24:00:00 -l eth_speed 10 -N yatsm_$job -b y \
+        $(which python) -u line_yatsm.py --resume --do-not-run -v config.ini $job $njob
+  done
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -211,7 +227,7 @@ $ for job in $(seq 1 $njob); do
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

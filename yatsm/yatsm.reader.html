@@ -214,18 +214,15 @@ datasets, for all image filenames</p>
 <dl class="method">
 <dt id="yatsm.reader.GDALStackReader.read_row">
 <tt class="descname">read_row</tt><big>(</big><em>row</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#GDALStackReader.read_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.GDALStackReader.read_row" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a 3D NumPy array (nband x nimage x ncol) of image data from
-one row</p>
+<dd><p>Return a 3D NumPy array (nband x nimage x ncol) of one row&#8217;s data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> (<em>int</em>) &#8211; row in image to return</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> &#8211;
-3D NumPy array (nband x nimage x ncol) of image<blockquote>
-<div>data for desired row</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">3D NumPy array (nband x nimage x ncol) of image
+data for desired row</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
 </tr>
@@ -305,8 +302,11 @@ nrow, ncol, nband, NumPy datatype</td>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray: Array (nband x n_images) containing all timeseries data
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Array (nband x n_images) containing all timeseries data
 from one pixel</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -355,12 +355,8 @@ bands in the image</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>data</strong> &#8211;
-3D array (nband x nimage x ncol) containing the row</p>
-<blockquote>
-<div><p>of data</p>
-</div></blockquote>
-</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">3D array (nband x nimage x ncol) containing the row
+of data</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -382,7 +378,7 @@ bands in the image</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

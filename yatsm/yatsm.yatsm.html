@@ -258,7 +258,9 @@ the signal) while decreasing omission during stable times of year.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">np.ndarray: NumPy array containing dynamic RMSE of each tested model</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">NumPy array containing dynamic RMSE of each tested model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -272,7 +274,9 @@ the signal) while decreasing omission during stable times of year.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">np.ndarray: NumPy array containing RMSE of each tested model</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">NumPy array containing RMSE of each tested model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -324,8 +328,11 @@ indices must be a subset of <cite>self.test_indices</cite>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">np.ndarray: Array of True or False for each record where
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Array of True or False for each record where
 True indicates omitted break point</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -335,7 +342,10 @@ True indicates omitted break point</p>
 <dl class="method">
 <dt id="yatsm.yatsm.YATSM.plot">
 <tt class="descname">plot</tt><big>(</big><em>band</em>, <em>freq</em>, <em>ylim=None</em><big>)</big><a class="reference internal" href="../_modules/yatsm/yatsm.html#YATSM.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.yatsm.YATSM.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot YATSM results for a specified band</p>
+<dd><p>Plot YATSM results for a specified band
+:param band        data band to plot:
+:param freq        frequency of sine/cosine (for predictions):
+:param ylim        tuple for y-axes limits:</p>
 </dd></dl>
 
 <dl class="method">
@@ -451,7 +461,7 @@ such as clouds or shadows.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

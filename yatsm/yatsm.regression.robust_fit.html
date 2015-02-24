@@ -151,7 +151,7 @@ but costly, creature comforts.</p>
 </dl>
 <dl class="class">
 <dt id="yatsm.regression.robust_fit.RLM">
-<em class="property">class </em><tt class="descclassname">yatsm.regression.robust_fit.</tt><tt class="descname">RLM</tt><big>(</big><em>y</em>, <em>X</em>, <em>M=&lt;function bisquare at 0x2b27e173ec08&gt;</em>, <em>tune=4.685</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">yatsm.regression.robust_fit.</tt><tt class="descname">RLM</tt><big>(</big><em>y</em>, <em>X</em>, <em>M=&lt;function bisquare at 0x2b0fc2407320&gt;</em>, <em>tune=4.685</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>Perform robust fitting regression via iteratively reweighted least squares
 according to weight function and tuning parameter.</p>
@@ -221,7 +221,7 @@ according to weight function and tuning parameter.</p>
 
 <dl class="method">
 <dt id="yatsm.regression.robust_fit.RLM.fit">
-<tt class="descname">fit</tt><big>(</big><em>maxiter=50</em>, <em>tol=1e-08</em>, <em>scale_est=&lt;function mad at 0x2b27e1b62aa0&gt;</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.fit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fit</tt><big>(</big><em>maxiter=50</em>, <em>tol=1e-08</em>, <em>scale_est=&lt;function mad at 0x2b0fc2411050&gt;</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit model using iteratively reweighted least squares</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -256,7 +256,9 @@ across iterations (default: True)</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>np.ndarray, optional</em>) &#8211; user provided design matrix</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">np.ndarray: yhat model predictions</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">yhat model predictions</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
 </tr>
 </tbody>
 </table>
@@ -334,7 +336,7 @@ weights for residuals</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

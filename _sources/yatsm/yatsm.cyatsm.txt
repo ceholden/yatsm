@@ -1,7 +1,0 @@
-yatsm.cyatsm module
-===================
-
-.. automodule:: yatsm.cyatsm
-    :members:
-    :undoc-members:
-    :show-inheritance:

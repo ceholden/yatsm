@@ -285,9 +285,13 @@
     <span class="n">dataset_config</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">yatsm_config</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="c"># Parse different versions</span>
-    <span class="n">version</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;metadata&#39;</span><span class="p">,</span> <span class="s">&#39;version&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">version</span> <span class="o">!=</span> <span class="n">__version__</span><span class="p">:</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;metadata&#39;</span><span class="p">,</span> <span class="s">&#39;version&#39;</span><span class="p">)</span>
+
+    <span class="c"># Warn on difference in minor or major version</span>
+    <span class="n">mm_config_version</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">mm_yatsm_version</span> <span class="o">=</span> <span class="n">__version__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">mm_config_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mm_yatsm_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> \
+            <span class="n">mm_config_version</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">mm_yatsm_version</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Config file version does not match YATSM version&#39;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;    config file: v{v}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">version</span><span class="p">))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;    YATSM: v{v}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">__version__</span><span class="p">))</span>
@@ -306,7 +310,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

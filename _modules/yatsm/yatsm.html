@@ -156,13 +156,8 @@
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LassoLarsIC</span>  <span class="c"># , Lasso, LassoCV, LassoLarsCV</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
 
-<span class="c"># Import standard Python version if Cython not built</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">cymasking</span> <span class="kn">import</span> <span class="n">multitemp_mask</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">masking</span> <span class="kn">import</span> <span class="n">multitemp_mask</span>
 <span class="kn">from</span> <span class="nn">errors</span> <span class="kn">import</span> <span class="n">TSLengthException</span>
-<span class="kn">from</span> <span class="nn">masking</span> <span class="kn">import</span> <span class="n">smooth_mask</span>
+<span class="kn">from</span> <span class="nn">masking</span> <span class="kn">import</span> <span class="n">smooth_mask</span><span class="p">,</span> <span class="n">multitemp_mask</span>
 <span class="kn">from</span> <span class="nn">regression.glmnet_fit</span> <span class="kn">import</span> <span class="n">GLMLasso</span>
 <span class="kn">from</span> <span class="nn">regression</span> <span class="kn">import</span> <span class="n">robust_fit</span> <span class="k">as</span> <span class="n">rlm</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">date2index</span>
@@ -350,6 +345,7 @@
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \\frac{[RSS_r - (RSS_1 + RSS_2)] / k}{(RSS_1 + RSS_2) / (n - 2k)}</span>
+
 <span class="sd">        where</span>
 <span class="sd">            - :math:`RSS_u` is the RSS of the combined, or, restricted model</span>
 <span class="sd">            - :math:`RSS_1` is the RSS of the first model</span>
@@ -806,12 +802,14 @@
             <span class="k">for</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_indices</span><span class="p">):</span>
                 <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
                 <span class="c"># Get test score for future observations</span>
-                <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span>
-                                         <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]))</span> <span class="o">/</span>
-                                  <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rmse</span><span class="p">,</span> <span class="n">rmse</span><span class="p">[</span><span class="n">i_b</span><span class="p">]))</span>
+                <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">-</span>
+                        <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]))</span> <span class="o">/</span>
+                    <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_rmse</span><span class="p">,</span> <span class="n">rmse</span><span class="p">[</span><span class="n">i_b</span><span class="p">])</span>
+                <span class="p">)</span>
 
         <span class="c"># Check for scores above critical value</span>
-        <span class="n">mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">scores</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">mag</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;CHANGE DETECTED&#39;</span><span class="p">)</span>
@@ -1003,7 +1001,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

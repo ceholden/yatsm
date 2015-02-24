@@ -173,7 +173,10 @@ np.array of rows to be processed</td>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(ndarray, ndarray): paired dates and filenames of stacked images</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">paired dates and filenames of stacked images</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(ndarray, ndarray)</p>
 </td>
 </tr>
 </tbody>
@@ -301,7 +304,8 @@ result records (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>np.ndarray: Result saved in record</em></p>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>np.ndarray</em> &#8211;
+Result saved in record</p>
 </td>
 </tr>
 </tbody>
@@ -312,6 +316,19 @@ result records (default: False)</li>
 <dt id="yatsm.utils.make_X">
 <tt class="descclassname">yatsm.utils.</tt><tt class="descname">make_X</tt><big>(</big><em>x</em>, <em>freq</em>, <em>intercept=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#make_X"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.make_X" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create X matrix of Fourier series style independent variables</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base of independent variables - dates</strong> (<em>x</em>) &#8211; </li>
+<li><strong>frequency of cosine/sin waves</strong> (<em>freq</em>) &#8211; </li>
+<li><strong>include intercept in X matrix</strong> (<em>intercept</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="docutils">
 <dt>Output:</dt>
 <dd>X               matrix X of independent variables</dd>
@@ -333,6 +350,12 @@ result records (default: False)</li>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="yatsm.utils.write_output">
+<tt class="descclassname">yatsm.utils.</tt><tt class="descname">write_output</tt><big>(</big><em>raster</em>, <em>output</em>, <em>image_ds</em>, <em>gdal_frmt</em>, <em>ndv</em>, <em>band_names=None</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#write_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.write_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write raster to output file</p>
+</dd></dl>
+
 </div>
 
 
@@ -345,7 +368,7 @@ result records (default: False)</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

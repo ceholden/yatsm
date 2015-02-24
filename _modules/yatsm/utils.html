@@ -266,6 +266,53 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
 
 
+<span class="c"># MAPPING UTILITIES</span></div>
+<div class="viewcode-block" id="write_output"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.write_output">[docs]</a><span class="k">def</span> <span class="nf">write_output</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span> <span class="n">gdal_frmt</span><span class="p">,</span> <span class="n">ndv</span><span class="p">,</span> <span class="n">band_names</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Write raster to output file &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span><span class="p">,</span> <span class="n">gdal_array</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Writing output to disk&#39;</span><span class="p">)</span>
+
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="n">gdal_frmt</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">nband</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nband</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span>
+        <span class="n">output</span><span class="p">,</span>
+        <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">nband</span><span class="p">,</span>
+        <span class="n">gdal_array</span><span class="o">.</span><span class="n">NumericTypeCodeToGDALTypeCode</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">band_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nband</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Did not get enough names for all bands&#39;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">raster</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nband</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;    writing band {b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">raster</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">b</span><span class="p">])</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetNoDataValue</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">band_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetDescription</span><span class="p">(</span><span class="n">band_names</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;    writing band&#39;</span><span class="p">)</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">raster</span><span class="p">)</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetNoDataValue</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">band_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetDescription</span><span class="p">(</span><span class="n">band_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">ds</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="n">image_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">())</span>
+    <span class="n">ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">image_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">())</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="bp">None</span>
+
+
 <span class="c"># RESULT UTILITIES</span></div>
 <div class="viewcode-block" id="find_results"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.find_results">[docs]</a><span class="k">def</span> <span class="nf">find_results</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Create list of result files and return sorted</span>
@@ -300,7 +347,6 @@
 <span class="sd">      records (list): List containing filenames of results</span>
 <span class="sd">      warn_on_empty (bool, optional): Log warning if result contained no</span>
 <span class="sd">        result records (default: False)</span>
-
 
 <span class="sd">    Yields:</span>
 <span class="sd">      np.ndarray: Result saved in record</span>
@@ -412,7 +458,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 

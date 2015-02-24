@@ -15,7 +15,6 @@ Submodules
 .. toctree::
 
    yatsm.config_parser
-   yatsm.cyatsm
    yatsm.cymasking
    yatsm.errors
    yatsm.masking

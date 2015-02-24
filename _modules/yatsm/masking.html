@@ -147,6 +147,8 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
 
+<span class="kn">from</span> <span class="nn">regression</span> <span class="kn">import</span> <span class="n">robust_fit</span> <span class="k">as</span> <span class="n">rlm</span>
+
 <span class="n">ndays</span> <span class="o">=</span> <span class="mf">365.25</span>
 <span class="n">green_band</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">swir1_band</span> <span class="o">=</span> <span class="mi">4</span>
@@ -185,10 +187,10 @@
         <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">n_year</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
     <span class="p">])</span>
 
-    <span class="n">green_RLM</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">green</span><span class="p">,</span> <span class="p">:],</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                       <span class="n">M</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">robust</span><span class="o">.</span><span class="n">norms</span><span class="o">.</span><span class="n">TukeyBiweight</span><span class="p">())</span>
-    <span class="n">swir1_RLM</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">swir1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                       <span class="n">M</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">robust</span><span class="o">.</span><span class="n">norms</span><span class="o">.</span><span class="n">TukeyBiweight</span><span class="p">())</span>
+    <span class="n">green_RLM</span> <span class="o">=</span> <span class="n">rlm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">green</span><span class="p">,</span> <span class="p">:],</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                        <span class="n">M</span><span class="o">=</span><span class="n">rlm</span><span class="o">.</span><span class="n">bisquare</span><span class="p">)</span>
+    <span class="n">swir1_RLM</span> <span class="o">=</span> <span class="n">rlm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">swir1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                        <span class="n">M</span><span class="o">=</span><span class="n">rlm</span><span class="o">.</span><span class="n">bisquare</span><span class="p">)</span>
 
     <span class="n">mask</span> <span class="o">=</span> <span class="p">((</span><span class="n">green_RLM</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span><span class="o">.</span><span class="n">resid</span> <span class="o">&lt;</span> <span class="n">crit</span><span class="p">)</span> <span class="o">*</span>
             <span class="p">(</span><span class="n">swir1_RLM</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span><span class="o">.</span><span class="n">resid</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">crit</span><span class="p">))</span>
@@ -277,7 +279,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri Feb 20 14:36:00 2015.
+      Last updated on Tue Feb 24 17:43:03 2015.
     </p>
   </div>
 
