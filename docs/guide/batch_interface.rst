@@ -8,7 +8,7 @@ The default method for running image stacks is to run each line, or row,
 separately from other lines. In a multiprocessing situation, the total
 number of lines can be broken up among the ``n`` available CPUs. Before
 using the batch interface, make sure you already have a parameter file
-generated as described by :ref:`model_config`.
+generated as described by :ref:`guide_model_config`.
 
 The batch interface which runs each line separately is
 ``line_yatsm.py``. It's usage is:

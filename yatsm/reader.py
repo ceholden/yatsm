@@ -217,14 +217,13 @@ class GDALStackReader(object):
             self.dataset_bands.append(bands)
 
     def read_row(self, row):
-        """ Return a 3D NumPy array (nband x nimage x ncol) of image data from
-        one row
+        """ Return a 3D NumPy array (nband x nimage x ncol) of one row's data
 
         Args:
           row (int): row in image to return
 
         Returns:
-          data (np.ndarray): 3D NumPy array (nband x nimage x ncol) of image
+          np.ndarray: 3D NumPy array (nband x nimage x ncol) of image
             data for desired row
 
         """
@@ -246,7 +245,7 @@ def read_row_GDAL(filenames, row):
       row (int): row to read
 
     Returns:
-      data (np.ndarray): 3D array (nband x nimage x ncol) containing the row
+      np.ndarray: 3D array (nband x nimage x ncol) containing the row
         of data
 
     """
