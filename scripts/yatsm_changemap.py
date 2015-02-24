@@ -60,6 +60,53 @@ WARN_ON_EMPTY = False
 
 
 # PROCESSING
+def get_magnitude_indices(results):
+    """ Finds indices of result containing magnitude of change information
+
+    Args:
+      results (iterable): list of result files to check within
+
+    Returns:
+      np.ndarray: indices containing magnitude change information from the
+        tested indices
+
+    """
+    for result in results:
+        try:
+            rec = np.load(result)
+        except (ValueError, AssertionError):
+            logger.warning('Error reading {f}. May be corrupted'.format(
+                f=result))
+            continue
+
+        # First search for record of `test_indices`
+        if 'test_indices' in rec.files:
+            logger.debug('Using `test_indices` information for magnitude')
+            return rec['test_indices']
+
+        # Fall back to using non-zero elements of 'record' record array
+        rec_array = rec['record']
+        if rec_array.dtype.names is None:
+            # Empty record -- skip
+            continue
+
+        if 'magnitude' not in rec_array.dtype.names:
+            logger.error('Cannot map magnitude of change')
+            logger.error('Magnitude information not present in file {f} -- '
+                'has it been calculated?'.format(f=result))
+            logger.error('Version of result file: {v}'.format(
+                v=rec['version'] if 'version' in rec.files else 'Unknown'))
+            sys.exit(1)
+
+        changed = np.where(rec_array['break'] != 0)[0]
+        if changed.size == 0:
+            continue
+
+        logger.debug('Using non-zero elements of "magnitude" field in '
+                     'changed records for magnitude indices')
+        return np.nonzero(np.any(rec_array[changed]['magnitude'] != 0))[0]
+
+
 def get_datechangemap(start, end, result_location, image_ds,
                       first=False,
                       out_format='%Y%j',
@@ -79,17 +126,23 @@ def get_datechangemap(start, end, result_location, image_ds,
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
-      raster (np.array): 3D numpy array containing the changes between the
-        start and end date, and the change magnitude of each change if
-        specified
+      tuple: A 2D np.ndarray array containing the changes between the
+        start and end date. Also includes, if specified, a 3D np.ndarray of
+        the magnitude of each change plus the indices of these magnitudes
 
     """
     # Find results
     records = find_results(result_location, pattern)
 
     logger.debug('Allocating memory...')
-    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize),
-                     dtype=np.int32) * int(ndv)
+    datemap = np.ones((image_ds.RasterYSize, image_ds.RasterXSize),
+                      dtype=np.int32) * int(ndv)
+    # Determine what magnitude information to output if requested
+    if magnitude:
+        magnitude_indices = get_magnitude_indices(records)
+        magnitudemap = np.ones((image_ds.RasterYSize, image_ds.RasterXSize,
+                               magnitude_indices.size),
+                               dtype=np.float32) * float(ndv)
 
     logger.debug('Processing results')
     for rec in iter_records(records):
@@ -105,12 +158,18 @@ def get_datechangemap(start, end, result_location, image_ds,
             if out_format != 'ordinal':
                 dates = np.array([int(dt.fromordinal(_d).strftime(out_format))
                                   for _d in rec['break'][index]])
-                raster[rec['py'][index], rec['px'][index]] = dates
+                datemap[rec['py'][index], rec['px'][index]] = dates
             else:
-                raster[rec['py'][index], rec['px'][index]] = \
+                datemap[rec['py'][index], rec['px'][index]] = \
                     rec['break'][index]
+            if magnitude:
+                magnitudemap[rec['py'][index], rec['px'][index], :] = \
+                    rec[index]['magnitude'][:, magnitude_indices]
 
-    return raster
+    if magnitude:
+        return datemap, magnitudemap, magnitude_indices
+    else:
+        return datemap, None, None
 
 
 def get_numchangemap(start, end, result_location, image_ds,
@@ -126,8 +185,8 @@ def get_numchangemap(start, end, result_location, image_ds,
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
-      raster (np.array): 2D numpy array containing the number of changes
-        between the start and end date
+      np.ndarray: 2D numpy array containing the number of changes
+        between the start and end date; list containing band names
 
     """
     # Find results
@@ -209,9 +268,7 @@ def parse_args(args):
             raise
 
     ### Map options
-    magnitude = args['--magnitude']
-    if magnitude:
-        raise NotImplementedError("Haven't written magnitude parser yet")
+    parsed_args['magnitude'] = args['--magnitude']
 
     ### Input options
     # Root directory
@@ -273,7 +330,7 @@ def parse_args(args):
     # Raster file format
     parsed_args['gdal_frmt'] = args['--format']
     try:
-        _ = gdal.GetDriverByName(parsed_args['gdal_frmt'])
+        gdal.GetDriverByName(parsed_args['gdal_frmt'])
     except:
         logger.error('Unknown GDAL format specified')
         raise
@@ -295,25 +352,37 @@ def main(args):
 
     # Make map of date of change
     if args['first'] or args['last']:
-        changemap = get_datechangemap(
+        changemap, magnitudemap, magnitude_indices = get_datechangemap(
             args['start'], args['end'], args['results'], image_ds,
             first=args['first'], out_format=args['out_format'],
-            magnitude=None,
+            magnitude=args['magnitude'],
             ndv=args['ndv'], pattern=_result_record
         )
 
         band_names = ['ChangeDate_s{s}-e{e}'.format(s=start_txt, e=end_txt)]
+        write_output(changemap, args['output'], image_ds,
+                     args['gdal_frmt'], args['ndv'],
+                     band_names=band_names)
+
+        if magnitudemap is not None:
+            band_names = (['Magnitude Index ' + str(i) for i in
+                          magnitude_indices])
+            name, ext = os.path.splitext(args['output'])
+            output = name + '_mag' + ext
+            write_output(magnitudemap, output, image_ds,
+                         args['gdal_frmt'], args['ndv'],
+                         band_names=band_names)
 
     elif args['num']:
         changemap = get_numchangemap(
             args['start'], args['end'], args['results'], image_ds,
             ndv=args['ndv'], pattern=_result_record
         )
-        band_names = ['NumChanges_{s}-e{e}'.format(s=start_txt, e=end_txt)]
 
-    write_output(changemap, args['output'], image_ds,
-                 args['gdal_frmt'], args['ndv'],
-                 band_names=band_names)
+        band_names = ['NumChanges_s{s}-e{e}'.format(s=start_txt, e=end_txt)]
+        write_output(changemap, args['output'], image_ds,
+                     args['gdal_frmt'], args['ndv'],
+                     band_names=band_names)
 
     image_ds = None
 
