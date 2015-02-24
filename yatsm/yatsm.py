@@ -657,12 +657,14 @@ class YATSM(object):
             for i_b, b in enumerate(self.test_indices):
                 m = self.models[b]
                 # Get test score for future observations
-                scores[i, i_b] = (np.abs(self.Y[b, self.here + i] -
-                                         m.predict(self.X[self.here + i, :])) /
-                                  max(self.min_rmse, rmse[i_b]))
+                scores[i, i_b] = (
+                    (self.Y[b, self.here + i] -
+                        m.predict(self.X[self.here + i, :])) /
+                    max(self.min_rmse, rmse[i_b])
+                )
 
         # Check for scores above critical value
-        mag = np.linalg.norm(scores, axis=1)
+        mag = np.linalg.norm(np.abs(scores), axis=1)
 
         if np.all(mag > self.threshold):
             self.logger.debug('CHANGE DETECTED')
