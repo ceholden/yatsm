@@ -18,7 +18,8 @@ Options:
     -h --help               Show help messages
 
 Change date options:
-    --magnitude             Add magnitude of change as extra bands
+    --magnitude             Add magnitude of change as extra image (pattern
+                                is [name]_mag[ext])
     --out_date <format>     Output date format [default: %Y%j]
 
 Examples:
