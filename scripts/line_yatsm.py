@@ -248,7 +248,7 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
 
     # Otherwise continue
     clear = (
-        np.in1d(Y[mask_band, :], dataset_config['mask_values']) *
+        ~np.in1d(Y[mask_band, :], dataset_config['mask_values']) *
         np.all(Y[:mask_band, :] > 0, axis=0) *
         np.all(Y[:mask_band, :] < 10000, axis=0)
     )
