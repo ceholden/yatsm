@@ -217,8 +217,8 @@ class YATSM(object):
           alpha (float): significance level for F-statistic (default: 0.01)
 
         Returns:
-          list: updated copy of `self.models` with spurrious models combined
-            into unified model
+          np.ndarray: updated copy of `self.models` with spurious models
+            combined into unified model
 
         """
         if self.record.size == 1:
@@ -305,7 +305,6 @@ class YATSM(object):
                 merged = True
 
         return np.array(models)
-
 
     def omission_test(self, crit=0.05, behavior='ANY',
                       indices=None):
