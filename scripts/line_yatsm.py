@@ -284,9 +284,19 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
         yatsm.record = yatsm.commission_test(yatsm_config['commission_alpha'])
 
     if yatsm_config['robust']:
-        return yatsm.robust_record
-    else:
-        return yatsm.record
+        yatsm.record = yatsm.robust_record
+
+    if yatsm_config['calc_pheno']:
+        ltm = pheno.LongTermMeanPhenology(
+            yatsm,
+            yatsm_config['red_index'], yatsm_config['nir_index'],
+            yatsm_config['blue_index'], yatsm_config['scale'],
+            yatsm_config['evi_index'], yatsm_config['evi_scale'])
+        yatsm.record = ltm.fit(year_interval=yatsm_config['year_interval'],
+                               q_min=yatsm_config['q_min'],
+                               q_max=yatsm_config['q_max'])
+
+    return yatsm.record
 
 
 def main(dataset_config, yatsm_config,
@@ -424,6 +434,10 @@ if __name__ == '__main__':
 
     # Parse and validate configuration file
     dataset_config, yatsm_config = parse_config_file(config_file)
+
+    # Import phenology stuff only if necessary since it relies on rpy2 / R
+    if yatsm_config['calc_pheno'] and not do_not_run:
+        import yatsm.phenology as pheno
 
     # Make output directory
     try:

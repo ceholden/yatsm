@@ -132,6 +132,54 @@ commission_alpha =
     return dataset_config, yatsm_config
 
 
+def parse_config_v0_3_x(config_file):
+    """ Parse config file for version 0.3.x """
+    dataset_config, yatsm_config = parse_config_v0_2_x(config_file)
+
+    defaults = """
+[phenology]
+calc_pheno = False
+red_index = 2
+nir_index = 3
+blue_index = 0
+scale = 0.0001
+evi_index =
+evi_scale =
+year_interval = 3
+q_min = 10
+q_max = 90
+    """
+
+    config = configparser.ConfigParser(allow_no_value=True)
+    config.readfp(StringIO.StringIO(defaults))
+    config.read(config_file)
+
+    yatsm_config['calc_pheno'] = config.getboolean('phenology', 'calc_pheno')
+    if not yatsm_config['calc_pheno']:
+        return dataset_config, yatsm_config
+
+    red_index = config.get('phenology', 'red_index')
+    yatsm_config['red_index'] = int(red_index) if red_index else None
+    nir_index = config.get('phenology', 'nir_index')
+    yatsm_config['nir_index'] = int(nir_index) if nir_index else None
+    blue_index = config.get('phenology', 'blue_index')
+    yatsm_config['blue_index'] = int(blue_index) if blue_index else None
+    scale = config.get('phenology', 'scale')
+    yatsm_config['scale'] = float(scale) if scale else None
+    evi_index = config.get('phenology', 'evi_index')
+    yatsm_config['evi_index'] = int(evi_index) if evi_index else None
+    evi_scale = config.get('phenology', 'evi_scale')
+    yatsm_config['evi_scale'] = float(evi_scale) if evi_scale else None
+    year_int = config.get('phenology', 'year_interval')
+    yatsm_config['year_interval'] = int(year_int) if year_int else None
+    q_min = config.get('phenology', 'q_min')
+    yatsm_config['q_min'] = float(q_min) if q_min else None
+    q_max = config.get('phenology', 'q_max')
+    yatsm_config['q_max'] = float(q_max) if q_max else None
+
+    return dataset_config, yatsm_config
+
+
 def parse_config_file(config_file):
     """ Parses config file into dictionary of attributes """
 
@@ -152,6 +200,6 @@ def parse_config_file(config_file):
         logger.warning('    config file: v{v}'.format(v=version))
         logger.warning('    YATSM: v{v}'.format(v=__version__))
 
-    dataset_config, yatsm_config = parse_config_v0_2_x(config_file)
+    dataset_config, yatsm_config = parse_config_v0_3_x(config_file)
 
     return (dataset_config, yatsm_config)
