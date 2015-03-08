@@ -680,7 +680,7 @@ class YATSM(object):
 
             # Reset _X and _Y for re-training
             self._X = self.X
-            self._Y = self._Y
+            self._Y = self.Y
             self.start = self.here + 1
 
             self.trained_date = 0
