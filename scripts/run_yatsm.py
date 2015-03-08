@@ -161,33 +161,31 @@ def plot_results():
 
 
 def plot_phenology():
+    if not plot_ylim:
+        _plot_ylim = (Y[plot_index, :].min(), Y[plot_index, :].max())
+    else:
+        _plot_ylim = plot_ylim
+
     # Break up into year/doy
     yeardoy = pheno.ordinal2yeardoy(yatsm.X[:, 1].astype(np.uint32))
 
-    # Get colormap and mapper
-    cmap = mpl.cm.get_cmap('jet')
-    norm = mpl.colors.Normalize(vmin=yeardoy[:, 0].min(),
-                                vmax=yeardoy[:, 0].max())
-    # mapper = mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
-
-    # Plot Y ~ DOY
-    sp = plt.scatter(yeardoy[:, 1], yatsm.Y[plot_index, :],
-                     cmap=cmap, c=yeardoy[:, 0], norm=norm,
-                     marker='o', edgecolors='none', s=25)
-
     # Plot predicted pheno
     repeat = int(math.ceil(len(yatsm.record) / 9.0))
-    fit_colors = brewer2mpl.get_map('set1',
-                                    'qualitative',
-                                    9).hex_colors * repeat
+    fit_colors = brewer2mpl.get_map(
+        'set1', 'qualitative', 9).hex_colors * repeat
 
     for i, r in enumerate(yatsm.record):
-        # plt.plot(np.arange(1, 366), r['spline_evi'], fit_colors[i])
+        # Plot data within record
+        index = np.where((yatsm.X[:, 1] >= r['start']) &
+                         (yatsm.X[:, 1] <= r['end']))
+        plt.scatter(yeardoy[index, 1], yatsm.Y[plot_index, index],
+                    c=fit_colors[i])
 
-        if not plot_ylim:
-            _plot_ylim = (Y[plot_index, :].min(), Y[plot_index, :].max())
-        else:
-            _plot_ylim = plot_ylim
+        # Plot spline'd EVI scaled to min/max of plot
+        scaled_evi = (r['spline_evi'] * (_plot_ylim[1] - _plot_ylim[0]))
+        plt.plot(np.arange(1, 366), scaled_evi, color=fit_colors[i],
+                 ls='-')
+
         plt.vlines(r['spring_doy'], _plot_ylim[0], _plot_ylim[1],
                    fit_colors[i], linestyles='dashed', lw=3)
         plt.vlines(r['autumn_doy'], _plot_ylim[0], _plot_ylim[1],
@@ -197,6 +195,7 @@ def plot_phenology():
         print('    spring: {d}'.format(i=i, d=r['spring_doy']))
         print('    autumn: {d}'.format(i=i, d=r['autumn_doy']))
         print('    correlation: {d}'.format(i=i, d=r['pheno_cor']))
+        print('    # observatiosn: {n}'.format(n=r['pheno_nobs']))
 
     plt.xlim(0, 366)
     plt.ylim(plot_ylim)
