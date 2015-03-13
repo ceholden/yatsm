@@ -7,7 +7,7 @@ surface phenomena, including land cover and land use change, using timeseries
 of remote sensing observations. The algorithm seeks to find distinct time
 periods within the timeseries, or time segments, by monitoring for disturbances. These time segments may be used to infer continuous periods of stable land cover, with breaks separating the segments representing ephemeral disturbances or permanent conversions in land cover or land use.
 
-The "Yet Another..." part of the algorithm name is an acknowledgement of the influence a previously published timeseries algorithm - the Continuous Change Detection and Classification (CCDC) (Zhu and Woodcock, 2014) algorithm. While YATSM began as an extension from CCDC, it was never intended as a 1 to 1 port of CCDC and will continue to diverge in its own direction.
+The ["Yet Another..."](http://en.wikipedia.org/wiki/Yet_another) part of the algorithm name is an acknowledgement of the influence a previously published timeseries algorithm - the Continuous Change Detection and Classification (CCDC) (Zhu and Woodcock, 2014) algorithm. While YATSM began as an extension from CCDC, it was never intended as a 1 to 1 port of CCDC and will continue to diverge in its own direction.
 
 This algorithm is also influenced by other remote sensing algorithms which, like CCDC, are based in theory on tests for structural change from econometrics
 literature (Chow, 1960; Andrews, 1993; Chu *et al*, 1996; Zeileis, 2005). These other remote sensing algorithms include Break detection For Additive Season and Trend (BFAST) (Verbesselt *et al*, 2012) and LandTrendr (Kennedy *et al*, 2010). By combining ideas from CCDC, BFAST, and LandTrendr, this "Yet Another..." algorithm hopes to overcome weaknesses present in any single approach.
@@ -49,3 +49,9 @@ Listed below are the Python library requirements for running YATSM. The version 
     scikit-learn >= 0.15.1
     ggplot >= 0.5.8
     docopt >= 0.6.1
+
+These are listed in the `requirements.txt` file, which is usable by PIP as follows:
+
+    pip install -r requirements.txt
+
+The R statistical software environment and the `rpy2` Python to R interface are required for calculation of phenology metrics. You can find this requirement in `requirements-pheno.txt`.
