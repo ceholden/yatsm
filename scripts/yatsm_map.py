@@ -241,9 +241,9 @@ def get_classification(date, result_location, image_ds,
 
     logger.debug('Processing results')
     for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
-        if not 'class' in rec.dtype.names:
+        if 'class' not in rec.dtype.names:
             raise ValueError('Results do not have classification labels')
-        if not 'class_proba' in rec.dtype.names and pred_proba:
+        if 'class_proba' not in rec.dtype.names and pred_proba:
             raise ValueError('Results do not have classification prediction'
                              ' probability values')
 
@@ -367,8 +367,8 @@ def get_prediction(date, result_location, image_ds,
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
-        A 3D numpy.ndarray containing the prediction for each band, for each
-        pixel
+      np.ndarray: A 3D numpy.ndarray containing the prediction for each band,
+        for each pixel
 
     """
     # Find results
