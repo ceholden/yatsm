@@ -155,6 +155,9 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
             if band_names is not None:
                 ds.GetRasterBand(b + 1).SetDescription(band_names[b])
+                ds.GetRasterBand(b + 1).SetMetadata({
+                    'band_{i}'.format(i=b + 1): band_names[b]
+                })
     else:
         logger.debug('    writing band')
         ds.GetRasterBand(1).WriteArray(raster)
@@ -162,6 +165,9 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
         if band_names is not None:
             ds.GetRasterBand(1).SetDescription(band_names[0])
+            ds.GetRasterBand(1).SetMetadata({
+                'band_1': band_names[0]
+            })
 
     ds.SetProjection(image_ds.GetProjection())
     ds.SetGeoTransform(image_ds.GetGeoTransform())
