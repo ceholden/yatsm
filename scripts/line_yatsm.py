@@ -5,6 +5,7 @@ Usage: line_yatsm.py [options] <config_file> <job_number> <total_jobs>
 
 Options:
     --check                     Check that images exist
+    --check_cache               Check that cache file contains matching data
     --resume                    Do not overwrite pre-existing results
     --do-not-run                Don't run YATSM (useful for just caching data)
     -v --verbose                Show verbose debugging messages
@@ -26,7 +27,7 @@ from docopt import docopt
 import numpy as np
 from osgeo import gdal
 
-# Handle runnin as installed module or not
+# Handle running as installed module or not
 try:
     from yatsm.version import __version__
 except ImportError:
@@ -34,9 +35,11 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
     from yatsm.version import __version__
+from yatsm.cache import (get_line_cache_name, test_cache, read_cache_file,
+                         write_cache_file)
 from yatsm.config_parser import parse_config_file
 from yatsm.errors import TSLengthException
-from yatsm.utils import (calculate_lines, get_output_name, get_line_cache_name,
+from yatsm.utils import (calculate_lines, get_output_name, get_image_IDs,
                          csvfile_to_dataset, make_X)
 from yatsm.reader import get_image_attribute, read_row_BIP, read_row_GDAL
 from yatsm.yatsm import YATSM
@@ -50,62 +53,25 @@ logger = logging.getLogger('yatsm')
 loglevel_YATSM = logging.WARNING
 
 
-def test_cache(dataset_config):
-    """ Test cache directory for ability to read from or write to
-
-    Args:
-      dataset_config (dict): dictionary of dataset configuration options
-
-    Returns:
-      (read_cache, write_cache): tuple of bools describing ability to read from
-        and write to cache directory
-
-    """
-    # Try to find / use cache
-    read_cache = False
-    write_cache = False
-
-    cache_dir = dataset_config.get('cache_line_dir')
-    if cache_dir:
-        # Test existence
-        if os.path.isdir(cache_dir):
-            read_cache = True
-            if os.access(cache_dir, os.W_OK):
-                write_cache = True
-            else:
-                logger.warning('Cache directory exist but is not writable')
-        else:
-            # If it doesn't already exist, can we create it?
-            try:
-                os.makedirs(cache_dir)
-            except:
-                logger.warning('Could not create cache directory')
-            else:
-                read_cache = True
-                write_cache = True
-
-    logger.debug('Attempt reading in from cache directory?: {b}'.format(
-        b=read_cache))
-    logger.debug('Attempt writing to cache directory?: {b}'.format(
-        b=write_cache))
-
-    return read_cache, write_cache
-
-
-def read_line(line, images, dataset_config,
+def read_line(line, images, image_IDs, dataset_config,
               ncol, nband, dtype,
-              read_cache=False, write_cache=False):
+              read_cache=False, write_cache=False, validate_cache=False):
     """ Reads in dataset from cache or images if required
 
     Args:
       line (int): line to read in from images
       images (list): list of image filenames to read from
+      image_IDs (iterable): list image identifying strings
       dataset_config (dict): dictionary of dataset configuration options
       ncol (int): number of columns
       nband (int): number of bands
       dtype (type): NumPy datatype
       read_cache (bool, optional): try to read from cache directory
-      write_cache (bool, optional): to to write to cache directory
+        (default: False)
+      write_cache (bool, optional): try to to write to cache directory
+        (default: False)
+      validate_cache (bool, optional): validate that cache data come from same
+        images specified in `images` (default: False)
 
     Returns:
       Y (np.ndarray): 3D array of image data (nband, n_image, n_cols)
@@ -117,12 +83,18 @@ def read_line(line, images, dataset_config,
     cache_filename = get_line_cache_name(
         dataset_config, len(images), line, nband)
 
+    Y_shape = (nband, len(images), ncol)
+
     if read_cache:
-        if os.path.isfile(cache_filename):
-            logger.debug('Reading in Y from cache file {f}'.format(
-                f=cache_filename))
-            Y = np.load(cache_filename)['Y']
+        Y = read_cache_file(cache_filename,
+                            image_IDs if validate_cache else None)
+        if Y is not None and Y.shape == Y_shape:
+            logger.debug('Read in Y from cache file')
             read_from_disk = False
+        elif Y is not None and Y.shape != Y_shape:
+            logger.warning(
+                'Data from cache file does not meet size requested '
+                '({y} versus {r})'.format(y=Y.shape, r=Y_shape))
 
     if read_from_disk:
         # Read in Y
@@ -141,23 +113,25 @@ def read_line(line, images, dataset_config,
     if write_cache and read_from_disk:
         logger.debug('Writing Y data to cache file {f}'.format(
             f=cache_filename))
-        np.savez_compressed(cache_filename, Y=Y)
+        write_cache_file(cache_filename, Y, image_IDs)
 
     return Y
 
 
 # Runner
-def run_line(line, X, images,
+def run_line(line, X, images, image_IDs,
              dataset_config, yatsm_config,
              nrow, ncol, nband, dtype,
              do_not_run=False,
-             read_cache=False, write_cache=False):
+             read_cache=False, write_cache=False,
+             validate_cache=False):
     """ Runs YATSM for a line
 
     Args:
       line (int): line to be run from image
       dates (ndarray): np.array of X feature from ordinal dates
       images (ndarray): np.array of image filenames
+      image_IDs (iterable): list image identifying strings
       dataset_config (dict): dict of dataset configuration options
       yatsm_config (dict): dict of YATSM algorithm options
       nrow (int): number of rows
@@ -166,15 +140,21 @@ def run_line(line, X, images,
       dtype (type): NumPy datatype
       do_not_run (bool, optional): don't run YATSM
       read_cache (bool, optional): try to read from cache directory
-      write_cache (bool, optional): to to write to cache directory
+        (default: False)
+      write_cache (bool, optional): try to to write to cache directory
+        (default: False)
+      validate_cache (bool, optional): ensure data from cache file come from
+        images specified in configuration (default: False)
+
 
     """
     # Setup output
     output = []
 
-    Y = read_line(line, images, dataset_config,
+    Y = read_line(line, images, image_IDs, dataset_config,
                   ncol, nband, dtype,
-                  read_cache=read_cache, write_cache=write_cache)
+                  read_cache=read_cache, write_cache=write_cache,
+                  validate_cache=validate_cache)
 
     if do_not_run:
         return
@@ -299,7 +279,8 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
 def main(dataset_config, yatsm_config,
          check=False, resume=False,
          do_not_run=False,
-         read_cache=False, write_cache=False):
+         read_cache=False, write_cache=False,
+         validate_cache=False):
     """ Read in dataset and YATSM for a complete line
 
     Args:
@@ -310,7 +291,11 @@ def main(dataset_config, yatsm_config,
         continue from first non-existing result file
       do_not_run (bool, optional): Don't run YATSM
       read_cache (bool, optional): try to read from cache directory
-      write_cache (bool, optional): to to write to cache directory
+        (default: False)
+      write_cache (bool, optional): try to to write to cache directory
+        (default: False)
+      validate_cache (bool, optional): ensure data from cache file come from
+        images specified in configuration (default: False)
 
     """
     # Read in dataset
@@ -318,6 +303,8 @@ def main(dataset_config, yatsm_config,
         dataset_config['input_file'],
         date_format=dataset_config['date_format']
     )
+
+    image_IDs = get_image_IDs(images)
 
     # Check for existence of files and remove missing
     if check:
@@ -363,11 +350,12 @@ def main(dataset_config, yatsm_config,
         start_time = time.time()
 
         try:
-            run_line(job_line, X, images,
+            run_line(job_line, X, images, image_IDs,
                      dataset_config, yatsm_config,
                      nrow, ncol, nband, dtype,
                      do_not_run=do_not_run,
-                     read_cache=read_cache, write_cache=write_cache)
+                     read_cache=read_cache, write_cache=write_cache,
+                     validate_cache=validate_cache)
         except Exception as e:
             logger.error('Could not process line {l}'.format(l=job_line))
             logger.error(type(e))
@@ -408,8 +396,9 @@ if __name__ == '__main__':
         print('Error - <total_jobs> must be an integer')
         sys.exit(1)
 
-    # Check for existence of images?
+    # Check for existence of images? for cache file validity?
     check = args['--check']
+    check_cache = args['--check_cache']
 
     # Resume?
     resume = False
@@ -464,4 +453,5 @@ if __name__ == '__main__':
     main(dataset_config, yatsm_config,
          check=check, resume=resume,
          do_not_run=do_not_run,
-         read_cache=read_cache, write_cache=write_cache)
+         read_cache=read_cache, write_cache=write_cache,
+         validate_cache=check_cache)

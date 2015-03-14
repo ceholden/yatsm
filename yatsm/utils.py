@@ -50,26 +50,6 @@ def get_output_name(dataset_config, line):
                             line=line))
 
 
-def get_line_cache_name(dataset_config, n_images, nrow, nbands):
-    """ Returns cache filename for specified config and line number
-
-    Args:
-      dataset_config (dict): configuration information about the dataset
-      n_images (int): number of images in dataset
-      nrow (int): line of the dataset for output
-      nbands (int): number of bands in dataset
-
-    Returns:
-      str: filename of cache file
-
-    """
-    path = dataset_config['cache_line_dir']
-    filename = 'yatsm_r{l}_n{n}_b{b}.npy.npz'.format(
-        l=nrow, n=n_images, b=nbands)
-
-    return os.path.join(path, filename)
-
-
 # IMAGE DATASET READING
 def csvfile_to_dataset(input_file, date_format='%Y-%j'):
     """ Return sorted filenames of images from input text file
@@ -120,6 +100,19 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
             images.append(row[i_image])
 
         return (np.array(dates), np.array(images))
+
+
+def get_image_IDs(filenames):
+    """ Returns image IDs for each filename (basename of dirname of file)
+
+    Args:
+      filenames (iterable): filenames to return image IDs for
+
+    Returns:
+      list: image IDs for each file in `filenames`
+
+    """
+    return [os.path.basename(os.path.dirname(f)) for f in filenames]
 
 
 # MAPPING UTILITIES
