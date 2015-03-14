@@ -149,28 +149,83 @@ def find_stack_images(location, folder_pattern='L*', image_pattern='L*stack',
     return (dates, image_filenames)
 
 
-def read_row_BIP(filename, row, size, dtype):
-    """ Reads in an entire row of data from a BIP image
+class _BIPStackReader(object):
+    """ Simple class to read BIP formatted stacks
+
+    Some tests have shown that we can speed up total dataset read time by
+    storing the file object references to each image as we loop over many rows
+    instead of opening once per row read. This is a simple class designed to
+    store these references.
+
+    Note that this class assumes the images are "stacked" -- that is that all
+    images contain the same number of rows, columns, and bands, and the images
+    are of the same geographic extent.
 
     Args:
-      filename (str): filename to read from
-      row (int): row to read
+      filenames (list): list of filenames to read from
       size (tuple): tuple of (int, int) containing the number of columns and
         bands in the image
-      dtype (np.dtype): NumPy datatype of the image
+      datatype (np.dtype): NumPy datatype of the images
 
-    Returns:
-      data (np.ndarray): 2D array (nband x ncol) containing the row of data
+    Attributes:
+      filenames (list): list of filenames to read from
+      n_image (int): number of images
+      size (tuple): tuple of (int, int) containing the number of columns and
+        bands in the image
+      datatype (np.dtype): NumPy datatype of images
+      files (list): list of file objects for each image
 
     """
-    with open(filename, 'rb') as f:
-        f.seek(np.dtype(dtype).itemsize * (row * size[0]) * size[1])
-        data = np.fromfile(f, dtype=dtype, count=size[0] * size[1])
+    def __init__(self, filenames, size, datatype):
+        self.filenames = filenames
+        self.n_image = len(self.filenames)
+        self.size = size
+        self.datatype = datatype
 
-    return data.reshape(size).T
+        self.files = []
+        for f in self.filenames:
+            self.files.append(open(f, 'rb'))
+
+    def read_row(self, row):
+        data = np.empty((self.size[1], self.n_image, self.size[0]),
+                        self.datatype)
+
+        for i, fid in enumerate(self.files):
+            # Find where we need to seek to
+            offset = np.dtype(self.datatype).itemsize * \
+                (row * self.size[0]) * self.size[1]
+            # Seek relative to current position
+            fid.seek(offset - fid.tell(), 1)
+            # Read
+            data[:, i, :] = np.fromfile(fid,
+                                        dtype=self.datatype,
+                                        count=self.size[0] * self.size[1],
+                                        ).reshape(self.size).T
+
+        return data
 
 
-class GDALStackReader(object):
+_BIP_stack_reader = None
+def read_row_BIP(filenames, row, size, dtype):
+    """ Reads in an entire row of data from every image
+
+    Args:
+      filenames (iterable): sequence of filenames to read from
+      row (int): row to read
+
+    Returns:
+      np.ndarray: 3D array (nband x nimage x ncol) containing the row
+        of data
+
+    """
+    global _BIP_stack_reader
+    if _BIP_stack_reader is None:
+        _BIP_stack_reader = _BIPStackReader(filenames, size, dtype)
+
+    return _BIP_stack_reader.read_row(row)
+
+
+class _GDALStackReader(object):
     """ Simple class to read stacks using GDAL, keeping file objects open
 
     Some tests have shown that we can speed up total dataset read time by
@@ -236,12 +291,12 @@ class GDALStackReader(object):
         return data
 
 
-stack_reader = None
+_gdal_stack_reader = None
 def read_row_GDAL(filenames, row):
-    """ Reads in an entire row of data from an image using GDAL
+    """ Reads in an entire row of data from every image using GDAL
 
     Args:
-      filename (iterable): sequence of filenames to read from
+      filenames (iterable): sequence of filenames to read from
       row (int): row to read
 
     Returns:
@@ -249,8 +304,8 @@ def read_row_GDAL(filenames, row):
         of data
 
     """
-    global stack_reader
-    if stack_reader is None:
-        stack_reader = GDALStackReader(filenames)
+    global _gdal_stack_reader
+    if _gdal_stack_reader is None:
+        _gdal_stack_reader = _GDALStackReader(filenames)
 
-    return stack_reader.read_row(row)
+    return _gdal_stack_reader.read_row(row)

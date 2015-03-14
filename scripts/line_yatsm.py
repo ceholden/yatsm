@@ -126,13 +126,10 @@ def read_line(line, images, dataset_config,
 
     if read_from_disk:
         # Read in Y
-        Y = np.zeros((nband, len(images), ncol), dtype=dtype)
-
         if dataset_config['use_bip_reader']:
             # Use BIP reader
             logger.debug('Reading in data from disk using BIP reader')
-            for i, image in enumerate(images):
-                Y[:, i, :] = read_row_BIP(image, line, (ncol, nband), dtype)
+            Y = read_row_BIP(images, line, (ncol, nband), dtype)
         else:
             # Read in data just using GDAL
             logger.debug('Reading in data from disk using GDAL')
