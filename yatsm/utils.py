@@ -3,13 +3,12 @@ from __future__ import division
 import csv
 from datetime import datetime as dt
 import fnmatch
-import logging
 import os
 import sys
 
 import numpy as np
 
-logger = logging.getLogger('yatsm')
+from log_yatsm import logger
 
 
 # JOB SPECIFIC FUNCTIONS

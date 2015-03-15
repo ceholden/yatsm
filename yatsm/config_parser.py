@@ -2,16 +2,12 @@ try:
     import ConfigParser as configparser
 except ImportError:
     import configparser
-import logging
 import StringIO
 
 import numpy as np
 
+from log_yatsm import logger
 from version import __version__
-
-FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
-logger = logging.getLogger('yatsm')
 
 
 # CONFIG FILE PARSING

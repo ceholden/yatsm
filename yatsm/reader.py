@@ -2,17 +2,16 @@
 """
 from datetime import datetime as dt
 import fnmatch
-import logging
 import os
 import sys
 
 import numpy as np
 from osgeo import gdal, gdal_array
 
+from log_yatsm import logger
+
 gdal.AllRegister()
 gdal.UseExceptions()
-
-logger = logging.getLogger('yatsm')
 
 
 def get_image_attribute(image_filename):

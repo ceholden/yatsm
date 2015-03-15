@@ -1,14 +1,10 @@
 """ Functions related to writing to and retrieving from cache files
 """
-import logging
 import os
 
 import numpy as np
 
-# Log setup for runner
-FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
-logger = logging.getLogger('yatsm')
+from log_yatsm import logger
 
 _image_ID_str = 'image_IDs'
 
