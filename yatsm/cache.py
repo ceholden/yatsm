@@ -101,7 +101,7 @@ def read_cache_file(cache_filename, image_IDs=None):
         return None
 
     if _image_ID_str in cache.files and image_IDs is not None:
-        if not all(image_IDs in cache[_image_ID_str]):
+        if not np.array_equal(image_IDs, cache[_image_ID_str]):
             logger.warning('Cache file data in {f} do not match images '
                            'specified'.format(f=cache_filename))
             return None
