@@ -52,10 +52,11 @@ def test_cache(dataset_config):
     if cache_dir:
         # Test existence
         if os.path.isdir(cache_dir):
-            read_cache = True
+            if os.access(cache_dir, os.R_OK):
+                read_cache = True
             if os.access(cache_dir, os.W_OK):
                 write_cache = True
-            else:
+            if read_cache and not write_cache:
                 logger.warning('Cache directory exists but is not writable')
         else:
             # If it doesn't already exist, can we create it?
