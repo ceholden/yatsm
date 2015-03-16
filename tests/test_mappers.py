@@ -10,31 +10,29 @@ from utils_mapping import TestMaps
 
 class Test_YATSMMap(TestMaps):
 
-    @classmethod
-    def setUpClass(cls):
+    def setUp(self):
         """ Setup test data filenames and load known truth dataset """
-        cls.script = 'yatsm_map.py'
+        self.script = 'yatsm_map.py'
 
         # Test data
-        cls.root = os.path.join(
+        self.root = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), 'data')
-        cls.result_dir = os.path.join(cls.root, 'YATSM')
-        cls.robust_result_dir = os.path.join(cls.root, 'YATSM_ROBUST')
-        cls.data_cache = os.path.join(cls.root, 'cache')
-        cls.example_img = os.path.join(cls.root, 'example_img')
-        cls.outdir = os.path.join(cls.root, 'outdir')
+        self.result_dir = os.path.join(self.root, 'YATSM')
+        self.robust_result_dir = os.path.join(self.root, 'YATSM_ROBUST')
+        self.data_cache = os.path.join(self.root, 'cache')
+        self.example_img = os.path.join(self.root, 'example_img')
+        self.outdir = os.path.join(self.root, 'outdir')
 
         # Answers
-        cls.answers = os.path.join(cls.root, 'answers')
+        self.answers = os.path.join(self.root, 'answers')
 
-        if not os.path.isdir(cls.outdir):
-            os.makedirs(cls.outdir)
+        if not os.path.isdir(self.outdir):
+            os.makedirs(self.outdir)
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self):
         """ Deletes answer directory """
-        if os.path.isdir(cls.outdir):
-            shutil.rmtree(cls.outdir)
+        if os.path.isdir(self.outdir):
+            shutil.rmtree(self.outdir)
 
 # Test coefficients
     def test_coef(self):

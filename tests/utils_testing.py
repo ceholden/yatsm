@@ -30,9 +30,10 @@ def remove_dir(d):
 
 
 # Utility to ensure we only unzip timeseries dataset once
-_tgz = 'data/p035r032_subset.tar.gz'
-_to_dir = 'data/'
-_dir = 'data/subset'
+_here = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+_tgz = os.path.join(_here, 'data', 'p035r032_subset.tar.gz')
+_to_dir = os.path.join(_here, 'data')
+_dir = os.path.join(_here, 'data', 'subset')
 _pattern = 'L*stack'
 
 
