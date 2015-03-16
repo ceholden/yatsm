@@ -219,7 +219,7 @@ def read_row_BIP(filenames, row, size, dtype):
     """
     global _BIP_stack_reader
     if _BIP_stack_reader is None or \
-            _BIP_stack_reader.filenames != filenames:
+            np.array_equal(_gdal_stack_reader.filenames, filenames):
         _BIP_stack_reader = _BIPStackReader(filenames, size, dtype)
 
     return _BIP_stack_reader.read_row(row)
@@ -306,7 +306,7 @@ def read_row_GDAL(filenames, row):
     """
     global _gdal_stack_reader
     if _gdal_stack_reader is None or \
-            _gdal_stack_reader.filenames != filenames:
+            np.array_equal(_gdal_stack_reader.filenames, filenames):
         _gdal_stack_reader = _GDALStackReader(filenames)
 
     return _gdal_stack_reader.read_row(row)
