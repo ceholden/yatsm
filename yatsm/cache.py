@@ -118,3 +118,88 @@ def write_cache_file(cache_filename, Y, image_IDs):
     np.savez_compressed(cache_filename, **{
         'Y': Y, _image_ID_str: image_IDs
     })
+
+
+# Cache file updating
+def update_cache_file(images, image_IDs,
+                      old_cache_filename, new_cache_filename,
+                      line, reader, reader_kwargs={}):
+    """ Modify an existing cache file to contain data within `images`
+
+    This should be useful for updating a set of cache files to reflect
+    modifications to the timeseries dataset without completely reading the
+    data into another cache file.
+
+    For example, the cache file could be updated to reflect the deletion of
+    a misregistered or cloudy image. Another common example would be for
+    updating cache files to include newly acquired observations.
+
+    Note that this updater will not handle updating cache files to include
+    new bands.
+
+    Args:
+      images (iterable): list of new image filenames
+      image_IDs (iterable): list of new image identifying strings
+      old_cache_filename (str): filename of cache file to update
+      new_cache_filename (str): filename of new cache file which includes
+        modified data
+      line (int): the line of data to be updated
+      reader (callable): GDAL or BIP image reader function from `yatsm.readers`
+      reader_kwargs (dict): additional keyword arguments for `reader` other
+        than the filenames to read and the line to read
+
+    Raises:
+      ValueError: Raise error if old cache file does not record `image_IDs`
+
+    """
+    images = np.asarray(images)
+    image_IDs = np.asarray(image_IDs)
+
+    # Cannot proceed if old cache file doesn't store filenames
+    old_cache = np.load(old_cache_filename)
+    if _image_ID_str not in old_cache.files:
+        raise ValueError('Cannot update cache.'
+                         'Old cache file does not store image IDs.')
+    old_IDs = old_cache[_image_ID_str]
+    old_Y = old_cache['Y']
+    nband, _, ncol = old_Y.shape
+
+    # Create new Y and add in values retained from old cache
+    new_Y = np.zeros((nband, image_IDs.size, ncol),
+                     dtype=old_Y.dtype.type)
+
+    # Check deletions -- find which indices to retain in new cache
+    retain_old = np.where(np.in1d(old_IDs, image_IDs))[0]
+    if retain_old.size == 0:
+        logger.warning('No image IDs in common in old cache file.')
+    else:
+        logger.debug('    retaining {r} of {n} images'.format(
+            r=retain_old.size, n=old_IDs.size))
+        # Find indices of old data to insert into new data
+        idx_old_IDs = np.argsort(old_IDs)
+        sorted_old_IDs = old_IDs[idx_old_IDs]
+        idx_IDs = np.searchsorted(sorted_old_IDs, image_IDs)
+
+        retain_old = idx_old_IDs[idx_IDs[:old_IDs.size]]
+
+        # Indices to insert into new data
+        retain_new = np.where(np.in1d(image_IDs, old_IDs))[0]
+
+        new_Y[:, retain_new, :] = old_Y[:, retain_old, :]
+
+    # Check additions -- find which indices we need to insert
+    insert = np.where(np.in1d(image_IDs, old_IDs) == False)[0]
+
+    if retain_old.size == 0 and insert.size == 0:
+        raise ValueError('Cannot update cache file -- '
+                         'no data retained or added')
+
+    # Read in the remaining data from disk
+    if insert.size > 0:
+        logger.debug('Inserting {n} new images into cache'.format(
+            n=insert.size))
+        insert_Y = reader(images[insert], line, **reader_kwargs)
+        new_Y[:, insert, :] = insert_Y
+
+    # Save
+    write_cache_file(new_cache_filename, new_Y, image_IDs)
