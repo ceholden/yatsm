@@ -21,6 +21,8 @@ install:
     # Add deps from binstar
     - conda install -y -c https://conda.binstar.org/statsmodels statsmodels
     - conda install -y -c https://conda.binstar.org/anaconda scikit-learn
+    # Add RPy2 for phenology
+    - conda install -y -c https://conda.binstar.org/r rpy2
     # Workaround for Fortran warnings -- install glmnet first and quietly
     - "pip install -q git+git://github.com/ceholden/glmnet-python.git#egg=glmnet"
     # Rest of dependencies
