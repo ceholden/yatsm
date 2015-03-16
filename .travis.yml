@@ -31,3 +31,8 @@ install:
     - "pip install -e ."
 script:
     - py.test
+    - coverage run --source yatsm -m py.test
+after_success:
+    - pip install coveralls
+    - coverage report
+    - coveralls
