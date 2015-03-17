@@ -12,24 +12,35 @@ from log_yatsm import logger
 
 
 # JOB SPECIFIC FUNCTIONS
-def calculate_lines(job_number, total_jobs, nrow):
+def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
     """ Calculate the lines this job processes given nrow, njobs, and job ID
 
     Args:
+      job_number (int): processor to distribute jobs to
+      total_jobs (int): total number of processors running jobs
       nrow (int): number of rows in image
+      interlaced (bool, optional): interlace line assignment (default: True)
 
     Returns:
       rows (ndarray): np.array of rows to be processed
 
     """
-    assigned = 0
-    rows = []
+    if interlaced:
+        assigned = 0
+        rows = []
 
-    while job_number + total_jobs * assigned < nrow:
-        rows.append(job_number + total_jobs * assigned)
-        assigned += 1
+        while job_number + total_jobs * assigned < nrow:
+            rows.append(job_number + total_jobs * assigned)
+            assigned += 1
+        rows = np.array(rows)
+    else:
+        size = int(nrow / total_jobs) + 1
+        i_start = size * job_number
+        i_end = size * (job_number + 1)
 
-    return np.array(rows)
+        rows = np.arange(i_start, min(i_end, nrow))
+
+    return rows
 
 
 def get_output_name(dataset_config, line):
