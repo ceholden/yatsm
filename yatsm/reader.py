@@ -211,6 +211,8 @@ def read_row_BIP(filenames, row, size, dtype):
     Args:
       filenames (iterable): sequence of filenames to read from
       row (int): row to read
+      size (tuple): tuple of (int, int) containing the number of columns and
+        bands in the image
 
     Returns:
       np.ndarray: 3D array (nband x nimage x ncol) containing the row
@@ -219,7 +221,7 @@ def read_row_BIP(filenames, row, size, dtype):
     """
     global _BIP_stack_reader
     if _BIP_stack_reader is None or \
-            np.array_equal(_gdal_stack_reader.filenames, filenames):
+            not np.array_equal(_BIP_stack_reader.filenames, filenames):
         _BIP_stack_reader = _BIPStackReader(filenames, size, dtype)
 
     return _BIP_stack_reader.read_row(row)
@@ -306,7 +308,7 @@ def read_row_GDAL(filenames, row):
     """
     global _gdal_stack_reader
     if _gdal_stack_reader is None or \
-            np.array_equal(_gdal_stack_reader.filenames, filenames):
+            not np.array_equal(_gdal_stack_reader.filenames, filenames):
         _gdal_stack_reader = _GDALStackReader(filenames)
 
     return _gdal_stack_reader.read_row(row)
