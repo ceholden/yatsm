@@ -121,7 +121,7 @@ def plot_dataset():
 
 def plot_results():
     # Add in deleted obs
-    deleted = ~np.in1d(Y[plot_index, :], yatsm.Y[plot_index, :])
+    deleted = np.in1d(X[:, 1], yatsm.X[:, 1], invert=True)
 
     plot_dataset()
     plt.plot(dates[deleted], Y[plot_index, deleted], 'ro')
