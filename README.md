@@ -1,6 +1,6 @@
 Yet Another Timeseries Model (YATSM)
 ------------------------------------
-[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm)
+[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=v0.4.0)](https://coveralls.io/r/ceholden/yatsm?branch=v0.4.0)
 ## About
 The Yet Another TimeSeries Model (YATSM) algorithm is designed to monitor land
 surface phenomena, including land cover and land use change, using timeseries
