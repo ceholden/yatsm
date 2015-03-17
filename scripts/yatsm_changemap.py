@@ -37,7 +37,7 @@ from docopt import docopt
 import numpy as np
 from osgeo import gdal
 
-# Handle runnin as installed module or not
+# Handle running as installed module or not
 try:
     from yatsm.version import __version__
 except ImportError:

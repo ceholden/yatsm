@@ -26,7 +26,7 @@ import numpy.lib.recfunctions as nprfn
 
 from sklearn.externals import joblib
 
-# Handle runnin as installed module or not
+# Handle running as installed module or not
 try:
     from yatsm.version import __version__
 except ImportError:

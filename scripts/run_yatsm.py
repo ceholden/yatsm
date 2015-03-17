@@ -62,7 +62,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
-# Handle runnin as installed module or not
+# Handle running as installed module or not
 try:
     from yatsm.version import __version__
 except ImportError:
