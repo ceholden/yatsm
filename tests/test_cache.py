@@ -44,6 +44,27 @@ class TestCache(TestStackDataset):
             self.config, self.n_images, self.n_row, self.n_bands)
         self.assertEqual(name, self.test_file)
 
+    def test_get_line_cache_pattern_glob(self):
+        import glob
+        pattern = cache.get_line_cache_pattern(
+            self.n_row, self.n_bands, regex=False)
+
+        found = glob.glob('{d}/{p}'.format(
+            d=self.config['cache_line_dir'], p=pattern))[0]
+
+        self.assertEqual(found, self.test_file)
+
+    def test_get_line_cache_pattern_regex(self):
+        import re
+        pattern = cache.get_line_cache_pattern(
+            self.n_row, self.n_bands, regex=True)
+
+        found = [f for f in os.listdir(self.config['cache_line_dir'])
+                 if re.match(pattern, f)]
+        found = os.path.join(self.config['cache_line_dir'], found[0])
+
+        self.assertEqual(found, self.test_file)
+
     def test_cache_permissions_readF_writeF(self):
         # False / False
         test_dir = 'test/test_f_f'

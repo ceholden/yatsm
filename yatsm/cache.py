@@ -9,13 +9,13 @@ from log_yatsm import logger
 _image_ID_str = 'image_IDs'
 
 
-def get_line_cache_name(dataset_config, n_images, nrow, nbands):
+def get_line_cache_name(dataset_config, n_images, row, nbands):
     """ Returns cache filename for specified config and line number
 
     Args:
       dataset_config (dict): configuration information about the dataset
       n_images (int): number of images in dataset
-      nrow (int): line of the dataset for output
+      row (int): line of the dataset for output
       nbands (int): number of bands in dataset
 
     Returns:
@@ -24,9 +24,32 @@ def get_line_cache_name(dataset_config, n_images, nrow, nbands):
     """
     path = dataset_config['cache_line_dir']
     filename = 'yatsm_r{l}_n{n}_b{b}.npy.npz'.format(
-        l=nrow, n=n_images, b=nbands)
+        l=row, n=n_images, b=nbands)
 
     return os.path.join(path, filename)
+
+
+def get_line_cache_pattern(row, nbands, regex=False):
+    """ Returns a pattern for a cache file from a certain row
+
+    This function is useful for finding all cache files from a line, ignoring
+    the number of images in the file.
+
+    Args:
+      row (int): line of the dataset for output
+      nbands (int): number of bands in dataset
+      regex (bool, optional): return a regular expression instead of glob
+        style (default: False)
+
+    Returns:
+      str: filename pattern for cache files from line `row`
+
+    """
+    wildcard = '.*' if regex else '*'
+    pattern = 'yatsm_r{l}_n{w}_b{b}.npy.npz'.format(
+        l=row, w=wildcard, b=nbands)
+
+    return pattern
 
 
 def test_cache(dataset_config):
