@@ -190,6 +190,7 @@ def update_cache_file(images, image_IDs,
     # Create new Y and add in values retained from old cache
     new_Y = np.zeros((nband, image_IDs.size, ncol),
                      dtype=old_Y.dtype.type)
+    new_IDs = np.zeros(image_IDs.size, dtype=image_IDs.dtype)
 
     # Check deletions -- find which indices to retain in new cache
     retain_old = np.where(np.in1d(old_IDs, image_IDs))[0]
@@ -201,14 +202,16 @@ def update_cache_file(images, image_IDs,
         # Find indices of old data to insert into new data
         idx_old_IDs = np.argsort(old_IDs)
         sorted_old_IDs = old_IDs[idx_old_IDs]
-        idx_IDs = np.searchsorted(sorted_old_IDs, image_IDs)
+        idx_IDs = np.searchsorted(sorted_old_IDs,
+                                  image_IDs[np.in1d(image_IDs, old_IDs)])
 
-        retain_old = idx_old_IDs[idx_IDs[:old_IDs.size]]
+        retain_old = idx_old_IDs[idx_IDs]
 
         # Indices to insert into new data
         retain_new = np.where(np.in1d(image_IDs, old_IDs))[0]
 
         new_Y[:, retain_new, :] = old_Y[:, retain_old, :]
+        new_IDs[retain_new] = old_IDs[retain_old]
 
     # Check additions -- find which indices we need to insert
     insert = np.where(np.in1d(image_IDs, old_IDs) == False)[0]
@@ -223,6 +226,9 @@ def update_cache_file(images, image_IDs,
             n=insert.size))
         insert_Y = reader(images[insert], line, **reader_kwargs)
         new_Y[:, insert, :] = insert_Y
+        new_IDs[insert] = image_IDs[insert]
+
+    np.testing.assert_equal(new_IDs, image_IDs)
 
     # Save
     write_cache_file(new_cache_filename, new_Y, image_IDs)
