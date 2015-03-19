@@ -22,7 +22,7 @@ def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
       interlaced (bool, optional): interlace line assignment (default: True)
 
     Returns:
-      rows (ndarray): np.array of rows to be processed
+      rows (np.ndarray): np.ndarray of rows to be processed
 
     """
     if interlaced:
