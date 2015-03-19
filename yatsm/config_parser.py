@@ -145,7 +145,7 @@ def parse_classification_config(config):
         dataset_config['training_image'] = config.get(
             'classification', 'training_image')
         dataset_config['roi_mask_values'] = config.get(
-            'classification', 'mask_values')
+            'classification', 'roi_mask_values')
         if dataset_config['roi_mask_values']:
             dataset_config['roi_mask_values'] = np.array([
                 int(v) for v in
