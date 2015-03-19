@@ -22,9 +22,6 @@ scripts = ['scripts/line_yatsm.py',
            'scripts/yatsm_map.py',
            'scripts/yatsm_changemap.py']
 
-ext = [Extension('yatsm.cymasking',
-                 ['yatsm/cymasking.pyx'],
-                 include_dirs=[np.get_include()])]
 
 cmdclass = {'build_ext': build_ext}
 
