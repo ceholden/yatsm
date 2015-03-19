@@ -38,6 +38,7 @@ except ImportError:
 from yatsm.cache import (get_line_cache_name, test_cache, read_cache_file,
                          write_cache_file)
 from yatsm.config_parser import parse_config_file
+import yatsm._cyprep as cyprep
 from yatsm.errors import TSLengthException
 from yatsm.utils import (calculate_lines, get_output_name, get_image_IDs,
                          csvfile_to_dataset, make_X)
@@ -216,22 +217,22 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
       model_result (ndarray): NumPy array of model results from YATSM
 
     """
-    # Mask
-    mask_band = dataset_config['mask_band']
-
-    # Continue if clear observations are less than 50% of dataset
-    if (Y[mask_band, :] < 255).sum() < Y.shape[1] / 2.0:
+    # Continue if valid observations are less than 50% of dataset
+    valid = cyprep.get_valid_mask(
+      Y[:dataset_config['mask_band'], :],
+      dataset_config['min_values'],
+      dataset_config['max_values']
+    )
+    if valid.sum() < Y.shape[1] / 2.0:
         raise TSLengthException('Not enough valid observations')
 
-    # Otherwise continue
-    clear = (
-        ~np.in1d(Y[mask_band, :], dataset_config['mask_values']) *
-        np.all(Y[:mask_band, :] > 0, axis=0) *
-        np.all(Y[:mask_band, :] < 10000, axis=0)
-    )
+    # Otherwise continue with masked values
+    valid = (valid * np.in1d(Y[dataset_config['mask_band'], :],
+                             dataset_config['mask_values'],
+                             invert=True)).astype(np.bool)
 
-    Y = Y[:mask_band, clear]
-    X = X[clear, :]
+    Y = Y.take(valid, axis=1)[:dataset_config['mask_band'], :]
+    X = X.take(valid, axis=0)
 
     if yatsm_config['reverse']:
         # TODO: do this earlier
