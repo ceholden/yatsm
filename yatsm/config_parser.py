@@ -30,7 +30,7 @@ screening_crit = 400.0
 robust = false
 [classification]
 training_image = None
-mask_values = 0, 255
+roi_mask_values = 0, 255
 cache_training =
     """
 
@@ -57,12 +57,12 @@ cache_training =
     if config.has_section('classification'):
         dataset_config['training_image'] = config.get('classification',
                                                       'training_image')
-        dataset_config['mask_values'] = config.get('classification',
-                                                   'mask_values')
-        if dataset_config['mask_values']:
-            dataset_config['mask_values'] = np.array([
+        dataset_config['roi_mask_values'] = config.get('classification',
+                                                   'roi_mask_values')
+        if dataset_config['roi_mask_values']:
+            dataset_config['roi_mask_values'] = np.array([
                 int(v) for v in
-                dataset_config['mask_values'].replace(' ', ',').split(',')
+                dataset_config['roi_mask_values'].replace(' ', ',').split(',')
                 if v != ','])
         dataset_config['cache_training'] = config.get(
             'classification', 'cache_training')
