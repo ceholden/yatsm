@@ -13,6 +13,7 @@ Algorithm options:
     --retrain_time=<n>      Wait <n> days to update model [default: 365.25]
     --screening=<method>    Multi-temporal screening method [default: RLM]
     --screening_crit=<t>    Screening critical value [default: 400.0]
+    --remove_noise          Remove noise during monitoring
     --dynamic_rmse          Vary RMSE as a function of day of year
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
@@ -242,6 +243,7 @@ if __name__ == '__main__':
     if screening not in YATSM.screening_types:
         raise TypeError('Unknown multi-temporal cloud screening type')
     screening_crit = float(args['--screening_crit'])
+    remove_noise = args['--remove_noise']
 
     dynamic_rmse = args['--dynamic_rmse']
 
@@ -336,6 +338,7 @@ if __name__ == '__main__':
                   retrain_time=retrain_time,
                   screening=screening,
                   screening_crit=screening_crit,
+                  remove_noise=remove_noise,
                   dynamic_rmse=dynamic_rmse,
                   lassocv=lassocv,
                   logger=logger)
