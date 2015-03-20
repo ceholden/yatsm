@@ -21,7 +21,7 @@ output_prefix = yatsm_r
 n_bands = 8
 mask_band = 8
 mask_values = 2, 3, 4, 255
-valid_range =
+valid_range = 0, 10000
 green_band = 2
 swir1_band = 5
 use_bip_reader = true
@@ -150,7 +150,7 @@ def parse_classification_config(config):
             dataset_config['roi_mask_values'] = np.array([
                 int(v) for v in
                 dataset_config['roi_mask_values'].replace(' ', ',').split(',')
-                if v != ','
+                if v != ''
             ])
         dataset_config['cache_training'] = config.get(
             'classification', 'cache_training')
