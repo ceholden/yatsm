@@ -18,9 +18,11 @@ Submodules
    yatsm.cymasking
    yatsm.errors
    yatsm.masking
+   yatsm.phenology
    yatsm.plots
    yatsm.reader
    yatsm.utils
+   yatsm.vegetation_indices
    yatsm.version
    yatsm.yatsm
 

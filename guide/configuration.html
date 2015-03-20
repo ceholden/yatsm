@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Model Configuration &mdash; YATSM 0.2.0 documentation</title>
+  <title>Model Configuration &mdash; YATSM 0.3.1 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.2.0 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.3.1 documentation" href="../index.html"/>
         <link rel="next" title="Batch Interface" href="batch_interface.html"/>
         <link rel="prev" title="Model Parameter Exploration" href="exploration.html"/> 
 
@@ -94,6 +94,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -351,7 +352,7 @@ options include:</p>
 
 # Version of config
 [metadata]
-version = 0.2
+version = 0.3
 
 # Section for Dataset
 [dataset]
@@ -388,7 +389,7 @@ test_indices = 2, 4, 5
 # Number of days between model fit updates during monitoring period
 retrain_time = 365.25
 # Multitemporal cloud/shadow screening algorithm and threshold
-screening = RLM
+screening = LOWESS
 screening_crit = 400.0
 # Remove observation if no change has been detected, but first observation is
 # above threshold
@@ -400,12 +401,31 @@ robust = False
 # Commission test alpha value for test; leave blank to ignore test
 commission_alpha =
 
+# Section for phenology fitting
+[phenology]
+# Boolean for calculating phenology, or not
+calc_pheno = False
+# Specification for dataset indices required for EVI based phenology monitoring
+red_index = 2
+nir_index = 3
+blue_index = 0
+# Scale factor for reflectance bands
+scale = 0.0001
+# You can also specify index of EVI if contained in dataset to override calculation
+evi_index =
+evi_scale =
+# Number of years to group together when normalizing EVI to upper and lower percentiles
+year_interval = 3
+# Upper and lower percentiles of EVI used for max/min scaling
+q_min = 10
+q_max = 90
+
 # Section for training and classification
 [classification]
 # Training data file
 training_image = /home/ceholden/Documents/yatsm/examples/training_data.gtif
 # Training data masked values
-mask_values = 0,255
+roi_mask_values = 0,255
 # Date range
 training_start = 1999-01-01
 training_end = 2001-01-01
@@ -436,7 +456,7 @@ cache_training =
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue Feb 24 17:43:03 2015.
+      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
     </p>
   </div>
 
@@ -456,7 +476,7 @@ cache_training =
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.2.0',
+            VERSION:'0.3.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

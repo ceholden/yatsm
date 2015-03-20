@@ -47,6 +47,7 @@ To get started with YATSM, please follow this user guide:
    guide/map_static
    guide/map_changes
    guide/classification
+   guide/phenology
 
 
 Command Line Utilities

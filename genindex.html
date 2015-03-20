@@ -8,7 +8,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; YATSM 0.2.0 documentation</title>
+  <title>Index &mdash; YATSM 0.3.1 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.2.0 documentation" href="index.html"/> 
+    <link rel="top" title="YATSM 0.3.1 documentation" href="index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -93,6 +93,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/phenology.html">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="scripts/scripts.html">Command Line Utilities</a><ul>
@@ -147,10 +148,12 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
@@ -206,6 +209,10 @@
   </dt>
 
       
+  <dt><a href="yatsm/yatsm.phenology.html#yatsm.phenology.CRAN_spline">CRAN_spline() (in module yatsm.phenology)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataset">csvfile_to_dataset() (in module yatsm.utils)</a>
   </dt>
 
@@ -216,25 +223,23 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.dataset_bands">dataset_bands (yatsm.reader.GDALStackReader attribute)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.datasets">datasets (yatsm.reader.GDALStackReader attribute)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.datatype">datatype (yatsm.reader.GDALStackReader attribute)</a>
+  <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.date2index">date2index() (in module yatsm.utils)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.date2index">date2index() (in module yatsm.utils)</a>
+  <dt><a href="yatsm/yatsm.classifiers.sklearn_helper.html#yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults">defaults (yatsm.classifiers.sklearn_helper.RandomForestHelper attribute)</a>
   </dt>
 
+  </dl></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.classifiers.sklearn_helper.html#yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults">defaults (yatsm.classifiers.sklearn_helper.RandomForestHelper attribute)</a>
+  <dt><a href="yatsm/yatsm.vegetation_indices.html#yatsm.vegetation_indices.EVI">EVI() (in module yatsm.vegetation_indices)</a>
   </dt>
 
   </dl></td>
@@ -244,10 +249,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.filenames">filenames (yatsm.reader.GDALStackReader attribute)</a>
-  </dt>
-
-      
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.find_results">find_results() (in module yatsm.utils)</a>
   </dt>
 
@@ -255,18 +256,22 @@
   <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.find_stack_images">find_stack_images() (in module yatsm.reader)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.regression.glmnet_fit.html#yatsm.regression.glmnet_fit.GLMLasso.fit">fit() (yatsm.regression.glmnet_fit.GLMLasso method)</a>
+  <dt><a href="yatsm/yatsm.phenology.html#yatsm.phenology.LongTermMeanPhenology.fit">fit() (yatsm.phenology.LongTermMeanPhenology method)</a>
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="yatsm/yatsm.regression.glmnet_fit.html#yatsm.regression.glmnet_fit.GLMLasso.fit">(yatsm.regression.glmnet_fit.GLMLasso method)</a>
+  </dt>
+
         
   <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.fit">(yatsm.regression.robust_fit.RLM method)</a>
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.fit_models_GLMnet">fit_models_GLMnet() (yatsm.yatsm.YATSM method)</a>
   </dt>
@@ -282,10 +287,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader">GDALStackReader (class in yatsm.reader)</a>
-  </dt>
-
-      
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.get_dynamic_rmse">get_dynamic_rmse() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
@@ -297,12 +298,12 @@
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.get_line_cache_name">get_line_cache_name() (in module yatsm.utils)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.get_model_rmse">get_model_rmse() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.get_output_name">get_output_name() (in module yatsm.utils)</a>
   </dt>
@@ -313,6 +314,10 @@
 
       
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.green_band">green_band (yatsm.yatsm.YATSM attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.html#yatsm.phenology.group_years">group_years() (in module yatsm.phenology)</a>
   </dt>
 
   </dl></td>
@@ -343,6 +348,16 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.kfold_scores">kfold_scores() (in module yatsm.classifiers.diagnostics)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.phenology.html#yatsm.phenology.LongTermMeanPhenology">LongTermMeanPhenology (class in yatsm.phenology)</a>
   </dt>
 
   </dl></td>
@@ -384,20 +399,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.n_band">n_band (yatsm.reader.GDALStackReader attribute)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.n_col">n_col (yatsm.reader.GDALStackReader attribute)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.n_image">n_image (yatsm.reader.GDALStackReader attribute)</a>
-  </dt>
-
-      
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.ndays">ndays (yatsm.yatsm.YATSM attribute)</a>
   </dt>
 
@@ -409,6 +410,12 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.omission_test">omission_test() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.phenology.html#yatsm.phenology.ordinal2yeardoy">ordinal2yeardoy() (in module yatsm.phenology)</a>
   </dt>
 
   </dl></td>
@@ -430,11 +437,19 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.plot">plot() (yatsm.yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_v0_3_x">parse_config_v0_3_x() (in module yatsm.config_parser)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.html#yatsm.phenology.LongTermMeanPhenology.self.pheno">pheno (yatsm.phenology.LongTermMeanPhenology.self attribute)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.plot">plot() (yatsm.yatsm.YATSM method)</a>
+  </dt>
+
       
   <dt><a href="yatsm/yatsm.plots.html#yatsm.plots.plot_crossvalidation_scores">plot_crossvalidation_scores() (in module yatsm.plots)</a>
   </dt>
@@ -462,10 +477,6 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.read_row">read_row() (yatsm.reader.GDALStackReader method)</a>
-  </dt>
-
-      
   <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_row_BIP">read_row_BIP() (in module yatsm.reader)</a>
   </dt>
 
@@ -477,12 +488,12 @@
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.reset">reset() (yatsm.yatsm.YATSM method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.resid">resid (yatsm.regression.robust_fit.RLM attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM">RLM (class in yatsm.regression.robust_fit)</a>
   </dt>
@@ -509,6 +520,10 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.phenology.html#yatsm.phenology.scale_EVI">scale_EVI() (in module yatsm.phenology)</a>
+  </dt>
+
       
   <dt><a href="yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.screen_timeseries_LOWESS">screen_timeseries_LOWESS() (yatsm.yatsm.YATSM method)</a>
   </dt>
@@ -653,6 +668,10 @@
   <dt><a href="yatsm/yatsm.masking.html#module-yatsm.masking">yatsm.masking (module)</a>
   </dt>
 
+      
+  <dt><a href="yatsm/yatsm.phenology.html#module-yatsm.phenology">yatsm.phenology (module)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -680,6 +699,10 @@
   </dt>
 
       
+  <dt><a href="yatsm/yatsm.vegetation_indices.html#module-yatsm.vegetation_indices">yatsm.vegetation_indices (module)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.version.html#module-yatsm.version">yatsm.version (module)</a>
   </dt>
 
@@ -701,7 +724,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue Feb 24 17:43:03 2015.
+      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
     </p>
   </div>
 
@@ -721,7 +744,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.0',
+            VERSION:'0.3.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

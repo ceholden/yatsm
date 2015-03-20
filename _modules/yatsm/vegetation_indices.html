@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.errors &mdash; YATSM 0.3.1 documentation</title>
+  <title>yatsm.vegetation_indices &mdash; YATSM 0.3.1 documentation</title>
   
 
   
@@ -131,10 +131,10 @@
       
           <li><a href="../index.html">Module code</a> &raquo;</li>
       
-    <li>yatsm.errors</li>
+    <li>yatsm.vegetation_indices</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/errors.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/vegetation_indices.rst" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
@@ -142,11 +142,40 @@
 </div>
           <div role="main">
             
-  <h1>Source code for yatsm.errors</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="TSLengthException"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.TSLengthException">[docs]</a><span class="k">class</span> <span class="nc">TSLengthException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Exception stating timeseries does not contain enough observations</span>
+  <h1>Source code for yatsm.vegetation_indices</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Functions for computing vegetation indices</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+
+<div class="viewcode-block" id="EVI"><a class="viewcode-back" href="../../yatsm/yatsm.vegetation_indices.html#yatsm.vegetation_indices.EVI">[docs]</a><span class="k">def</span> <span class="nf">EVI</span><span class="p">(</span><span class="n">red</span><span class="p">,</span> <span class="n">nir</span><span class="p">,</span> <span class="n">blue</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return the Enhanced Vegetation Index for a set of np.ndarrays</span>
+
+<span class="sd">    EVI is calculated as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        2.5 * \\frac{(NIR - RED)}{(NIR + C_1 * RED - C_2 * BLUE + L)}</span>
+
+<span class="sd">    where:</span>
+<span class="sd">        - :math:`RED` is the red band</span>
+<span class="sd">        - :math:`NIR` is the near infrared band</span>
+<span class="sd">        - :math:`BLUE` is the blue band</span>
+<span class="sd">        - :math:`C_1 = 6`</span>
+<span class="sd">        - :math:`C_2 = 7.5`</span>
+<span class="sd">        - :math:`L = 1`</span>
+
+<span class="sd">    Note: bands must be given in float datatype from [0, 1]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      red (np.ndarray): red band</span>
+<span class="sd">      nir (np.ndarray): NIR band</span>
+<span class="sd">      blue (np.ndarray): blue band</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      np.ndarray: EVI</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span></div>
+    <span class="k">return</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">nir</span> <span class="o">-</span> <span class="n">red</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nir</span> <span class="o">+</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">red</span> <span class="o">-</span> <span class="mf">7.5</span> <span class="o">*</span> <span class="n">blue</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

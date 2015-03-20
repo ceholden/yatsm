@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.reader &mdash; YATSM 0.2.0 documentation</title>
+  <title>yatsm.reader &mdash; YATSM 0.3.1 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.2.0 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.3.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -93,6 +93,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -293,28 +294,83 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">image_filenames</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="read_row_BIP"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_row_BIP">[docs]</a><span class="k">def</span> <span class="nf">read_row_BIP</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Reads in an entire row of data from a BIP image</span>
+<span class="k">class</span> <span class="nc">_BIPStackReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Simple class to read BIP formatted stacks</span>
+
+<span class="sd">    Some tests have shown that we can speed up total dataset read time by</span>
+<span class="sd">    storing the file object references to each image as we loop over many rows</span>
+<span class="sd">    instead of opening once per row read. This is a simple class designed to</span>
+<span class="sd">    store these references.</span>
+
+<span class="sd">    Note that this class assumes the images are &quot;stacked&quot; -- that is that all</span>
+<span class="sd">    images contain the same number of rows, columns, and bands, and the images</span>
+<span class="sd">    are of the same geographic extent.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      filename (str): filename to read from</span>
-<span class="sd">      row (int): row to read</span>
+<span class="sd">      filenames (list): list of filenames to read from</span>
 <span class="sd">      size (tuple): tuple of (int, int) containing the number of columns and</span>
 <span class="sd">        bands in the image</span>
-<span class="sd">      dtype (np.dtype): NumPy datatype of the image</span>
+<span class="sd">      datatype (np.dtype): NumPy datatype of the images</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">      data (np.ndarray): 2D array (nband x ncol) containing the row of data</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">      filenames (list): list of filenames to read from</span>
+<span class="sd">      n_image (int): number of images</span>
+<span class="sd">      size (tuple): tuple of (int, int) containing the number of columns and</span>
+<span class="sd">        bands in the image</span>
+<span class="sd">      datatype (np.dtype): NumPy datatype of images</span>
+<span class="sd">      files (list): list of file objects for each image</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">*</span> <span class="p">(</span><span class="n">row</span> <span class="o">*</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">datatype</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span> <span class="o">=</span> <span class="n">filenames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_image</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span>
 
-    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">read_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_image</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">):</span>
+            <span class="c"># Find where we need to seek to</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datatype</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span> <span class="o">*</span> \
+                <span class="p">(</span><span class="n">row</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c"># Seek relative to current position</span>
+            <span class="n">fid</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span> <span class="o">-</span> <span class="n">fid</span><span class="o">.</span><span class="n">tell</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c"># Read</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span>
+                                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datatype</span><span class="p">,</span>
+                                        <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                        <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="n">_BIP_stack_reader</span> <span class="o">=</span> <span class="bp">None</span>
+<div class="viewcode-block" id="read_row_BIP"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_row_BIP">[docs]</a><span class="k">def</span> <span class="nf">read_row_BIP</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reads in an entire row of data from every image</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      filenames (iterable): sequence of filenames to read from</span>
+<span class="sd">      row (int): row to read</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      np.ndarray: 3D array (nband x nimage x ncol) containing the row</span>
+<span class="sd">        of data</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_BIP_stack_reader</span>
+    <span class="k">if</span> <span class="n">_BIP_stack_reader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_BIP_stack_reader</span> <span class="o">=</span> <span class="n">_BIPStackReader</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_BIP_stack_reader</span><span class="o">.</span><span class="n">read_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="GDALStackReader"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader">[docs]</a><span class="k">class</span> <span class="nc">GDALStackReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_GDALStackReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Simple class to read stacks using GDAL, keeping file objects open</span>
 
 <span class="sd">    Some tests have shown that we can speed up total dataset read time by</span>
@@ -360,7 +416,7 @@
                 <span class="n">bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dataset_bands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GDALStackReader.read_row"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.GDALStackReader.read_row">[docs]</a>    <span class="k">def</span> <span class="nf">read_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a 3D NumPy array (nband x nimage x ncol) of one row&#39;s data</span>
 
 <span class="sd">        Args:</span>
@@ -379,13 +435,13 @@
 
         <span class="k">return</span> <span class="n">data</span>
 
-</div></div>
-<span class="n">stack_reader</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="n">_gdal_stack_reader</span> <span class="o">=</span> <span class="bp">None</span>
 <div class="viewcode-block" id="read_row_GDAL"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_row_GDAL">[docs]</a><span class="k">def</span> <span class="nf">read_row_GDAL</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Reads in an entire row of data from an image using GDAL</span>
+    <span class="sd">&quot;&quot;&quot; Reads in an entire row of data from every image using GDAL</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      filename (iterable): sequence of filenames to read from</span>
+<span class="sd">      filenames (iterable): sequence of filenames to read from</span>
 <span class="sd">      row (int): row to read</span>
 
 <span class="sd">    Returns:</span>
@@ -393,11 +449,11 @@
 <span class="sd">        of data</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">stack_reader</span>
-    <span class="k">if</span> <span class="n">stack_reader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">stack_reader</span> <span class="o">=</span> <span class="n">GDALStackReader</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">_gdal_stack_reader</span>
+    <span class="k">if</span> <span class="n">_gdal_stack_reader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">_gdal_stack_reader</span> <span class="o">=</span> <span class="n">_GDALStackReader</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">stack_reader</span><span class="o">.</span><span class="n">read_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_gdal_stack_reader</span><span class="o">.</span><span class="n">read_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -409,7 +465,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue Feb 24 17:43:03 2015.
+      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
     </p>
   </div>
 
@@ -429,7 +485,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.0',
+            VERSION:'0.3.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

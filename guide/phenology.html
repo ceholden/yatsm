@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Dataset Preparation &mdash; YATSM 0.3.1 documentation</title>
+  <title>Long Term Mean Phenology &mdash; YATSM 0.3.1 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
 
   
     <link rel="top" title="YATSM 0.3.1 documentation" href="../index.html"/>
-        <link rel="next" title="Model Parameter Exploration" href="exploration.html"/>
-        <link rel="prev" title="Installation" href="install.html"/> 
+        <link rel="next" title="Command Line Utilities" href="../scripts/scripts.html"/>
+        <link rel="prev" title="Classification" href="classification.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -68,7 +68,7 @@
 <li class="toctree-l2"><a class="reference internal" href="install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file">Configuration File</a></li>
@@ -94,7 +94,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -130,10 +130,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Dataset Preparation</li>
+    <li>Long Term Mean Phenology</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/dataset.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/phenology.rst" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
@@ -141,11 +141,17 @@
 </div>
           <div role="main">
             
-  <div class="section" id="dataset-preparation">
-<span id="guide-dataset-prep"></span><h1>Dataset Preparation<a class="headerlink" href="#dataset-preparation" title="Permalink to this headline">¶</a></h1>
-<p>This part of the guide is a work in progress. For now you can get an idea of how
-the datasets should be organized and prepared by viewing two example datasets
-located [here](<a class="reference external" href="https://github.com/ceholden/landsat_stack">https://github.com/ceholden/landsat_stack</a>).</p>
+  <div class="section" id="long-term-mean-phenology">
+<span id="guide-phenology"></span><h1>Long Term Mean Phenology<a class="headerlink" href="#long-term-mean-phenology" title="Permalink to this headline">¶</a></h1>
+<p>This part of the guide is a work in progress and more information will be added.</p>
+<p>The purpose of this module within YATSM is to provide long term mean phenological
+characteristics of landscapes using an algorithm developed by Melaas <em>et al</em>
+(2013) for each stable land cover segment identified by the CCDC portion of YATSM.</p>
+<p>See:</p>
+<blockquote>
+<div>Melaas, EK, MA Friedl, and Z Zhu. 2013. Detecting interannual variation in
+deciduous broadleaf forest phenology using Landsat TM/ETM+ data. Remote
+Sensing of Environment 132: 176-185. <a class="reference external" href="http://dx.doi.org/10.1016/j.rse.2013.01.011">http://dx.doi.org/10.1016/j.rse.2013.01.011</a></div></blockquote>
 </div>
 
 
@@ -154,10 +160,10 @@ located [here](<a class="reference external" href="https://github.com/ceholden/l
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="exploration.html" class="btn btn-neutral float-right" title="Model Parameter Exploration"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../scripts/scripts.html" class="btn btn-neutral float-right" title="Command Line Utilities"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="install.html" class="btn btn-neutral" title="Installation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="classification.html" class="btn btn-neutral" title="Classification"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

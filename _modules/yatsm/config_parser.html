@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.config_parser &mdash; YATSM 0.2.0 documentation</title>
+  <title>yatsm.config_parser &mdash; YATSM 0.3.1 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.2.0 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.3.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -93,6 +93,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -174,7 +175,7 @@
 <span class="s">robust = false</span>
 <span class="s">[classification]</span>
 <span class="s">training_image = None</span>
-<span class="s">mask_values = 0, 255</span>
+<span class="s">roi_mask_values = 0, 255</span>
 <span class="s">cache_training =</span>
 <span class="s">    &quot;&quot;&quot;</span>
 
@@ -201,13 +202,13 @@
     <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_section</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">):</span>
         <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
                                                       <span class="s">&#39;training_image&#39;</span><span class="p">)</span>
-        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
-                                                   <span class="s">&#39;mask_values&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]:</span>
-            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;roi_mask_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;classification&#39;</span><span class="p">,</span>
+                                                   <span class="s">&#39;roi_mask_values&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;roi_mask_values&#39;</span><span class="p">]:</span>
+            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;roi_mask_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
                 <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span>
-                <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;mask_values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="s">&#39;,&#39;</span><span class="p">])</span>
+                <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;roi_mask_values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;,&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">])</span>
         <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="s">&#39;classification&#39;</span><span class="p">,</span> <span class="s">&#39;cache_training&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]:</span>
@@ -276,6 +277,54 @@
     <span class="k">return</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span>
 
 </div>
+<div class="viewcode-block" id="parse_config_v0_3_x"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_v0_3_x">[docs]</a><span class="k">def</span> <span class="nf">parse_config_v0_3_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse config file for version 0.3.x &quot;&quot;&quot;</span>
+    <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">parse_config_v0_2_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="n">defaults</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">[phenology]</span>
+<span class="s">calc_pheno = False</span>
+<span class="s">red_index = 2</span>
+<span class="s">nir_index = 3</span>
+<span class="s">blue_index = 0</span>
+<span class="s">scale = 0.0001</span>
+<span class="s">evi_index =</span>
+<span class="s">evi_scale =</span>
+<span class="s">year_interval = 3</span>
+<span class="s">q_min = 10</span>
+<span class="s">q_max = 90</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">allow_no_value</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">readfp</span><span class="p">(</span><span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">defaults</span><span class="p">))</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;calc_pheno&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">getboolean</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;calc_pheno&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;calc_pheno&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span>
+
+    <span class="n">red_index</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;red_index&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;red_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">red_index</span><span class="p">)</span> <span class="k">if</span> <span class="n">red_index</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">nir_index</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;nir_index&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;nir_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nir_index</span><span class="p">)</span> <span class="k">if</span> <span class="n">nir_index</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">blue_index</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;blue_index&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;blue_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">blue_index</span><span class="p">)</span> <span class="k">if</span> <span class="n">blue_index</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;scale&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;scale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span> <span class="k">if</span> <span class="n">scale</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">evi_index</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;evi_index&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;evi_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">evi_index</span><span class="p">)</span> <span class="k">if</span> <span class="n">evi_index</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">evi_scale</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;evi_scale&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;evi_scale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">evi_scale</span><span class="p">)</span> <span class="k">if</span> <span class="n">evi_scale</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">year_int</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;year_interval&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;year_interval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">year_int</span><span class="p">)</span> <span class="k">if</span> <span class="n">year_int</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">q_min</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;q_min&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;q_min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">q_min</span><span class="p">)</span> <span class="k">if</span> <span class="n">q_min</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">q_max</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;phenology&#39;</span><span class="p">,</span> <span class="s">&#39;q_max&#39;</span><span class="p">)</span>
+    <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;q_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">q_max</span><span class="p">)</span> <span class="k">if</span> <span class="n">q_max</span> <span class="k">else</span> <span class="bp">None</span>
+
+    <span class="k">return</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span>
+
+</div>
 <div class="viewcode-block" id="parse_config_file"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_file">[docs]</a><span class="k">def</span> <span class="nf">parse_config_file</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parses config file into dictionary of attributes &quot;&quot;&quot;</span>
 
@@ -296,7 +345,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;    config file: v{v}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">version</span><span class="p">))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;    YATSM: v{v}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="n">__version__</span><span class="p">))</span>
 
-    <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">parse_config_v0_2_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+    <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">parse_config_v0_3_x</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">)</span></div>
 </pre></div>
@@ -310,7 +359,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue Feb 24 17:43:03 2015.
+      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
     </p>
   </div>
 
@@ -330,7 +379,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.0',
+            VERSION:'0.3.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
