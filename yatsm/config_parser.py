@@ -63,7 +63,7 @@ cache_training =
             dataset_config['roi_mask_values'] = np.array([
                 int(v) for v in
                 dataset_config['roi_mask_values'].replace(' ', ',').split(',')
-                if v != ','])
+                if v != ''])
         dataset_config['cache_training'] = config.get(
             'classification', 'cache_training')
         if not dataset_config['cache_training']:
