@@ -26,7 +26,7 @@ import numpy.lib.recfunctions as nprfn
 
 from sklearn.externals import joblib
 
-# Handle runnin as installed module or not
+# Handle running as installed module or not
 try:
     from yatsm.version import __version__
 except ImportError:
@@ -78,8 +78,9 @@ def classify_line(filename, classifier):
     z = np.load(filename)
     rec = z['record']
 
-    if rec.shape == 0:
+    if rec.shape[0] == 0:
         logger.debug('No records in {f}. Continuing'.format(f=filename))
+        return
 
     # Rescale intercept term
     coef = rec['coef']
@@ -97,17 +98,21 @@ def classify_line(filename, classifier):
         ('class_proba', 'float32', classes.size)
     ])
     classified['class'] = classifier.predict(X)
-    classified['class_proba'] = classifier.predict_proba(X).max(axis=1)
+    classified['class_proba'] = classifier.predict_proba(X)
 
-    # Merge
-    merged_rec = nprfn.merge_arrays((rec, classified), flatten=True)
+    # Replace with new classification if exists, or add by merging
+    if 'class' in rec.dtype.names or 'class_proba' in rec.dtype.names:
+        rec['class'] = classified['class']
+        rec['class_proba'] = classified['class_proba']
+    else:
+        rec = nprfn.merge_arrays((rec, classified), flatten=True)
 
     # Create dict for re-saving `npz` file (only way to append)
     out = {}
     for k, v in z.iteritems():
         out[k] = v
     out['classes'] = classes
-    out['record'] = merged_rec
+    out['record'] = rec
 
     np.savez(filename, **out)
 
@@ -167,12 +172,12 @@ def main(args):
 
     # Read in the saved classification result
     try:
-        f = open(args['algo'])
+        _ = open(args['algo'])
     except:
         logger.error('Could not open pickled classifier')
         sys.exit(1)
 
-    classifier = joblib.load(f)
+    classifier = joblib.load(args['algo'])
 
     # Split into lines and classify
     job_lines = calculate_lines(args['job_number'] - 1, args['total_jobs'],
