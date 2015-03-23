@@ -231,8 +231,8 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                              dataset_config['mask_values'],
                              invert=True)).astype(np.bool)
 
-    Y = Y.take(valid, axis=1)[:dataset_config['mask_band'], :]
-    X = X.take(valid, axis=0)
+    Y = Y[:dataset_config['mask_band'], valid]
+    X = X[valid, :]
 
     if yatsm_config['reverse']:
         # TODO: do this earlier
