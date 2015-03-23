@@ -199,6 +199,11 @@ class LongTermMeanPhenology(object):
         periods = group_years(yeardoy[:, 0], year_interval)
         evi_norm = scale_EVI(evi, periods, qmin=q_min, qmax=q_max)
 
+        # Mask out np.nan
+        valid = np.isfinite(evi_norm)
+        yeardoy = yeardoy[valid, :]
+        evi_norm = evi_norm[valid]
+
         # Pad missing DOY values (e.g. in winter) with 0's to improve
         # spline fit
         pad_start = np.arange(1, yeardoy[:, 1].min() + 1)
