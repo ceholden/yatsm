@@ -39,6 +39,8 @@ def group_years(years, interval=3):
 
     """
     n_groups = math.ceil((years.max() - years.min()) / interval)
+    if n_groups <= 1:
+        return np.zeros_like(years, dtype=np.uint16)
     splits = np.array_split(np.arange(years.min(), years.max() + 1), n_groups)
 
     groups = np.zeros_like(years, dtype=np.uint16)
