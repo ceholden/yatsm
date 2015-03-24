@@ -126,10 +126,10 @@ def find_result_attributes(results, output_bands, output_coefs,
         else:
             break
 
-    if not result_bands or not result_coefs:
+    if result_bands is None or result_coefs is None:
         logger.error('Could not determine the number of coefficients or bands')
         sys.exit(1)
-    if not freq:
+    if freq is None:
         logger.error('Seasonality frequency not found in results.')
         sys.exit(1)
 
