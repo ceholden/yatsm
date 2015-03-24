@@ -237,7 +237,7 @@ def get_classification(date, result_location, image_ds,
 
     band_names = ['Classification']
     if pred_proba:
-        band_names = band_names + ['Pred Proba']
+        band_names = band_names + ['Pred Proba (x10,000)']
 
     logger.debug('Processing results')
     for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
@@ -257,7 +257,8 @@ def get_classification(date, result_location, image_ds,
                    rec['px'][index], 0] = rec['class'][index]
             if pred_proba:
                 raster[rec['py'][index],
-                       rec['px'][index], 0] = rec['class_proba'][index]
+                       rec['px'][index], 1] = \
+                            rec['class_proba'][index].max(axis=1) * 10000
 
     return raster, band_names
 
