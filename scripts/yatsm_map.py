@@ -329,20 +329,22 @@ def get_coefficients(date, result_location, image_ds,
             if index.shape[0] == 0:
                 continue
 
-            # Normalize intercept to mid-point in time segment
-            rec[_coef][index, 0, :] += \
-                ((rec['start'][index] + rec['end'][index]) / 2.0)[:, None] * \
-                rec[_coef][index, 1, :]
+            if n_coefs > 0:
+                # Normalize intercept to mid-point in time segment
+                rec[_coef][index, 0, :] += \
+                    ((rec['start'][index] + rec['end'][index]) / 2.0)[:, None]\
+                    * rec[_coef][index, 1, :]
 
-            # Extract coefficients
-            raster[rec['py'][index], rec['px'][index], :n_coefs * n_bands] =\
-                np.reshape(rec[_coef][index][:, i_coefs, :][:, :, i_bands],
-                           (index.size, n_coefs * n_bands))
+                # Extract coefficients
+                raster[rec['py'][index],
+                       rec['px'][index], :n_coefs * n_bands] =\
+                    np.reshape(rec[_coef][index][:, i_coefs, :][:, :, i_bands],
+                               (index.size, n_coefs * n_bands))
 
-            if not use_rmse:
-                continue
-            raster[rec['py'][index], rec['px'][index], n_coefs * n_bands:] =\
-                rec[_rmse][index][:, i_bands]
+            if use_rmse:
+                raster[rec['py'][index], rec['px'][index],
+                       n_coefs * n_bands:] =\
+                    rec[_rmse][index][:, i_bands]
 
     return (raster, band_names)
 
