@@ -26,6 +26,9 @@ Classification map options:
 Coefficient and prediction options:
     --band <bands>          Bands to export [default: all]
     --robust                Use robust estimates
+
+Coefficient options:
+    --no_scale_intercept    Don't scale intercept by slope term
     --coef <coefs>          Coefficients to export [default: all]
 
 Examples:
@@ -264,7 +267,7 @@ def get_classification(date, result_location, image_ds,
 
 
 def get_coefficients(date, result_location, image_ds,
-                     bands, coefs,
+                     bands, coefs, no_scale_intercept=False,
                      use_robust=False, after=False, before=False,
                      ndv=-9999, pattern=_result_record):
     """ Output a raster with coefficients from CCDC
@@ -275,6 +278,8 @@ def get_coefficients(date, result_location, image_ds,
       bands (list): Bands to predict
       coefs (list): List of coefficients to output
       image_ds (gdal.Dataset): Example dataset
+      no_scale_intercept (bool, optional): Skip scaling of intercept
+        coefficient by slope (default: False)
       use_robust (bool, optional): Map robust coefficients and RMSE instead of
         normal ones
       after (bool, optional): If date intersects a disturbed period, use next
@@ -331,9 +336,10 @@ def get_coefficients(date, result_location, image_ds,
 
             if n_coefs > 0:
                 # Normalize intercept to mid-point in time segment
-                rec[_coef][index, 0, :] += \
-                    ((rec['start'][index] + rec['end'][index]) / 2.0)[:, None]\
-                    * rec[_coef][index, 1, :]
+                if not no_scale_intercept:
+                    rec[_coef][index, 0, :] += (
+                        (rec['start'][index] + rec['end'][index])
+                        / 2.0)[:, None] * rec[_coef][index, 1, :]
 
                 # Extract coefficients
                 raster[rec['py'][index],
@@ -562,6 +568,9 @@ def parse_args(args):
         logger.error(parsed['coefs'])
         sys.exit(1)
 
+    # Intercept coefficient handling
+    parsed['no_scale_intercept'] = args['--no_scale_intercept']
+
     # Bands to output
     bands = args['--band']
     if bands != 'all':
@@ -610,6 +619,7 @@ def main(args):
         raster, band_names = get_coefficients(
             args['date'], args['results'], image_ds,
             args['bands'], args['coefs'],
+            no_scale_intercept=args['no_scale_intercept'],
             use_robust=args['use_robust'],
             after=args['after'], before=args['before'],
             ndv=args['ndv']

@@ -75,6 +75,8 @@ from yatsm.utils import make_X
 from yatsm.reader import find_stack_images, read_pixel_timeseries
 from yatsm.yatsm import YATSM
 
+import sklearn.linear_model
+
 # Some constants
 ndays = 365.25
 fmask = 7
@@ -147,6 +149,14 @@ def plot_results():
         mx_date = np.array([dt.fromordinal(int(_x)) for _x in mx])
 
         plt.plot(mx_date, my, fit_colors[i])
+
+        idx = np.where((yatsm.X[:, 1] >= r['start']) & (yatsm.X[:, 1] <= r['end']))[0]
+        sklearn_lasso = sklearn.linear_model.Lasso(alpha=20).fit(yatsm.X[idx, :], yatsm.Y[plot_index, idx])
+
+        plt.plot(mx_date, sklearn_lasso.predict(make_X(mx, freq).T), fit_colors[i], ls='dashed', lw=3)
+
+        # from IPython.core.debugger import Pdb
+        # Pdb().set_trace()
 
         if r['break'] != 0:
             break_date = dt.fromordinal(int(r['break']))
