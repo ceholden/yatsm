@@ -101,10 +101,15 @@ def classify_line(filename, classifier):
     classified['class_proba'] = classifier.predict_proba(X)
 
     # Replace with new classification if exists, or add by merging
-    if 'class' in rec.dtype.names or 'class_proba' in rec.dtype.names:
+    if ('class' in rec.dtype.names and 'class_proba' in rec.dtype.names and
+            rec['class_proba'].shape[1] == classes.size):
         rec['class'] = classified['class']
         rec['class_proba'] = classified['class_proba']
     else:
+        # Drop incompatible classified results if needed
+        # e.g., if the number of classes changed
+        if 'class' in rec.dtype.names and 'class_proba' in rec.dtype.names:
+            rec = nprfn.drop_fields(rec, ['class', 'class_proba'])
         rec = nprfn.merge_arrays((rec, classified), flatten=True)
 
     # Create dict for re-saving `npz` file (only way to append)
