@@ -32,7 +32,7 @@ consecutive = 5
 threshold = 3
 min_obs = 16
 min_rmse = 150
-freq = 1
+design_matrix = 1 + x + harm(x, 1)
 test_indices = 2, 4, 5
 retrain_time = 365.25
 screening = RLM
@@ -114,10 +114,7 @@ def parse_algorithm_config(config):
     yatsm_config['threshold'] = config.getfloat('YATSM', 'threshold')
     yatsm_config['min_obs'] = config.getint('YATSM', 'min_obs')
     yatsm_config['min_rmse'] = config.getfloat('YATSM', 'min_rmse')
-    yatsm_config['freq'] = config.get(
-        'YATSM', 'freq').replace(',', ' ').split(' ')
-    yatsm_config['freq'] = [int(v) for v in yatsm_config['freq']
-                            if v != '']
+    yatsm_config['design_matrix'] = config.get('YATSM', 'design_matrix')
     yatsm_config['test_indices'] = config.get(
         'YATSM', 'test_indices').replace(',', ' ').split(' ')
     yatsm_config['test_indices'] = np.array([
