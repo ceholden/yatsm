@@ -69,15 +69,18 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
       date_format (str): format of dates in file
 
     Returns:
-      (ndarray, ndarray): paired dates and filenames of stacked images
+      (ndarray, ndarray, ndarray): dates, sensor IDs, and filenames of stacked
+        images
 
     """
     # Store index of date and image
     i_date = 0
-    i_image = 1
+    i_sensor = 1
+    i_image = 2
 
     dates = []
     images = []
+    sensors = []
 
     logger.debug('Opening image dataset file')
     with open(input_file, 'rb') as f:
@@ -91,7 +94,7 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
         except:
             logger.debug('Could not parse first column to ordinal date')
             try:
-                dt.strptime(row[i_image], date_format).toordinal()
+                dt.strptime(row[i_sensor], date_format).toordinal()
             except:
                 logger.debug('Could not parse second column to ordinal date')
                 logger.error('Could not parse any columns to ordinal date')
@@ -100,16 +103,18 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
                 raise
             else:
                 i_date = 1
-                i_image = 0
+                i_sensor = 0
 
         f.seek(0)
 
-        logger.debug('Reading in image date and filenames')
+        logger.debug('Reading in image date, sensor, and filenames')
         for row in reader:
             dates.append(dt.strptime(row[i_date], date_format).toordinal())
+            sensors.append(row[i_sensor])
             images.append(row[i_image])
 
-        return (np.array(dates), np.array(images))
+
+        return (np.array(dates), np.array(sensors), np.array(images))
 
 
 def get_image_IDs(filenames):

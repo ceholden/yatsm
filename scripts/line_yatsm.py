@@ -300,7 +300,7 @@ def main(dataset_config, yatsm_config,
 
     """
     # Read in dataset
-    dates, images = csvfile_to_dataset(
+    dates, sensors, images = csvfile_to_dataset(
         dataset_config['input_file'],
         date_format=dataset_config['date_format']
     )

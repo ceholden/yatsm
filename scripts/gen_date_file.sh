@@ -4,6 +4,7 @@ set +e
 
 pattern="L*stack"
 istart=9
+sstart=0
 overwrite=0
 relative=0
 verbose=0
@@ -19,7 +20,8 @@ function usage() {
 
     Options:
         -p         Filename pattern [default: $pattern]
-        -s         Starting index of date within filename [default: $istart]
+        -d         Starting index of date within filename [default: $istart]
+        -s         Starting index of sensor within filename [default: $sstart]
         -r         Use relative paths
         -o         Overwrite <output_file> if exists
         -v         Be verbose
@@ -51,13 +53,14 @@ function main() {
         bn=$(basename $img)
         id=$(basename $(dirname $img))
         ydoy=${id:$istart:7}
+        sensor=${id:$sstart:3}
 
-        echo "$ydoy,$name"
+        echo "$ydoy,$sensor,$name"
     done | sort > $output
 
 }
 
-while getopts "hp:s:orv" opt; do
+while getopts "hp:d:s:orv" opt; do
     case $opt in
     h)
         usage
@@ -66,8 +69,11 @@ while getopts "hp:s:orv" opt; do
     p)
         pattern=$OPTARG
         ;;
-    s)
+    d)
         istart=$OPTARG
+        ;;
+    s)
+        sstart=$OPTARG
         ;;
     o)
         overwrite=1
