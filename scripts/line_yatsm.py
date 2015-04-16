@@ -23,9 +23,8 @@ import sys
 import time
 
 from docopt import docopt
-
 import numpy as np
-from osgeo import gdal
+import patsy
 
 # Handle running as installed module or not
 try:
@@ -44,6 +43,7 @@ from yatsm.utils import (calculate_lines, get_output_name, get_image_IDs,
                          csvfile_to_dataset, make_X)
 from yatsm.reader import get_image_attribute, read_row_BIP, read_row_GDAL
 from yatsm.yatsm import YATSM
+from yatsm.regression.transforms import harm
 
 # Log setup for runner
 FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
@@ -189,7 +189,7 @@ def run_line(line, X, images, image_IDs,
              min_obs=yatsm_config['min_obs'],
              min_rmse=yatsm_config['min_rmse'],
              test_indices=yatsm_config['test_indices'],
-             freq=yatsm_config['freq'],
+             design_matrix=yatsm_config['design_matrix'],
              retrain_time=yatsm_config['retrain_time'],
              screening=yatsm_config['screening'],
              screening_crit=yatsm_config['screening_crit'],
@@ -331,7 +331,8 @@ def main(dataset_config, yatsm_config,
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Calculate X feature input
-    X = make_X(dates, yatsm_config['freq']).T
+    X = patsy.dmatrix(yatsm_config['design_matrix'],
+                      {'x': dates, 'sensor': sensors})
 
     # Start running YATSM
     start_time_all = time.time()
