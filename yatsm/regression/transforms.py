@@ -26,6 +26,10 @@ class Harmonic(object):
         pass
 
     def transform(self, x, freq):
+        x = np.asarray(x)
+        if x.shape == ():
+            x = x[np.newaxis]
+
         return np.array([
             np.cos(freq * self.w * x),
             np.sin(freq * self.w * x)
