@@ -39,17 +39,23 @@ Examples:
 
     > yatsm_map.py --result "YATSM_new" --after class 2000-01-01 LCmap.gtif
 
+Notes:
+    - Image predictions will not use categorical information in timeseries
+        models.
+
 """
 from __future__ import division, print_function
 
 import datetime as dt
 import logging
 import os
+import re
 import sys
 
 from docopt import docopt
 import numpy as np
 from osgeo import gdal
+import patsy
 
 # Handle running as installed module or not
 try:
@@ -59,7 +65,9 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
     from yatsm.version import __version__
-from yatsm.utils import find_results, iter_records, make_X, write_output
+from yatsm.utils import find_results, iter_records, write_output
+from yatsm.regression import design_to_indices, design_coefs
+from yatsm.regression.transforms import harm
 
 gdal.UseExceptions()
 gdal.AllRegister()
@@ -68,8 +76,6 @@ FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('yatsm')
 
-# Possible coefficients
-_coefs = ['all', 'intercept', 'slope', 'seasonality', 'rmse']
 # Filters for results
 _result_record = 'yatsm_*'
 # number of days in year
@@ -80,34 +86,33 @@ WARN_ON_EMPTY = False
 
 
 # UTILITY FUNCTIONS
-def find_result_attributes(results, output_bands, output_coefs,
-                           use_robust=False):
+def find_result_attributes(results, bands, coefs, use_robust=False):
     """ Returns attributes about the dataset from result files
 
     Args:
       results (list): Result filenames
-      output_bands (list): Bands to describe for output
-      output_coefs (list): Coefficients to describe for output
+      bands (list): Bands to describe for output
+      coefs (list): Coefficients to describe for output
       use_robust (bool, optional): Search for robust results
 
     Returns:
-      tuple: Tuple containing list of indices for output bands and output
-        coefficients, bool for outputting RMSE, and list of frequency of
-        seasonality used in fit (i_bands, i_coefs, use_rmse, freq)
+      tuple: Tuple containing `list` of indices for output bands and output
+        coefficients, `bool` for outputting RMSE, `list` of coefficient names,
+        and a `str` design specification  (i_bands, i_coefs, use_rmse, design)
 
     """
     _coef = 'robust_coef' if use_robust else 'coef'
     _rmse = 'robust_rmse' if use_robust else 'rmse'
 
     # How many coefficients and bands exist in the results?
-    result_bands = None
-    result_coefs = None
-    freq = None
+    n_bands, n_coefs = None, None
+    design = None
     for r in results:
         try:
             _result = np.load(r)
             rec = _result['record']
-            freq = _result['freq']
+            design = _result['design_matrix'].item()
+            design_str = _result['design'].item()
         except:
             continue
 
@@ -123,52 +128,43 @@ def find_result_attributes(results, output_bands, output_coefs,
             sys.exit(1)
 
         try:
-            result_coefs, result_bands = rec[_coef][0].shape
+            n_coefs, n_bands = rec[_coef][0].shape
         except:
             continue
         else:
             break
 
-    if result_bands is None or result_coefs is None:
+    if n_coefs is None or n_bands is None:
         logger.error('Could not determine the number of coefficients or bands')
         sys.exit(1)
-    if freq is None:
-        logger.error('Seasonality frequency not found in results.')
+    if design is None:
+        logger.error('Design matrix specification not found in results.')
         sys.exit(1)
 
     # How many bands does the user want?
-    if output_bands == 'all':
-        i_bands = range(0, result_bands)
+    if bands == 'all':
+        i_bands = range(0, n_bands)
     else:
         # NumPy index on 0; GDAL on 1 -- so subtract 1
-        i_bands = [b - 1 for b in output_bands]
-        if any([b > result_bands for b in i_bands]):
+        i_bands = [b - 1 for b in bands]
+        if any([b > n_bands for b in i_bands]):
             logger.error('Bands specified exceed size of bands in results')
             sys.exit(1)
 
     # How many coefficients did the user want?
     use_rmse = False
-    i_coefs = []
-    if output_coefs:
-        for c in output_coefs:
-            if c == 'all':
-                i_coefs.extend(range(0, result_coefs))
-                use_rmse = True
-                break
-            elif c == 'intercept':
-                i_coefs.append(0)
-            elif c == 'slope':
-                i_coefs.append(1)
-            elif c == 'seasonality':
-                i_coefs.extend(range(2, result_coefs))
-            elif c == 'rmse':
-                use_rmse = True
+    if coefs:
+        if 'rmse' in coefs or 'all' in coefs:
+            use_rmse = True
+        i_coefs, coef_names = design_to_indices(design, coefs)
+    else:
+        i_coefs, coef_names = None, None
 
     logger.debug('Bands: {0}'.format(i_bands))
-    if output_coefs:
+    if coefs:
         logger.debug('Coefficients: {0}'.format(i_coefs))
 
-    return (i_bands, i_coefs, use_rmse, freq)
+    return (i_bands, i_coefs, use_rmse, coef_names, design_str)
 
 
 def find_indices(record, date, after=False, before=False):
@@ -299,7 +295,7 @@ def get_coefficients(date, result_location, image_ds,
     records = find_results(result_location, pattern)
 
     # Find result attributes to extract
-    i_bands, i_coefs, use_rmse, _ = find_result_attributes(
+    i_bands, i_coefs, use_rmse, coef_names, _ = find_result_attributes(
         records, bands, coefs, use_robust=use_robust)
 
     n_bands = len(i_bands)
@@ -313,9 +309,9 @@ def get_coefficients(date, result_location, image_ds,
 
     # Setup output band names
     band_names = []
-    for _c in i_coefs:
+    for _c in coef_names:
         for _b in i_bands:
-            band_names.append('B' + str(_b + 1) + '_beta' + str(_c))
+            band_names.append('B' + str(_b + 1) + '_' + _c.replace(' ', ''))
     for _b in i_bands:
         if use_rmse is True:
             band_names.append('B' + str(_b + 1) + '_RMSE')
@@ -384,13 +380,17 @@ def get_prediction(date, result_location, image_ds,
     records = find_results(result_location, pattern)
 
     # Find result attributes to extract
-    i_bands, _, _, freq = find_result_attributes(
+    i_bands, _, _, _, design = find_result_attributes(
         records, bands, None, use_robust=use_robust)
 
     n_bands = len(i_bands)
 
-    # Create X matrix from date
-    X = make_X(date, freq)
+    # Create X matrix from date -- ignoring categorical variables
+    if re.match(r'.*C\(.*\).*', design):
+        logger.warning('Categorical variable found in design matrix not used'
+                       ' in predicted image estimate')
+    design = re.sub(r'[\+\-][\w]+C\(.*\)', '', design)
+    X = patsy.dmatrix(design, {'x': date}).squeeze()
 
     logger.debug('Allocating memory')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_bands),
@@ -560,10 +560,10 @@ def parse_args(args):
     # Coefficients to output
     parsed['coefs'] = [c for c in
                        args['--coef'].replace(',', ' ').split(' ') if c != '']
-    if not all([c.lower() in _coefs for c in parsed['coefs']]):
+    if not all([c.lower() in design_coefs for c in parsed['coefs']]):
         logger.error('Unknown coefficient options')
         logger.error('Options are:')
-        logger.error(_coefs)
+        logger.error(design_coefs)
         logger.error('Specified were:')
         logger.error(parsed['coefs'])
         sys.exit(1)
