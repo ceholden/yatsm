@@ -53,6 +53,7 @@ setup(
         'glmnet',
         'matplotlib',
         'docopt',
-        'brewer2mpl'
+        'brewer2mpl',
+        'patsy'
     ]
 )

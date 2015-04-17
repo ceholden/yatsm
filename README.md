@@ -50,6 +50,7 @@ Listed below are the Python library requirements for running YATSM. The version 
     scikit-learn >= 0.15.1
     ggplot >= 0.5.8
     docopt >= 0.6.1
+    patsy >= 0.3.0
 
 These are listed in the `requirements.txt` file, which is usable by PIP as follows:
 
