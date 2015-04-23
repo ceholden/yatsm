@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Yet Another Time Series Model (YATSM) &mdash; YATSM 0.3.1 documentation</title>
+  <title>Yet Another Time Series Model (YATSM) &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.3.1 documentation" href="#"/>
+    <link rel="top" title="YATSM 0.4.0 documentation" href="#"/>
         <link rel="next" title="Installation" href="guide/install.html"/> 
 
   
@@ -69,10 +69,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#example">Example</a></li>
 </ul>
@@ -93,7 +95,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="scripts/scripts.html">Command Line Utilities</a><ul>
@@ -183,10 +188,12 @@ algorithm hopes to overcome weaknesses present in any single approach.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide/configuration.html#example">Example</a></li>
 </ul>
@@ -207,7 +214,10 @@ algorithm hopes to overcome weaknesses present in any single approach.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -302,7 +312,7 @@ algorithm hopes to overcome weaknesses present in any single approach.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
     </p>
   </div>
 
@@ -322,7 +332,7 @@ algorithm hopes to overcome weaknesses present in any single approach.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.1',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Interface &mdash; YATSM 0.4.0 documentation</title>
+  <title>Timeseries Model Specification &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
 
   
     <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/>
-        <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
-        <link rel="prev" title="Model Configuration" href="configuration.html"/> 
+        <link rel="next" title="Model Configuration" href="configuration.html"/>
+        <link rel="prev" title="Model Parameter Exploration" href="exploration.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -70,7 +70,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#dataset-parameters">Dataset Parameters</a></li>
@@ -80,8 +80,8 @@
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#example">Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Batch Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#sun-grid-engine">Sun Grid Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a><ul>
@@ -135,10 +135,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Batch Interface</li>
+    <li>Timeseries Model Specification</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/batch_interface.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/model_specification.rst" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
@@ -146,73 +146,9 @@
 </div>
           <div role="main">
             
-  <div class="section" id="batch-interface">
-<span id="guide-batch-interface"></span><h1>Batch Interface<a class="headerlink" href="#batch-interface" title="Permalink to this headline">¶</a></h1>
-<p>The default method for running image stacks is to run each line, or row,
-separately from other lines. In a multiprocessing situation, the total
-number of lines can be broken up among the <tt class="docutils literal"><span class="pre">n</span></tt> available CPUs. Before
-using the batch interface, make sure you already have a parameter file
-generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><em>Model Configuration</em></a>.</p>
-<p>The batch interface which runs each line separately is
-<tt class="docutils literal"><span class="pre">line_yatsm.py</span></tt>. It&#8217;s usage is:</p>
-<div class="highlight-text"><div class="highlight"><pre>$ line_yatsm.py -h
- Yet Another Timeseries Model (YATSM) - run script for lines of images
-
-Usage: line_yatsm.py [options] &lt;config_file&gt; &lt;job_number&gt; &lt;total_jobs&gt;
-
-Options:
-    --check                     Check that images exist
-    --check_cache               Check that cache file contains matching data
-    --resume                    Do not overwrite pre-existing results
-    --do-not-run                Don&#39;t run YATSM (useful for just caching data)
-    -v --verbose                Show verbose debugging messages
-    --verbose-yatsm             Show verbose debugging messages in YATSM
-    -q --quiet                  Show only error messages
-    --version                   Print program version and exit
-    -h --help                   Show help
-</pre></div>
-</div>
-<p>Let&#8217;s say our image stack contains 1,000 rows. If we use 50 total CPUs
-to process the image stack, then each CPU will be responsible for only
-20 lines. To evenly distribute the number of pixels that contain
-timeseries (e.g., to ignore any NODATA buffers around the images), the
-lines are divided up in sequence. Thus, job 5 of 50 total jobs would
-work on the lines:</p>
-<div class="code sh highlight-python"><div class="highlight"><pre>$ job=5
-$ n=50
-$ seq -s , $job $n 1000
-5,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
-</pre></div>
-</div>
-<div class="section" id="sun-grid-engine">
-<h2>Sun Grid Engine<a class="headerlink" href="#sun-grid-engine" title="Permalink to this headline">¶</a></h2>
-<p>In the example of the compute cluster at Boston University which
-utilizes the Sun Grid Engine scheduler, one could run an image stack as
-follows:</p>
-<div class="code sh highlight-python"><div class="highlight"><pre>$ njob=200
-$ for job in $(seq 1 $njob); do
-    qsub -j y -V -l h_rt=24:00:00 -N yatsm_$job -b y \
-        $(which python) -u line_yatsm.py --resume -v config.ini $job $njob
-  done
-</pre></div>
-</div>
-<p>One useful tip is to optimize the use of the CPU nodes by first transforming the
-dataset from an image based format to a timeseries format by saving all
-observations for each row in a separate file. The transformed dataset will be
-much easier to read as a timeseries because each processor only needs to read
-in one file instead of finding, opening, seeking through, and reading from
-many individual image files.</p>
-<p>To accomplish this approach, the <tt class="docutils literal"><span class="pre">--do-not-run</span></tt> flag can be combined with a
-specific request for computer nodes with fast ethernet speeds,
-<tt class="docutils literal"><span class="pre">-l</span> <span class="pre">eth_speed</span> <span class="pre">10</span></tt>:</p>
-<div class="code sh highlight-python"><div class="highlight"><pre>$ njob=16
-$ for job in $(seq 1 $njob); do
-    qsub -j y -V -l h_rt=24:00:00 -l eth_speed=10 -N yatsm_$job -b y \
-        $(which python) -u line_yatsm.py --resume --do-not-run -v config.ini $job $njob
-  done
-</pre></div>
-</div>
-</div>
+  <div class="section" id="timeseries-model-specification">
+<span id="guide-model-spec"></span><h1>Timeseries Model Specification<a class="headerlink" href="#timeseries-model-specification" title="Permalink to this headline">¶</a></h1>
+<p>This section will describe the timeseries models used in YATSM and how to configure them <a class="reference internal" href="configuration.html#guide-model-config"><em>within the configuration file</em></a>.</p>
 </div>
 
 
@@ -221,10 +157,10 @@ $ for job in $(seq 1 $njob); do
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="map_static.html" class="btn btn-neutral float-right" title="Mapping Derived Information"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Model Configuration"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="configuration.html" class="btn btn-neutral" title="Model Configuration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="exploration.html" class="btn btn-neutral" title="Model Parameter Exploration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

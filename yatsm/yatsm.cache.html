@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.reader module &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.cache module &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -133,10 +133,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>yatsm.reader module</li>
+    <li>yatsm.cache module</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.reader.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.cache.rst" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
@@ -144,39 +144,29 @@
 </div>
           <div role="main">
             
-  <div class="section" id="module-yatsm.reader">
-<span id="yatsm-reader-module"></span><h1>yatsm.reader module<a class="headerlink" href="#module-yatsm.reader" title="Permalink to this headline">¶</a></h1>
-<p>Functions for reading timeseries data</p>
+  <div class="section" id="module-yatsm.cache">
+<span id="yatsm-cache-module"></span><h1>yatsm.cache module<a class="headerlink" href="#module-yatsm.cache" title="Permalink to this headline">¶</a></h1>
+<p>Functions related to writing to and retrieving from cache files</p>
 <dl class="function">
-<dt id="yatsm.reader.find_stack_images">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">find_stack_images</tt><big>(</big><em>location, folder_pattern='L*', image_pattern='L*stack', date_index_start=9, date_index_end=16, date_format='%Y%j', ignore=['YATSM']</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#find_stack_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.find_stack_images" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find and identify dates and filenames of Landsat image stacks</p>
+<dt id="yatsm.cache.get_line_cache_name">
+<tt class="descclassname">yatsm.cache.</tt><tt class="descname">get_line_cache_name</tt><big>(</big><em>dataset_config</em>, <em>n_images</em>, <em>row</em>, <em>nbands</em><big>)</big><a class="reference internal" href="../_modules/yatsm/cache.html#get_line_cache_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.get_line_cache_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns cache filename for specified config and line number</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>location</strong> (<em>str</em>) &#8211; Stacked image dataset location</li>
-<li><strong>folder_pattern</strong> (<em>str, optional</em>) &#8211; Filename pattern for stack image
-folders located within <cite>location</cite> (default: &#8216;L*&#8217;)</li>
-<li><strong>image_pattern</strong> (<em>str, optional</em>) &#8211; Filename pattern for stacked images
-located within each folder (default: &#8216;L*stack&#8217;)</li>
-<li><strong>date_index_start</strong> (<em>int, optional</em>) &#8211; Starting index of image date string
-within folder name (default: 9)</li>
-<li><strong>date_index_end</strong> (<em>int, optional</em>) &#8211; Ending index of image date string within
-folder name (default: 16)</li>
-<li><strong>date_format</strong> (<em>str, optional</em>) &#8211; String format of date within folder names
-(default: &#8216;%Y%j&#8217;)</li>
-<li><strong>ignore</strong> (<em>list, optional</em>) &#8211; List of folder names within <cite>location</cite> to
-ignore from search (default: [&#8216;YATSM&#8217;])</li>
+<li><strong>dataset_config</strong> (<em>dict</em>) &#8211; configuration information about the dataset</li>
+<li><strong>n_images</strong> (<em>int</em>) &#8211; number of images in dataset</li>
+<li><strong>row</strong> (<em>int</em>) &#8211; line of the dataset for output</li>
+<li><strong>nbands</strong> (<em>int</em>) &#8211; number of bands in dataset</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple of lists containing the dates and filenames of all stacked
-images located</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">filename of cache file</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -184,44 +174,27 @@ images located</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.reader.get_image_attribute">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">get_image_attribute</tt><big>(</big><em>image_filename</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#get_image_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.get_image_attribute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use GDAL to open image and return some attributes</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image_filename</strong> (<em>string</em>) &#8211; image filename</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> &#8211;
-nrow, ncol, nband, NumPy datatype</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int, int, int, type</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.reader.read_pixel_timeseries">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">read_pixel_timeseries</tt><big>(</big><em>files</em>, <em>px</em>, <em>py</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#read_pixel_timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_pixel_timeseries" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns NumPy array containing timeseries values for one pixel</p>
+<dt id="yatsm.cache.get_line_cache_pattern">
+<tt class="descclassname">yatsm.cache.</tt><tt class="descname">get_line_cache_pattern</tt><big>(</big><em>row</em>, <em>nbands</em>, <em>regex=False</em><big>)</big><a class="reference internal" href="../_modules/yatsm/cache.html#get_line_cache_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.get_line_cache_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pattern for a cache file from a certain row</p>
+<p>This function is useful for finding all cache files from a line, ignoring
+the number of images in the file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>files</strong> (<em>list</em>) &#8211; List of filenames to read from</li>
-<li><strong>px</strong> (<em>int</em>) &#8211; Pixel X location</li>
-<li><strong>py</strong> (<em>int</em>) &#8211; Pixel Y location</li>
+<li><strong>row</strong> (<em>int</em>) &#8211; line of the dataset for output</li>
+<li><strong>nbands</strong> (<em>int</em>) &#8211; number of bands in dataset</li>
+<li><strong>regex</strong> (<em>bool, optional</em>) &#8211; return a regular expression instead of glob
+style (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Array (nband x n_images) containing all timeseries data
-from one pixel</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">filename pattern for cache files from line <cite>row</cite></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
 </td>
 </tr>
 </tbody>
@@ -229,26 +202,30 @@ from one pixel</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.reader.read_row_BIP">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">read_row_BIP</tt><big>(</big><em>filenames</em>, <em>row</em>, <em>size</em>, <em>dtype</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#read_row_BIP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_row_BIP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads in an entire row of data from every image</p>
+<dt id="yatsm.cache.read_cache_file">
+<tt class="descclassname">yatsm.cache.</tt><tt class="descname">read_cache_file</tt><big>(</big><em>cache_filename</em>, <em>image_IDs=None</em><big>)</big><a class="reference internal" href="../_modules/yatsm/cache.html#read_cache_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.read_cache_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns image data from a cache file</p>
+<p>If <cite>image_IDs</cite> is not None this function will try to ensure data from cache
+file come from the list of image IDs provided. If cache file does not
+contain a list of image IDs, it will skip the check and return cache data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filenames</strong> (<em>iterable</em>) &#8211; sequence of filenames to read from</li>
-<li><strong>row</strong> (<em>int</em>) &#8211; row to read</li>
-<li><strong>size</strong> (<em>tuple</em>) &#8211; tuple of (int, int) containing the number of columns and
-bands in the image</li>
+<li><strong>cache_filename</strong> (<em>str</em>) &#8211; cache filename</li>
+<li><strong>image_IDs</strong> (<em>iterable, optional</em>) &#8211; list of image IDs corresponding to data
+in cache file. If not specified, function will not check for
+correspondence (default: None)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">3D array (nband x nimage x ncol) containing the row
-of data</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Return Y as np.ndarray if possible and if the
+cache file passes the consistency check specified by <cite>image_IDs</cite>; else
+None</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray, or None</p>
 </td>
 </tr>
 </tbody>
@@ -256,24 +233,75 @@ of data</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.reader.read_row_GDAL">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">read_row_GDAL</tt><big>(</big><em>filenames</em>, <em>row</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#read_row_GDAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_row_GDAL" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads in an entire row of data from every image using GDAL</p>
+<dt id="yatsm.cache.test_cache">
+<tt class="descclassname">yatsm.cache.</tt><tt class="descname">test_cache</tt><big>(</big><em>dataset_config</em><big>)</big><a class="reference internal" href="../_modules/yatsm/cache.html#test_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.test_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test cache directory for ability to read from or write to</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset_config</strong> (<em>dict</em>) &#8211; dictionary of dataset configuration options</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">tuple of bools describing ability to read from
+and write to cache directory</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(read_cache, write_cache)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.cache.update_cache_file">
+<tt class="descclassname">yatsm.cache.</tt><tt class="descname">update_cache_file</tt><big>(</big><em>images</em>, <em>image_IDs</em>, <em>old_cache_filename</em>, <em>new_cache_filename</em>, <em>line</em>, <em>reader</em>, <em>reader_kwargs={}</em><big>)</big><a class="reference internal" href="../_modules/yatsm/cache.html#update_cache_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.update_cache_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify an existing cache file to contain data within <cite>images</cite></p>
+<p>This should be useful for updating a set of cache files to reflect
+modifications to the timeseries dataset without completely reading the
+data into another cache file.</p>
+<p>For example, the cache file could be updated to reflect the deletion of
+a misregistered or cloudy image. Another common example would be for
+updating cache files to include newly acquired observations.</p>
+<p>Note that this updater will not handle updating cache files to include
+new bands.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>filenames</strong> (<em>iterable</em>) &#8211; sequence of filenames to read from</li>
-<li><strong>row</strong> (<em>int</em>) &#8211; row to read</li>
+<li><strong>images</strong> (<em>iterable</em>) &#8211; list of new image filenames</li>
+<li><strong>image_IDs</strong> (<em>iterable</em>) &#8211; list of new image identifying strings</li>
+<li><strong>old_cache_filename</strong> (<em>str</em>) &#8211; filename of cache file to update</li>
+<li><strong>new_cache_filename</strong> (<em>str</em>) &#8211; filename of new cache file which includes
+modified data</li>
+<li><strong>line</strong> (<em>int</em>) &#8211; the line of data to be updated</li>
+<li><strong>reader</strong> (<em>callable</em>) &#8211; GDAL or BIP image reader function from <cite>yatsm.readers</cite></li>
+<li><strong>reader_kwargs</strong> (<em>dict</em>) &#8211; additional keyword arguments for <cite>reader</cite> other
+than the filenames to read and the line to read</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">3D array (nband x nimage x ncol) containing the row
-of data</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> &#8211;
+Raise error if old cache file does not record <cite>image_IDs</cite></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.cache.write_cache_file">
+<tt class="descclassname">yatsm.cache.</tt><tt class="descname">write_cache_file</tt><big>(</big><em>cache_filename</em>, <em>Y</em>, <em>image_IDs</em><big>)</big><a class="reference internal" href="../_modules/yatsm/cache.html#write_cache_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.write_cache_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes data to a cache file using np.savez_compressed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cache_filename</strong> (<em>str</em>) &#8211; cache filename</li>
+<li><strong>(np.ndarray)</strong> (<em>Y</em>) &#8211; </li>
+<li><strong>image_IDs</strong> (<em>iterable</em>) &#8211; list of image IDs corresponding to data in cache
+file. If not specified, function will not check for correspondence</li>
+</ul>
 </td>
 </tr>
 </tbody>

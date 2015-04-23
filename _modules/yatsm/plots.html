@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.plots &mdash; YATSM 0.3.1 documentation</title>
+  <title>yatsm.plots &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.3.1 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -69,10 +69,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#example">Example</a></li>
 </ul>
@@ -93,7 +95,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -145,6 +150,7 @@
   <h1>Source code for yatsm.plots</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot; Plots useful for YATSM</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -220,6 +226,53 @@
               <span class="n">algo</span><span class="o">.</span><span class="n">feature_importances_</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Feature Importance&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Importance&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../yatsm/yatsm.plots.html#yatsm.plots.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">yatsm</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Plot YATSM results for a specified band</span>
+<span class="sd">    Args:</span>
+<span class="sd">      yatsm (yatsm.YATSM): model</span>
+<span class="sd">      band (int): data band to plot</span>
+<span class="sd">      freq (iterable): frequency of sine/cosine (for predictions)</span>
+<span class="sd">      ylim (tuple): tuple of floats for y-axes limits</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">make_X</span>
+
+    <span class="n">dates</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">,</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">))</span>
+
+    <span class="c"># Plot data</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="s">&#39;ko&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ylim</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+
+    <span class="c"># Add in lines and break points</span>
+    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
+        <span class="c"># Create sequence of X between start and end dates</span>
+        <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]:</span>
+            <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]:</span>
+            <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">mdates</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">,</span> <span class="n">mx</span><span class="p">)</span>
+
+        <span class="c"># Predict</span>
+        <span class="n">mX</span> <span class="o">=</span> <span class="n">make_X</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span>
+        <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
+
+        <span class="c"># Plot prediction</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mdates</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c"># Plot change</span>
+        <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]),</span>
+                     <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span>
+                     <span class="s">&#39;ro&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mew</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 </pre></div>
 
@@ -232,7 +285,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
     </p>
   </div>
 
@@ -252,7 +305,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.1',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

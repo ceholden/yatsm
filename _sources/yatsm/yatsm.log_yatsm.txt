@@ -1,7 +1,7 @@
-yatsm.cymasking module
+yatsm.log_yatsm module
 ======================
 
-.. automodule:: yatsm.cymasking
+.. automodule:: yatsm.log_yatsm
     :members:
     :undoc-members:
     :show-inheritance:

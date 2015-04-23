@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Model Configuration &mdash; YATSM 0.3.1 documentation</title>
+  <title>Model Configuration &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -28,9 +28,9 @@
   
 
   
-    <link rel="top" title="YATSM 0.3.1 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/>
         <link rel="next" title="Batch Interface" href="batch_interface.html"/>
-        <link rel="prev" title="Model Parameter Exploration" href="exploration.html"/> 
+        <link rel="prev" title="Timeseries Model Specification" href="model_specification.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -70,10 +70,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
 </ul>
@@ -94,7 +96,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -162,9 +167,9 @@ interpreted as <tt class="docutils literal"><span class="pre">None</span></tt> (
 <p>The following dataset information is required:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="17%" />
+<col width="16%" />
 <col width="12%" />
-<col width="71%" />
+<col width="72%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Parameter</th>
@@ -196,6 +201,14 @@ interpreted as <tt class="docutils literal"><span class="pre">None</span></tt> (
 <tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mask_band</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">int</span></tt></td>
 <td>Band index in each image of the mask band</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mask_values</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
+<td>List of integer values to mask within the mask band</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">valid_range</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
+<td>Valid range of non-mask band data. Specify 1 range for all bands, or specify ranges for each band</td>
 </tr>
 <tr class="row-even"><td><tt class="docutils literal"><span class="pre">green_band</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">int</span></tt></td>
@@ -250,9 +263,9 @@ file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.<
 <td><tt class="docutils literal"><span class="pre">float</span></tt></td>
 <td>Minimum RMSE in test statistic for each model</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">freq</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
-<td>Frequency of sine/cosine seasonal periods</td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">design_matrix</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<td>Patsy style model specification for timeseries model</td>
 </tr>
 <tr class="row-odd"><td><tt class="docutils literal"><span class="pre">test_indices</span></tt></td>
 <td><tt class="docutils literal"><span class="pre">list</span></tt></td>
@@ -290,8 +303,16 @@ file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.<
 <td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
 <td>Return coefficients and RMSE from a robust linear model for each time segment</td>
 </tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">commission_alpha</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
+<td>Commission test alpha value for test; leave blank to ignore test</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="phenology">
+<h2>Phenology<a class="headerlink" href="#phenology" title="Permalink to this headline">¶</a></h2>
+<p>The option for long term mean phenology calculation is an optional addition to <cite>YATSM</cite>. As such, visit <a class="reference internal" href="phenology.html#guide-phenology"><em>the phenology guide page</em></a> for configuration options.</p>
 </div>
 <div class="section" id="classification">
 <h2>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h2>
@@ -344,94 +365,98 @@ options include:</p>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>An example template of the parameter file is located within
-<tt class="docutils literal"><span class="pre">examples/example.ini</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre># Example configuration file for YATSM line runner
-#
-# This configuration includes details about the dataset and how YATSM should
-# run
+<tt class="docutils literal"><span class="pre">examples/p022r049_example.ini</span></tt>:</p>
+<div class="highlight-ini"><div class="highlight"><pre><span class="c1"># Example configuration file for YATSM line runner</span>
+<span class="c1">#</span>
+<span class="c1"># This configuration includes details about the dataset and how YATSM should</span>
+<span class="c1"># run</span>
 
-# Version of config
-[metadata]
-version = 0.3
+<span class="c1"># Version of config</span>
+<span class="k">[metadata]</span>
+<span class="na">version</span> <span class="o">=</span> <span class="s">0.4</span>
 
-# Section for Dataset
-[dataset]
-# Text file containing dates and images
-input_file = /home/ceholden/Documents/yatsm/examples/p022r049_input.csv
-# Input date format
-date_format = %Y%j
-# Output location
-output = /home/ceholden/Documents/landsat_stack/p022r049/images/YATSM
-# Output file prefix (e.g., [prefix]_[line].npz)
-output_prefix = yatsm_r
-# Total number of bands
-n_bands = 8
-# Mask band (e.g., Fmask)
-mask_band = 8
-# Values to mask within the mask band
-mask_values = 2, 3, 4, 255
-# Indices for multi-temporal cloud masking (indexed on 1)
-green_band = 2
-swir1_band = 5
-# Use BIP image reader? If not, use GDAL to read in
-use_bip_reader = true
-# Directory location for caching dataset lines
-cache_line_dir = /home/ceholden/Documents/landsat_stack/p022r049/images/.yatsm_cache
+<span class="c1"># Section for Dataset</span>
+<span class="k">[dataset]</span>
+<span class="c1"># Text file containing dates and images</span>
+<span class="na">input_file</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/yatsm/examples/p022r049_input.csv</span>
+<span class="c1"># Input date format</span>
+<span class="na">date_format</span> <span class="o">=</span> <span class="s">%Y%j</span>
+<span class="c1"># Output location</span>
+<span class="na">output</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/landsat_stack/p022r049/images/YATSM</span>
+<span class="c1"># Output file prefix (e.g., [prefix]_[line].npz)</span>
+<span class="na">output_prefix</span> <span class="o">=</span> <span class="s">yatsm_r</span>
+<span class="c1"># Total number of bands</span>
+<span class="na">n_bands</span> <span class="o">=</span> <span class="s">8</span>
+<span class="c1"># Mask band (e.g., Fmask)</span>
+<span class="na">mask_band</span> <span class="o">=</span> <span class="s">8</span>
+<span class="c1"># List of integer values to mask within the mask band</span>
+<span class="na">mask_values</span> <span class="o">=</span> <span class="s">2, 3, 4, 255</span>
+<span class="c1"># Valid range of non-mask band data</span>
+<span class="c1"># specify 1 range for all bands, or specify ranges for each band</span>
+<span class="na">valid_range</span> <span class="o">=</span> <span class="s">0, 10000</span>
+<span class="c1"># Indices for multi-temporal cloud masking (indexed on 1)</span>
+<span class="na">green_band</span> <span class="o">=</span> <span class="s">2</span>
+<span class="na">swir1_band</span> <span class="o">=</span> <span class="s">5</span>
+<span class="c1"># Use BIP image reader? If not, use GDAL to read in</span>
+<span class="na">use_bip_reader</span> <span class="o">=</span> <span class="s">true</span>
+<span class="c1"># Directory location for caching dataset lines</span>
+<span class="na">cache_line_dir</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/landsat_stack/p022r049/images/.yatsm_cache</span>
 
-# Section for YATSM parameters
-[YATSM]
-consecutive = 5
-threshold = 3
-min_obs = 16
-min_rmse = 150
-freq = 1
-test_indices = 2, 4, 5
-# Number of days between model fit updates during monitoring period
-retrain_time = 365.25
-# Multitemporal cloud/shadow screening algorithm and threshold
-screening = LOWESS
-screening_crit = 400.0
-# Remove observation if no change has been detected, but first observation is
-# above threshold
-remove_noise = True
-dynamic_rmse = False
-lassocv = False
-reverse = False
-robust = False
-# Commission test alpha value for test; leave blank to ignore test
-commission_alpha =
+<span class="c1"># Section for YATSM parameters</span>
+<span class="k">[YATSM]</span>
+<span class="na">consecutive</span> <span class="o">=</span> <span class="s">5</span>
+<span class="na">threshold</span> <span class="o">=</span> <span class="s">3</span>
+<span class="na">min_obs</span> <span class="o">=</span> <span class="s">16</span>
+<span class="na">min_rmse</span> <span class="o">=</span> <span class="s">150</span>
+<span class="c1"># Patsy style model specification for timeseries model</span>
+<span class="na">design_matrix</span> <span class="o">=</span> <span class="s">1 + x + harm(x, 1)</span>
+<span class="na">test_indices</span> <span class="o">=</span> <span class="s">2, 4, 5</span>
+<span class="c1"># Number of days between model fit updates during monitoring period</span>
+<span class="na">retrain_time</span> <span class="o">=</span> <span class="s">365.25</span>
+<span class="c1"># Multitemporal cloud/shadow screening algorithm and threshold</span>
+<span class="na">screening</span> <span class="o">=</span> <span class="s">RLM</span>
+<span class="na">screening_crit</span> <span class="o">=</span> <span class="s">400.0</span>
+<span class="c1"># Remove observation if no change has been detected, but first observation is</span>
+<span class="c1"># above threshold</span>
+<span class="na">remove_noise</span> <span class="o">=</span> <span class="s">True</span>
+<span class="na">dynamic_rmse</span> <span class="o">=</span> <span class="s">False</span>
+<span class="na">lassocv</span> <span class="o">=</span> <span class="s">False</span>
+<span class="na">reverse</span> <span class="o">=</span> <span class="s">False</span>
+<span class="na">robust</span> <span class="o">=</span> <span class="s">False</span>
+<span class="c1"># Commission test alpha value for test; leave blank to ignore test</span>
+<span class="na">commission_alpha</span> <span class="o">=</span>
 
-# Section for phenology fitting
-[phenology]
-# Boolean for calculating phenology, or not
-calc_pheno = False
-# Specification for dataset indices required for EVI based phenology monitoring
-red_index = 2
-nir_index = 3
-blue_index = 0
-# Scale factor for reflectance bands
-scale = 0.0001
-# You can also specify index of EVI if contained in dataset to override calculation
-evi_index =
-evi_scale =
-# Number of years to group together when normalizing EVI to upper and lower percentiles
-year_interval = 3
-# Upper and lower percentiles of EVI used for max/min scaling
-q_min = 10
-q_max = 90
+<span class="c1"># Section for phenology fitting</span>
+<span class="k">[phenology]</span>
+<span class="c1"># Boolean for calculating phenology, or not</span>
+<span class="na">calc_pheno</span> <span class="o">=</span> <span class="s">False</span>
+<span class="c1"># Specification for dataset indices required for EVI based phenology monitoring</span>
+<span class="na">red_index</span> <span class="o">=</span> <span class="s">2</span>
+<span class="na">nir_index</span> <span class="o">=</span> <span class="s">3</span>
+<span class="na">blue_index</span> <span class="o">=</span> <span class="s">0</span>
+<span class="c1"># Scale factor for reflectance bands</span>
+<span class="na">scale</span> <span class="o">=</span> <span class="s">0.0001</span>
+<span class="c1"># You can also specify index of EVI if contained in dataset to override calculation</span>
+<span class="na">evi_index</span> <span class="o">=</span>
+<span class="na">evi_scale</span> <span class="o">=</span>
+<span class="c1"># Number of years to group together when normalizing EVI to upper and lower percentiles</span>
+<span class="na">year_interval</span> <span class="o">=</span> <span class="s">3</span>
+<span class="c1"># Upper and lower percentiles of EVI used for max/min scaling</span>
+<span class="na">q_min</span> <span class="o">=</span> <span class="s">10</span>
+<span class="na">q_max</span> <span class="o">=</span> <span class="s">90</span>
 
-# Section for training and classification
-[classification]
-# Training data file
-training_image = /home/ceholden/Documents/yatsm/examples/training_data.gtif
-# Training data masked values
-roi_mask_values = 0,255
-# Date range
-training_start = 1999-01-01
-training_end = 2001-01-01
-training_date_format = %Y-%m-%d
-# Cache X feature input and y labels for training data image into file?
-cache_training =
+<span class="c1"># Section for training and classification</span>
+<span class="k">[classification]</span>
+<span class="c1"># Training data file</span>
+<span class="na">training_image</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/yatsm/examples/training_data.gtif</span>
+<span class="c1"># Training data masked values</span>
+<span class="na">roi_mask_values</span> <span class="o">=</span> <span class="s">0,255</span>
+<span class="c1"># Date range</span>
+<span class="na">training_start</span> <span class="o">=</span> <span class="s">1999-01-01</span>
+<span class="na">training_end</span> <span class="o">=</span> <span class="s">2001-01-01</span>
+<span class="na">training_date_format</span> <span class="o">=</span> <span class="s">%Y-%m-%d</span>
+<span class="c1"># Cache X feature input and y labels for training data image into file?</span>
+<span class="na">cache_training</span> <span class="o">=</span>
 </pre></div>
 </div>
 </div>
@@ -446,7 +471,7 @@ cache_training =
         <a href="batch_interface.html" class="btn btn-neutral float-right" title="Batch Interface"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="exploration.html" class="btn btn-neutral" title="Model Parameter Exploration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="model_specification.html" class="btn btn-neutral" title="Timeseries Model Specification"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -456,7 +481,7 @@ cache_training =
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
     </p>
   </div>
 
@@ -476,7 +501,7 @@ cache_training =
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.3.1',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

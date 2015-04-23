@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.glmnet_fit &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.regression.transforms &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -138,10 +138,10 @@
       
           <li><a href="../regression.html">yatsm.regression</a> &raquo;</li>
       
-    <li>yatsm.regression.glmnet_fit</li>
+    <li>yatsm.regression.transforms</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/glmnet_fit.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/transforms.rst" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
@@ -149,56 +149,46 @@
 </div>
           <div role="main">
             
-  <h1>Source code for yatsm.regression.glmnet_fit</h1><div class="highlight"><pre>
-<span class="kn">import</span> <span class="nn">math</span>
+  <h1>Source code for yatsm.regression.transforms</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Custom transforms for Patsy formulas</span>
 
+<span class="sd">TODO:</span>
+<span class="sd">    - Add vegetation indices</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">glmnet.elastic_net</span> <span class="kn">import</span> <span class="n">ElasticNet</span><span class="p">,</span> <span class="n">elastic_net</span>
+<span class="kn">from</span> <span class="nn">patsy</span> <span class="kn">import</span> <span class="n">stateful_transform</span>
 
 
-<div class="viewcode-block" id="GLMLasso"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.glmnet_fit.html#yatsm.regression.glmnet_fit.GLMLasso">[docs]</a><span class="k">class</span> <span class="nc">GLMLasso</span><span class="p">(</span><span class="n">ElasticNet</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; LASSO model using GLMnet implemented through `glmnet-python`.</span>
-<span class="sd">    Basically a wrapper around the ElasticNet model that produces</span>
-<span class="sd">    the variables I&#39;m interested in within the `fit` method.</span>
+<div class="viewcode-block" id="Harmonic"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic">[docs]</a><span class="k">class</span> <span class="nc">Harmonic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Transform `x` into seasonal harmonics with a given frequency</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      x (np.ndarray): array of ordinal dates</span>
+<span class="sd">      freq (int or float): frequency of harmonics</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GLMLasso</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">365.25</span>
 
-<div class="viewcode-block" id="GLMLasso.fit"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.glmnet_fit.html#yatsm.regression.glmnet_fit.GLMLasso.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">lambdas</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">lambdas</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lambdas</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-            <span class="n">lambdas</span> <span class="o">=</span> <span class="p">[</span><span class="n">lambdas</span><span class="p">]</span>
+<div class="viewcode-block" id="Harmonic.memorize_chunk"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.memorize_chunk">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Harmonic.memorize_finish"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.memorize_finish">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Harmonic.transform"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
 
-        <span class="n">n_lambdas</span><span class="p">,</span> <span class="n">intercept_</span><span class="p">,</span> <span class="n">coef_</span><span class="p">,</span> <span class="n">ia</span><span class="p">,</span> <span class="n">nin</span><span class="p">,</span> <span class="n">rsquared_</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">jerr</span> <span class="o">=</span> \
-            <span class="n">elastic_net</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lambdas</span><span class="o">=</span><span class="n">lambdas</span><span class="p">)</span>
-        <span class="c"># elastic_net will fire exception instead</span>
-        <span class="c"># assert jerr == 0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">freq</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">freq</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+        <span class="p">])</span><span class="o">.</span><span class="n">T</span>
 
-        <span class="c"># LASSO returns coefs out of order... reorder them with `ia`</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="n">ia</span><span class="p">[:</span><span class="n">nin</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coef_</span><span class="p">[:</span><span class="n">nin</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="n">intercept_</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rsquared_</span> <span class="o">=</span> <span class="n">rsquared_</span>
-
-        <span class="c"># Create external friendly coefficients</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">intercept_</span>
-
-        <span class="c"># Store number of observations</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span>
-
-        <span class="c"># Store fitted values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fittedvalues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-
-        <span class="c"># Calculate the residual sum of squares</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-
-        <span class="c"># Calculate model RMSE</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rmse</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rss</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span></div></div>
+</div></div>
+<span class="n">harm</span> <span class="o">=</span> <span class="n">stateful_transform</span><span class="p">(</span><span class="n">Harmonic</span><span class="p">)</span>
 </pre></div>
 
           </div>

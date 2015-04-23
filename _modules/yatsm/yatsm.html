@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.yatsm &mdash; YATSM 0.3.1 documentation</title>
+  <title>yatsm.yatsm &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.3.1 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -69,10 +69,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#example">Example</a></li>
 </ul>
@@ -93,7 +95,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -163,9 +168,6 @@
 <span class="kn">from</span> <span class="nn">regression</span> <span class="kn">import</span> <span class="n">robust_fit</span> <span class="k">as</span> <span class="n">rlm</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">date2index</span>
 
-<span class="c"># Some constants</span>
-<span class="n">ndays</span> <span class="o">=</span> <span class="mf">365.25</span>
-
 
 <div class="viewcode-block" id="YATSM"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM">[docs]</a><span class="k">class</span> <span class="nc">YATSM</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Initialize a YATSM model for data X (spectra) and Y (dates)</span>
@@ -219,7 +221,7 @@
                  <span class="n">green_band</span><span class="o">=</span><span class="n">green_band</span><span class="p">,</span> <span class="n">swir1_band</span><span class="o">=</span><span class="n">swir1_band</span><span class="p">,</span>
                  <span class="n">remove_noise</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">dynamic_rmse</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                  <span class="n">lassocv</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                 <span class="n">px</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">design_info</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">px</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">logger</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="c"># Setup logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
@@ -236,6 +238,15 @@
         <span class="c"># Store data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span>
+
+        <span class="c"># Find column index of X containing date from Patsy</span>
+        <span class="k">if</span> <span class="n">design_info</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">design_info</span> <span class="o">=</span> <span class="n">design_info</span>
+            <span class="k">if</span> <span class="s">&#39;x&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">design_info</span><span class="o">.</span><span class="n">term_name_slices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Design info must specify &quot;x&quot; (slope)&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span> <span class="o">=</span> <span class="n">design_info</span><span class="o">.</span><span class="n">term_name_slices</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">start</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="c"># Default fitted and tested indices to all, except last band</span>
         <span class="k">if</span> <span class="n">fit_indices</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -381,10 +392,10 @@
                 <span class="n">m_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">m_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
-            <span class="n">m_1_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
-            <span class="n">m_1_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
-            <span class="n">m_2_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
-            <span class="n">m_2_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
+            <span class="n">m_1_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">],</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
+            <span class="n">m_1_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">],</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
+            <span class="n">m_2_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">],</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
+            <span class="n">m_2_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">],</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
 
             <span class="n">m_r_start</span> <span class="o">=</span> <span class="n">m_1_start</span>
             <span class="n">m_r_end</span> <span class="o">=</span> <span class="n">m_2_end</span>
@@ -496,8 +507,9 @@
             <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="c"># Find matching X and Y in data</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]))</span> <span class="o">&amp;</span>
-                             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]))</span> <span class="o">&amp;</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])))[</span><span class="mi">0</span><span class="p">]</span>
             <span class="c"># Grab matching X and Y</span>
             <span class="n">_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
             <span class="n">_Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
@@ -547,8 +559,9 @@
         <span class="c"># Update to robust model</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">):</span>
             <span class="c"># Find matching X and Y in data</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]))</span> <span class="o">&amp;</span>
-                             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]))</span> <span class="o">&amp;</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])))[</span><span class="mi">0</span><span class="p">]</span>
             <span class="c"># Grab matching X and Y</span>
             <span class="n">_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
             <span class="n">_Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
@@ -596,7 +609,8 @@
     <span class="nd">@property</span>
 <div class="viewcode-block" id="YATSM.span_time"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.span_time">[docs]</a>    <span class="k">def</span> <span class="nf">span_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return time span (in days) between start and end of model &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">-</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">])</span>
 </div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="YATSM.span_index"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.span_index">[docs]</a>    <span class="k">def</span> <span class="nf">span_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -658,7 +672,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">span</span><span class="p">:</span>
                 <span class="n">span</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">consecutive</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
 
-            <span class="n">mask</span> <span class="o">=</span> <span class="n">smooth_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">smooth_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span>
                                <span class="n">crit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screening_crit</span><span class="p">,</span>
                                <span class="n">green</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">green_band</span><span class="p">,</span> <span class="n">swir1</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">swir1_band</span><span class="p">)</span>
 
@@ -684,7 +698,8 @@
         <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">consecutive</span><span class="p">,</span>
                           <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-        <span class="n">mask</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">multitemp_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">index</span><span class="p">],</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">multitemp_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">index</span><span class="p">],</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">span_time</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndays</span><span class="p">,</span>
                                      <span class="n">crit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screening_crit</span><span class="p">,</span>
                                      <span class="n">green</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">green_band</span><span class="p">,</span>
@@ -768,9 +783,10 @@
 </div>
 <div class="viewcode-block" id="YATSM.update_model"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.update_model">[docs]</a>    <span class="k">def</span> <span class="nf">update_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># Only train if enough time has past</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrain_time</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span><span class="p">)</span> <span class="o">&gt;</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">retrain_time</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Monitoring - retraining ({n} days since last)&#39;</span><span class="o">.</span>
-                              <span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
+                              <span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">-</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span><span class="p">))</span>
 
             <span class="c"># Fit timeseries models</span>
@@ -778,17 +794,17 @@
                                           <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
 
             <span class="c"># Update record</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">coef</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;rmse&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">rmse</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Monitoring - updated &#39;</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trained_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># Update record with new end date</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="YATSM.monitor"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.monitor">[docs]</a>    <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Monitor for changes in time series &quot;&quot;&quot;</span>
@@ -815,7 +831,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;CHANGE DETECTED&#39;</span><span class="p">)</span>
 
             <span class="c"># Record break date</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span>
             <span class="c"># Record magnitude of difference for tested indices</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">][</span><span class="s">&#39;magnitude&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">test_indices</span><span class="p">]</span> <span class="o">=</span> \
                 <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -901,8 +918,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># Indices of closest observations based on DOY</span>
         <span class="n">i_doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">consecutive</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">]</span> <span class="o">-</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">here</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">consecutive</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jx</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ndays</span><span class="p">))[:</span><span class="bp">self</span><span class="o">.</span><span class="n">min_obs</span><span class="p">]</span>
 
         <span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_indices</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -913,83 +930,7 @@
                     <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">i_doy</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
                 <span class="o">/</span> <span class="n">i_doy</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">rmse</span>
-</div>
-<div class="viewcode-block" id="YATSM.monitor_plot_debug"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.monitor_plot_debug">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_plot_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">i_buffer</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Monitoring debug plot &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-        <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">make_X</span>
-        <span class="c"># Show before/after current timeseries</span>
-        <span class="n">before_buffer</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">i_buffer</span><span class="p">)</span>
-        <span class="n">after_buffer</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">i_buffer</span><span class="p">)</span>
-
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">before_buffer</span><span class="p">:</span><span class="n">after_buffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                 <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="n">before_buffer</span><span class="p">:</span><span class="n">after_buffer</span><span class="p">],</span> <span class="s">&#39;ko&#39;</span><span class="p">)</span>
-
-        <span class="n">pred_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">before_buffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-                           <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">after_buffer</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">pred_X</span> <span class="o">=</span> <span class="n">make_X</span><span class="p">(</span><span class="n">pred_x</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pred_x</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pred_X</span><span class="p">),</span> <span class="s">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;0.75&#39;</span><span class="p">)</span>
-
-        <span class="c"># Show monitoring prediction</span>
-        <span class="n">pred_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">pred_X</span> <span class="o">=</span> <span class="n">make_X</span><span class="p">(</span><span class="n">pred_x</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pred_x</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pred_X</span><span class="p">))</span>
-
-        <span class="c"># Show currently considered obs</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="n">index</span><span class="p">],</span> <span class="s">&#39;ro&#39;</span><span class="p">)</span>
-
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Model {i} - RMSE: {rmse}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_record</span><span class="p">,</span>
-                                                    <span class="n">rmse</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">rmse</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
-
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="YATSM.plot"><a class="viewcode-back" href="../../yatsm/yatsm.yatsm.html#yatsm.yatsm.YATSM.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Plot YATSM results for a specified band</span>
-<span class="sd">        Args:</span>
-<span class="sd">            band        data band to plot</span>
-<span class="sd">            freq        frequency of sine/cosine (for predictions)</span>
-<span class="sd">            ylim        tuple for y-axes limits</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-        <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">make_X</span>
-
-        <span class="n">dates</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">))</span>
-
-        <span class="c"># Plot data</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="s">&#39;ko&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">ylim</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
-
-        <span class="c"># Add in lines and break points</span>
-        <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
-            <span class="c"># Create sequence of X between start and end dates</span>
-            <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]:</span>
-                <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]:</span>
-                <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="n">mdates</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">,</span> <span class="n">mx</span><span class="p">)</span>
-
-            <span class="c"># Predict</span>
-            <span class="n">mX</span> <span class="o">=</span> <span class="n">make_X</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span>
-            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
-
-            <span class="c"># Plot prediction</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mdates</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
-            <span class="c"># Plot change</span>
-            <span class="k">if</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]),</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span>
-                         <span class="s">&#39;ro&#39;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mew</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="n">rmse</span></div></div>
 </pre></div>
 
           </div>
@@ -1001,7 +942,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
     </p>
   </div>
 
@@ -1021,7 +962,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.1',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

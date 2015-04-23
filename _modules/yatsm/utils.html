@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.utils &mdash; YATSM 0.3.1 documentation</title>
+  <title>yatsm.utils &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.3.1 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -69,10 +69,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#example">Example</a></li>
 </ul>
@@ -93,7 +95,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -148,34 +153,44 @@
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">log_yatsm</span> <span class="kn">import</span> <span class="n">logger</span>
 
 
 <span class="c"># JOB SPECIFIC FUNCTIONS</span>
-<div class="viewcode-block" id="calculate_lines"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.calculate_lines">[docs]</a><span class="k">def</span> <span class="nf">calculate_lines</span><span class="p">(</span><span class="n">job_number</span><span class="p">,</span> <span class="n">total_jobs</span><span class="p">,</span> <span class="n">nrow</span><span class="p">):</span>
+<div class="viewcode-block" id="calculate_lines"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.calculate_lines">[docs]</a><span class="k">def</span> <span class="nf">calculate_lines</span><span class="p">(</span><span class="n">job_number</span><span class="p">,</span> <span class="n">total_jobs</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">interlaced</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Calculate the lines this job processes given nrow, njobs, and job ID</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">      job_number (int): processor to distribute jobs to</span>
+<span class="sd">      total_jobs (int): total number of processors running jobs</span>
 <span class="sd">      nrow (int): number of rows in image</span>
+<span class="sd">      interlaced (bool, optional): interlace line assignment (default: True)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      rows (ndarray): np.array of rows to be processed</span>
+<span class="sd">      rows (np.ndarray): np.ndarray of rows to be processed</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">assigned</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">interlaced</span><span class="p">:</span>
+        <span class="n">assigned</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">while</span> <span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span> <span class="o">&lt;</span> <span class="n">nrow</span><span class="p">:</span>
-        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span><span class="p">)</span>
-        <span class="n">assigned</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span> <span class="o">&lt;</span> <span class="n">nrow</span><span class="p">:</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span><span class="p">)</span>
+            <span class="n">assigned</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nrow</span> <span class="o">/</span> <span class="n">total_jobs</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">i_start</span> <span class="o">=</span> <span class="n">size</span> <span class="o">*</span> <span class="n">job_number</span>
+        <span class="n">i_end</span> <span class="o">=</span> <span class="n">size</span> <span class="o">*</span> <span class="p">(</span><span class="n">job_number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i_start</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">i_end</span><span class="p">,</span> <span class="n">nrow</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">rows</span>
 
 </div>
 <div class="viewcode-block" id="get_output_name"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_output_name">[docs]</a><span class="k">def</span> <span class="nf">get_output_name</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
@@ -194,26 +209,6 @@
                             <span class="n">pref</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output_prefix&#39;</span><span class="p">],</span>
                             <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">))</span>
 
-</div>
-<div class="viewcode-block" id="get_line_cache_name"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_line_cache_name">[docs]</a><span class="k">def</span> <span class="nf">get_line_cache_name</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">n_images</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">nbands</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns cache filename for specified config and line number</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      dataset_config (dict): configuration information about the dataset</span>
-<span class="sd">      n_images (int): number of images in dataset</span>
-<span class="sd">      nrow (int): line of the dataset for output</span>
-<span class="sd">      nbands (int): number of bands in dataset</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      str: filename of cache file</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_line_dir&#39;</span><span class="p">]</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;yatsm_r{l}_n{n}_b{b}.npy.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="n">l</span><span class="o">=</span><span class="n">nrow</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_images</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">nbands</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-
 
 <span class="c"># IMAGE DATASET READING</span></div>
 <div class="viewcode-block" id="csvfile_to_dataset"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataset">[docs]</a><span class="k">def</span> <span class="nf">csvfile_to_dataset</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s">&#39;%Y-%j&#39;</span><span class="p">):</span>
@@ -224,15 +219,18 @@
 <span class="sd">      date_format (str): format of dates in file</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      (ndarray, ndarray): paired dates and filenames of stacked images</span>
+<span class="sd">      (ndarray, ndarray, ndarray): dates, sensor IDs, and filenames of stacked</span>
+<span class="sd">        images</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Store index of date and image</span>
     <span class="n">i_date</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">i_image</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">i_sensor</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">i_image</span> <span class="o">=</span> <span class="mi">2</span>
 
     <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sensors</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Opening image dataset file&#39;</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -246,7 +244,7 @@
         <span class="k">except</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Could not parse first column to ordinal date&#39;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_image</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
+                <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_sensor</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Could not parse second column to ordinal date&#39;</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not parse any columns to ordinal date&#39;</span><span class="p">)</span>
@@ -255,16 +253,31 @@
                 <span class="k">raise</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">i_date</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="n">i_image</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">i_sensor</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in image date and filenames&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in image date, sensor, and filenames&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
             <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_date</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">())</span>
+            <span class="n">sensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_sensor</span><span class="p">])</span>
             <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_image</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sensors</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="get_image_IDs"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_image_IDs">[docs]</a><span class="k">def</span> <span class="nf">get_image_IDs</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns image IDs for each filename (basename of dirname of file)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      filenames (iterable): filenames to return image IDs for</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      list: image IDs for each file in `filenames`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
 
 
 <span class="c"># MAPPING UTILITIES</span></div>
@@ -465,7 +478,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
     </p>
   </div>
 
@@ -485,7 +498,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.1',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

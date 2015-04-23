@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.cache &mdash; YATSM 0.4.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.4.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> YATSM</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtualenv">virtualenv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#python-dependencies">Python Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#phenology">Phenology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#classification">Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_static.html#missing-values">Missing Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_static.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_static.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_changes.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/map_changes.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>yatsm.cache</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cache.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for yatsm.cache</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Functions related to writing to and retrieving from cache files</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">log_yatsm</span> <span class="kn">import</span> <span class="n">logger</span>
+
+<span class="n">_image_ID_str</span> <span class="o">=</span> <span class="s">&#39;image_IDs&#39;</span>
+
+
+<div class="viewcode-block" id="get_line_cache_name"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.get_line_cache_name">[docs]</a><span class="k">def</span> <span class="nf">get_line_cache_name</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">n_images</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">nbands</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns cache filename for specified config and line number</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      dataset_config (dict): configuration information about the dataset</span>
+<span class="sd">      n_images (int): number of images in dataset</span>
+<span class="sd">      row (int): line of the dataset for output</span>
+<span class="sd">      nbands (int): number of bands in dataset</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      str: filename of cache file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_line_dir&#39;</span><span class="p">]</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;yatsm_r{l}_n{n}_b{b}.npy.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">l</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_images</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">nbands</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_line_cache_pattern"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.get_line_cache_pattern">[docs]</a><span class="k">def</span> <span class="nf">get_line_cache_pattern</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">nbands</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a pattern for a cache file from a certain row</span>
+
+<span class="sd">    This function is useful for finding all cache files from a line, ignoring</span>
+<span class="sd">    the number of images in the file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      row (int): line of the dataset for output</span>
+<span class="sd">      nbands (int): number of bands in dataset</span>
+<span class="sd">      regex (bool, optional): return a regular expression instead of glob</span>
+<span class="sd">        style (default: False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      str: filename pattern for cache files from line `row`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wildcard</span> <span class="o">=</span> <span class="s">&#39;.*&#39;</span> <span class="k">if</span> <span class="n">regex</span> <span class="k">else</span> <span class="s">&#39;*&#39;</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="s">&#39;yatsm_r{l}_n{w}_b{b}.npy.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">l</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">wildcard</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">nbands</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pattern</span>
+
+</div>
+<div class="viewcode-block" id="test_cache"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.test_cache">[docs]</a><span class="k">def</span> <span class="nf">test_cache</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Test cache directory for ability to read from or write to</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      dataset_config (dict): dictionary of dataset configuration options</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      (read_cache, write_cache): tuple of bools describing ability to read from</span>
+<span class="sd">        and write to cache directory</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Try to find / use cache</span>
+    <span class="n">read_cache</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">write_cache</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="n">cache_dir</span> <span class="o">=</span> <span class="n">dataset_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;cache_line_dir&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cache_dir</span><span class="p">:</span>
+        <span class="c"># Test existence</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
+                <span class="n">read_cache</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">W_OK</span><span class="p">):</span>
+                <span class="n">write_cache</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">read_cache</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">write_cache</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Cache directory exists but is not writable&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># If it doesn&#39;t already exist, can we create it?</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Could not create cache directory&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">read_cache</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">write_cache</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Attempt reading in from cache directory?: {b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">read_cache</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Attempt writing to cache directory?: {b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">write_cache</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">read_cache</span><span class="p">,</span> <span class="n">write_cache</span>
+
+</div>
+<div class="viewcode-block" id="read_cache_file"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.read_cache_file">[docs]</a><span class="k">def</span> <span class="nf">read_cache_file</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="n">image_IDs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns image data from a cache file</span>
+
+<span class="sd">    If `image_IDs` is not None this function will try to ensure data from cache</span>
+<span class="sd">    file come from the list of image IDs provided. If cache file does not</span>
+<span class="sd">    contain a list of image IDs, it will skip the check and return cache data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      cache_filename (str): cache filename</span>
+<span class="sd">      image_IDs (iterable, optional): list of image IDs corresponding to data</span>
+<span class="sd">        in cache file. If not specified, function will not check for</span>
+<span class="sd">        correspondence (default: None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      np.ndarray, or None: Return Y as np.ndarray if possible and if the</span>
+<span class="sd">        cache file passes the consistency check specified by `image_IDs`; else</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="n">_image_ID_str</span> <span class="ow">in</span> <span class="n">cache</span><span class="o">.</span><span class="n">files</span> <span class="ow">and</span> <span class="n">image_IDs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">image_IDs</span><span class="p">,</span> <span class="n">cache</span><span class="p">[</span><span class="n">_image_ID_str</span><span class="p">]):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Cache file data in {f} do not match images &#39;</span>
+                           <span class="s">&#39;specified&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">cache_filename</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="s">&#39;Y&#39;</span><span class="p">]</span>
+
+</div>
+<div class="viewcode-block" id="write_cache_file"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.write_cache_file">[docs]</a><span class="k">def</span> <span class="nf">write_cache_file</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Writes data to a cache file using np.savez_compressed</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      cache_filename (str): cache filename</span>
+<span class="sd">      Y (np.ndarray)</span>
+<span class="sd">      image_IDs (iterable): list of image IDs corresponding to data in cache</span>
+<span class="sd">        file. If not specified, function will not check for correspondence</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
+        <span class="s">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="n">_image_ID_str</span><span class="p">:</span> <span class="n">image_IDs</span>
+    <span class="p">})</span>
+
+
+<span class="c"># Cache file updating</span></div>
+<div class="viewcode-block" id="update_cache_file"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.update_cache_file">[docs]</a><span class="k">def</span> <span class="nf">update_cache_file</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">,</span>
+                      <span class="n">old_cache_filename</span><span class="p">,</span> <span class="n">new_cache_filename</span><span class="p">,</span>
+                      <span class="n">line</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">reader_kwargs</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot; Modify an existing cache file to contain data within `images`</span>
+
+<span class="sd">    This should be useful for updating a set of cache files to reflect</span>
+<span class="sd">    modifications to the timeseries dataset without completely reading the</span>
+<span class="sd">    data into another cache file.</span>
+
+<span class="sd">    For example, the cache file could be updated to reflect the deletion of</span>
+<span class="sd">    a misregistered or cloudy image. Another common example would be for</span>
+<span class="sd">    updating cache files to include newly acquired observations.</span>
+
+<span class="sd">    Note that this updater will not handle updating cache files to include</span>
+<span class="sd">    new bands.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      images (iterable): list of new image filenames</span>
+<span class="sd">      image_IDs (iterable): list of new image identifying strings</span>
+<span class="sd">      old_cache_filename (str): filename of cache file to update</span>
+<span class="sd">      new_cache_filename (str): filename of new cache file which includes</span>
+<span class="sd">        modified data</span>
+<span class="sd">      line (int): the line of data to be updated</span>
+<span class="sd">      reader (callable): GDAL or BIP image reader function from `yatsm.readers`</span>
+<span class="sd">      reader_kwargs (dict): additional keyword arguments for `reader` other</span>
+<span class="sd">        than the filenames to read and the line to read</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ValueError: Raise error if old cache file does not record `image_IDs`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+    <span class="n">image_IDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image_IDs</span><span class="p">)</span>
+
+    <span class="c"># Cannot proceed if old cache file doesn&#39;t store filenames</span>
+    <span class="n">old_cache</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">old_cache_filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_image_ID_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">old_cache</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot update cache.&#39;</span>
+                         <span class="s">&#39;Old cache file does not store image IDs.&#39;</span><span class="p">)</span>
+    <span class="n">old_IDs</span> <span class="o">=</span> <span class="n">old_cache</span><span class="p">[</span><span class="n">_image_ID_str</span><span class="p">]</span>
+    <span class="n">old_Y</span> <span class="o">=</span> <span class="n">old_cache</span><span class="p">[</span><span class="s">&#39;Y&#39;</span><span class="p">]</span>
+    <span class="n">nband</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="n">old_Y</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c"># Create new Y and add in values retained from old cache</span>
+    <span class="n">new_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nband</span><span class="p">,</span> <span class="n">image_IDs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">ncol</span><span class="p">),</span>
+                     <span class="n">dtype</span><span class="o">=</span><span class="n">old_Y</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+    <span class="n">new_IDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">image_IDs</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">image_IDs</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="c"># Check deletions -- find which indices to retain in new cache</span>
+    <span class="n">retain_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">old_IDs</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">retain_old</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;No image IDs in common in old cache file.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;    retaining {r} of {n} images&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">r</span><span class="o">=</span><span class="n">retain_old</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">old_IDs</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="c"># Find indices of old data to insert into new data</span>
+        <span class="n">idx_old_IDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">old_IDs</span><span class="p">)</span>
+        <span class="n">sorted_old_IDs</span> <span class="o">=</span> <span class="n">old_IDs</span><span class="p">[</span><span class="n">idx_old_IDs</span><span class="p">]</span>
+        <span class="n">idx_IDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">sorted_old_IDs</span><span class="p">,</span>
+                                  <span class="n">image_IDs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">image_IDs</span><span class="p">,</span> <span class="n">old_IDs</span><span class="p">)])</span>
+
+        <span class="n">retain_old</span> <span class="o">=</span> <span class="n">idx_old_IDs</span><span class="p">[</span><span class="n">idx_IDs</span><span class="p">]</span>
+
+        <span class="c"># Indices to insert into new data</span>
+        <span class="n">retain_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">image_IDs</span><span class="p">,</span> <span class="n">old_IDs</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">new_Y</span><span class="p">[:,</span> <span class="n">retain_new</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">old_Y</span><span class="p">[:,</span> <span class="n">retain_old</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">new_IDs</span><span class="p">[</span><span class="n">retain_new</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_IDs</span><span class="p">[</span><span class="n">retain_old</span><span class="p">]</span>
+
+    <span class="c"># Check additions -- find which indices we need to insert</span>
+    <span class="n">insert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">image_IDs</span><span class="p">,</span> <span class="n">old_IDs</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">retain_old</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">insert</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot update cache file -- &#39;</span>
+                         <span class="s">&#39;no data retained or added&#39;</span><span class="p">)</span>
+
+    <span class="c"># Read in the remaining data from disk</span>
+    <span class="k">if</span> <span class="n">insert</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Inserting {n} new images into cache&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">insert</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">insert_Y</span> <span class="o">=</span> <span class="n">reader</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">insert</span><span class="p">],</span> <span class="n">line</span><span class="p">,</span> <span class="o">**</span><span class="n">reader_kwargs</span><span class="p">)</span>
+        <span class="n">new_Y</span><span class="p">[:,</span> <span class="n">insert</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">insert_Y</span>
+        <span class="n">new_IDs</span><span class="p">[</span><span class="n">insert</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_IDs</span><span class="p">[</span><span class="n">insert</span><span class="p">]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_equal</span><span class="p">(</span><span class="n">new_IDs</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">)</span>
+
+    <span class="c"># Save</span>
+    <span class="n">write_cache_file</span><span class="p">(</span><span class="n">new_cache_filename</span><span class="p">,</span> <span class="n">new_Y</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.4.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Long Term Mean Phenology &mdash; YATSM 0.3.1 documentation</title>
+  <title>Long Term Mean Phenology &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.3.1 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/>
         <link rel="next" title="Command Line Utilities" href="../scripts/scripts.html"/>
         <link rel="prev" title="Classification" href="classification.html"/> 
 
@@ -70,10 +70,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html#example">Example</a></li>
 </ul>
@@ -94,7 +96,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Long Term Mean Phenology</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
@@ -152,6 +157,30 @@ characteristics of landscapes using an algorithm developed by Melaas <em>et al</
 <div>Melaas, EK, MA Friedl, and Z Zhu. 2013. Detecting interannual variation in
 deciduous broadleaf forest phenology using Landsat TM/ETM+ data. Remote
 Sensing of Environment 132: 176-185. <a class="reference external" href="http://dx.doi.org/10.1016/j.rse.2013.01.011">http://dx.doi.org/10.1016/j.rse.2013.01.011</a></div></blockquote>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>Example</p>
+<div class="highlight-ini"><div class="highlight"><pre><span class="c1"># Section for phenology fitting</span>
+<span class="k">[phenology]</span>
+<span class="c1"># Boolean for calculating phenology, or not</span>
+<span class="na">calc_pheno</span> <span class="o">=</span> <span class="s">False</span>
+<span class="c1"># Specification for dataset indices required for EVI based phenology monitoring</span>
+<span class="na">red_index</span> <span class="o">=</span> <span class="s">2</span>
+<span class="na">nir_index</span> <span class="o">=</span> <span class="s">3</span>
+<span class="na">blue_index</span> <span class="o">=</span> <span class="s">0</span>
+<span class="c1"># Scale factor for reflectance bands</span>
+<span class="na">scale</span> <span class="o">=</span> <span class="s">0.0001</span>
+<span class="c1"># You can also specify index of EVI if contained in dataset to override calculation</span>
+<span class="na">evi_index</span> <span class="o">=</span>
+<span class="na">evi_scale</span> <span class="o">=</span>
+<span class="c1"># Number of years to group together when normalizing EVI to upper and lower percentiles</span>
+<span class="na">year_interval</span> <span class="o">=</span> <span class="s">3</span>
+<span class="c1"># Upper and lower percentiles of EVI used for max/min scaling</span>
+<span class="na">q_min</span> <span class="o">=</span> <span class="s">10</span>
+<span class="na">q_max</span> <span class="o">=</span> <span class="s">90</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -173,7 +202,7 @@ Sensing of Environment 132: 176-185. <a class="reference external" href="http://
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
     </p>
   </div>
 
@@ -193,7 +222,7 @@ Sensing of Environment 132: 176-185. <a class="reference external" href="http://
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.3.1',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

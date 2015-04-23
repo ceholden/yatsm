@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm_map.py &mdash; YATSM 0.3.1 documentation</title>
+  <title>yatsm_map.py &mdash; YATSM 0.4.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.3.1 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/>
         <link rel="up" title="Command Line Utilities" href="scripts.html"/>
         <link rel="next" title="train_yatsm.py" href="train_yatsm.html"/>
         <link rel="prev" title="yatsm_changemap.py" href="yatsm_changemap.html"/> 
@@ -71,10 +71,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#example">Example</a></li>
 </ul>
@@ -95,7 +97,10 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Command Line Utilities</a><ul class="current">
@@ -169,6 +174,8 @@ Options:
 Time segment map options:
     --after                 Use time segment after &lt;date&gt; if needed for map
     --before                Use time segment before &lt;date&gt; if needed for map
+    --qa                    Add QA band identifying segment type (3=intersect,
+                                2=after, 1=before)
 
 Classification map options:
     --predict_proba         Include prediction probability band (P x 10000)
@@ -176,6 +183,9 @@ Classification map options:
 Coefficient and prediction options:
     --band &lt;bands&gt;          Bands to export [default: all]
     --robust                Use robust estimates
+
+Coefficient options:
+    --no_scale_intercept    Don&#39;t scale intercept by slope term
     --coef &lt;coefs&gt;          Coefficients to export [default: all]
 
 Examples:
@@ -185,6 +195,10 @@ Examples:
     &gt; yatsm_map.py --date &quot;%Y-%j&quot; predict 2000-001 prediction.gtif
 
     &gt; yatsm_map.py --result &quot;YATSM_new&quot; --after class 2000-01-01 LCmap.gtif
+
+Notes:
+    - Image predictions will not use categorical information in timeseries
+        models.
 </pre></div>
 </div>
 </div>
@@ -208,7 +222,7 @@ Examples:
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 20 Mar 2015 02:13:55 PM EDT.
+      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
     </p>
   </div>
 
@@ -228,7 +242,7 @@ Examples:
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.3.1',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
