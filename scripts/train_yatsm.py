@@ -153,6 +153,11 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
                     raise
                 else:
                     continue
+
+        if rec.shape[0] == 0:
+            logger.error('Results missing from training data location at x/y {x}/{y}'.format(l=_y, x=_col, y=_row))
+            continue
+
         # Find intersecting time segment
         i = np.where((rec['start'] < training_start) &
                      (rec['end'] > training_end) &
