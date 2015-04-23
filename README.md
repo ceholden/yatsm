@@ -1,17 +1,21 @@
 Yet Another Timeseries Model (YATSM)
 ------------------------------------
-[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=v0.4.0)](https://coveralls.io/r/ceholden/yatsm?branch=v0.4.0) [![DOI](https://zenodo.org/badge/6804/ceholden/yatsm.svg)](http://dx.doi.org/10.5281/zenodo.16201)
+[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=v0.4.0)](https://coveralls.io/r/ceholden/yatsm?branch=v0.4.0) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.17129.svg)](http://dx.doi.org/10.5281/zenodo.17129)
 
 ## About
 The Yet Another TimeSeries Model (YATSM) algorithm is designed to monitor land
 surface phenomena, including land cover and land use change, using timeseries
 of remote sensing observations. The algorithm seeks to find distinct time
-periods within the timeseries, or time segments, by monitoring for disturbances. These time segments may be used to infer continuous periods of stable land cover, with breaks separating the segments representing ephemeral disturbances or permanent conversions in land cover or land use.
+periods, or time segments, within the timeseries by monitoring for disturbances. These time segments may be used to infer continuous periods of stable land cover, with breaks separating the segments representing ephemeral disturbances or permanent conversions in land cover or land use.
 
 The ["Yet Another..."](http://en.wikipedia.org/wiki/Yet_another) part of the algorithm name is an acknowledgement of the influence a previously published timeseries algorithm - the Continuous Change Detection and Classification (CCDC) (Zhu and Woodcock, 2014) algorithm. While YATSM began as an extension from CCDC, it was never intended as a 1 to 1 port of CCDC and will continue to diverge in its own direction.
 
 This algorithm is also influenced by other remote sensing algorithms which, like CCDC, are based in theory on tests for structural change from econometrics
 literature (Chow, 1960; Andrews, 1993; Chu *et al*, 1996; Zeileis, 2005). These other remote sensing algorithms include Break detection For Additive Season and Trend (BFAST) (Verbesselt *et al*, 2012) and LandTrendr (Kennedy *et al*, 2010). By combining ideas from CCDC, BFAST, and LandTrendr, this "Yet Another..." algorithm hopes to overcome weaknesses present in any single approach.
+
+Please consider citing as:
+
+    Chris Holden. (2015). Yet Another Time Series Model (YATSM). Zenodo. 10.5281/zenodo.17129
 
 ## Documentation
 
