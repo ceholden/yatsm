@@ -18,6 +18,9 @@ install:
     # Create conda matching requirements
     - conda create --yes -n venv python=$TRAVIS_PYTHON_VERSION pip nose numpy scipy cython gdal scikit-learn statsmodels matplotlib
     - source activate venv
+    # Add deps from binstar
+    # Add RPy2 for phenology
+    # - conda install -y -c https://conda.binstar.org/r rpy2
     # Workaround for Fortran warnings -- install glmnet first and quietly
     - "pip install -q git+git://github.com/ceholden/glmnet-python.git#egg=glmnet"
     # Rest of dependencies
@@ -28,3 +31,8 @@ install:
     - "pip install -e ."
 script:
     - py.test
+    - coverage run --source yatsm -m py.test
+after_success:
+    - pip install coveralls
+    - coverage report
+    - coveralls

@@ -1,5 +1,6 @@
 """ Plots useful for YATSM
 """
+from datetime import datetime as dt
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -75,4 +76,51 @@ def plot_feature_importance(algo, dataset_config, yatsm_config):
               algo.feature_importances_.max())
     plt.title('Feature Importance')
     plt.ylabel('Importance')
+    plt.show()
+
+
+def plot(yatsm, band, freq, ylim=None):
+    """ Plot YATSM results for a specified band
+    Args:
+      yatsm (yatsm.YATSM): model
+      band (int): data band to plot
+      freq (iterable): frequency of sine/cosine (for predictions)
+      ylim (tuple): tuple of floats for y-axes limits
+
+    """
+    from utils import make_X
+
+    dates = map(dt.fromordinal, yatsm.X[:, 1].astype(np.uint32))
+
+    # Plot data
+    plt.plot(dates, yatsm.Y[band, :], 'ko')
+
+    if ylim:
+        plt.ylim(ylim)
+
+    # Add in lines and break points
+    for rec in yatsm.record:
+        # Create sequence of X between start and end dates
+        if rec['start'] < rec['end']:
+            mx = np.arange(rec['start'], rec['end'])
+        elif rec['start'] > rec['end']:
+            mx = np.arange(rec['end'], rec['start'])
+        else:
+            continue
+        mdates = map(dt.fromordinal, mx)
+
+        # Predict
+        mX = make_X(mx, freq)
+        my = np.dot(rec['coef'][:, 4], mX)
+
+        # Plot prediction
+        plt.plot(mdates, my, linewidth=2)
+
+        # Plot change
+        if rec['break'] > 0:
+            i = np.where(yatsm.X[:, 1] == rec['break'])[0]
+            plt.plot(dt.fromordinal(rec['break']),
+                     yatsm.Y[band, i],
+                     'ro', mec='r', mfc='none', ms=10, mew=5)
+
     plt.show()

@@ -39,6 +39,8 @@ def group_years(years, interval=3):
 
     """
     n_groups = math.ceil((years.max() - years.min()) / interval)
+    if n_groups <= 1:
+        return np.zeros_like(years, dtype=np.uint16)
     splits = np.array_split(np.arange(years.min(), years.max() + 1), n_groups)
 
     groups = np.zeros_like(years, dtype=np.uint16)
@@ -198,6 +200,11 @@ class LongTermMeanPhenology(object):
         # Calculate year-to-year groupings for EVI normalization
         periods = group_years(yeardoy[:, 0], year_interval)
         evi_norm = scale_EVI(evi, periods, qmin=q_min, qmax=q_max)
+
+        # Mask out np.nan
+        valid = np.isfinite(evi_norm)
+        yeardoy = yeardoy[valid, :]
+        evi_norm = evi_norm[valid]
 
         # Pad missing DOY values (e.g. in winter) with 0's to improve
         # spline fit

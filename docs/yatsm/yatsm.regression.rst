@@ -8,6 +8,7 @@ Submodules
 
    yatsm.regression.glmnet_fit
    yatsm.regression.robust_fit
+   yatsm.regression.transforms
 
 Module contents
 ---------------

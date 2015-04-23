@@ -22,9 +22,12 @@ scripts = ['scripts/line_yatsm.py',
            'scripts/yatsm_map.py',
            'scripts/yatsm_changemap.py']
 
-ext = [Extension('yatsm.cymasking',
-                 ['yatsm/cymasking.pyx'],
-                 include_dirs=[np.get_include()])]
+ext = [
+    Extension('yatsm._cyprep',
+              ['yatsm/_cyprep.pyx'],
+              include_dirs=[np.get_include()],
+              extra_compile_args=["-O3"])
+]
 
 cmdclass = {'build_ext': build_ext}
 
@@ -50,6 +53,7 @@ setup(
         'glmnet',
         'matplotlib',
         'docopt',
-        'brewer2mpl'
+        'brewer2mpl',
+        'patsy'
     ]
 )

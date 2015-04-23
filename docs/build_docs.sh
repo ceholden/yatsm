@@ -2,7 +2,7 @@
 
 cd $(dirname $0)
 
-rm yatsm/*.rst
+# rm yatsm/*.rst
 make clean
 
 cd ../

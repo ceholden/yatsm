@@ -13,6 +13,7 @@ Algorithm options:
     --retrain_time=<n>      Wait <n> days to update model [default: 365.25]
     --screening=<method>    Multi-temporal screening method [default: RLM]
     --screening_crit=<t>    Screening critical value [default: 400.0]
+    --remove_noise          Remove noise during monitoring
     --dynamic_rmse          Vary RMSE as a function of day of year
     --lassocv               Use sklearn cross-validated LassoLarsIC
     --reverse               Run timeseries in reverse
@@ -62,7 +63,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
-# Handle runnin as installed module or not
+# Handle running as installed module or not
 try:
     from yatsm.version import __version__
 except ImportError:
@@ -73,6 +74,8 @@ except ImportError:
 from yatsm.utils import make_X
 from yatsm.reader import find_stack_images, read_pixel_timeseries
 from yatsm.yatsm import YATSM
+
+import sklearn.linear_model
 
 # Some constants
 ndays = 365.25
@@ -121,7 +124,7 @@ def plot_dataset():
 
 def plot_results():
     # Add in deleted obs
-    deleted = ~np.in1d(Y[plot_index, :], yatsm.Y[plot_index, :])
+    deleted = np.in1d(X[:, 1], yatsm.X[:, 1], invert=True)
 
     plot_dataset()
     plt.plot(dates[deleted], Y[plot_index, deleted], 'ro')
@@ -146,6 +149,14 @@ def plot_results():
         mx_date = np.array([dt.fromordinal(int(_x)) for _x in mx])
 
         plt.plot(mx_date, my, fit_colors[i])
+
+        idx = np.where((yatsm.X[:, 1] >= r['start']) & (yatsm.X[:, 1] <= r['end']))[0]
+        sklearn_lasso = sklearn.linear_model.Lasso(alpha=20).fit(yatsm.X[idx, :], yatsm.Y[plot_index, idx])
+
+        plt.plot(mx_date, sklearn_lasso.predict(make_X(mx, freq).T), fit_colors[i], ls='dashed', lw=3)
+
+        # from IPython.core.debugger import Pdb
+        # Pdb().set_trace()
 
         if r['break'] != 0:
             break_date = dt.fromordinal(int(r['break']))
@@ -242,6 +253,7 @@ if __name__ == '__main__':
     if screening not in YATSM.screening_types:
         raise TypeError('Unknown multi-temporal cloud screening type')
     screening_crit = float(args['--screening_crit'])
+    remove_noise = args['--remove_noise']
 
     dynamic_rmse = args['--dynamic_rmse']
 
@@ -336,6 +348,7 @@ if __name__ == '__main__':
                   retrain_time=retrain_time,
                   screening=screening,
                   screening_crit=screening_crit,
+                  remove_noise=remove_noise,
                   dynamic_rmse=dynamic_rmse,
                   lassocv=lassocv,
                   logger=logger)

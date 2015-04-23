@@ -114,6 +114,9 @@ class RLM(object):
         self.M = M
         self.tune = tune
 
+        if self.X.ndim == 1:
+            self.X = self.X[:, np.newaxis]
+
         self.weights = np.ones_like(y)
 
     def fit(self, maxiter=50, tol=1e-8, scale_est=mad, scale_constant=0.6745,

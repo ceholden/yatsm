@@ -1,75 +1,58 @@
-""" Helper class & functions for testing
-"""
-import subprocess
+import fnmatch
+import os
 import unittest
+import subprocess
 
 import numpy as np
-from osgeo import gdal
 
 
-class TestMaps(unittest.TestCase):
-    """ Helper class for testing map attributes and values
-    """
+def create_dir(d, read=True, write=True):
+    """ Creates a directory with given permissions """
+    if read and write:
+        mode = 0755
+    elif read and not write:
+        mode = 0555
+    elif not read and write:
+        mode = 0333
+    elif not read and not write:
+        mode = 0000
 
-    def _compare_maps(self, test, truth,
-                      num_test_almost_eq=False):
-        """ Compare map attributes and values
+    if os.path.exists(d):
+        remove_dir(d)
+    os.makedirs(d)
+    os.chmod(d, mode)
 
-        Args:
-          test (str): filename of data to test
-          truth (str): filename containing 'truth'
-          num_test_almost_eq (bool, optional): test
 
-        """
-        test_ds = gdal.Open(test, gdal.GA_ReadOnly)
-        truth_ds = gdal.Open(truth, gdal.GA_ReadOnly)
+def remove_dir(d):
+    """ Makes sure we can remove directory by changing permissions first """
+    os.chmod(d, 0755)
+    os.removedirs(d)
 
-        # Test dimensions
-        self.assertEqual(test_ds.RasterCount, truth_ds.RasterCount,
-                         'Number of bands differ')
-        self.assertEqual(test_ds.RasterXSize, truth_ds.RasterXSize,
-                         'Number of columns differ')
-        self.assertEqual(test_ds.RasterYSize, truth_ds.RasterYSize,
-                         'Number of rows differ')
 
-        # Test projection / geotransform
-        self.assertEqual(test_ds.GetGeoTransform(), truth_ds.GetGeoTransform(),
-                         'GeoTransform differs')
-        self.assertEqual(test_ds.GetProjection(), truth_ds.GetProjection(),
-                         'Projection differs')
+# Utility to ensure we only unzip timeseries dataset once
+_here = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+_tgz = os.path.join(_here, 'data', 'p035r032_subset.tar.gz')
+_to_dir = os.path.join(_here, 'data')
+_dir = os.path.join(_here, 'data', 'subset')
+_pattern = 'L*stack'
 
-        # Test values
-        for b in range(1, test_ds.RasterCount + 1):
-            test_arr = test_ds.GetRasterBand(b).ReadAsArray()
-            truth_arr = truth_ds.GetRasterBand(b).ReadAsArray()
 
-            if num_test_almost_eq:
-                np.testing.assert_array_almost_equal(
-                    test_arr, truth_arr,
-                    err_msg='Band {0} is not almost equal'.format(b)
-                )
-            else:
-                np.testing.assert_array_equal(
-                    test_arr, truth_arr,
-                    err_msg='Band {0} is not equal'.format(b)
-                )
+class TestStackDataset(unittest.TestCase):
+    """ Special class that ensures test stacked dataset only unzips once """
 
-    def _run(self, script, args):
-        """ Use subprocess to run script with arguments
+    @classmethod
+    def setUpClass(cls):
+        subprocess.call(['tar', '-xzf', _tgz, '-C', _to_dir])
+        cls.stack_images = []
+        cls.stack_image_IDs = []
+        for root, dnames, fnames in os.walk(_dir):
+            for fname in fnmatch.filter(fnames, _pattern):
+                cls.stack_images.append(os.path.join(root, fname))
+                cls.stack_image_IDs.append(os.path.basename(root))
 
-        Args:
-          script (str): script filename to run
-          args (list): program arguments
+        cls.stack_images = np.asarray(cls.stack_images)
+        cls.stack_image_IDs = np.asarray(cls.stack_image_IDs)
 
-        Returns:
-          tuple: stdout and exit code
-
-        """
-        proc = subprocess.Popen([script] + args,
-                                stdout=subprocess.PIPE
-                                )
-
-        stdout = proc.communicate()[0]
-        retcode = proc.returncode
-
-        return stdout, retcode
+    @classmethod
+    def tearDownClass(cls):
+        subprocess.call(['rm', '-rf', _dir])

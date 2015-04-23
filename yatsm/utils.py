@@ -3,34 +3,44 @@ from __future__ import division
 import csv
 from datetime import datetime as dt
 import fnmatch
-import logging
 import os
 import sys
 
 import numpy as np
 
-logger = logging.getLogger('yatsm')
+from log_yatsm import logger
 
 
 # JOB SPECIFIC FUNCTIONS
-def calculate_lines(job_number, total_jobs, nrow):
+def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
     """ Calculate the lines this job processes given nrow, njobs, and job ID
 
     Args:
+      job_number (int): processor to distribute jobs to
+      total_jobs (int): total number of processors running jobs
       nrow (int): number of rows in image
+      interlaced (bool, optional): interlace line assignment (default: True)
 
     Returns:
-      rows (ndarray): np.array of rows to be processed
+      rows (np.ndarray): np.ndarray of rows to be processed
 
     """
-    assigned = 0
-    rows = []
+    if interlaced:
+        assigned = 0
+        rows = []
 
-    while job_number + total_jobs * assigned < nrow:
-        rows.append(job_number + total_jobs * assigned)
-        assigned += 1
+        while job_number + total_jobs * assigned < nrow:
+            rows.append(job_number + total_jobs * assigned)
+            assigned += 1
+        rows = np.array(rows)
+    else:
+        size = int(nrow / total_jobs) + 1
+        i_start = size * job_number
+        i_end = size * (job_number + 1)
 
-    return np.array(rows)
+        rows = np.arange(i_start, min(i_end, nrow))
+
+    return rows
 
 
 def get_output_name(dataset_config, line):
@@ -50,26 +60,6 @@ def get_output_name(dataset_config, line):
                             line=line))
 
 
-def get_line_cache_name(dataset_config, n_images, nrow, nbands):
-    """ Returns cache filename for specified config and line number
-
-    Args:
-      dataset_config (dict): configuration information about the dataset
-      n_images (int): number of images in dataset
-      nrow (int): line of the dataset for output
-      nbands (int): number of bands in dataset
-
-    Returns:
-      str: filename of cache file
-
-    """
-    path = dataset_config['cache_line_dir']
-    filename = 'yatsm_r{l}_n{n}_b{b}.npy.npz'.format(
-        l=nrow, n=n_images, b=nbands)
-
-    return os.path.join(path, filename)
-
-
 # IMAGE DATASET READING
 def csvfile_to_dataset(input_file, date_format='%Y-%j'):
     """ Return sorted filenames of images from input text file
@@ -79,15 +69,18 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
       date_format (str): format of dates in file
 
     Returns:
-      (ndarray, ndarray): paired dates and filenames of stacked images
+      (ndarray, ndarray, ndarray): dates, sensor IDs, and filenames of stacked
+        images
 
     """
     # Store index of date and image
     i_date = 0
-    i_image = 1
+    i_sensor = 1
+    i_image = 2
 
     dates = []
     images = []
+    sensors = []
 
     logger.debug('Opening image dataset file')
     with open(input_file, 'rb') as f:
@@ -101,7 +94,7 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
         except:
             logger.debug('Could not parse first column to ordinal date')
             try:
-                dt.strptime(row[i_image], date_format).toordinal()
+                dt.strptime(row[i_sensor], date_format).toordinal()
             except:
                 logger.debug('Could not parse second column to ordinal date')
                 logger.error('Could not parse any columns to ordinal date')
@@ -110,16 +103,31 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
                 raise
             else:
                 i_date = 1
-                i_image = 0
+                i_sensor = 0
 
         f.seek(0)
 
-        logger.debug('Reading in image date and filenames')
+        logger.debug('Reading in image date, sensor, and filenames')
         for row in reader:
             dates.append(dt.strptime(row[i_date], date_format).toordinal())
+            sensors.append(row[i_sensor])
             images.append(row[i_image])
 
-        return (np.array(dates), np.array(images))
+
+        return (np.array(dates), np.array(sensors), np.array(images))
+
+
+def get_image_IDs(filenames):
+    """ Returns image IDs for each filename (basename of dirname of file)
+
+    Args:
+      filenames (iterable): filenames to return image IDs for
+
+    Returns:
+      list: image IDs for each file in `filenames`
+
+    """
+    return [os.path.basename(os.path.dirname(f)) for f in filenames]
 
 
 # MAPPING UTILITIES

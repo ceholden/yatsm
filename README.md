@@ -1,6 +1,7 @@
 Yet Another Timeseries Model (YATSM)
 ------------------------------------
-[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm)
+[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=v0.4.0)](https://coveralls.io/r/ceholden/yatsm?branch=v0.4.0) [![DOI](https://zenodo.org/badge/6804/ceholden/yatsm.svg)](http://dx.doi.org/10.5281/zenodo.16201)
+
 ## About
 The Yet Another TimeSeries Model (YATSM) algorithm is designed to monitor land
 surface phenomena, including land cover and land use change, using timeseries
@@ -49,6 +50,7 @@ Listed below are the Python library requirements for running YATSM. The version 
     scikit-learn >= 0.15.1
     ggplot >= 0.5.8
     docopt >= 0.6.1
+    patsy >= 0.3.0
 
 These are listed in the `requirements.txt` file, which is usable by PIP as follows:
 

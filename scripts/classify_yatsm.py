@@ -122,7 +122,7 @@ def classify_line(filename, classifier):
     np.savez(filename, **out)
 
 
-# Main and parsing of arguments
+# Main and parsing o/f arguments
 def parse_args(args):
     """ Returns dictionary of parsed and validated command arguments
 

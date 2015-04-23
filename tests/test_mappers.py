@@ -5,7 +5,7 @@ import os
 import shutil
 import unittest
 
-from utils_testing import TestMaps
+from utils_mapping import TestMaps
 
 
 class Test_YATSMMap(TestMaps):
