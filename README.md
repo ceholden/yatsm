@@ -15,7 +15,7 @@ literature (Chow, 1960; Andrews, 1993; Chu *et al*, 1996; Zeileis, 2005). These 
 
 Please consider citing as:
 
-    Chris Holden. (2015). Yet Another Time Series Model (YATSM). Zenodo. 10.5281/zenodo.17129
+    Christopher E. Holden. (2015). Yet Another Time Series Model (YATSM). Zenodo. 10.5281/zenodo.17129
 
 ## Documentation
 
