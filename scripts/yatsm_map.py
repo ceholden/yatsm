@@ -105,7 +105,8 @@ def find_result_attributes(results, bands, coefs, use_robust=False):
     Returns:
       tuple: Tuple containing `list` of indices for output bands and output
         coefficients, `bool` for outputting RMSE, `list` of coefficient names,
-        and a `str` design specification  (i_bands, i_coefs, use_rmse, design)
+        `str` design specification, and `OrderedDict` design_info
+        (i_bands, i_coefs, use_rmse, design, design_info)
 
     """
     _coef = 'robust_coef' if use_robust else 'coef'
@@ -171,7 +172,7 @@ def find_result_attributes(results, bands, coefs, use_robust=False):
     if coefs:
         logger.debug('Coefficients: {0}'.format(i_coefs))
 
-    return (i_bands, i_coefs, use_rmse, coef_names, design_str)
+    return (i_bands, i_coefs, use_rmse, coef_names, design_str, design)
 
 
 def find_indices(record, date, after=False, before=False):
@@ -313,7 +314,7 @@ def get_coefficients(date, result_location, image_ds,
     records = find_results(result_location, pattern)
 
     # Find result attributes to extract
-    i_bands, i_coefs, use_rmse, coef_names, _ = find_result_attributes(
+    i_bands, i_coefs, use_rmse, coef_names, _, _ = find_result_attributes(
         records, bands, coefs, use_robust=use_robust)
 
     n_bands = len(i_bands)
@@ -406,7 +407,7 @@ def get_prediction(date, result_location, image_ds,
     records = find_results(result_location, pattern)
 
     # Find result attributes to extract
-    i_bands, _, _, _, design = find_result_attributes(
+    i_bands, _, _, _, design, design_info = find_result_attributes(
         records, bands, None, use_robust=use_robust)
 
     n_bands = len(i_bands)
@@ -423,6 +424,12 @@ def get_prediction(date, result_location, image_ds,
     design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', design)
     X = patsy.dmatrix(design, {'x': date}).squeeze()
 
+    i_coef = []
+    for k, v in design_info.iteritems():
+        if not re.match('C\(.*\)', k):
+            i_coef.append(v)
+    i_coef = np.asarray(i_coef)
+
     logger.debug('Allocating memory')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_bands),
                      dtype=np.int16) * int(ndv)
@@ -434,9 +441,10 @@ def get_prediction(date, result_location, image_ds,
                 continue
 
             # Calculate prediction
+            _coef = rec['coef'].take(index, axis=0).\
+                take(i_coef, axis=1).take(i_bands, axis=2)
             raster[rec['py'][index], rec['px'][index], :n_i_bands] = \
-                np.tensordot(rec['coef'][index, :][:, :, i_bands], X,
-                             axes=(1, 0))
+                np.tensordot(_coef, X, axes=(1, 0))
             if qa:
                 raster[rec['py'][index], rec['px'][index], -1] = _qa
 
