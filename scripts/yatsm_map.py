@@ -420,7 +420,7 @@ def get_prediction(date, result_location, image_ds,
     if re.match(r'.*C\(.*\).*', design):
         logger.warning('Categorical variable found in design matrix not used'
                        ' in predicted image estimate')
-    design = re.sub(r'[\+\-][\w]+C\(.*\)', '', design)
+    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', design)
     X = patsy.dmatrix(design, {'x': date}).squeeze()
 
     logger.debug('Allocating memory')
