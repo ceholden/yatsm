@@ -70,7 +70,7 @@ def parse_dataset_config(config):
     dataset_config['output'] = config.get('dataset', 'output')
     dataset_config['output_prefix'] = config.get('dataset', 'output_prefix')
     dataset_config['n_bands'] = config.getint('dataset', 'n_bands')
-    dataset_config['mask_band'] = config.getint('dataset', 'mask_band') - 1
+    dataset_config['mask_band'] = config.getint('dataset', 'mask_band')
 
     mask_values = config.get('dataset', 'mask_values')
     dataset_config['mask_values'] = [
@@ -97,8 +97,8 @@ def parse_dataset_config(config):
     dataset_config['min_values'] = np.array(min_values, dtype=np.int32)
     dataset_config['max_values'] = np.array(max_values, dtype=np.int32)
 
-    dataset_config['green_band'] = config.getint('dataset', 'green_band') - 1
-    dataset_config['swir1_band'] = config.getint('dataset', 'swir1_band') - 1
+    dataset_config['green_band'] = config.getint('dataset', 'green_band')
+    dataset_config['swir1_band'] = config.getint('dataset', 'swir1_band')
     dataset_config['use_bip_reader'] = config.getboolean(
         'dataset', 'use_bip_reader')
     dataset_config['cache_line_dir'] = config.get('dataset', 'cache_line_dir')

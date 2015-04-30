@@ -53,6 +53,8 @@ class YATSM(object):
       dynamic_rmse (bool, optional): Vary RMSE as a function of day of year (
         default: False)
       lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet
+      design_info (patsy.DesignInfo, optional): design information for X, if
+        X is created using Patsy
       px (int, optional): X (column) pixel reference
       py (int, optional): Y (row) pixel reference
       logger (logging.Logger, optional): Specific logger to use, else get one

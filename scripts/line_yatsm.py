@@ -220,7 +220,7 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
     """
     # Continue if valid observations are less than 50% of dataset
     valid = cyprep.get_valid_mask(
-      Y[:dataset_config['mask_band'], :],
+      Y[:dataset_config['mask_band'] - 1, :],
       dataset_config['min_values'],
       dataset_config['max_values']
     )
@@ -228,11 +228,11 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
         raise TSLengthException('Not enough valid observations')
 
     # Otherwise continue with masked values
-    valid = (valid * np.in1d(Y[dataset_config['mask_band'], :],
+    valid = (valid * np.in1d(Y[dataset_config['mask_band'] - 1, :],
                              dataset_config['mask_values'],
                              invert=True)).astype(np.bool)
 
-    Y = Y[:dataset_config['mask_band'], valid]
+    Y = Y[:dataset_config['mask_band'] - 1, valid]
     X = X[valid, :]
 
     if yatsm_config['reverse']:
