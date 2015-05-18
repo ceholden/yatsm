@@ -78,6 +78,7 @@ entry_points = '''
 
     [yatsm.yatsm_commands]
     segment=yatsm.cli.segment:segment
+    line=yatsm.cli.line:line
 '''
 
 setup_dict = dict(
