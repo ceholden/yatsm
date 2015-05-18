@@ -1,9 +1,13 @@
-from distutils.core import setup
-from distutils.extension import Extension
-from Cython.Distutils import build_ext
+import logging
+import sys
 
-import numpy as np
+from setuptools import setup
+from setuptools.extension import Extension
 
+logging.basicConfig()
+log = logging.getLogger()
+
+# Get version
 with open('yatsm/version.py') as f:
     for line in f:
         if line.find('__version__') >= 0:
@@ -12,8 +16,54 @@ with open('yatsm/version.py') as f:
             version = version.strip("'")
             continue
 
+# Get README
 with open('README.md') as f:
     readme = f.read()
+
+# Installation requirements
+install_requires = [
+    'numpy',
+    'scipy',
+    'Cython',
+    'statsmodels',
+    'scikit-learn',
+    'glmnet',
+    'matplotlib',
+    'docopt',
+    'brewer2mpl',
+    'patsy'
+]
+
+# NumPy/Cython build setup
+include_dirs = []
+extra_compile_args = ['-O3']
+
+try:
+    import numpy as np
+    include_dirs.append(np.get_include())
+except ImportError:
+    log.critical('NumPy and its headers are required for YATSM. '
+                 'Please install and try again.')
+    sys.exit(1)
+
+try:
+    from Cython.Build import cythonize
+except ImportError:
+    log.critical('Cython is required for YATSM. Please install and try again')
+    sys.exit(1)
+
+ext_opts = dict(
+    include_dirs=include_dirs,
+    extra_compile_args=extra_compile_args
+)
+
+ext_modules = cythonize([
+    Extension('yatsm._cyprep', ['yatsm/_cyprep.pyx'], **ext_opts)
+])
+
+# Setup
+packages = ['yatsm', 'yatsm.cli',
+            'yatsm.classifiers', 'yatsm.regression', 'yatsm.segment']
 
 scripts = ['scripts/line_yatsm.py',
            'scripts/run_yatsm.py',
@@ -22,38 +72,28 @@ scripts = ['scripts/line_yatsm.py',
            'scripts/yatsm_map.py',
            'scripts/yatsm_changemap.py']
 
-ext = [
-    Extension('yatsm._cyprep',
-              ['yatsm/_cyprep.pyx'],
-              include_dirs=[np.get_include()],
-              extra_compile_args=["-O3"])
-]
+entry_points = '''
+    [console_scripts]
+    yatsm=yatsm.cli.main:cli
 
-cmdclass = {'build_ext': build_ext}
+    [yatsm.yatsm_commands]
+    segment=yatsm.cli.segment:segment
+'''
 
-setup(
+setup_dict = dict(
     name='yatsm',
     version=version,
     author='Chris Holden',
     author_email='ceholden@gmail.com',
-    packages=['yatsm', 'yatsm.classifiers', 'yatsm.regression'],
+    packages=packages,
     scripts=scripts,
+    entry_points=entry_points,
     url='https://github.com/ceholden/yatsm',
-    license='LICENSE.txt',
+    license='MIT',
     description='Land cover monitoring based on CCDC in Python',
     long_description=readme,
-    cmdclass=cmdclass,
-    ext_modules=ext,
-    install_requires=[
-        'numpy',
-        'scipy',
-        'Cython',
-        'statsmodels',
-        'scikit-learn',
-        'glmnet',
-        'matplotlib',
-        'docopt',
-        'brewer2mpl',
-        'patsy'
-    ]
+    ext_modules=ext_modules,
+    install_requires=install_requires
 )
+
+setup(**setup_dict)
