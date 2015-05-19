@@ -68,9 +68,8 @@ def read_image(image_filename, bands=None, dtype=None):
     if bands:
         if not all([b in range(1, ds.RasterCount + 1) for b in bands]):
             raise IOError('Image {i} ({n} bands) does not contain bands specified'
-                          ' (requested {b}'.format(i=image_filename,
-                                                   n=ds.RasterCount,
-                                                   b=bands))
+                          ' (requested {b}'.format(
+                            i=image_filename, n=ds.RasterCount, b=bands))
     else:
         bands = range(1, ds.RasterCount + 1)
 
@@ -83,6 +82,7 @@ def read_image(image_filename, bands=None, dtype=None):
         output.append(ds.GetRasterBand(b).ReadAsArray().astype(dtype))
 
     return output
+
 
 def read_pixel_timeseries(files, px, py):
     """ Returns NumPy array containing timeseries values for one pixel
