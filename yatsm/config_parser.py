@@ -193,6 +193,23 @@ def parse_phenology_config(config):
     return yatsm_config
 
 
+def parse_segment_config(config):
+    """ Parse configuration for segmentation """
+    yatsm_config = {}
+    if 'segment' not in config.sections():
+        return yatsm_config
+
+    yatsm_config['segmentation'] = config.get('segment', 'segmentation')
+    yatsm_config['resegment_crit'] = config.getfloat('segment',
+                                                     'resegment_crit')
+    yatsm_config['resegment_minpix'] = config.getint('segment',
+                                                     'resegment_minpix')
+    yatsm_config['resegment_maxpix'] = config.getint('segment',
+                                                     'resegment_maxpix')
+
+    return yatsm_config
+
+
 def parse_config_file(config_file):
     """ Parses config file into dictionary of attributes """
 
@@ -218,5 +235,6 @@ def parse_config_file(config_file):
     yatsm_config.update(parse_algorithm_config(config))
     yatsm_config.update(parse_phenology_config(config))
     dataset_config.update(parse_classification_config(config))
+    yatsm_config.update(parse_segment_config(config))
 
     return (dataset_config, yatsm_config)
