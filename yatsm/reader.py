@@ -18,7 +18,7 @@ def get_image_attribute(image_filename):
     """ Use GDAL to open image and return some attributes
 
     Args:
-      image_filename (string): image filename
+      image_filename (str): image filename
 
     Returns:
       tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype
@@ -39,6 +39,50 @@ def get_image_attribute(image_filename):
 
     return (nrow, ncol, nband, dtype)
 
+
+def read_image(image_filename, bands=None, dtype=None):
+    """ Return raster image bands as a sequence of NumPy arrays
+
+    Args:
+      image_filename (str): Image filename
+      bands (iterable, optional): A sequence of bands to read from image.
+        If `bands` is None, function returns all bands in raster. Note that
+        bands are indexed on 1 (default: None)
+      dtype (np.dtype): NumPy datatype to use for image bands. If `dtype` is
+        None, arrays are kept as the image datatype (default: None)
+
+    Returns:
+      list: list of NumPy arrays for each band specified
+
+    Raises:
+      IOError: raise IOError if bands specified are not contained within raster
+      RuntimeError: raised if GDAL encounters errors
+
+    """
+    try:
+        ds = gdal.Open(image_filename, gdal.GA_ReadOnly)
+    except:
+        logger.error('Could not read image {i}'.format(i=image_filename))
+        raise
+
+    if bands:
+        if not all([b in range(1, ds.RasterCount + 1) for b in bands]):
+            raise IOError('Image {i} ({n} bands) does not contain bands specified'
+                          ' (requested {b}'.format(i=image_filename,
+                                                   n=ds.RasterCount,
+                                                   b=bands))
+    else:
+        bands = range(1, ds.RasterCount + 1)
+
+    if not dtype:
+        dtype = gdal_array.GDALTypeCodeToNumericTypeCode(
+            ds.GetRasterBand(1).DataType)
+
+    output = []
+    for b in bands:
+        output.append(ds.GetRasterBand(b).ReadAsArray().astype(dtype))
+
+    return output
 
 def read_pixel_timeseries(files, px, py):
     """ Returns NumPy array containing timeseries values for one pixel

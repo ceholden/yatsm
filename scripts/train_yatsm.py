@@ -52,8 +52,9 @@ except ImportError:
 from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
 from yatsm.classifiers import diagnostics
-from yatsm import utils
 from yatsm import plots
+from yatsm import reader
+from yatsm import utils
 
 gdal.AllRegister()
 gdal.UseExceptions()
@@ -102,18 +103,13 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
 
     """
     # Find and parse training data
-    try:
-        roi_ds = gdal.Open(dataset_config['training_image'], gdal.GA_ReadOnly)
-    except:
-        logger.error('Could not read in training image')
-        raise
-    logger.info('Reading in training data')
-    roi = roi_ds.GetRasterBand(1).ReadAsArray()
-    if roi_ds.RasterCount == 2:
+    roi = reader.read_image(dataset_config['training_image'])
+    logger.debug('Read in training data')
+    if len(roi) == 2:
         logger.info('Found labels for ROIs -- including in output')
-        labels = roi_ds.GetRasterBand(2).ReadAsArray()
+        labels = roi[1]
     else:
-        labels = None
+        roi = roi[0]
 
     # Determine start and end dates of training sample relevance
     try:
