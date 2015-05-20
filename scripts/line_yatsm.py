@@ -34,14 +34,13 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))))
     from yatsm.version import __version__
-from yatsm.cache import (get_line_cache_name, test_cache, read_cache_file,
-                         write_cache_file)
+from yatsm.cache import test_cache
 from yatsm.config_parser import parse_config_file
 import yatsm._cyprep as cyprep
 from yatsm.errors import TSLengthException
 from yatsm.utils import (calculate_lines, get_output_name, get_image_IDs,
                          csvfile_to_dataset, make_X)
-from yatsm.reader import get_image_attribute, read_row_BIP, read_row_GDAL
+from yatsm.reader import get_image_attribute, read_line
 from yatsm.yatsm import YATSM
 from yatsm.regression.transforms import harm
 
@@ -52,72 +51,6 @@ logger = logging.getLogger('yatsm')
 
 # Logging level for YATSM
 loglevel_YATSM = logging.WARNING
-
-
-def read_line(line, images, image_IDs, dataset_config,
-              ncol, nband, dtype,
-              read_cache=False, write_cache=False, validate_cache=False):
-    """ Reads in dataset from cache or images if required
-
-    Args:
-      line (int): line to read in from images
-      images (list): list of image filenames to read from
-      image_IDs (iterable): list image identifying strings
-      dataset_config (dict): dictionary of dataset configuration options
-      ncol (int): number of columns
-      nband (int): number of bands
-      dtype (type): NumPy datatype
-      read_cache (bool, optional): try to read from cache directory
-        (default: False)
-      write_cache (bool, optional): try to to write to cache directory
-        (default: False)
-      validate_cache (bool, optional): validate that cache data come from same
-        images specified in `images` (default: False)
-
-    Returns:
-      Y (np.ndarray): 3D array of image data (nband, n_image, n_cols)
-
-    """
-    start_time = time.time()
-
-    read_from_disk = True
-    cache_filename = get_line_cache_name(
-        dataset_config, len(images), line, nband)
-
-    Y_shape = (nband, len(images), ncol)
-
-    if read_cache:
-        Y = read_cache_file(cache_filename,
-                            image_IDs if validate_cache else None)
-        if Y is not None and Y.shape == Y_shape:
-            logger.debug('Read in Y from cache file')
-            read_from_disk = False
-        elif Y is not None and Y.shape != Y_shape:
-            logger.warning(
-                'Data from cache file does not meet size requested '
-                '({y} versus {r})'.format(y=Y.shape, r=Y_shape))
-
-    if read_from_disk:
-        # Read in Y
-        if dataset_config['use_bip_reader']:
-            # Use BIP reader
-            logger.debug('Reading in data from disk using BIP reader')
-            Y = read_row_BIP(images, line, (ncol, nband), dtype)
-        else:
-            # Read in data just using GDAL
-            logger.debug('Reading in data from disk using GDAL')
-            Y = read_row_GDAL(images, line)
-
-        logger.debug('Took {s}s to read in the data'.format(
-            s=round(time.time() - start_time, 2)))
-
-    if write_cache and read_from_disk:
-        logger.debug('Writing Y data to cache file {f}'.format(
-            f=cache_filename))
-        write_cache_file(cache_filename, Y, image_IDs)
-
-    return Y
-
 
 # Runner
 def run_line(line, X, images, image_IDs,
