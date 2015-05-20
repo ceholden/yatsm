@@ -11,6 +11,7 @@ from yatsm.cli.cli import (
 )
 import yatsm.config_parser
 import yatsm.reader
+import yatsm.segment
 import yatsm.utils
 
 logger = logging.getLogger('yatsm')
@@ -23,11 +24,14 @@ logger = logging.getLogger('yatsm')
 @click.pass_context
 def segment(ctx, config, job_number, total_jobs):
     # Parse config
-    yatsm_config, dataset_config = \
+    dataset_config, yatsm_config = \
         yatsm.config_parser.parse_config_file(config)
 
     # Read in segmentation image
-    segment = yatsm.reader.read_image(yatsm_config['segmentation'])
+    if not yatsm_config['segmentation']:
+        logger.error('No segmentation image specified in configuration file.')
+        sys.exit(1)
+    segment = yatsm.reader.read_image(yatsm_config['segmentation'])[0]
 
     # Calculate segments for this job
     n_segment = segment.max()
@@ -35,5 +39,7 @@ def segment(ctx, config, job_number, total_jobs):
                                                n_segment, interlaced=False)
 
     # What lines are required?
-    from IPython.core.debugger import Pdb
-    Pdb().set_trace()
+    job_lines = yatsm.segment.segments_to_lines(segment, job_segments)
+
+    # Read and store all required lines
+
