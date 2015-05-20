@@ -17,6 +17,26 @@ import yatsm.utils
 logger = logging.getLogger('yatsm')
 
 
+def read_data_discontinous(cfg, lines):
+    """ Read lines of a timeseries into discontinous NumPy array
+
+    Args:
+      cfg (dict): YATSM dataset configuration
+      lines (iterable): sequence of lines to read from timeseries stack
+
+    Returns:
+      tuple (np.ndarray, dict):
+
+
+    """
+    dates, sensors, images = yatsm.utils.csvfile_to_dataset(
+        cfg['input_file'],
+        date_format=cfg['date_format'])
+
+    image_IDs = yatsm.utils.get_image_IDs(images)
+
+
+
 @cli.command(short_help='Run YATSM on a segmented image')
 @config_file_arg
 @job_number_arg
@@ -42,4 +62,5 @@ def segment(ctx, config, job_number, total_jobs):
     job_lines = yatsm.segment.segments_to_lines(segment, job_segments)
 
     # Read and store all required lines
-
+    from IPython.core.debugger import Pdb
+    Pdb().set_trace()
