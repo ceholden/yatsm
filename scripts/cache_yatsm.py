@@ -55,7 +55,7 @@ def main(args):
     nrow, ncol, nband, dtype = reader.get_image_attribute(images[0])
 
     # Determine lines to work on
-    job_lines = utils.calculate_lines(args['job_number'],
+    job_lines = utils.distribute_jobs(args['job_number'],
                                       args['total_jobs'],
                                       nrow,
                                       interlaced=args['interlace'])

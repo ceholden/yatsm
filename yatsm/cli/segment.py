@@ -35,7 +35,7 @@ def segment(ctx, config, job_number, total_jobs):
 
     # Calculate segments for this job
     n_segment = segment.max()
-    job_segments = yatsm.utils.calculate_lines(job_number, total_jobs,
+    job_segments = yatsm.utils.distribute_jobs(job_number, total_jobs,
                                                n_segment, interlaced=False)
 
     # What lines are required?

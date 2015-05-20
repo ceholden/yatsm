@@ -12,17 +12,17 @@ from log_yatsm import logger
 
 
 # JOB SPECIFIC FUNCTIONS
-def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
-    """ Calculate the lines this job processes given nrow, njobs, and job ID
+def distribute_jobs(job_number, total_jobs, n, interlaced=True):
+    """ Assign `job_number` out of `total_jobs` a subset of `n` tasks
 
     Args:
       job_number (int): processor to distribute jobs to
       total_jobs (int): total number of processors running jobs
-      nrow (int): number of rows in image
-      interlaced (bool, optional): interlace line assignment (default: True)
+      n (int): number of tasks (lines in image, regions in segment)
+      interlaced (bool, optional): interlace job assignment (default: True)
 
     Returns:
-      rows (np.ndarray): np.ndarray of rows to be processed
+      np.ndarray: np.ndarray of task IDs to be processed
 
     Raises:
       ValueError: raise error if `job_number` and `total_jobs` specified
@@ -32,24 +32,24 @@ def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
     """
     if interlaced:
         assigned = 0
-        rows = []
+        tasks = []
 
-        while job_number + total_jobs * assigned < nrow:
-            rows.append(job_number + total_jobs * assigned)
+        while job_number + total_jobs * assigned < n:
+            tasks.append(job_number + total_jobs * assigned)
             assigned += 1
-        rows = np.array(rows)
+        tasks = np.asarray(tasks)
     else:
-        size = int(nrow / total_jobs) + 1
+        size = int(n / total_jobs) + 1
         i_start = size * job_number
         i_end = size * (job_number + 1)
 
-        rows = np.arange(i_start, min(i_end, nrow))
+        tasks = np.arange(i_start, min(i_end, n))
 
-    if rows.size == 0:
+    if tasks.size == 0:
         raise ValueError('No jobs assigned for job_number/total_jobs: {j}/{t}'.
                          format(j=job_number, t=total_jobs))
 
-    return rows
+    return tasks
 
 
 def get_output_name(dataset_config, line):

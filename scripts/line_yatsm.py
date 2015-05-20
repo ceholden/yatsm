@@ -38,7 +38,7 @@ from yatsm.cache import test_cache
 from yatsm.config_parser import parse_config_file
 import yatsm._cyprep as cyprep
 from yatsm.errors import TSLengthException
-from yatsm.utils import (calculate_lines, get_output_name, get_image_IDs,
+from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
                          csvfile_to_dataset, make_X)
 from yatsm.reader import get_image_attribute, read_line
 from yatsm.yatsm import YATSM
@@ -261,7 +261,7 @@ def main(dataset_config, yatsm_config,
     nrow, ncol, nband, dtype = get_image_attribute(images[0])
 
     # Calculate the lines this job ID works on
-    job_lines = calculate_lines(job_number, total_jobs, nrow)
+    job_lines = distribute_jobs(job_number, total_jobs, nrow)
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Calculate X feature input

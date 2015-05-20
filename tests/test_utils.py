@@ -7,13 +7,13 @@ from yatsm import utils
 
 class TestUtils(unittest.TestCase):
 
-    def test_calculate_lines_interlaced(self):
+    def test_distribute_jobs_interlaced(self):
         nrow = 7937
         total_jobs = 13
 
         assigned = []
         for i in xrange(total_jobs):
-            assigned.extend(utils.calculate_lines(i, total_jobs, nrow,
+            assigned.extend(utils.distribute_jobs(i, total_jobs, nrow,
                                                   interlaced=True))
 
         assigned = np.sort(np.asarray(assigned))
@@ -21,13 +21,13 @@ class TestUtils(unittest.TestCase):
 
         np.testing.assert_equal(assigned, all_rows)
 
-    def test_calculate_lines_sequential(self):
+    def test_distribute_jobs_sequential(self):
         nrow = 7937
         total_jobs = 13
 
         assigned = []
         for i in xrange(total_jobs):
-            assigned.extend(utils.calculate_lines(i, total_jobs, nrow,
+            assigned.extend(utils.distribute_jobs(i, total_jobs, nrow,
                                                   interlaced=False))
 
         assigned = np.asarray(assigned)
@@ -37,7 +37,7 @@ class TestUtils(unittest.TestCase):
 
     def test_calculate_lines_sequential_onejob(self):
         with self.assertRaises(ValueError):
-            utils.calculate_lines(1, 1, 7937, interlaced=False)
+            utils.distribute_jobs(1, 1, 7937, interlaced=False)
 
 
 if __name__ == '__main__':
