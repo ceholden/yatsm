@@ -47,11 +47,23 @@ config_file_arg = click.argument(
                     dir_okay=False, resolve_path=True),
     metavar='<config>')
 
-job_number_arg = click.argument(
-    'job_number',
-    nargs=1,
-    type=click.INT,
-    metavar='<job_number>')
+
+def job_number_arg(f):
+    def callback(ctx, param, value):
+        try:
+            value = int(value)
+        except:
+            raise click.BadParameter('Must specify an integer >= 0')
+
+        if value < 0:
+            raise click.BadParameter('Must specify an integer >= 0')
+        elif value == 0:
+            return value
+        else:
+            return value - 1
+
+    return click.argument('job_number', nargs=1, callback=callback,
+                          metavar='<job_number>')(f)
 
 total_jobs_arg = click.argument(
     'total_jobs',
