@@ -24,6 +24,11 @@ def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
     Returns:
       rows (np.ndarray): np.ndarray of rows to be processed
 
+    Raises:
+      ValueError: raise error if `job_number` and `total_jobs` specified
+        result in no jobs being assinged (happens if `job_number` and
+        `total_jobs` are both 1)
+
     """
     if interlaced:
         assigned = 0
@@ -39,6 +44,10 @@ def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
         i_end = size * (job_number + 1)
 
         rows = np.arange(i_start, min(i_end, nrow))
+
+    if rows.size == 0:
+        raise ValueError('No jobs assigned for job_number/total_jobs: {j}/{t}'.
+                         format(j=job_number, t=total_jobs))
 
     return rows
 
