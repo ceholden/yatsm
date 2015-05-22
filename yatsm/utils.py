@@ -122,7 +122,6 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
             sensors.append(row[i_sensor])
             images.append(row[i_image])
 
-
         return (np.array(dates), np.array(sensors), np.array(images))
 
 

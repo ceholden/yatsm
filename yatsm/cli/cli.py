@@ -47,7 +47,6 @@ config_file_arg = click.argument(
                     dir_okay=False, resolve_path=True),
     metavar='<config>')
 
-
 def job_number_arg(f):
     def callback(ctx, param, value):
         try:
