@@ -1,5 +1,10 @@
 import logging
 
-FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
+_FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
+_formatter = logging.Formatter(_FORMAT)
+_handler = logging.StreamHandler()
+_handler.setFormatter(_formatter)
+
 logger = logging.getLogger('yatsm')
+logger.addHandler(_handler)
+logger.setLevel(logging.INFO)
