@@ -51,8 +51,8 @@ def try_resume(filename):
       filename (str): filename of the result to be checked
 
     Returns:
-      bool: If the `npz` file exists and contains a file 'class', this test will
-    return True, else False.
+      bool: If the `npz` file exists and contains a file 'class', this test
+        will return True, else False.
 
     """
     try:
