@@ -169,7 +169,7 @@ def main(args):
     dataset_config, yatsm_config = parse_config_file(args['config_file'])
 
     # Get some attributes about the dataset
-    dates, images = csvfile_to_dataset(
+    dates, sensors, images = csvfile_to_dataset(
         dataset_config['input_file'],
         date_format=dataset_config['date_format']
     )
