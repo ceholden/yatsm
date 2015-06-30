@@ -83,7 +83,7 @@ def classify_line(filename, classifier):
         return
 
     # Rescale intercept term
-    coef = rec['coef']
+    coef = rec['coef'].copy()  # copy so we don't transform npz coef
     coef[:, 0, :] = (coef[:, 0, :] + coef[:, 1, :] *
                      ((rec['start'] + rec['end']) / 2.0)[:, np.newaxis])
 
