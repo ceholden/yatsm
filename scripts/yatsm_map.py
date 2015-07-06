@@ -84,7 +84,7 @@ _after_qa = 2
 _before_qa = 1
 
 # Filters for results
-_result_record = 'yatsm_*'
+_result_record = 'yatsm_r*'
 # number of days in year
 _days = 365.25
 w = 2 * np.pi / _days
