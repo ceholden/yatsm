@@ -218,16 +218,17 @@ def find_results(location, pattern):
     return records
 
 
-def iter_records(records, warn_on_empty=False):
+def iter_records(records, warn_on_empty=False, yield_filename=False):
     """ Iterates over records, returning result NumPy array
 
     Args:
       records (list): List containing filenames of results
       warn_on_empty (bool, optional): Log warning if result contained no
         result records (default: False)
+      yield_filename (bool, optional): Yield the filename and the record
 
     Yields:
-      np.ndarray: Result saved in record
+      np.ndarray or tuple: Result saved in record and the filename, if desired
 
     """
     n_records = len(records)
@@ -249,7 +250,10 @@ def iter_records(records, warn_on_empty=False):
                 logger.warning('Could not find results in {f}'.format(f=r))
             continue
 
-        yield rec
+        if yield_filename:
+            yield rec, r
+        else:
+            yield rec
 
 
 # CALCULATION UTILITIES

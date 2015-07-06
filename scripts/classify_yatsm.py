@@ -51,8 +51,8 @@ def try_resume(filename):
       filename (str): filename of the result to be checked
 
     Returns:
-      bool: If the `npz` file exists and contains a file 'class', this test will
-    return True, else False.
+      bool: If the `npz` file exists and contains a file 'class', this test
+        will return True, else False.
 
     """
     try:
@@ -83,7 +83,7 @@ def classify_line(filename, classifier):
         return
 
     # Rescale intercept term
-    coef = rec['coef']
+    coef = rec['coef'].copy()  # copy so we don't transform npz coef
     coef[:, 0, :] = (coef[:, 0, :] + coef[:, 1, :] *
                      ((rec['start'] + rec['end']) / 2.0)[:, np.newaxis])
 
@@ -169,7 +169,7 @@ def main(args):
     dataset_config, yatsm_config = parse_config_file(args['config_file'])
 
     # Get some attributes about the dataset
-    dates, images = csvfile_to_dataset(
+    dates, sensors, images = csvfile_to_dataset(
         dataset_config['input_file'],
         date_format=dataset_config['date_format']
     )

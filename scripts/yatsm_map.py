@@ -84,7 +84,7 @@ _after_qa = 2
 _before_qa = 1
 
 # Filters for results
-_result_record = 'yatsm_*'
+_result_record = 'yatsm_r*'
 # number of days in year
 _days = 365.25
 w = 2 * np.pi / _days
@@ -255,9 +255,12 @@ def get_classification(date, result_location, image_ds,
                      dtype=dtype) * int(ndv)
 
     logger.debug('Processing results')
-    for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
+    for rec, fname in iter_records(records, warn_on_empty=WARN_ON_EMPTY,
+                                   yield_filename=True):
         if 'class' not in rec.dtype.names:
-            raise ValueError('Results do not have classification labels')
+            logger.warning('Results in {f} do not have classification labels'
+                           .format(f=fname))
+            continue
         if 'class_proba' not in rec.dtype.names and pred_proba:
             raise ValueError('Results do not have classification prediction'
                              ' probability values')
