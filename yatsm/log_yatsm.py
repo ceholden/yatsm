@@ -1,7 +1,7 @@
 import logging
 
 _FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
-_formatter = logging.Formatter(_FORMAT)
+_formatter = logging.Formatter(_FORMAT, '%H:%M:%S')
 _handler = logging.StreamHandler()
 _handler.setFormatter(_formatter)
 
