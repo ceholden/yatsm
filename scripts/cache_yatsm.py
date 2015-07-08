@@ -45,10 +45,11 @@ def main(args):
     if not os.path.isdir(dataset_config['cache_line_dir']):
         os.makedirs(dataset_config['cache_line_dir'])
 
-    dates, images = utils.csvfile_to_dataset(
+    dataset = utils.csvfile_to_dataset(
         dataset_config['input_file'],
         date_format=dataset_config['date_format']
     )
+    images = dataset['images']
 
     image_IDs = utils.get_image_IDs(images)
 

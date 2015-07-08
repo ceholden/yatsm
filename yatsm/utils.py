@@ -78,8 +78,8 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
       date_format (str): format of dates in file
 
     Returns:
-      (ndarray, ndarray, ndarray): dates, sensor IDs, and filenames of stacked
-        images
+      dict: dates, sensor IDs, and filenames of stacked images as np.ndarray
+        within a dict
 
     """
     # Store index of date and image
@@ -122,7 +122,9 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
             sensors.append(row[i_sensor])
             images.append(row[i_image])
 
-        return (np.array(dates), np.array(sensors), np.array(images))
+        return {'dates': np.array(dates),
+                'sensors': np.array(sensors),
+                'images': np.array(images)}
 
 
 def get_image_IDs(filenames):

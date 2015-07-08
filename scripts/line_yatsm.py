@@ -234,10 +234,13 @@ def main(dataset_config, yatsm_config,
 
     """
     # Read in dataset
-    dates, sensors, images = csvfile_to_dataset(
+    dataset = csvfile_to_dataset(
         dataset_config['input_file'],
         date_format=dataset_config['date_format']
     )
+    dates = dataset['dates']
+    sensors = dataset['sensors']
+    images = dataset['images']
 
     image_IDs = get_image_IDs(images)
 
