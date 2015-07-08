@@ -2,6 +2,7 @@
 """
 from datetime import datetime as dt
 import fnmatch
+import logging
 import os
 import sys
 import time
@@ -10,7 +11,9 @@ import numpy as np
 from osgeo import gdal, gdal_array
 
 from . import cache
-from .log_yatsm import logger
+from . import log_yatsm
+
+logger = logging.getLogger('yatsm')
 
 gdal.AllRegister()
 gdal.UseExceptions()
