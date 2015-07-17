@@ -586,7 +586,37 @@ class YATSM(object):
         return True
 
     def train(self):
-        """ Train time series model """
+        """ Train time series model if stability criteria are met
+
+        Stability criteria (Equation 5 in Zhu and Woodcock, 2014) include a
+        test on the change in reflectance over the training period (slope test)
+        and a test on the magnitude of the residuals for the first and last
+        observations in the training period. Training periods with large slopes
+        can indicate that a disturbance process is still in progress. Large
+        residuals on the first or last observations have high leverage on the
+        estimated regression and should be excluded from the training period.
+
+        1. Slope test:
+
+        .. math::
+            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
+                \left|\\beta_{slope,b}(t_{end}-t_{start})\\right|}
+                {RMSE_b} > T_{crit}
+
+        2. First and last residual tests:
+
+        .. math::
+            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
+                \left|\hat\\rho_{b,i=1} - \\rho_{b,i=1}\\right|}
+                {RMSE_b} > T_{crit}
+
+            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
+                \left|\hat\\rho_{b,i=N} - \\rho_{b,i=N}\\right|}
+                {RMSE_b} > T_{crit}
+
+
+
+        """
         # Test if we can train yet
         if self.span_time <= self.ndays or self.span_index < self.n_coef:
             self.logger.debug('could not train - moving forward')
