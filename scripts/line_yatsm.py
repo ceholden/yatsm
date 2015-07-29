@@ -218,6 +218,8 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
       model_result (ndarray): NumPy array of model results from YATSM
 
     """
+    # Extract design info
+    design_info = X.design_info
     # Continue if valid observations are less than 50% of dataset
     valid = cyprep.get_valid_mask(
       Y[:dataset_config['mask_band'] - 1, :],
@@ -253,7 +255,9 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
                   swir1_band=dataset_config['swir1_band'] - 1,
                   remove_noise=yatsm_config['remove_noise'],
                   dynamic_rmse=yatsm_config['dynamic_rmse'],
+                  slope_test=yatsm_config['slope_test'],
                   lassocv=yatsm_config['lassocv'],
+                  design_info=design_info,
                   px=px,
                   py=py,
                   logger=logger)
