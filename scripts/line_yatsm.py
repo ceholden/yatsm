@@ -45,12 +45,10 @@ from yatsm.yatsm import YATSM
 from yatsm.regression.transforms import harm
 
 # Log setup for runner
-FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('yatsm')
-
 # Logging level for YATSM
 loglevel_YATSM = logging.WARNING
+
 
 # Runner
 def run_line(line, X, images, image_IDs,
@@ -117,23 +115,8 @@ def run_line(line, X, images, image_IDs,
 
     np.savez(outfile,
              version=__version__,
-             consecutive=yatsm_config['consecutive'],
-             threshold=yatsm_config['threshold'],
-             min_obs=yatsm_config['min_obs'],
-             min_rmse=yatsm_config['min_rmse'],
-             test_indices=yatsm_config['test_indices'],
-             design=yatsm_config['design_matrix'],
-             design_matrix=X.design_info.column_name_indexes,
-             retrain_time=yatsm_config['retrain_time'],
-             screening=yatsm_config['screening'],
-             screening_crit=yatsm_config['screening_crit'],
-             remove_noise=yatsm_config['remove_noise'],
-             dynamic_rmse=yatsm_config['dynamic_rmse'],
-             commission_alpha=yatsm_config['commission_alpha'],
-             reverse=yatsm_config['reverse'],
-             robust=yatsm_config['robust'],
-             lassocv=yatsm_config['lassocv'],
-             record=np.array(output))
+             record=np.array(output),
+             **{k: v for k, v in yatsm_config.iteritems()})
 
 
 def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
