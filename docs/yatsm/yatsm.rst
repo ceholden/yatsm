@@ -7,7 +7,9 @@ Subpackages
 .. toctree::
 
     yatsm.classifiers
+    yatsm.cli
     yatsm.regression
+    yatsm.segment
 
 Submodules
 ----------
