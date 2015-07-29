@@ -37,6 +37,7 @@ test_indices = 2, 4, 5
 retrain_time = 365.25
 screening = RLM
 screening_crit = 400.0
+slope_test = False
 remove_noise = True
 dynamic_rmse = False
 lassocv = False
@@ -122,6 +123,10 @@ def parse_algorithm_config(config):
     yatsm_config['retrain_time'] = config.getfloat('YATSM', 'retrain_time')
     yatsm_config['screening'] = config.get('YATSM', 'screening')
     yatsm_config['screening_crit'] = config.getfloat('YATSM', 'screening_crit')
+    try:
+        yatsm_config['slope_test'] = config.getfloat('YATSM', 'slope_test')
+    except:
+        yatsm_config['slope_test'] = config.getboolean('YATSM', 'slope_test')
     yatsm_config['remove_noise'] = config.getboolean('YATSM', 'remove_noise')
     yatsm_config['dynamic_rmse'] = config.getboolean('YATSM', 'dynamic_rmse')
     yatsm_config['lassocv'] = config.getboolean('YATSM', 'lassocv')

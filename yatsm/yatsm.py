@@ -52,6 +52,11 @@ class YATSM(object):
         noise) (default: True)
       dynamic_rmse (bool, optional): Vary RMSE as a function of day of year (
         default: False)
+      slope_test (float or bool, optional): Use an additional slope test to
+        assess the suitability of the training period. A value of True
+        enables the test and uses the `threshold` parameter as the test
+        criterion. False turns off the test or a float value enables the test
+        but overrides the test criterion threshold. (default: False)
       lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet
       design_info (patsy.DesignInfo, optional): design information for X, if
         X is created using Patsy
@@ -71,12 +76,21 @@ class YATSM(object):
                  fit_indices=None, test_indices=None, retrain_time=ndays,
                  screening='RLM', screening_crit=400.0,
                  green_band=green_band, swir1_band=swir1_band,
-                 remove_noise=True, dynamic_rmse=False,
+                 remove_noise=True, dynamic_rmse=False, slope_test=False,
                  lassocv=False,
                  design_info=None, px=0, py=0,
                  logger=None):
+        # Store data
+        self.X = X
+        self.Y = Y
+
         # Setup logger
         self.logger = logger or logging.getLogger('yatsm')
+
+        # Setup slope test
+        self.slope_test = slope_test
+        if self.slope_test is True:
+            self.slope_test = threshold
 
         # Configure which implementation of LASSO we're using
         self.lassocv = lassocv
@@ -86,10 +100,6 @@ class YATSM(object):
         else:
             self.fit_models = self.fit_models_GLMnet
             self.logger.info('Using Lasso from GLMnet (lambda = 20)')
-
-        # Store data
-        self.X = X
-        self.Y = Y
 
         # Find column index of X containing date from Patsy
         if design_info:
@@ -641,6 +651,7 @@ class YATSM(object):
         # Ensure first and last points aren't unusual
         start_resid = np.zeros(len(self.test_indices))
         end_resid = np.zeros(len(self.test_indices))
+        slope_resid = np.zeros(len(self.test_indices))
         for i, (b, m) in enumerate(zip(self.test_indices, models)):
             start_resid[i] = (np.abs(self._Y[b, self.start] -
                                      m.predict(self._X[self.start, :])) /
@@ -648,9 +659,13 @@ class YATSM(object):
             end_resid[i] = (np.abs(self._Y[b, self.here] -
                                    m.predict(self._X[self.here, :])) /
                             max(self.min_rmse, m.rmse))
+            slope_resid[i] = (np.abs(m.coef[1] * (self.here - self.start)) /
+                              max(self.min_rmse, m.rmse))
 
         if np.linalg.norm(start_resid) > self.threshold or \
-                np.linalg.norm(end_resid) > self.threshold:
+                np.linalg.norm(end_resid) > self.threshold or \
+                (self.slope_test and
+                 np.linalg.norm(slope_resid) > self.threshold):
             self.logger.debug('Training period unstable')
             self.start += 1
             self.here = self._here
