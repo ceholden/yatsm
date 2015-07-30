@@ -1,39 +1,10 @@
-#!/usr/bin/env python
-""" Yet Another Timeseries Model (YATSM) - run script for classifier training
-
-Usage:
-    train_yatsm.py [options] <yatsm_config> <classifier_config> <model>
-
-Train a classifier from `scikit-learn` on YATSM output and save result to
-file <model>. Dataset configuration is specified by <yatsm_config> and
-classifier and classifier parameters are specified by <classifier_config>.
-
-Options:
-    --kfold=<n>             Number of folds in cross validation [default: 3]
-    --seed=<n>              Random number generator seed
-    --plot                  Show diagnostic plots
-    --diagnostics           Run K-Fold diagnostics
-    --overwrite             Overwrite output model file
-    -v --verbose            Show verbose debugging messages
-    -q --quiet              Show only error messages
-    --version               Print program version and exit
-    -h --help               Show help
-
-"""
-from __future__ import division, print_function
-
-# Support namechange in Python3
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser
+""" Command line interface for training classifiers on YATSM output """
 from datetime import datetime as dt
 from itertools import izip
 import logging
 import os
-import sys
 
-from docopt import docopt
+import click
 import matplotlib.pyplot as plt
 import numpy as np
 from osgeo import gdal
@@ -41,14 +12,7 @@ from osgeo import gdal
 from sklearn.cross_validation import KFold, StratifiedKFold
 from sklearn.externals import joblib
 
-# Handle runnin as installed module or not
-try:
-    from yatsm.version import __version__
-except ImportError:
-    # Try adding `pwd` to PYTHONPATH
-    sys.path.append(os.path.dirname(os.path.dirname(
-        os.path.abspath(__file__))))
-    from yatsm.version import __version__
+from yatsm.cli.cli import cli, config_file_arg, job_number_arg, total_jobs_arg
 from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
 from yatsm.classifiers import diagnostics
@@ -56,12 +20,61 @@ from yatsm import plots
 from yatsm import reader
 from yatsm import utils
 
+logger = logging.getLogger('yatsm')
+
 gdal.AllRegister()
 gdal.UseExceptions()
 
-FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
-logger = logging.getLogger('yatsm')
+if hasattr(plt, 'style') and 'ggplot' in plt.style.available:
+    plt.style.use('ggplot')
+
+
+@cli.command(short_help='Train classifier on YATSM output')
+@config_file_arg
+@click.argument('classifier_config', metavar='<classifier_config>', nargs=1,
+                type=click.Path(exists=True, readable=True,
+                                dir_okay=False, resolve_path=True))
+@click.argument('model', metavar='<model>', nargs=1,
+                type=click.Path(writable=True, dir_okay=False,
+                                resolve_path=True))
+@click.option('--kfold', 'n_fold', nargs=1, type=click.INT, default=3,
+              help='Number of folds in cross validation (default: 3)')
+@click.option('--seed', nargs=1, type=click.INT,
+              help='Random number generator seed')
+@click.option('--plot', is_flag=True, help='Show diagnostic plots')
+@click.option('--diagnostics', is_flag=True, help='Run K-Fold diagnostics')
+@click.option('--overwrite', is_flag=True, help='Overwrite output model file')
+@click.pass_context
+def train(ctx, config, classifier_config, model, n_fold, seed,
+          plot, diagnostics, overwrite):
+    """
+    Train a classifier from `scikit-learn` on YATSM output and save result to
+    file <model>. Dataset configuration is specified by <yatsm_config> and
+    classifier and classifier parameters are specified by <classifier_config>.
+    """
+    if not model.endswith('.pkl'):
+        model += '.pkl'
+    if os.path.isfile(model) and not overwrite:
+        logger.error('<model> exists and --overwrite was not specified')
+        raise click.Abort()
+
+    if seed:
+        np.random.seed(seed)
+
+    # Parse YATSM config
+    dataset_config, yatsm_config = parse_config_file(config)
+
+    if not dataset_config['training_image'] or \
+            not os.path.isfile(dataset_config['training_image']):
+        logger.error('Training data image {f} does not exist'.format(
+            f=dataset_config['training_image']))
+        raise click.Abort()
+
+    # Parse classifier config
+    algorithm_helper = classifiers.ini_to_algorthm(classifier_config)
+
+    main(dataset_config, yatsm_config, algorithm_helper, model,
+         diagnostics, n_fold, plot)
 
 
 class TrainingDataException(Exception):
@@ -110,6 +123,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
         labels = roi[1]
     else:
         roi = roi[0]
+        labels = None
 
     # Determine start and end dates of training sample relevance
     try:
@@ -176,7 +190,7 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
 
     if not out_y:
         logger.error('Could not find any matching timeseries segments')
-        sys.exit(1)
+        raise click.Abort()
     logger.info('Found matching time segments for {m} out of {n} labels'.
                 format(m=len(out_y), n=y.size))
 
@@ -190,15 +204,20 @@ def get_training_inputs(dataset_config, exit_on_missing=False):
             out_row, out_col, labels)
 
 
-def algo_diagnostics(X, y, row, col, algo):
+def algo_diagnostics(dataset_config, yatsm_config, X, y,
+                     row, col, algo, n_fold, make_plots=True):
     """ Display algorithm diagnostics for a given X and y
 
     Args:
+      dataset_config (dict): dict of dataset configuration options
+      yatsm_config (dict): dict of YATSM algorithm options
       X (np.ndarray): X feature input used in classification
       y (np.ndarray): y labeled examples
       row (np.ndarray): row pixel locations of `y`
       col (np.ndarray): column pixel locations of `y`
       algo (sklearn classifier): classifier used from scikit-learn
+      n_fold (int): number of folds for crossvalidation
+      make_plots (bool, optional): show diagnostic plots (default: True)
 
     """
     # Print algorithm diagnostics without crossvalidation
@@ -245,7 +264,7 @@ def algo_diagnostics(X, y, row, col, algo):
 
 
 def main(dataset_config, yatsm_config, algo, model_filename,
-         run_diagnostics=True):
+         run_diagnostics, n_fold, make_plots=True):
     """ YATSM trainining main
 
     Args:
@@ -254,6 +273,9 @@ def main(dataset_config, yatsm_config, algo, model_filename,
       algo (sklearn classifier): classification algorithm helper class
       model_filename (str): filename for pickled algorithm object
       run_diagnostics (bool): Run KFold diagnostics
+      n_fold (int): number of folds for crossvalidation
+      make_plots (bool, optional): show diagnostic plots (default: True)
+
     """
     # Cache file for training data
     has_cache = False
@@ -312,65 +334,4 @@ def main(dataset_config, yatsm_config, algo, model_filename,
 
     # Diagnostics
     if run_diagnostics:
-        algo_diagnostics(X, y, row, col, algo)
-
-
-if __name__ == '__main__':
-    # Arguments
-    args = docopt(__doc__,
-                  version=__version__)
-
-    # Validate dataset config file input
-    yatsm_config_file = args['<yatsm_config>']
-    if not os.path.isfile(yatsm_config_file):
-        print('Error - <yatsm_config> specified is not a file')
-        sys.exit(1)
-
-    # Validate classifier config file input
-    classifier_config_file = args['<classifier_config>']
-    if not os.path.isfile(classifier_config_file):
-        print('Error - <classifier_config> specified is not a file')
-        sys.exit(1)
-
-    # Output filename for pickled model
-    model_filename = args['<model>']
-    if not model_filename.endswith('.pkl'):
-        model_filename += '.pkl'
-    if os.path.isfile(model_filename) and not args['--overwrite']:
-        print('Error - <model> exists and --overwrite was not specified')
-        sys.exit(1)
-
-    # Options
-    try:
-        n_fold = int(args['--kfold'])
-    except ValueError:
-        logger.error('Must specify integer for --kfold')
-        sys.exit(1)
-
-    if args['--seed']:
-        np.random.seed(int(args['--seed']))
-
-    make_plots = args['--plot']
-    plt.style.use('ggplot')
-
-    run_diagnostics = args['--diagnostics']
-
-    if args['--verbose']:
-        logger.setLevel(logging.DEBUG)
-    if args['--quiet']:
-        logger.setLevel(logging.WARNING)
-
-    # Parse YATSM config
-    dataset_config, yatsm_config = parse_config_file(yatsm_config_file)
-
-    if not dataset_config['training_image'] or \
-            not os.path.isfile(dataset_config['training_image']):
-        logger.error('Training data image {f} does not exist'.format(
-            f=dataset_config['training_image']))
-        sys.exit(1)
-
-    # Parse classifier config
-    algorithm_helper = classifiers.ini_to_algorthm(classifier_config_file)
-
-    main(dataset_config, yatsm_config, algorithm_helper, model_filename,
-         run_diagnostics=run_diagnostics)
+        algo_diagnostics(X, y, row, col, algo, n_fold, make_plots)

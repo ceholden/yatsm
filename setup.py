@@ -67,7 +67,6 @@ packages = ['yatsm', 'yatsm.cli',
 
 scripts = ['scripts/run_yatsm.py',
            'scripts/gen_date_file.sh',
-           'scripts/train_yatsm.py',
            'scripts/yatsm_map.py',
            'scripts/yatsm_changemap.py']
 
@@ -78,6 +77,7 @@ entry_points = '''
     [yatsm.yatsm_commands]
     segment=yatsm.cli.segment:segment
     line=yatsm.cli.line:line
+    train=yatsm.cli.train:train
 '''
 
 setup_dict = dict(
