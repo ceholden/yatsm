@@ -65,8 +65,7 @@ ext_modules = cythonize([
 packages = ['yatsm', 'yatsm.cli',
             'yatsm.classifiers', 'yatsm.regression', 'yatsm.segment']
 
-scripts = ['scripts/line_yatsm.py',
-           'scripts/run_yatsm.py',
+scripts = ['scripts/run_yatsm.py',
            'scripts/gen_date_file.sh',
            'scripts/train_yatsm.py',
            'scripts/yatsm_map.py',

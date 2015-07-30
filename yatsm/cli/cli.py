@@ -7,8 +7,6 @@ import click
 import yatsm
 
 # Logging config
-FORMAT = '%(asctime)s:%(levelname)s:%(module)s.%(funcName)s:%(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO, datefmt='%H:%M:%S')
 logger = logging.getLogger('yatsm')
 
 _context = dict(
@@ -39,6 +37,7 @@ def valid_band(ctx, param, value):
         raise click.BadParameter('Band must be integer above 1')
     return band
 
+
 # CLI arguments and options
 config_file_arg = click.argument(
     'config',
@@ -46,6 +45,7 @@ config_file_arg = click.argument(
     type=click.Path(exists=True, readable=True,
                     dir_okay=False, resolve_path=True),
     metavar='<config>')
+
 
 def job_number_arg(f):
     def callback(ctx, param, value):
