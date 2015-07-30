@@ -65,19 +65,19 @@ ext_modules = cythonize([
 packages = ['yatsm', 'yatsm.cli',
             'yatsm.classifiers', 'yatsm.regression', 'yatsm.segment']
 
-scripts = ['scripts/run_yatsm.py',
-           'scripts/gen_date_file.sh',
-           'scripts/yatsm_map.py',
-           'scripts/yatsm_changemap.py']
-
 entry_points = '''
     [console_scripts]
     yatsm=yatsm.cli.main:cli
 
     [yatsm.yatsm_commands]
+    cache=yatsm.cli.cache:cache
+    pixel=yatsm.cli.pixel:pixel
     segment=yatsm.cli.segment:segment
     line=yatsm.cli.line:line
     train=yatsm.cli.train:train
+    classify=yatsm.cli.classify:classify
+    map=yatsm.cli.map:map
+    changemap=yatsm.cli.changemap:changemap
 '''
 
 setup_dict = dict(
@@ -86,7 +86,6 @@ setup_dict = dict(
     author='Chris Holden',
     author_email='ceholden@gmail.com',
     packages=packages,
-    scripts=scripts,
     entry_points=entry_points,
     url='https://github.com/ceholden/yatsm',
     license='MIT',

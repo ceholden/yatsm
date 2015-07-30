@@ -13,4 +13,5 @@ for entry_point in iter_entry_points('yatsm.yatsm_commands'):
     try:
         entry_point.load()
     except:
-        pass
+        from IPython.core.debugger import Pdb
+        Pdb().set_trace()

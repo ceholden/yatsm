@@ -32,7 +32,7 @@ logger = logging.getLogger('yatsm')
 
 
 def _temp_plot(dates, Y_seg_mean, Y_seg_std, Y_seg_stderr, Y_seg_mask,
-               seg_id, plot_idx):
+               seg_id, plot_idx, results=None):
     import matplotlib.pyplot as plt
 
     seg_id -= 1
@@ -54,6 +54,16 @@ def _temp_plot(dates, Y_seg_mean, Y_seg_std, Y_seg_stderr, Y_seg_mask,
                  fmt='o')
     plt.ylabel('Mean/stderr idx {i}'.format(i=plot_idx))
 
+    if results is not None:
+        for i, r in enumerate(results.record):
+            mx = np.arange(r['start'], r['end'], 1)
+            from IPython.core.debugger import Pdb
+            Pdb().set_trace()
+            mX = patsy.dmatrix(results.design_info, {'x': mx})
+            my = np.dot(r['coef'][:, plot_idx], mX)
+
+            # dates =
+
     plt.show()
 
 
@@ -73,9 +83,12 @@ def read_data(cfg, lines, ravel=True):
     read_cache, write_cache = yatsm.cache.test_cache(cfg)
 
     # Find dataset and read in
-    dates, sensors, images = yatsm.utils.csvfile_to_dataset(
-        cfg['input_file'],
-        date_format=cfg['date_format'])
+    dataset = yatsm.utils.csvfile_to_dataset(cfg['input_file'],
+                                             date_format=cfg['date_format'])
+    dates = dataset['dates']
+    sensors = dataset['sensors']
+    images = dataset['images']
+
     image_IDs = yatsm.utils.get_image_IDs(images)
     nrow, ncol, nband, dtype = yatsm.reader.get_image_attribute(images[0])
 
@@ -176,6 +189,9 @@ def segment(ctx, config, job_number, total_jobs, seg_id):
     _temp_plot(dates, Y_seg_mean, Y_seg_std, Y_seg_stderr, Y_seg_mask,
                seg_id, plot_idx)
 
+    from IPython.core.debugger import Pdb
+    Pdb().set_trace()
+
     _yatsm = yatsm.yatsm.YATSM(
         X[Y_seg_mask[seg_id, :]],
         Y_seg_mean[seg_id, :, :],
@@ -191,6 +207,7 @@ def segment(ctx, config, job_number, total_jobs, seg_id):
         swir1_band=dataset_config['swir1_band'] - 1,
         remove_noise=yatsm_config['remove_noise'],
         dynamic_rmse=yatsm_config['dynamic_rmse'],
+        design_info=X.design_info,
         lassocv=yatsm_config['lassocv'],
         px=seg_id,
         py=0,
@@ -205,6 +222,8 @@ def segment(ctx, config, job_number, total_jobs, seg_id):
             print('Break {0}: {1}'.format(
                 i, dt.fromordinal(bp).strftime('%Y-%m-%d')))
 
+    _temp_plot(dates, Y_seg_mean, Y_seg_std, Y_seg_stderr, Y_seg_mask,
+               seg_id, plot_idx, results=_yatsm)
 
 if __name__ == '__main__':
     segment()
