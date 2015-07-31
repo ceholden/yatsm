@@ -47,12 +47,24 @@ logger = logging.getLogger('yatsm')
               help='Y-axis limits')
 @click.option('--style', metavar='<style>', default='ggplot',
               type=click.Choice(plot_styles), help='Plot style')
+@click.option('--cmap', metavar='<cmap>', default='perceptual_rainbow_16',
+              help='DOY plot colormap (default: perceptual_rainbow_16)')
 @click.option('--embed', is_flag=True,
               help='Drop to embedded IPython shell at various points')
 @click.pass_context
-def pixel(ctx, config, px, py, band, plot, ylim, style, embed):
+def pixel(ctx, config, px, py, band, plot, ylim, style, cmap, embed):
     # Convert band to index
     band -= 1
+
+    # Get colormap
+    if hasattr(palettable.colorbrewer, cmap):
+        mpl_cmap = getattr(palettable.colorbrewer, cmap).mpl_colormap
+    elif hasattr(palettable.cubehelix, cmap):
+        mpl_cmap = getattr(palettable.cubehelix, cmap).mpl_colormap
+    elif hasattr(palettable.wesanderson, cmap):
+        mpl_cmap = getattr(palettable.wesanderson, cmap).mpl_colormap
+    else:
+        raise click.Abort('Cannot find specified colormap in `palettable`')
 
     # Parse config
     dataset_config, yatsm_config = parse_config_file(config)
@@ -90,11 +102,17 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, embed):
             if _plot == 'TS':
                 plot_TS(dates, Y[band, :])
             elif _plot == 'DOY':
-                plot_DOY(dates, Y[band, :])
+                plot_DOY(dates, Y[band, :], mpl_cmap)
+
+            if ylim:
+                plt.ylim(ylim)
             plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
             plt.ylabel('Band {b}'.format(b=band + 1))
+
             if embed and has_embed:
                 IPython_embed('About to show {p} plot'.format(p=_plot))
+
+            plt.tight_layout()
             plt.show()
 
 
@@ -103,7 +121,11 @@ def plot_TS(dates, y):
     plt.xlabel('Date')
 
 
-def plot_DOY(dates, y):
+def plot_DOY(dates, y, mpl_cmap):
     doy = np.array([d.timetuple().tm_yday for d in dates])
-    plt.plot(doy, y, 'ro')
+    year = np.array([d.year for d in dates])
+
+    sp = plt.scatter(doy, y, c=year, cmap=mpl_cmap,
+                     marker='o', edgecolors='none', s=35)
+    plt.colorbar(sp)
     plt.xlabel('Day of Year')
