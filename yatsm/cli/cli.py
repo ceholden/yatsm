@@ -10,6 +10,7 @@ import yatsm
 logger = logging.getLogger('yatsm')
 
 _context = dict(
+    token_normalize_func=lambda x: x.lower(),
     help_option_names=['--help', '-h']
 )
 
