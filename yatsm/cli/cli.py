@@ -1,4 +1,5 @@
 """ YATSM command line interface """
+from datetime import datetime as dt
 import logging
 import os
 
@@ -75,13 +76,41 @@ format_opt = click.option(
     '-f', '--format',
     default='GTiff',
     metavar='<driver>',
+    show_default=True,
     help='Output format driver')
+
+date_format_opt = click.option(
+    '--date', 'date_frmt',
+    default='%Y-%m-%d',
+    metavar='<format>',
+    show_default=True,
+    is_eager=True,
+    help='Date format')
+
+
+def date_arg(f):
+    def callback(ctx, param, value):
+        try:
+            value = dt.strptime(value, ctx.params['date_frmt'])
+        except KeyError:
+            raise click.ClickException(
+                'Need to use `date_format_opt` when using `date_arg`')
+        except ValueError:
+            raise click.BadParameter(
+                'Cannot parse {v} to date with format {f}'.format(
+                    v=value, f=ctx.params['date_frmt']))
+        else:
+            return value
+
+    return click.argument('date', metavar='<date>', callback=callback)(f)
+
 
 rootdir_opt = click.option(
     '--root',
     default='./',
     metavar='<directory>',
     help='Root timeseries directory',
+    show_default=True,
     type=click.Path(exists=True, file_okay=False,
                     readable=True, resolve_path=True))
 
@@ -104,6 +133,7 @@ def resultdir_opt(f):
     return click.option('--result', '-r',
                         default='YATSM',
                         metavar='<directory>',
+                        show_default=True,
                         help='Directory of results',
                         callback=callback)(f)
 
@@ -126,5 +156,6 @@ def exampleimg_opt(f):
     return click.option('--image', '-i',
                         default='example_img',
                         metavar='<image>',
+                        show_default=True,
                         help='Example timeseries image',
                         callback=callback)(f)
