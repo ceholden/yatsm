@@ -6,5 +6,5 @@ scikit-learn>=0.15.1
 git+git://github.com/ceholden/glmnet-python.git#egg=glmnet
 matplotlib>=1.4.2
 docopt>=0.6.2
-brewer2mpl>=1.4.1
+palettable>=2.0.0
 patsy>=0.3.0
