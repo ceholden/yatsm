@@ -41,8 +41,8 @@ logger = logging.getLogger('yatsm')
 @click.argument('py', metavar='<py>', nargs=1, type=click.INT)
 @click.option('--band', metavar='<n>', nargs=1, type=click.INT, default=1,
               help='Band to plot')
-@click.option('--plot', metavar='<type>', type=click.Choice(avail_plots),
-              default='TS', help='Plot type')
+@click.option('--plot', default=('TS',), multiple=True,
+              type=click.Choice(avail_plots), help='Plot type')
 @click.option('--ylim', metavar='<min> <max>', nargs=2, type=float,
               help='Y-axis limits')
 @click.option('--style', metavar='<style>', default='ggplot',
@@ -86,15 +86,16 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, embed):
 
     # Plot before fitting
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
-        if plot == 'TS':
-            plot_TS(dates, Y[band, :])
-        elif plot == 'DOY':
-            plot_DOY(dates, Y[band, :])
-        plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
-        plt.ylabel('Band {b}'.format(b=band + 1))
-        if embed and has_embed:
-            IPython_embed()
-        plt.show()
+        for _plot in plot:
+            if _plot == 'TS':
+                plot_TS(dates, Y[band, :])
+            elif _plot == 'DOY':
+                plot_DOY(dates, Y[band, :])
+            plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
+            plt.ylabel('Band {b}'.format(b=band + 1))
+            if embed and has_embed:
+                IPython_embed('About to show {p} plot'.format(p=_plot))
+            plt.show()
 
 
 def plot_TS(dates, y):
