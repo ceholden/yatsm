@@ -2,6 +2,7 @@
 """
 from datetime import datetime as dt
 import logging
+import re
 
 try:
     from IPython import embed as IPython_embed
@@ -15,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import palettable
 import patsy
+import sklearn
 
 from yatsm.cli.cli import cli, config_file_arg
 from yatsm.config_parser import parse_config_file
@@ -118,9 +120,52 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap, embed):
             plt.tight_layout()
             plt.show()
 
+    # Fit model
+    kwargs = {}
+    while True:
+        from IPython.core.debugger import Pdb
+        Pdb().set_trace()
+
+        model = sklearn.linear_model.LassoCV(**kwargs)
+        # model = sklearn.linear_model.Lasso(alpha=20)
+        model = model.fit(X, Y[band, :])
+
+        if hasattr(model, 'alpha_'):
+            plot_lasso_debug(model)
+            plt.show()
+
+    # Setup prediction for model
+    x_min, x_max = dates.min().toordinal(), dates.max().toordinal()
+    mx = np.arange(x_min, x_max)
+    _dates = np.array([dt.fromordinal(_x) for _x in mx])
+
+    # Plot after predictions
+    with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
+        for _plot in plot:
+            if _plot == 'TS':
+                plot_TS(dates, Y[band, :])
+            elif _plot == 'DOY':
+                plot_DOY(dates, Y[band, :], mpl_cmap)
+            elif _plot == 'VAL':
+                plot_VAL(dates, Y[band, :], mpl_cmap)
+
+            if ylim:
+                plt.ylim(ylim)
+            plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
+            plt.ylabel('Band {b}'.format(b=band + 1))
+
+            plot_fit(mx, _dates, yatsm_config['design_matrix'], model)
+
+            if embed and has_embed:
+                IPython_embed()
+
+            plt.tight_layout()
+            plt.show()
+
 
 def plot_TS(dates, y):
-    plt.plot(dates, y, 'ro')
+    # Plot data
+    plt.scatter(dates, y, c='r', marker='o', edgecolors='none', s=35)
     plt.xlabel('Date')
 
 
@@ -138,7 +183,7 @@ def plot_VAL(dates, y, mpl_cmap, reps=2):
     doy = np.array([d.timetuple().tm_yday for d in dates])
     year = np.array([d.year for d in dates])
 
-    # Replicate
+    # Replicate `reps` times
     _doy = doy.copy()
     for r in range(1, reps + 1):
         _doy = np.concatenate((_doy, doy + r * 366))
@@ -151,17 +196,18 @@ def plot_VAL(dates, y, mpl_cmap, reps=2):
     plt.xlabel('Day of Year')
 
 
-def plot_fit(dates, design_matrix, model):
-    x_min, x_max = dates.min().toordinal(), dates.max().toordinal()
-    mx = np.arange(x_min, x_max)
+def plot_fit(mx, dates, design, model):
+    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', design)
+    mX = patsy.dmatrix(design, {'x': mx})
+    plt.plot(dates, model.predict(mX), ls='-')
 
-    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', self._design)
-        coef_columns = []
-        for k, v in self._design_info.column_name_indexes.iteritems():
-            if not re.match('C\(.*\)', k):
-                coef_columns.append(v)
-        coef_columns = np.asarray(coef_columns)
-    mX = patsy.dmatrix(design_matrix,
-                       {'x': dates, 'sensor': sensors})
-    yhat = model.predict(x)
-    plt.
+
+def plot_lasso_debug(model):
+    """ See example http://scikit-learn.org/stable/auto_examples/linear_model/plot_lasso_model_selection.html
+    """
+    m_log_alphas = -np.log10(model.alphas_)
+    plt.plot(m_log_alphas, model.mse_path_, ':')
+    plt.plot(m_log_alphas, model.mse_path_.mean(axis=-1), 'k',
+             label='Average across the folds', linewidth=2)
+    plt.axvline(-np.log10(model.alpha_), linestyle='--', color='k',
+                label='alpha: CV estimate')
