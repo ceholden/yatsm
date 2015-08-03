@@ -24,7 +24,7 @@ from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm
 from yatsm.yatsm import YATSM
 
-avail_plots = ['TS', 'DOY']
+avail_plots = ['TS', 'DOY', 'VAL']
 
 plot_styles = []
 if hasattr(mpl, 'style'):
@@ -40,15 +40,16 @@ logger = logging.getLogger('yatsm')
 @click.argument('px', metavar='<px>', nargs=1, type=click.INT)
 @click.argument('py', metavar='<py>', nargs=1, type=click.INT)
 @click.option('--band', metavar='<n>', nargs=1, type=click.INT, default=1,
-              help='Band to plot')
-@click.option('--plot', default=('TS',), multiple=True,
+              show_default=True, help='Band to plot')
+@click.option('--plot', default=('TS',), multiple=True, show_default=True,
               type=click.Choice(avail_plots), help='Plot type')
 @click.option('--ylim', metavar='<min> <max>', nargs=2, type=float,
-              help='Y-axis limits')
+              show_default=True, help='Y-axis limits')
 @click.option('--style', metavar='<style>', default='ggplot',
-              type=click.Choice(plot_styles), help='Plot style')
+              show_default=True, type=click.Choice(plot_styles),
+              help='Plot style')
 @click.option('--cmap', metavar='<cmap>', default='perceptual_rainbow_16',
-              help='DOY plot colormap (default: perceptual_rainbow_16)')
+              show_default=True, help='DOY plot colormap')
 @click.option('--embed', is_flag=True,
               help='Drop to embedded IPython shell at various points')
 @click.pass_context
@@ -103,6 +104,8 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap, embed):
                 plot_TS(dates, Y[band, :])
             elif _plot == 'DOY':
                 plot_DOY(dates, Y[band, :], mpl_cmap)
+            elif _plot == 'VAL':
+                plot_VAL(dates, Y[band, :], mpl_cmap)
 
             if ylim:
                 plt.ylim(ylim)
@@ -110,7 +113,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap, embed):
             plt.ylabel('Band {b}'.format(b=band + 1))
 
             if embed and has_embed:
-                IPython_embed('About to show {p} plot'.format(p=_plot))
+                IPython_embed()
 
             plt.tight_layout()
             plt.show()
@@ -129,3 +132,36 @@ def plot_DOY(dates, y, mpl_cmap):
                      marker='o', edgecolors='none', s=35)
     plt.colorbar(sp)
     plt.xlabel('Day of Year')
+
+
+def plot_VAL(dates, y, mpl_cmap, reps=2):
+    doy = np.array([d.timetuple().tm_yday for d in dates])
+    year = np.array([d.year for d in dates])
+
+    # Replicate
+    _doy = doy.copy()
+    for r in range(1, reps + 1):
+        _doy = np.concatenate((_doy, doy + r * 366))
+    _year = np.tile(year, reps + 1)
+    _y = np.tile(y, reps + 1)
+
+    sp = plt.scatter(_doy, _y, c=_year, cmap=mpl_cmap,
+                     marker='o', edgecolors='none', s=35)
+    plt.colorbar(sp)
+    plt.xlabel('Day of Year')
+
+
+def plot_fit(dates, design_matrix, model):
+    x_min, x_max = dates.min().toordinal(), dates.max().toordinal()
+    mx = np.arange(x_min, x_max)
+
+    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', self._design)
+        coef_columns = []
+        for k, v in self._design_info.column_name_indexes.iteritems():
+            if not re.match('C\(.*\)', k):
+                coef_columns.append(v)
+        coef_columns = np.asarray(coef_columns)
+    mX = patsy.dmatrix(design_matrix,
+                       {'x': dates, 'sensor': sensors})
+    yhat = model.predict(x)
+    plt.
