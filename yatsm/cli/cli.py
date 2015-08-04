@@ -159,3 +159,22 @@ def exampleimg_opt(f):
                         show_default=True,
                         help='Example timeseries image',
                         callback=callback)(f)
+
+
+# CALLBACKS
+def dict_callback(ctx, param, value):
+    """ Call back for dict style arguments (e.g., KEY=VALUE)
+    """
+    if not value:
+        return {}
+    else:
+        d = {}
+        for val in value:
+            if '=' not in val:
+                raise click.BadParameter(
+                    'Must specify {p} as KEY=VALUE ({v} given)'.format(
+                        p=param, v=value))
+            else:
+                k, v = val.split('=', 1)
+                d[k] = v
+        return d

@@ -18,7 +18,7 @@ import palettable
 import patsy
 import sklearn
 
-from yatsm.cli.cli import cli, config_file_arg
+from yatsm.cli import cli as yatsm_cli
 from yatsm.config_parser import parse_config_file
 import yatsm._cyprep as cyprep
 from yatsm.utils import csvfile_to_dataset
@@ -37,8 +37,8 @@ if hasattr(plt, 'xkcd'):
 logger = logging.getLogger('yatsm')
 
 
-@cli.command(short_help='Run YATSM algorithm on individual pixels')
-@config_file_arg
+@yatsm_cli.cli.command(short_help='Run YATSM algorithm on individual pixels')
+@yatsm_cli.config_file_arg
 @click.argument('px', metavar='<px>', nargs=1, type=click.INT)
 @click.argument('py', metavar='<py>', nargs=1, type=click.INT)
 @click.option('--band', metavar='<n>', nargs=1, type=click.INT, default=1,
@@ -55,9 +55,11 @@ logger = logging.getLogger('yatsm')
 @click.option('--embed', is_flag=True,
               help='Drop to embedded IPython shell at various points')
 @click.option('--seed', help='Set NumPy RNG seed value')
+@click.option('--algo_kw', multiple=True, callback=yatsm_cli.dict_callback,
+              help='Algorithm parameter overrides')
 @click.pass_context
 def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
-          embed, seed):
+          embed, seed, algo_kw):
     # Set seed
     np.random.seed()
     # Convert band to index
@@ -75,6 +77,15 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
     # Parse config
     dataset_config, yatsm_config = parse_config_file(config)
+
+    # Override anything in yatsm_config if in --algo_kw
+    for k in algo_kw:
+        if k in yatsm_config:
+            logger.debug('Overriding {k} from {v1} to {v2}'.format(
+                k=k, v1=yatsm_config[k], v2=algo_kw[k]))
+            from IPython.core.debugger import Pdb
+            Pdb().set_trace()
+            yatsm_config[k] = type_convert(algo_kw[k], yatsm_config[k])
 
     # Locate and fetch attributes from data
     dataset = csvfile_to_dataset(dataset_config['input_file'],
@@ -215,3 +226,29 @@ def plot_lasso_debug(model):
              label='Average across the folds', linewidth=2)
     plt.axvline(-np.log10(model.alpha_), linestyle='--', color='k',
                 label='alpha: CV estimate')
+
+
+# UTILITY FUNCTIONS
+def type_convert(value, example):
+    """ Convert value (str) to dtype of `example`
+
+    Args:
+      value (str): string value to convert type
+      example (int, float, bool, list, tuple, np.ndarray, etc.): `value`
+        converted to type of `example` variable
+
+    """
+    dtype = type(example)
+    if dtype is int:
+        return int(value)
+    elif dtype is float:
+        return float(value)
+    elif dtype in (list, tuple, np.ndarray):
+        _dtype = type(example[0])
+        return np.array([_dtype(v) for v in value.replace(',', ' ').split(' ')
+                         if v])
+    elif dtype is bool:
+        if value.lower()[0] in ('t', 'y'):
+            return True
+        else:
+            return False
