@@ -1,6 +1,7 @@
 """ Command line interface for running YATSM algorithms on individual pixels
 """
-from datetime import datetime as dt
+import datetime as dt
+import inspect
 import logging
 import re
 
@@ -61,7 +62,7 @@ logger = logging.getLogger('yatsm')
 def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
           embed, seed, algo_kw):
     # Set seed
-    np.random.seed()
+    np.random.seed(seed)
     # Convert band to index
     band -= 1
 
@@ -83,8 +84,6 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
         if k in yatsm_config:
             logger.debug('Overriding {k} from {v1} to {v2}'.format(
                 k=k, v1=yatsm_config[k], v2=algo_kw[k]))
-            from IPython.core.debugger import Pdb
-            Pdb().set_trace()
             yatsm_config[k] = type_convert(algo_kw[k], yatsm_config[k])
 
     # Locate and fetch attributes from data
@@ -110,11 +109,11 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     Y = np.delete(Y, dataset_config['mask_band'] - 1, axis=0)
 
     # Apply mask
-    dates = np.array([dt.fromordinal(d) for d in dates[valid]])
+    dates = np.array([dt.datetime.fromordinal(d) for d in dates[valid]])
     Y = Y[:, valid]
     X = X[valid, :]
 
-    # Plot before fitting
+    # # Plot before fitting
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
@@ -135,26 +134,16 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.tight_layout()
             plt.show()
 
-    # Fit model
-    kwargs = {}
-    while True:
-        from IPython.core.debugger import Pdb
-        Pdb().set_trace()
+    # Eliminate config parameters not algorithm and fit model
+    cfg = yatsm_config.copy()
+    _args = inspect.getargspec(YATSM.__init__)
+    for k in yatsm_config:
+        if k not in _args.args:
+            del cfg[k]
+    yatsm_model = YATSM(X, Y, **cfg)
+    yatsm_model.run()
 
-        model = sklearn.linear_model.LassoCV(**kwargs)
-        # model = sklearn.linear_model.Lasso(alpha=20)
-        model = model.fit(X, Y[band, :])
-
-        if hasattr(model, 'alpha_'):
-            plot_lasso_debug(model)
-            plt.show()
-
-    # Setup prediction for model
-    x_min, x_max = dates.min().toordinal(), dates.max().toordinal()
-    mx = np.arange(x_min, x_max)
-    _dates = np.array([dt.fromordinal(_x) for _x in mx])
-
-    # Plot after predictions
+    # # Plot after predictions
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
@@ -169,7 +158,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
             plt.ylabel('Band {b}'.format(b=band + 1))
 
-            plot_fit(mx, _dates, yatsm_config['design_matrix'], model)
+            plot_results(band, yatsm_config, yatsm_model, plot_type=_plot)
 
             if embed and has_embed:
                 IPython_embed()
@@ -180,7 +169,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
 def plot_TS(dates, y):
     # Plot data
-    plt.scatter(dates, y, c='r', marker='o', edgecolors='none', s=35)
+    plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
     plt.xlabel('Date')
 
 
@@ -191,6 +180,15 @@ def plot_DOY(dates, y, mpl_cmap):
     sp = plt.scatter(doy, y, c=year, cmap=mpl_cmap,
                      marker='o', edgecolors='none', s=35)
     plt.colorbar(sp)
+
+    months = mpl.dates.MonthLocator()  # every month
+    months_fmrt = mpl.dates.DateFormatter('%b')
+
+    plt.tick_params(axis='x', which='minor', direction='in', pad=-10)
+    plt.axes().xaxis.set_minor_locator(months)
+    plt.axes().xaxis.set_minor_formatter(months_fmrt)
+
+    plt.xlim(1, 366)
     plt.xlabel('Day of Year')
 
 
@@ -211,10 +209,36 @@ def plot_VAL(dates, y, mpl_cmap, reps=2):
     plt.xlabel('Day of Year')
 
 
-def plot_fit(mx, dates, design, model):
-    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', design)
-    mX = patsy.dmatrix(design, {'x': mx})
-    plt.plot(dates, model.predict(mX), ls='-')
+def plot_results(band, yatsm_config, yatsm_model, plot_type='TS'):
+    step = -1 if yatsm_config['reverse'] else 1
+    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', yatsm_config['design_matrix'])
+
+    for i, r in enumerate(yatsm_model.record):
+        label = 'Model {i}'.format(i=i)
+        if plot_type == 'TS':
+            mx = np.arange(r['start'], r['end'], step)
+            mX = patsy.dmatrix(design, {'x': mx}).T
+
+            my = np.dot(r['coef'][:, band], mX)
+            mx_date = np.array([dt.datetime.fromordinal(int(_x)) for _x in mx])
+
+        elif plot_type == 'DOY':
+            yr_end = dt.datetime.fromordinal(r['end']).year
+            yr_start = dt.datetime.fromordinal(r['start']).year
+            yr_mid = int(yr_end - (yr_end - yr_start) / 2)
+
+            mx = np.arange(dt.date(yr_mid, 1, 1).toordinal(),
+                           dt.date(yr_mid + 1, 1, 1).toordinal(), 1)
+            mX = patsy.dmatrix(design, {'x': mx}).T
+
+            my = np.dot(r['coef'][:, band], mX)
+            mx_date = np.array([dt.datetime.fromordinal(d).timetuple().tm_yday
+                                for d in mx])
+
+            label = 'Model {i} - {yr}'.format(i=i, yr=yr_mid)
+
+        plt.plot(mx_date, my, lw=2, label=label)
+        plt.legend()
 
 
 def plot_lasso_debug(model):
