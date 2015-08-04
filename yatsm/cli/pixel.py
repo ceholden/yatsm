@@ -226,6 +226,9 @@ def plot_lasso_debug(model):
              label='Average across the folds', linewidth=2)
     plt.axvline(-np.log10(model.alpha_), linestyle='--', color='k',
                 label='alpha: CV estimate')
+    plt.xlabel('-log(alpha)')
+    plt.ylabel('Mean square error')
+    plt.title('Mean square error on each fold: coordinate descent')
 
 
 # UTILITY FUNCTIONS
