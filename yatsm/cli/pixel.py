@@ -54,8 +54,12 @@ logger = logging.getLogger('yatsm')
               show_default=True, help='DOY plot colormap')
 @click.option('--embed', is_flag=True,
               help='Drop to embedded IPython shell at various points')
+@click.option('--seed', help='Set NumPy RNG seed value')
 @click.pass_context
-def pixel(ctx, config, px, py, band, plot, ylim, style, cmap, embed):
+def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
+          embed, seed):
+    # Set seed
+    np.random.seed()
     # Convert band to index
     band -= 1
 
