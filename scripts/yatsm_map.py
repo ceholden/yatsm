@@ -687,7 +687,7 @@ def main(args):
         raster, band_names = get_coefficients(
             args['date'], args['results'], image_ds,
             args['bands'], args['coefs'],
-            use_robust=args['use_robust'],
+            use_robust=args['use_robust'], amplitude=args['amplitude'],
             after=args['after'], before=args['before'], qa=args['qa'],
             ndv=args['ndv']
         )
@@ -695,7 +695,7 @@ def main(args):
         raster, band_names = get_prediction(
             args['date'], args['results'], image_ds,
             args['bands'],
-            use_robust=args['use_robust'], amplitude=args['amplitude'],
+            use_robust=args['use_robust'],
             after=args['after'], before=args['before'], qa=args['qa'],
             ndv=args['ndv']
         )
