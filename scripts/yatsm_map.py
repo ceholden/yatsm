@@ -30,8 +30,9 @@ Coefficient and prediction options:
     --robust                Use robust estimates
 
 Coefficient options:
-    --no_scale_intercept    Don't scale intercept by slope term
     --coef <coefs>          Coefficients to export [default: all]
+    --amplitude             Export amplitude of sin/cosine pairs instead of
+                                individual coefficient estimates
 
 Examples:
     > yatsm_map.py --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
@@ -283,7 +284,7 @@ def get_classification(date, result_location, image_ds,
 
 def get_coefficients(date, result_location, image_ds,
                      bands, coefs,
-                     no_scale_intercept=False, use_robust=False,
+                     use_robust=False, amplitude=False,
                      after=False, before=False, qa=False,
                      ndv=-9999, pattern=_result_record):
     """ Output a raster with coefficients from CCDC
@@ -294,17 +295,17 @@ def get_coefficients(date, result_location, image_ds,
       bands (list): Bands to predict
       coefs (list): List of coefficients to output
       image_ds (gdal.Dataset): Example dataset
-      no_scale_intercept (bool, optional): Skip scaling of intercept
-        coefficient by slope (default: False)
       use_robust (bool, optional): Map robust coefficients and RMSE instead of
         normal ones
+      amplitude (bool, optional): Map amplitude of seasonality instead of
+        individual coefficient estimates for sin/cosine pair (default: False)
       after (bool, optional): If date intersects a disturbed period, use next
-        available time segment
+        available time segment (default: False)
       before (bool, optional): If date does not intersect a model, use previous
-        non-disturbed time segment
+        non-disturbed time segment (default: False)
       qa (bool, optional): Add QA flag specifying segment type (intersect,
-        after, or before)
-      ndv (int, optional): NoDataValue
+        after, or before) (default: False)
+      ndv (int, optional): NoDataValue (default: -9999)
       pattern (str, optional): filename pattern of saved record results
 
     Returns:
@@ -319,6 +320,22 @@ def get_coefficients(date, result_location, image_ds,
     # Find result attributes to extract
     i_bands, i_coefs, use_rmse, coef_names, _, _ = find_result_attributes(
         records, bands, coefs, use_robust=use_robust)
+
+    # Process amplitude transform for seasonality coefficients
+    if amplitude:
+        # Find indices of first element in each cos/sin pair
+        harm_coefs = [i for i, n in enumerate(coef_names) if
+                      re.match(r'harm\(x, [0-9]+\)\[0]', n)]
+
+        # Change harm to amplitude in coef_names
+        for i_harm in harm_coefs:
+            # Change harm to amplitude in coef_names
+            coef_names[i_harm] = re.sub(r'harm(.*)\[.*', r'amplitude\1',
+                                        coef_names[i_harm])
+        # Delete sin term from each harmonic pair
+        i_coefs = [i for i in i_coefs if i - 1 not in harm_coefs]
+        coef_names = [n for i, n in enumerate(coef_names) if
+                      i - 1 not in harm_coefs]
 
     n_bands = len(i_bands)
     n_coefs = len(i_coefs)
@@ -338,15 +355,11 @@ def get_coefficients(date, result_location, image_ds,
         band_names.append('SegmentQAQC')
     n_out_bands = n_bands * n_coefs + n_rmse + n_qa
 
-    logger.debug('Band names:')
-    logger.debug(band_names)
-
     _coef = 'robust_coef' if use_robust else 'coef'
     _rmse = 'robust_rmse' if use_robust else 'rmse'
 
     logger.debug('Allocating memory...')
-    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize,
-                     n_out_bands),
+    raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_out_bands),
                      dtype=np.float32) * ndv
 
     logger.debug('Processing results')
@@ -357,10 +370,16 @@ def get_coefficients(date, result_location, image_ds,
 
             if n_coefs > 0:
                 # Normalize intercept to mid-point in time segment
-                if not no_scale_intercept:
-                    rec[_coef][index, 0, :] += (
-                        (rec['start'][index] + rec['end'][index])
-                        / 2.0)[:, None] * rec[_coef][index, 1, :]
+                rec[_coef][index, 0, :] += (
+                    (rec['start'][index] + rec['end'][index])
+                        / 2.0)[:, np.newaxis] * \
+                    rec[_coef][index, 1, :]
+
+                # If we want amplitude, calculate it
+                if amplitude:
+                    for i_coef in harm_coefs:
+                        rec[_coef][index, i_coef, :] = np.linalg.norm(
+                            rec[_coef][index, i_coef:i_coef + 2, :], axis=1)
 
                 # Extract coefficients
                 raster[rec['py'][index],
@@ -616,9 +635,6 @@ def parse_args(args):
         logger.error(parsed['coefs'])
         sys.exit(1)
 
-    # Intercept coefficient handling
-    parsed['no_scale_intercept'] = args['--no_scale_intercept']
-
     # Bands to output
     bands = args['--band']
     if bands != 'all':
@@ -635,6 +651,9 @@ def parse_args(args):
 
     # Robust estimates?
     parsed['use_robust'] = args['--robust']
+
+    # Export amplitude of seasonality instead of coefficient estimates
+    parsed['amplitude'] = args['--amplitude']
 
     ### Classification outputs
     parsed['pred_proba'] = args['--predict_proba']
@@ -668,7 +687,6 @@ def main(args):
         raster, band_names = get_coefficients(
             args['date'], args['results'], image_ds,
             args['bands'], args['coefs'],
-            no_scale_intercept=args['no_scale_intercept'],
             use_robust=args['use_robust'],
             after=args['after'], before=args['before'], qa=args['qa'],
             ndv=args['ndv']
@@ -677,7 +695,7 @@ def main(args):
         raster, band_names = get_prediction(
             args['date'], args['results'], image_ds,
             args['bands'],
-            use_robust=args['use_robust'],
+            use_robust=args['use_robust'], amplitude=args['amplitude'],
             after=args['after'], before=args['before'], qa=args['qa'],
             ndv=args['ndv']
         )
