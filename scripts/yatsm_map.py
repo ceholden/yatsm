@@ -333,7 +333,7 @@ def get_coefficients(date, result_location, image_ds,
             coef_names[i_harm] = re.sub(r'harm(.*)\[.*', r'amplitude\1',
                                         coef_names[i_harm])
         # Delete sin term from each harmonic pair
-        i_coefs = [i for i in i_coefs if i - 1 not in harm_coefs]
+        i_coefs = [c for i, c in enumerate(i_coefs) if i - 1 not in harm_coefs]
         coef_names = [n for i, n in enumerate(coef_names) if
                       i - 1 not in harm_coefs]
 
@@ -377,9 +377,11 @@ def get_coefficients(date, result_location, image_ds,
 
                 # If we want amplitude, calculate it
                 if amplitude:
-                    for i_coef in harm_coefs:
-                        rec[_coef][index, i_coef, :] = np.linalg.norm(
-                            rec[_coef][index, i_coef:i_coef + 2, :], axis=1)
+                    for harm_coef in harm_coefs:
+                        harm_coef = i_coefs[harm_coef]
+                        rec[_coef][index, harm_coef, :] = np.linalg.norm(
+                            rec[_coef][index, harm_coef:harm_coef + 2, :],
+                            axis=1)
 
                 # Extract coefficients
                 raster[rec['py'][index],
