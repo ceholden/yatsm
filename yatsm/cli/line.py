@@ -8,7 +8,7 @@ import numpy as np
 import patsy
 
 from yatsm.cache import test_cache
-from yatsm.cli.cli import cli, config_file_arg, job_number_arg, total_jobs_arg
+from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
 import yatsm._cyprep as cyprep
 from yatsm.errors import TSLengthException
@@ -27,10 +27,10 @@ logger = logging.getLogger('yatsm')
 logger_algo = logging.getLogger('yatsm_algo')
 
 
-@cli.command(short_help='Run YATSM on an entire image line by line')
-@config_file_arg
-@job_number_arg
-@total_jobs_arg
+@click.command(short_help='Run YATSM on an entire image line by line')
+@options.arg_config_file
+@options.arg_job_number
+@options.arg_total_jobs
 @click.option('--check', is_flag=True,
               help='Check that images exist')
 @click.option('--check_cache', is_flag=True,
@@ -126,7 +126,7 @@ def run_line(line, X, images, image_IDs,
 
     # About to run YATSM
     logger.debug('    running YATSM')
-    for c in xrange(Y.shape[-1]):
+    for c in range(Y.shape[-1]):
         try:
             result = run_pixel(X, Y[..., c], dataset_config, yatsm_config,
                                px=c, py=line)

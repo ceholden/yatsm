@@ -8,12 +8,13 @@ import os
 import click
 import numpy as np
 
-from yatsm.cli.cli import cli
+from yatsm.cli import options
 
 logger = logging.getLogger('yatsm')
 
 
-@cli.command(short_help='Map change found by YATSM algorithm over time period')
+@click.command(
+    short_help='Map change found by YATSM algorithm over time period')
 @click.pass_context
 def changemap(ctx):
     raise NotImplementedError('TODO')

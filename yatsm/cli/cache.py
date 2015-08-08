@@ -8,12 +8,12 @@ import os
 import click
 import numpy as np
 
-from yatsm.cli.cli import cli
+from yatsm.cli import options
 
 logger = logging.getLogger('yatsm')
 
 
-@cli.command(short_help='Create or update cached timeseries data for YATSM')
+@click.command(short_help='Create or update cached timeseries data for YATSM')
 @click.pass_context
 def cache(ctx):
     raise NotImplementedError('TODO')

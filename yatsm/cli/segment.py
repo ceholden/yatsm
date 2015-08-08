@@ -14,11 +14,7 @@ import numpy as np
 import patsy
 
 import yatsm.cache
-from yatsm.cli.cli import (
-    cli,
-    config_file_arg, job_number_arg, total_jobs_arg,
-    format_opt, rootdir_opt, resultdir_opt, exampleimg_opt
-)
+from yatsm.cli import options
 import yatsm.config_parser
 import yatsm._cyprep as cyprep
 import yatsm.reader
@@ -111,10 +107,10 @@ def read_data(cfg, lines, ravel=True):
     return Y, dates
 
 
-@cli.command(short_help='Run YATSM on a segmented image')
-@config_file_arg
-@job_number_arg
-@total_jobs_arg
+@click.command(short_help='Run YATSM on a segmented image')
+@options.arg_config_file
+@options.arg_job_number
+@options.arg_total_jobs
 @click.argument('seg_id', type=click.INT, metavar='<seg_id>')
 @click.pass_context
 def segment(ctx, config, job_number, total_jobs, seg_id):

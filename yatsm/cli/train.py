@@ -12,7 +12,7 @@ from osgeo import gdal
 from sklearn.cross_validation import KFold, StratifiedKFold
 from sklearn.externals import joblib
 
-from yatsm.cli.cli import cli, config_file_arg, job_number_arg, total_jobs_arg
+from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
 from yatsm.classifiers import diagnostics
@@ -29,8 +29,8 @@ if hasattr(plt, 'style') and 'ggplot' in plt.style.available:
     plt.style.use('ggplot')
 
 
-@cli.command(short_help='Train classifier on YATSM output')
-@config_file_arg
+@click.command(short_help='Train classifier on YATSM output')
+@options.arg_config_file
 @click.argument('classifier_config', metavar='<classifier_config>', nargs=1,
                 type=click.Path(exists=True, readable=True,
                                 dir_okay=False, resolve_path=True))

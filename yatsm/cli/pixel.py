@@ -19,7 +19,7 @@ import palettable
 import patsy
 import sklearn
 
-from yatsm.cli import cli as yatsm_cli
+from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
 import yatsm._cyprep as cyprep
 from yatsm.utils import csvfile_to_dataset
@@ -38,8 +38,8 @@ if hasattr(plt, 'xkcd'):
 logger = logging.getLogger('yatsm')
 
 
-@yatsm_cli.cli.command(short_help='Run YATSM algorithm on individual pixels')
-@yatsm_cli.config_file_arg
+@click.command(short_help='Run YATSM algorithm on individual pixels')
+@options.arg_config_file
 @click.argument('px', metavar='<px>', nargs=1, type=click.INT)
 @click.argument('py', metavar='<py>', nargs=1, type=click.INT)
 @click.option('--band', metavar='<n>', nargs=1, type=click.INT, default=1,
@@ -56,7 +56,7 @@ logger = logging.getLogger('yatsm')
 @click.option('--embed', is_flag=True,
               help='Drop to embedded IPython shell at various points')
 @click.option('--seed', help='Set NumPy RNG seed value')
-@click.option('--algo_kw', multiple=True, callback=yatsm_cli.dict_callback,
+@click.option('--algo_kw', multiple=True, callback=options.callback_dict,
               help='Algorithm parameter overrides')
 @click.pass_context
 def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,

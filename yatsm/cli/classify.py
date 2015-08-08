@@ -8,12 +8,12 @@ import os
 import click
 import numpy as np
 
-from yatsm.cli.cli import cli
+from yatsm.cli import options
 
 logger = logging.getLogger('yatsm')
 
 
-@cli.command(short_help='Classify entire images using trained algorithm')
+@click.command(short_help='Classify entire images using trained algorithm')
 @click.pass_context
 def classify(ctx):
     raise NotImplementedError('TODO')
