@@ -78,7 +78,7 @@ opt_date_format = click.option(
 
 
 opt_format = click.option(
-    '-f', '--format',
+    '-f', '--format', 'gdal_frmt',
     default='GTiff',
     metavar='<driver>',
     show_default=True,
@@ -86,8 +86,8 @@ opt_format = click.option(
 
 
 opt_nodata = click.option(
-    '--ndv', type=float, default=-9999, show_default=True,
-    help='Output NoDataValue')
+    '--ndv', metavar='<NoDataValue>', type=float, default=-9999,
+    show_default=True, help='Output NoDataValue')
 
 
 opt_rootdir = click.option(
