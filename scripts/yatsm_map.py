@@ -321,19 +321,14 @@ def get_coefficients(date, result_location, image_ds,
 
     # Process amplitude transform for seasonality coefficients
     if amplitude:
-        # Find indices of first element in each cos/sin pair
-        harm_coefs = [i for i, n in enumerate(coef_names) if
-                      re.match(r'harm\(x, [0-9]+\)\[0]', n)]
-
-        # Change harm to amplitude in coef_names
-        for i_harm in harm_coefs:
-            # Change harm to amplitude in coef_names
-            coef_names[i_harm] = re.sub(r'harm(.*)\[.*', r'amplitude\1',
-                                        coef_names[i_harm])
-        # Delete sin term from each harmonic pair
-        i_coefs = [c for i, c in enumerate(i_coefs) if i - 1 not in harm_coefs]
-        coef_names = [n for i, n in enumerate(coef_names) if
-                      i - 1 not in harm_coefs]
+        harm_coefs = []
+        for i, (c, n) in enumerate(zip(i_coefs, coef_names)):
+            if re.match(r'harm\(x, [0-9]+\)\[0]', n):
+                harm_coefs.append(c)
+                coef_names[i] = re.sub(r'harm(.*)\[.*', r'amplitude\1', n)
+        # Remove sin term from each harmonic pair
+        i_coefs = [c for c in i_coefs if c - 1 not in harm_coefs]
+        coef_names = [n for n in coef_names if 'harm' not in n]
 
     n_bands = len(i_bands)
     n_coefs = len(i_coefs)
@@ -376,7 +371,6 @@ def get_coefficients(date, result_location, image_ds,
                 # If we want amplitude, calculate it
                 if amplitude:
                     for harm_coef in harm_coefs:
-                        harm_coef = i_coefs[harm_coef]
                         rec[_coef][index, harm_coef, :] = np.linalg.norm(
                             rec[_coef][index, harm_coef:harm_coef + 2, :],
                             axis=1)
