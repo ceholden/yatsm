@@ -35,7 +35,7 @@ class TestUtils(unittest.TestCase):
 
         np.testing.assert_equal(assigned, all_rows)
 
-    def test_calculate_lines_sequential_onejob(self):
+    def test_distribute_jobs_sequential_onejob(self):
         with self.assertRaises(ValueError):
             utils.distribute_jobs(1, 1, 7937, interlaced=False)
 
