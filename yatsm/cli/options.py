@@ -25,21 +25,36 @@ arg_config_file = click.argument(
     metavar='<config>')
 
 
-def arg_date(f):
-    def callback(ctx, param, value):
-        try:
-            value = dt.strptime(value, ctx.params['date_frmt'])
-        except KeyError:
-            raise click.ClickException(
-                'Need to use `date_format_opt` when using `date_arg`')
-        except ValueError:
-            raise click.BadParameter(
-                'Cannot parse {v} to date with format {f}'.format(
-                    v=value, f=ctx.params['date_frmt']))
-        else:
-            return value
+arg_output = click.argument(
+    'output',
+    metavar='<output>',
+    type=click.Path(writable=True, dir_okay=False,
+                    resolve_path=True))
 
-    return click.argument('date', metavar='<date>', callback=callback)(f)
+
+arg_total_jobs = click.argument(
+    'total_jobs',
+    nargs=1,
+    type=click.INT,
+    metavar='<total_jobs>')
+
+
+def arg_date(var='date', metavar='<date>', date_frmt_key='date_frmt'):
+    def _arg_date(f):
+        def callback(ctx, param, value):
+            try:
+                value = dt.strptime(value, ctx.params[date_frmt_key])
+            except KeyError:
+                raise click.ClickException(
+                    'Need to use `date_format_opt` when using `date_arg`')
+            except ValueError:
+                raise click.BadParameter(
+                    'Cannot parse {v} to date with format {f}'.format(
+                        v=value, f=ctx.params['date_frmt']))
+            else:
+                return value
+        return click.argument(var, metavar=metavar, callback=callback)(f)
+    return _arg_date
 
 
 def arg_job_number(f):
@@ -58,13 +73,6 @@ def arg_job_number(f):
 
     return click.argument('job_number', nargs=1, callback=callback,
                           metavar='<job_number>')(f)
-
-
-arg_total_jobs = click.argument(
-    'total_jobs',
-    nargs=1,
-    type=click.INT,
-    metavar='<total_jobs>')
 
 
 # CLI OPTIONS

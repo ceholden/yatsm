@@ -37,10 +37,8 @@ WARN_ON_EMPTY = False
 @click.command(short_help='Make map of YATSM output for a given date')
 @click.argument('map_type', metavar='<map_type>',
                 type=click.Choice(['coef', 'predict', 'class', 'pheno']))
-@options.arg_date
-@click.argument('output', metavar='<output>',
-                type=click.Path(writable=True, dir_okay=False,
-                                resolve_path=True))
+@options.arg_date()
+@options.arg_output
 @options.opt_rootdir
 @options.opt_resultdir
 @options.opt_exampleimg
