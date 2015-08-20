@@ -184,30 +184,33 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
         X = np.flipud(X)
         Y = np.fliplr(Y)
 
-    yatsm = YATSM(X, Y,
-                  consecutive=yatsm_config['consecutive'],
-                  threshold=yatsm_config['threshold'],
-                  min_obs=yatsm_config['min_obs'],
-                  min_rmse=yatsm_config['min_rmse'],
-                  test_indices=yatsm_config['test_indices'],
-                  retrain_time=yatsm_config['retrain_time'],
-                  screening=yatsm_config['screening'],
-                  screening_crit=yatsm_config['screening_crit'],
-                  green_band=dataset_config['green_band'] - 1,
-                  swir1_band=dataset_config['swir1_band'] - 1,
-                  remove_noise=yatsm_config['remove_noise'],
-                  dynamic_rmse=yatsm_config['dynamic_rmse'],
-                  slope_test=yatsm_config['slope_test'],
-                  lassocv=yatsm_config['lassocv'],
-                  design_info=design_info,
-                  px=px,
-                  py=py,
-                  logger=logger_algo)
-    yatsm.run()
+    yatsm = YATSM(
+        fit_indices=np.arange(Y.shape[0]),
+        test_indices=yatsm_config['test_indices']
+        design_info=design_info,
+        consecutive=yatsm_config['consecutive'],
+        threshold=yatsm_config['threshold'],
+        min_obs=yatsm_config['min_obs'],
+        min_rmse=yatsm_config['min_rmse'],
+        retrain_time=yatsm_config['retrain_time'],
+        screening=yatsm_config['screening'],
+        screening_crit=yatsm_config['screening_crit'],
+        remove_noise=yatsm_config['remove_noise'],
+        green_band=dataset_config['green_band'] - 1,
+        swir1_band=dataset_config['swir1_band'] - 1,
+        dynamic_rmse=yatsm_config['dynamic_rmse'],
+        slope_test=yatsm_config['slope_test'],
+        lassocv=yatsm_config['lassocv'],
+        px=px,
+        py=py,
+        logger=logger_algo)
+    yatsm.fit(X, Y)
 
+    # TODO: use yatsm.algorithms.postprocess.comission_test
     if yatsm_config['commission_alpha']:
         yatsm.record = yatsm.commission_test(yatsm_config['commission_alpha'])
 
+    # TODO: use yatsm.algorithms.postprocess.robust_record
     if yatsm_config['robust']:
         yatsm.record = yatsm.robust_record
 

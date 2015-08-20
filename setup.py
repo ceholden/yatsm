@@ -27,10 +27,10 @@ install_requires = [
     'Cython',
     'statsmodels',
     'scikit-learn',
-    'glmnet',
     'matplotlib',
-    'docopt',
-    'brewer2mpl',
+    'click',
+    'click_plugins',
+    'palettable',
     'patsy'
 ]
 
@@ -62,8 +62,12 @@ ext_modules = cythonize([
 ])
 
 # Setup
-packages = ['yatsm', 'yatsm.cli',
-            'yatsm.classifiers', 'yatsm.regression', 'yatsm.segment']
+packages = ['yatsm',
+            'yatsm.algorithms',
+            'yatsm.cli',
+            'yatsm.classifiers',
+            'yatsm.regression',
+            'yatsm.segment']
 
 entry_points = '''
     [console_scripts]

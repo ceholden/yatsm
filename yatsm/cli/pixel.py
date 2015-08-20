@@ -25,7 +25,7 @@ import yatsm._cyprep as cyprep
 from yatsm.utils import csvfile_to_dataset
 from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm
-from yatsm.yatsm import YATSM
+from yatsm.algorithms.ccdc import CCDCesque
 
 avail_plots = ['TS', 'DOY', 'VAL']
 
@@ -97,6 +97,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     Y = read_pixel_timeseries(images, px, py)
     X = patsy.dmatrix(yatsm_config['design_matrix'],
                       {'x': dates, 'sensor': sensors})
+    design_info = X.design_info
 
     # Mask out of range data
     valid = cyprep.get_valid_mask(Y[:dataset_config['mask_band'] - 1, :],
@@ -136,12 +137,14 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
     # Eliminate config parameters not algorithm and fit model
     cfg = yatsm_config.copy()
-    _args = inspect.getargspec(YATSM.__init__)
+    _args = inspect.getargspec(CCDCesque.__init__)
     for k in yatsm_config:
         if k not in _args.args:
             del cfg[k]
-    yatsm_model = YATSM(X, Y, **cfg)
-    yatsm_model.run()
+    yatsm_model = CCDCesque(fit_indices=np.arange(Y.shape[0]),
+                            design_info=design_info,
+                            **cfg)
+    yatsm_model.fit(X, Y)
 
     # # Plot after predictions
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
