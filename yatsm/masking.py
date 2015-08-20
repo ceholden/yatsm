@@ -6,12 +6,10 @@ import statsmodels.api as sm
 from regression import robust_fit as rlm
 
 ndays = 365.25
-green_band = 1
-swir1_band = 4
 
 
 def multitemp_mask(x, Y, n_year, crit=400,
-                   green=green_band, swir1=swir1_band,
+                   green=1, swir1=4,
                    maxiter=10):
     """ Multi-temporal masking using RLM
 
@@ -23,8 +21,9 @@ def multitemp_mask(x, Y, n_year, crit=400,
       Y (ndarray): matrix of observed spectra
       n_year (float): "number of years to mask"
       crit (float, optional): critical value for masking clouds/shadows
-      green (int, optional): 0 indexed value for green band in Y
+      green (int, optional): 0 indexed value for green band in Y (default: 1)
       swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
+        (default: 4)
       maxiter (int, optional): maximum iterations for RLM fit
 
     Returns:
@@ -55,7 +54,7 @@ def multitemp_mask(x, Y, n_year, crit=400,
     return mask
 
 
-def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band,
+def smooth_mask(x, Y, span, crit=400, green=1, swir1=4,
                 maxiter=5):
     """ Multi-temporal masking using LOWESS
 
@@ -74,8 +73,9 @@ def smooth_mask(x, Y, span, crit=400, green=green_band, swir1=swir1_band,
       Y (ndarray): matrix of observed spectra
       span (int): span of LOWESS
       crit (float, optional): critical value for masking clouds/shadows
-      green (int, optional): 0 indexed value for green band in Y
+      green (int, optional): 0 indexed value for green band in Y (default: 1)
       swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
+        (default: 4)
       maxiter (int, optional): maximum increases to span when checking for
         NaN in LOWESS results
 

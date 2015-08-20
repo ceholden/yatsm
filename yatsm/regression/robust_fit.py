@@ -9,7 +9,6 @@ Reference:
     http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf
 
 """
-
 import numpy as np
 import scipy.linalg
 
