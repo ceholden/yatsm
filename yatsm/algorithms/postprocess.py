@@ -3,12 +3,18 @@
 Includes comission and omission tests and robust linear model result
 calculations
 """
+import logging
+import math
+
 import numpy as np
 import numpy.lib.recfunctions
 import scipy.stats
+import statsmodels.api as sm
 
 from ..regression import robust_fit as rlm
 from ..utils import date2index
+
+logger = logging.getLogger('yatsm')
 
 
 # POST-PROCESSING
@@ -34,13 +40,13 @@ def commission_test(model, alpha=0.001):
 
     Because we look for change in multiple bands, the RSS used to compare
     the unrestricted versus restricted models is the L2 norm of RSS
-    values from `self.test_indices`.
+    values from `model.test_indices`.
 
     Args:
       alpha (float): significance level for F-statistic (default: 0.01)
 
     Returns:
-      np.ndarray: updated copy of `self.models` with spurious models
+      np.ndarray: updated copy of `model.record` with spurious models
         combined into unified model
 
     """
@@ -56,13 +62,13 @@ def commission_test(model, alpha=0.001):
         if merged:
             m_1 = models[-1]
         else:
-            m_1 = self.record[i]
+            m_1 = model.record[i]
         m_2 = model.record[i + 1]
 
-        m_1_start = date2index(model.X[:, model._jx], m_1['start'])
-        m_1_end = date2index(model.X[:, model._jx], m_1['end'])
-        m_2_start = date2index(model.X[:, model._jx], m_2['start'])
-        m_2_end = date2index(model.X[:, model._jx], m_2['end'])
+        m_1_start = date2index(model.X[:, model.i_x], m_1['start'])
+        m_1_end = date2index(model.X[:, model.i_x], m_1['end'])
+        m_2_start = date2index(model.X[:, model.i_x], m_2['start'])
+        m_2_end = date2index(model.X[:, model.i_x], m_2['end'])
 
         m_r_start = m_1_start
         m_r_end = m_2_end
@@ -112,9 +118,8 @@ def commission_test(model, alpha=0.001):
             m_new['end'] = m_2['end']
             m_new['break'] = m_2['break']
 
-            _models = model.fit_models(
-                model.X[m_r_start:m_r_end, :],
-                model.Y[:, m_r_start:m_r_end])
+            _models = model.fit_models(model.X[m_r_start:m_r_end, :],
+                                       model.Y[:, m_r_start:m_r_end])
 
             for i_m, _m in enumerate(_models):
                 m_new['coef'][:, i_m] = _m.coef
@@ -130,8 +135,7 @@ def commission_test(model, alpha=0.001):
     return np.array(models)
 
 
-def omission_test(model, crit=0.05, behavior='ANY',
-                  indices=None):
+def omission_test(model, crit=0.05, behavior='ANY', indices=None):
     """ Add omitted breakpoint into records based on residual stationarity
 
     Uses recursive residuals within a CUMSUM test to check if each model
@@ -167,8 +171,7 @@ def omission_test(model, crit=0.05, behavior='ANY',
     if not model.ran:
         return np.empty(0, dtype=bool)
 
-    omission = np.zeros((model.record.size, len(indices)),
-                        dtype=bool)
+    omission = np.zeros((model.record.size, len(indices)), dtype=bool)
 
     for i, r in enumerate(model.record):
         # Skip if no model fit
@@ -176,8 +179,8 @@ def omission_test(model, crit=0.05, behavior='ANY',
             continue
         # Find matching X and Y in data
         index = np.where(
-            (model.X[:, model._jx] >= min(r['start'], r['end'])) &
-            (model.X[:, model._jx] <= max(r['end'], r['start'])))[0]
+            (model.X[:, model.i_x] >= min(r['start'], r['end'])) &
+            (model.X[:, model.i_x] <= max(r['end'], r['start'])))[0]
         # Grab matching X and Y
         _X = model.X[index, :]
         _Y = model.Y[:, index]
@@ -215,17 +218,19 @@ def robust_record(model):
         return None
 
     # Create new array for robust coefficients and RMSE
-    robust = np.zeros(model.record.shape[0], dtype=[
-        ('robust_coef', 'float32', (model.n_coef, len(model.fit_indices))),
-        ('robust_rmse', 'float32', len(model.fit_indices)),
-    ])
+    robust = np.zeros(
+        model.record.shape[0],
+        dtype=[
+            ('robust_coef', 'float32', (model.n_coef, len(model.fit_indices))),
+            ('robust_rmse', 'float32', len(model.fit_indices)),
+        ])
 
     # Update to robust model
     for i, r in enumerate(model.record):
         # Find matching X and Y in data
         index = np.where(
-            (model.X[:, model._jx] >= min(r['start'], r['end'])) &
-            (model.X[:, model._jx] <= max(r['end'], r['start'])))[0]
+            (model.X[:, model.i_x] >= min(r['start'], r['end'])) &
+            (model.X[:, model.i_x] <= max(r['end'], r['start'])))[0]
         # Grab matching X and Y
         _X = model.X[index, :]
         _Y = model.Y[:, index]

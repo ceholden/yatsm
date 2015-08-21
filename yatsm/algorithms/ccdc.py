@@ -9,7 +9,6 @@ import numpy.lib.recfunctions
 
 import scipy.linalg
 from sklearn.linear_model import LassoLarsIC  # , Lasso, LassoCV, LassoLarsCV
-import statsmodels.api as sm
 
 from .yatsm import YATSM
 from ..errors import TSLengthException

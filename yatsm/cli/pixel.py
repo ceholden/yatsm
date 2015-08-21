@@ -25,7 +25,7 @@ import yatsm._cyprep as cyprep
 from yatsm.utils import csvfile_to_dataset
 from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm
-from yatsm.algorithms.ccdc import CCDCesque
+from yatsm.algorithms import postprocess, ccdc
 
 avail_plots = ['TS', 'DOY', 'VAL']
 
@@ -137,13 +137,14 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
     # Eliminate config parameters not algorithm and fit model
     cfg = yatsm_config.copy()
-    _args = inspect.getargspec(CCDCesque.__init__)
+    _args = inspect.getargspec(ccdc.CCDCesque.__init__)
     for k in yatsm_config:
         if k not in _args.args:
             del cfg[k]
-    yatsm_model = CCDCesque(fit_indices=np.arange(Y.shape[0]),
-                            design_info=design_info,
-                            **cfg)
+    yatsm_model = ccdc.CCDCesque(fit_indices=np.arange(Y.shape[0]),
+                                 design_info=design_info,
+                                 **cfg)
+
     yatsm_model.fit(X, Y)
 
     # # Plot after predictions

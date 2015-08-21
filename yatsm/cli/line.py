@@ -16,7 +16,7 @@ from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
                          csvfile_to_dataset)
 from yatsm.reader import get_image_attribute, read_line
 from yatsm.regression.transforms import harm
-from yatsm.yatsm import YATSM
+from yatsm.algorithms import ccdc, postprocess
 try:
     import yatsm.phenology as pheno
 except ImportError:
@@ -184,10 +184,10 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
         X = np.flipud(X)
         Y = np.fliplr(Y)
 
-    yatsm = YATSM(
+    yatsm = ccdc.CCDCesque(
         fit_indices=np.arange(Y.shape[0]),
-        test_indices=yatsm_config['test_indices']
         design_info=design_info,
+        test_indices=yatsm_config['test_indices'],
         consecutive=yatsm_config['consecutive'],
         threshold=yatsm_config['threshold'],
         min_obs=yatsm_config['min_obs'],
@@ -208,11 +208,12 @@ def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
 
     # TODO: use yatsm.algorithms.postprocess.comission_test
     if yatsm_config['commission_alpha']:
-        yatsm.record = yatsm.commission_test(yatsm_config['commission_alpha'])
+        yatsm.record = postprocess.commission_test(
+            yatsm, yatsm_config['commission_alpha'])
 
     # TODO: use yatsm.algorithms.postprocess.robust_record
     if yatsm_config['robust']:
-        yatsm.record = yatsm.robust_record
+        yatsm.record = postprocess.robust_record(yatsm)
 
     if yatsm_config['calc_pheno']:
         ltm = pheno.LongTermMeanPhenology(
