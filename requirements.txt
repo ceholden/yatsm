@@ -9,3 +9,4 @@ click>=4.0
 click_plugins>=1.0
 palettable>=2.0.0
 patsy>=0.3.0
+pyyaml>=3.11
