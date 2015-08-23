@@ -48,12 +48,11 @@ def line(ctx, config, job_number, total_jobs,
         logger_algo.setLevel(logging.DEBUG)
 
     # Parse config
-    dataset_config, yatsm_config = parse_config_file(config)
+    cfg = parse_config_file(config)
 
-    if yatsm_config.get('calc_pheno') and pheno is None:
-        logger.error('Could not import yatsm.phenology but phenology metrics '
-                     'are requested')
-        raise click.Abort()
+    if cfg.get('phenology') and pheno is None:
+        raise click.Abort('Could not import yatsm.phenology but phenology '
+                          'metrics are requested')
 
     # Make sure output directory exists and is writable
     try:
