@@ -3,7 +3,7 @@ import StringIO
 
 import numpy as np
 import sklearn.linear_model
-import sklearn.externals.joblib
+import sklearn.externals.joblib as joblib
 import yaml
 
 from . import algorithms
@@ -72,9 +72,8 @@ def parse_config_file(config_file):
         cfg['classification'] = {'training_image': None}
 
     # Load sklearn objects
-    if cfg['YATSM']['prediction'] in dir(sklearn.linear_model):
-        reg = sklearn.externals.joblib.load(
-            cfg[cfg['YATSM']['prediction']]['pickle'])
+    reg = joblib.load(cfg[cfg['YATSM']['prediction']]['pickle'])
+    if reg.__class__.__name__ in dir(sklearn.linear_model):
         cfg['YATSM']['prediction'] = reg
     else:
         raise KeyError('Currently cannot unpickle prediction objects not '
