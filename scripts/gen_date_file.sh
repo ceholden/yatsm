@@ -31,6 +31,8 @@ EOF
 }
 
 function main() {
+    # Header
+    echo "date,sensor,filename" > $output
 
     images=$(find $root -follow -name "$pattern")
     nimages=$(echo $images | awk '{ print NF }')
@@ -56,7 +58,7 @@ function main() {
         sensor=${id:$sstart:3}
 
         echo "$ydoy,$sensor,$name"
-    done | sort > $output
+    done | sort >> $output
 
 }
 

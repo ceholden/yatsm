@@ -1,12 +1,12 @@
 from __future__ import division
 
-import csv
 from datetime import datetime as dt
 import fnmatch
 import os
 import sys
 
 import numpy as np
+import pandas as pd
 
 from log_yatsm import logger
 
@@ -46,8 +46,10 @@ def distribute_jobs(job_number, total_jobs, n, interlaced=True):
         tasks = np.arange(i_start, min(i_end, n))
 
     if tasks.size == 0:
-        raise ValueError('No jobs assigned for job_number/total_jobs: {j}/{t}'.
-                         format(j=job_number, t=total_jobs))
+        raise ValueError(
+            'No jobs assigned for job_number/total_jobs: {j}/{t}'.format(
+                j=job_number,
+                t=total_jobs))
 
     return tasks
 
@@ -64,13 +66,11 @@ def get_output_name(dataset_config, line):
 
     """
     return os.path.join(dataset_config['output'],
-                        '{pref}{line}.npz'.format(
-                            pref=dataset_config['output_prefix'],
-                            line=line))
+                        '%s%s.npz' % (dataset_config['output_prefix'], line))
 
 
 # IMAGE DATASET READING
-def csvfile_to_dataset(input_file, date_format='%Y-%j'):
+def csvfile_to_dataset(input_file, date_format='%Y%j'):
     """ Return sorted filenames of images from input text file
 
     Args:
@@ -78,53 +78,24 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
       date_format (str): format of dates in file
 
     Returns:
-      dict: dates, sensor IDs, and filenames of stacked images as np.ndarray
-        within a dict
+      dict: pd.DataFrame of dates, sensor IDs, and filenames
 
     """
-    # Store index of date and image
-    i_date = 0
-    i_sensor = 1
-    i_image = 2
+    df = pd.read_csv(input_file)
 
-    dates = []
-    images = []
-    sensors = []
+    # Guess and convert date field
+    date_col = [i for i, n in enumerate(df.columns) if 'date' in n.lower()]
+    if not date_col:
+        raise KeyError('Could not find date column in input file')
+    if len(date_col) > 1:
+        logger.warning('Multiple date columns found in input CSV file. '
+                       'Using %s' % df.columns[date_col[0]])
+    date_col = df.columns[date_col[0]]
 
-    logger.debug('Opening image dataset file')
-    with open(input_file, 'rb') as f:
-        reader = csv.reader(f)
+    df[date_col] = pd.to_datetime(
+        df[date_col], format=date_format).map(lambda x: dt.toordinal(x))
 
-        # Figure out which index is for what
-        row = reader.next()
-
-        try:
-            dt.strptime(row[i_date], date_format).toordinal()
-        except:
-            logger.debug('Could not parse first column to ordinal date')
-            try:
-                dt.strptime(row[i_sensor], date_format).toordinal()
-            except:
-                logger.debug('Could not parse second column to ordinal date')
-                logger.error('Could not parse any columns to ordinal date')
-                logger.error('Input dataset file: {f}'.format(f=input_file))
-                logger.error('Date format: {f}'.format(f=date_format))
-                raise
-            else:
-                i_date = 1
-                i_sensor = 0
-
-        f.seek(0)
-
-        logger.debug('Reading in image date, sensor, and filenames')
-        for row in reader:
-            dates.append(dt.strptime(row[i_date], date_format).toordinal())
-            sensors.append(row[i_sensor])
-            images.append(row[i_image])
-
-        return {'dates': np.array(dates),
-                'sensors': np.array(sensors),
-                'images': np.array(images)}
+    return df
 
 
 def get_image_IDs(filenames):
@@ -183,9 +154,7 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
         if band_names is not None:
             ds.GetRasterBand(1).SetDescription(band_names[0])
-            ds.GetRasterBand(1).SetMetadata({
-                'band_1': band_names[0]
-            })
+            ds.GetRasterBand(1).SetMetadata({'band_1': band_names[0]})
 
     ds.SetProjection(image_ds.GetProjection())
     ds.SetGeoTransform(image_ds.GetGeoTransform())

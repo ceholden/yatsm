@@ -8,5 +8,6 @@ matplotlib>=1.4.2
 click>=4.0
 click_plugins>=1.0
 palettable>=2.0.0
+pandas>=0.16.0
 patsy>=0.3.0
 pyyaml>=3.11

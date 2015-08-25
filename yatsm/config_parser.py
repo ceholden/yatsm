@@ -1,12 +1,14 @@
+import inspect
 import StringIO
-import yaml
 
 import numpy as np
 import sklearn.linear_model
 import sklearn.externals.joblib
+import yaml
 
-from log_yatsm import logger
-from version import __version__
+from . import algorithms
+from .log_yatsm import logger
+from .version import __version__
 
 
 def parse_config_file(config_file):
@@ -29,24 +31,42 @@ def parse_config_file(config_file):
         cfg = yaml.safe_load(f)
 
     # Ensure algorithm & prediction sections are specified
-    if 'YATSM' not in cfg.keys():
+    if 'YATSM' not in cfg:
         raise KeyError('YATSM must be a section in configuration YAML file')
 
     if 'algorithm' not in cfg['YATSM']:
         raise KeyError('YATSM section does not declare an algorithm')
-    if cfg['YATSM']['algorithm'] not in cfg.keys():
+    algo = cfg['YATSM']['algorithm']
+    if algo not in cfg:
         raise KeyError('Algorithm specified (%s) is not parameterized in '
-                       'configuration file' % cfg['YATSM']['algorithm'])
+                       'configuration file' % algo)
 
-    if 'prediction' not in cfg['YATSM'].keys():
+    if 'prediction' not in cfg['YATSM']:
         raise KeyError('YATSM section does not declare a prediction method')
-    if cfg['YATSM']['prediction'] not in cfg.keys():
+    if cfg['YATSM']['prediction'] not in cfg:
         raise KeyError('Prediction method specified (%s) is not parameterized '
                        'in configuration file' % cfg['YATSM']['prediction'])
 
+    # Embed algorithm in YATSM key
+    if algo not in algorithms.available:
+        raise NotImplementedError('Algorithm specified (%s) is not currently '
+                                  'available' % algo)
+    cfg['YATSM']['algorithm_cls'] = getattr(algorithms, algo)
+    if not cfg['YATSM']['algorithm_cls']:
+        raise KeyError('Could not find algorithm specified (%s) in '
+                       '`yatsm.algorithms`' % algo)
+
+    # Expand min/max values to all bands
+    n_bands = cfg['dataset']['n_bands']
+    mins, maxes = cfg['dataset']['min_values'], cfg['dataset']['max_values']
+    if isinstance(mins, (float, int)):
+        cfg['dataset']['min_values'] = np.asarray([mins] * n_bands)
+    if isinstance(maxes, (float, int)):
+        cfg['dataset']['max_values'] = np.asarray([maxes] * n_bands)
+
     # Add in dummy phenology and classification dicts if not included
     if 'phenology' not in cfg:
-        cfg['phenology'] = {'calc_pheno': False}
+        cfg['phenology'] = {'enable': False}
 
     if 'classification' not in cfg:
         cfg['classification'] = {'training_image': None}
