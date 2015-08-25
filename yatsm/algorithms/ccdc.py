@@ -17,6 +17,9 @@ from ..regression.glmnet_fit import GLMLasso
 from ..regression import robust_fit as rlm
 from ..utils import date2index
 
+# Setup
+logger = logging.getLogger('yatsm_algo')
+
 
 class CCDCesque(YATSM):
     """Initialize a CCDC-esuqe model for data X (spectra) and Y (dates)
@@ -56,7 +59,6 @@ class CCDCesque(YATSM):
       lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet
       px (int, optional): X (column) pixel reference
       py (int, optional): Y (row) pixel reference
-      logger (logging.Logger, optional): Specific logger to use, else get one
 
     """
 
@@ -69,11 +71,9 @@ class CCDCesque(YATSM):
                  remove_noise=True, green_band=1, swir1_band=4,
                  dynamic_rmse=False, slope_test=False,
                  lassocv=False,
-                 px=0, py=0, logger=None):
+                 px=0, py=0):
         # Parent's __init__ sets up fit_indices, design_info, and test_indices
         super(CCDCesque, self).__init__(fit_indices, design_info, test_indices)
-        # Setup logger
-        self.logger = logger or logging.getLogger('yatsm')  # TODO: remove
 
         # Store model hyperparameters
         self.consecutive = consecutive
@@ -85,10 +85,10 @@ class CCDCesque(YATSM):
         # Define screening method according to type
         if screening == 'RLM':
             self.screen_timeseries = self._screen_timeseries_RLM
-            self.logger.debug('Using RLM for screening')
+            logger.debug('Using RLM for screening')
         elif screening == 'LOWESS':
             self.screen_timeseries = self._screen_timeseries_LOWESS
-            self.logger.debug('Using LOWESS for screening')
+            logger.debug('Using LOWESS for screening')
         else:
             raise TypeError('Unknown screening type %s' % screening)
 
@@ -105,10 +105,10 @@ class CCDCesque(YATSM):
         self.lassocv = lassocv
         if self.lassocv:
             self.fit_models = self._fit_models_LassoCV
-            self.logger.info('Using LassoCV from sklearn')
+            logger.info('Using LassoCV from sklearn')
         else:
             self.fit_models = self._fit_models_GLMnet
-            self.logger.info('Using Lasso from GLMnet (lambda = 20)')
+            logger.info('Using Lasso from GLMnet (lambda = 20)')
 
         if dynamic_rmse:
             self.get_rmse = self._get_dynamic_rmse
@@ -263,7 +263,7 @@ class CCDCesque(YATSM):
 
         # Return if not enough observations
         if _span_index < self.min_obs:
-            self.logger.debug('    multitemp masking - not enough obs')
+            logger.debug('    multitemp masking - not enough obs')
             return False
 
         # There is enough observations in train period to fit - remove noise
@@ -278,11 +278,11 @@ class CCDCesque(YATSM):
         self.here = self.start + _span_index - 1
 
         if self.span_time < self.ndays:
-            self.logger.debug('    multitemp masking - not enough time')
+            logger.debug('    multitemp masking - not enough time')
             self.here = self._here
             return False
 
-        self.logger.debug('Updated "here"')
+        logger.debug('Updated "here"')
 
         return True
 
@@ -320,7 +320,7 @@ class CCDCesque(YATSM):
         """
         # Test if we can train yet
         if self.span_time <= self.ndays or self.span_index < self.n_coef:
-            self.logger.debug('could not train - moving forward')
+            logger.debug('could not train - moving forward')
             return
 
         # Check if screening was OK
@@ -329,7 +329,7 @@ class CCDCesque(YATSM):
 
         # Test if we can still run after noise removal
         if self.here >= self._X.shape[0]:
-            self.logger.debug(
+            logger.debug(
                 'Not enough observations to proceed after noise removal')
             raise TSLengthException(
                 'Not enough observations after noise removal')
@@ -357,7 +357,7 @@ class CCDCesque(YATSM):
                 np.linalg.norm(end_resid) > self.threshold or \
                 (self.slope_test and
                  np.linalg.norm(slope_resid) > self.threshold):
-            self.logger.debug('Training period unstable')
+            logger.debug('Training period unstable')
             self.start += 1
             self.here = self._here
             return
@@ -365,7 +365,7 @@ class CCDCesque(YATSM):
         self.X = self._X
         self.Y = self._Y
 
-        self.logger.debug('Entering monitoring period')
+        logger.debug('Entering monitoring period')
 
         self.monitoring = True
 
@@ -373,9 +373,8 @@ class CCDCesque(YATSM):
         # Only train if enough time has past
         if (abs(self.X[self.here, self.i_x] - self.trained_date) >
                 self.retrain_time):
-            self.logger.debug('Monitoring - retraining ({n} days since last)'.
-                              format(n=self.X[self.here, self.i_x] -
-                                     self.trained_date))
+            logger.debug('Monitoring - retraining (%s days since last)' %
+                         str(self.X[self.here, self.i_x] - self.trained_date))
 
             # Fit timeseries models
             self.models = self.fit_models(self.X[self.start:self.here + 1, :],
@@ -387,7 +386,7 @@ class CCDCesque(YATSM):
             for i, m in enumerate(self.models):
                 self.record[self.n_record]['coef'][:, i] = m.coef
                 self.record[self.n_record]['rmse'][i] = m.rmse
-            self.logger.debug('Monitoring - updated ')
+            logger.debug('Monitoring - updated ')
 
             self.trained_date = self.X[self.here, self.i_x]
         else:
@@ -416,7 +415,7 @@ class CCDCesque(YATSM):
         mag = np.linalg.norm(np.abs(scores), axis=1)
 
         if np.all(mag > self.threshold):
-            self.logger.debug('CHANGE DETECTED')
+            logger.debug('CHANGE DETECTED')
 
             # Record break date
             self.record[self.n_record]['break'] = \
