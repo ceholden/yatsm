@@ -31,8 +31,6 @@ logger_algo = logging.getLogger('yatsm_algo')
 @options.arg_config_file
 @options.arg_job_number
 @options.arg_total_jobs
-@click.option('--check', is_flag=True,
-              help='Check that images exist')
 @click.option('--check_cache', is_flag=True,
               help='Check that cache file contains matching data')
 @click.option('--resume', is_flag=True,
@@ -43,283 +41,143 @@ logger_algo = logging.getLogger('yatsm_algo')
               help='Show verbose debugging messages in YATSM algorithm')
 @click.pass_context
 def line(ctx, config, job_number, total_jobs,
-         resume, check, check_cache, do_not_run, verbose_yatsm):
+         resume, check_cache, do_not_run, verbose_yatsm):
     if verbose_yatsm:
         logger_algo.setLevel(logging.DEBUG)
 
     # Parse config
     cfg = parse_config_file(config)
 
-    if cfg.get('phenology') and pheno is None:
+    if ('phenology' in cfg and 'calc_pheno' in cfg['phenology']) and not pheno:
         raise click.Abort('Could not import yatsm.phenology but phenology '
                           'metrics are requested')
 
     # Make sure output directory exists and is writable
+    output_dir = cfg['dataset']['output']
     try:
-        os.makedirs(dataset_config['output'])
+        os.makedirs(output_dir)
     except OSError as e:
         # File exists
         if e.errno == 17:
             pass
         elif e.errno == 13:
-            logger.error('Cannot create output directory {d}'.format(
-                d=dataset_config['output']))
-            raise click.Abort()
+            raise click.Abort('Cannot create output directory %s' % output_dir)
 
-    if not os.access(dataset_config['output'], os.W_OK):
-        logger.error('Cannot write to output directory {d}'.format(
-            d=dataset_config['output']))
-        raise click.Abort()
+    if not os.access(output_dir, os.W_OK):
+        raise click.Abort('Cannot write to output directory %s' % output_dir)
 
     # Test existence of cache directory
-    read_cache, write_cache = test_cache(dataset_config)
+    read_cache, write_cache = test_cache(cfg['dataset'])
 
-    logger.info('Job {i} / {n} - using config file {f}'.format(
-                i=job_number, n=total_jobs, f=config))
-    main(job_number, total_jobs, dataset_config, yatsm_config,
-         check=check, resume=resume,
-         do_not_run=do_not_run,
-         read_cache=read_cache, write_cache=write_cache,
-         validate_cache=check_cache)
-
-
-# Runner
-def run_line(line, X, images, image_IDs,
-             dataset_config, yatsm_config,
-             nrow, ncol, nband, dtype,
-             do_not_run=False,
-             read_cache=False, write_cache=False,
-             validate_cache=False):
-    """ Runs YATSM for a line
-
-    Args:
-      line (int): line to be run from image
-      dates (ndarray): np.array of X feature from ordinal dates
-      images (ndarray): np.array of image filenames
-      image_IDs (iterable): list image identifying strings
-      dataset_config (dict): dict of dataset configuration options
-      yatsm_config (dict): dict of YATSM algorithm options
-      nrow (int): number of rows
-      ncol (int): number of columns
-      nband (int): number of bands
-      dtype (type): NumPy datatype
-      do_not_run (bool, optional): don't run YATSM
-      read_cache (bool, optional): try to read from cache directory
-        (default: False)
-      write_cache (bool, optional): try to to write to cache directory
-        (default: False)
-      validate_cache (bool, optional): ensure data from cache file come from
-        images specified in configuration (default: False)
-
-    """
-    # Setup output
-    output = []
-
-    Y = read_line(line, images, image_IDs, dataset_config,
-                  ncol, nband, dtype,
-                  read_cache=read_cache, write_cache=write_cache,
-                  validate_cache=validate_cache)
-
-    if do_not_run:
-        return
-
-    # About to run YATSM
-    logger.debug('    running YATSM')
-    for c in range(Y.shape[-1]):
-        try:
-            result = run_pixel(X, Y[..., c], dataset_config, yatsm_config,
-                               px=c, py=line)
-        except TSLengthException:
-            continue
-
-        output.extend(result)
-
-    # Save output
-    outfile = get_output_name(dataset_config, line)
-    logger.debug('    saving YATSM output to {f}'.format(f=outfile))
-
-    np.savez(outfile,
-             version=__version__,
-             record=np.array(output),
-             **{k: v for k, v in yatsm_config.iteritems()})
-
-
-def run_pixel(X, Y, dataset_config, yatsm_config, px=0, py=0):
-    """ Run a single pixel through YATSM
-
-    Args:
-      X (ndarray): 2D (nimage x nband) feature input from ordinal date
-      Y (ndarray): 2D (nband x nimage) image input
-      dataset_config (dict): dict of dataset configuration options
-      yatsm_config (dict): dict of YATSM algorithm options
-      px (int, optional):       X (column) pixel reference
-      py (int, optional):       Y (row) pixel reference
-
-    Returns:
-      model_result (ndarray): NumPy array of model results from YATSM
-
-    """
-    # Extract design info
-    design_info = X.design_info
-    # Continue if valid observations are less than 50% of dataset
-    valid = cyprep.get_valid_mask(
-      Y[:dataset_config['mask_band'] - 1, :],
-      dataset_config['min_values'],
-      dataset_config['max_values']
-    )
-    if valid.sum() < Y.shape[1] / 2.0:
-        raise TSLengthException('Not enough valid observations')
-
-    # Otherwise continue with masked values
-    valid = (valid * np.in1d(Y[dataset_config['mask_band'] - 1, :],
-                             dataset_config['mask_values'],
-                             invert=True)).astype(np.bool)
-
-    Y = Y[:dataset_config['mask_band'] - 1, valid]
-    X = X[valid, :]
-
-    if yatsm_config['reverse']:
-        # TODO: do this earlier
-        X = np.flipud(X)
-        Y = np.fliplr(Y)
-
-    yatsm = ccdc.CCDCesque(
-        fit_indices=np.arange(Y.shape[0]),
-        design_info=design_info,
-        test_indices=yatsm_config['test_indices'],
-        consecutive=yatsm_config['consecutive'],
-        threshold=yatsm_config['threshold'],
-        min_obs=yatsm_config['min_obs'],
-        min_rmse=yatsm_config['min_rmse'],
-        retrain_time=yatsm_config['retrain_time'],
-        screening=yatsm_config['screening'],
-        screening_crit=yatsm_config['screening_crit'],
-        remove_noise=yatsm_config['remove_noise'],
-        green_band=dataset_config['green_band'] - 1,
-        swir1_band=dataset_config['swir1_band'] - 1,
-        dynamic_rmse=yatsm_config['dynamic_rmse'],
-        slope_test=yatsm_config['slope_test'],
-        lassocv=yatsm_config['lassocv'],
-        px=px,
-        py=py,
-        logger=logger_algo)
-    yatsm.fit(X, Y)
-
-    # TODO: use yatsm.algorithms.postprocess.comission_test
-    if yatsm_config['commission_alpha']:
-        yatsm.record = postprocess.commission_test(
-            yatsm, yatsm_config['commission_alpha'])
-
-    # TODO: use yatsm.algorithms.postprocess.robust_record
-    if yatsm_config['robust']:
-        yatsm.record = postprocess.robust_record(yatsm)
-
-    if yatsm_config['calc_pheno']:
-        ltm = pheno.LongTermMeanPhenology(
-            yatsm,
-            yatsm_config['red_index'], yatsm_config['nir_index'],
-            yatsm_config['blue_index'], yatsm_config['scale'],
-            yatsm_config['evi_index'], yatsm_config['evi_scale'])
-        yatsm.record = ltm.fit(year_interval=yatsm_config['year_interval'],
-                               q_min=yatsm_config['q_min'],
-                               q_max=yatsm_config['q_max'])
-
-    return yatsm.record
-
-
-def main(job_number, total_jobs, dataset_config, yatsm_config,
-         check=False, resume=False,
-         do_not_run=False,
-         read_cache=False, write_cache=False,
-         validate_cache=False):
-    """ Read in dataset and YATSM for a complete line
-
-    Args:
-      dataset_config (dict): dict of dataset configuration options
-      yatsm_config (dict): dict of YATSM algorithm options
-      check (bool, optional): check to make sure images are readible
-      resume (bool, optional): do not overwrite existing results, instead
-        continue from first non-existing result file
-      do_not_run (bool, optional): Don't run YATSM
-      read_cache (bool, optional): try to read from cache directory
-        (default: False)
-      write_cache (bool, optional): try to to write to cache directory
-        (default: False)
-      validate_cache (bool, optional): ensure data from cache file come from
-        images specified in configuration (default: False)
-
-    """
-    # Read in dataset
-    dataset = csvfile_to_dataset(
-        dataset_config['input_file'],
-        date_format=dataset_config['date_format']
-    )
-    dates = dataset['dates']
-    sensors = dataset['sensors']
-    images = dataset['images']
-
-    image_IDs = get_image_IDs(images)
-
-    # Check for existence of files and remove missing
-    if check:
-        to_delete = []
-        for i, img in enumerate(images):
-            if not os.path.isfile(img):
-                logger.warning('Could not find file {f} -- removing'.
-                               format(f=img))
-                to_delete.append(i)
-
-        if len(to_delete) == 0:
-            logger.debug('Checked and found all input images')
-        else:
-            logger.warning('Removing {n} images'.format(n=len(to_delete)))
-            dates = np.delete(dates, np.array(to_delete))
-            images = np.delete(images, np.array(to_delete))
+    logger.info('Job {i} of {n} - using config file {f}'.format(i=job_number,
+                                                                n=total_jobs,
+                                                                f=config))
+    df = csvfile_to_dataset(cfg['dataset']['input_file'],
+                            cfg['dataset']['date_format'])
+    df['image_ID'] = get_image_IDs(df['filename'])
 
     # Get attributes of one of the images
-    nrow, ncol, nband, dtype = get_image_attribute(images[0])
+    nrow, ncol, nband, dtype = get_image_attribute(df['filename'][0])
 
     # Calculate the lines this job ID works on
     job_lines = distribute_jobs(job_number, total_jobs, nrow)
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Calculate X feature input
-    X = patsy.dmatrix(yatsm_config['design_matrix'],
-                      {'x': dates, 'sensor': sensors})
+    kws = {'x': df['date']}
+    kws.update(df.to_dict())
+    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], kws)
 
-    # Start running YATSM
+    # Form YATSM class arguments
+    design_info = X.design_info
+    fit_indices = np.arange(cfg['dataset']['n_bands'])
+    if cfg['dataset']['mask_band'] is not None:
+        fit_indices = fit_indices[:-1]
+
+    if cfg['YATSM']['reverse']:
+        X = np.flipud(X)
+
+    # Begin process
     start_time_all = time.time()
-    logger.info('Starting to run lines')
-    for job_line in job_lines:
+    for line in job_lines:
+        out = get_output_name(cfg['dataset'], line)
+
         if resume:
             try:
-                z = np.load(get_output_name(dataset_config, job_line))
+                np.load(out)
             except:
                 pass
             else:
-                del z
-                logger.debug('Already processed line {l}'.format(l=job_line))
+                logger.debug('Already processed line %s' % line)
                 continue
 
-        logger.debug('Running line {l}'.format(l=job_line))
+        logger.debug('Running line %s' % line)
         start_time = time.time()
 
-        try:
-            run_line(job_line, X, images, image_IDs,
-                     dataset_config, yatsm_config,
-                     nrow, ncol, nband, dtype,
-                     do_not_run=do_not_run,
-                     read_cache=read_cache, write_cache=write_cache,
-                     validate_cache=validate_cache)
-        except Exception as e:
-            logger.error('Could not process line {l}'.format(l=job_line))
-            logger.error(type(e))
-            logger.error(str(e))
+        Y = read_line(line, df['filename'], df['image_ID'], cfg['dataset'],
+                      ncol, nband, dtype,
+                      read_cache=read_cache, write_cache=write_cache,
+                      validate_cache=False)
+        if do_not_run:
+            continue
+        if cfg['YATSM']['reverse']:
+            Y = np.fliplr(Y)
 
-        logger.debug('Took {s}s to run'.format(
-            s=round(time.time() - start_time, 2)))
+        output = []
+        for col in np.arange(Y.shape[-1]):
+            _Y = Y.take(col, axis=2)
+            # Mask
+            idx_mask = cfg['dataset']['mask_band'] - 1
+            valid = cyprep.get_valid_mask(
+                _Y,
+                cfg['dataset']['min_values'],
+                cfg['dataset']['max_values']).astype(bool)
+
+            valid *= np.in1d(_Y.take(idx_mask, axis=0),
+                             cfg['dataset']['mask_values'],
+                             invert=True).astype(np.bool)
+
+            _Y = np.delete(_Y, idx_mask, axis=0)[:, valid]
+            _X = X[valid, :]
+
+            # Run model
+            algo = cfg['YATSM']['algorithm']
+            yatsm = cfg['YATSM']['algorithm_cls'](fit_indices,
+                                                  design_info,
+                                                  **cfg[algo])
+            yatsm.px, yatsm.py = col, line
+            yatsm.fit(_X, _Y)
+
+            # Formulate save file metadata
+            md = cfg[algo].copy()
+
+            # Postprocess
+            if cfg['YATSM']['commission_alpha']:
+                yatsm.record = postprocess.commission_test(
+                    yatsm, cfg['YATSM']['commission_alpha'])
+
+            if cfg['YATSM']['robust']:
+                yatsm.record = postprocess.robust_record(yatsm)
+
+            if cfg['phenology']['enable']:
+                ltm = pheno.LongTermMeanPhenology(yatsm, **cfg['phenology'])
+                yatsm.record = ltm.fit(
+                    year_interval=cfg['phenology']['year_interval'],
+                    q_min=cfg['phenology']['q_min'],
+                    q_max=cfg['phenology']['q_max'])
+                md.update(cfg['YATSM']['phenology'])
+
+            output.extend(yatsm.record)
+
+        logger.debug('    Saving YATSM output to %s' % out)
+        np.savez(out,
+                 version=__version__,
+                 record=np.array(output),
+                 **{k: v for k, v in md.iteritems()})
+
+        run_time = time.time() - start_time
+        logger.debug('Line %s took %ss to run' % (line, run_time))
 
     logger.info('Completed {n} lines in {m} minutes'.format(
-        n=len(job_lines),
-        m=round((time.time() - start_time_all) / 60.0, 2)
-    ))
+                n=len(job_lines),
+                m=round((time.time() - start_time_all) / 60.0, 2)))
