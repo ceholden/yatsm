@@ -47,7 +47,7 @@ cpdef cnp.ndarray[cnp.uint8_t, ndim=1] get_valid_mask(
 
     for row in range(rows):
         for col in range(cols):
-            if array[col, row] <= mins[col] or array[col, row] >= maxes[col]:
+            if array[col, row] < mins[col] or array[col, row] > maxes[col]:
                 valid_mask_view[row] = 0
                 break
 
