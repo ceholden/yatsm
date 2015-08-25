@@ -144,8 +144,10 @@ def line(ctx, config, job_number, total_jobs,
             algo = cfg['YATSM']['algorithm']
             yatsm = cfg['YATSM']['algorithm_cls'](fit_indices,
                                                   design_info,
+                                                  cfg['YATSM']['prediction'],
+                                                  lm=cfg['YATSM']['prediction'],
+                                                  px=col, py=line,
                                                   **cfg[algo])
-            yatsm.px, yatsm.py = col, line
             yatsm.fit(_X, _Y)
 
             # Formulate save file metadata

@@ -8,7 +8,7 @@ import numpy as np
 import numpy.lib.recfunctions
 
 import scipy.linalg
-from sklearn.linear_model import LassoLarsIC  # , Lasso, LassoCV, LassoLarsCV
+import sklearn.linear_model
 
 from .yatsm import YATSM
 from ..errors import TSLengthException
@@ -32,6 +32,8 @@ class CCDCesque(YATSM):
       design_info (patsy.DesignInfo): Patsy design information for X
       test_indices (np.ndarray, optional): Test for changes with these indices
         of Y. If not provided, all `fit_indices` will be used as test indices
+      lm (sklearn.linear_model predictor): regression model from scikit-learn
+        used to fit and predict timeseries
       consecutive (int, optional): Consecutive observations to trigger change
       threshold (float): Test statistic threshold for change
       min_obs (int): Minimum observations in model
@@ -56,7 +58,6 @@ class CCDCesque(YATSM):
         enables the test and uses the `threshold` parameter as the test
         criterion. False turns off the test or a float value enables the test
         but overrides the test criterion threshold. (default: False)
-      lassocv (bool, optional): Use scikit-learn LarsLassoCV over glmnet
       px (int, optional): X (column) pixel reference
       py (int, optional): Y (row) pixel reference
 
@@ -66,14 +67,15 @@ class CCDCesque(YATSM):
 
     def __init__(self,
                  fit_indices, design_info, test_indices=None,
+                 lm=sklearn.linear_model.Lasso(alpha=20),
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  retrain_time=365.25, screening='RLM', screening_crit=400.0,
                  remove_noise=True, green_band=1, swir1_band=4,
                  dynamic_rmse=False, slope_test=False,
-                 lassocv=False,
                  px=0, py=0):
-        # Parent's __init__ sets up fit_indices, design_info, and test_indices
-        super(CCDCesque, self).__init__(fit_indices, design_info, test_indices)
+        # Parent sets up fit_indices, design_info, lm, and test_indices
+        super(CCDCesque, self).__init__(fit_indices, design_info,
+                                        test_indices, lm)
 
         # Store model hyperparameters
         self.consecutive = consecutive
@@ -99,16 +101,6 @@ class CCDCesque(YATSM):
         self.slope_test = slope_test
         if self.slope_test is True:
             self.slope_test = threshold
-
-        # Configure which implementation of LASSO we're using
-        # TODO: replace with keyword argument for model variable
-        self.lassocv = lassocv
-        if self.lassocv:
-            self.fit_models = self._fit_models_LassoCV
-            logger.info('Using LassoCV from sklearn')
-        else:
-            self.fit_models = self._fit_models_GLMnet
-            logger.info('Using Lasso from GLMnet (lambda = 20)')
 
         if dynamic_rmse:
             self.get_rmse = self._get_dynamic_rmse
@@ -344,19 +336,22 @@ class CCDCesque(YATSM):
         end_resid = np.zeros(len(self.test_indices))
         slope_resid = np.zeros(len(self.test_indices))
         for i, (b, m) in enumerate(zip(self.test_indices, models)):
-            start_resid[i] = (np.abs(self._Y[b, self.start] -
-                                     m.predict(self._X[self.start, :])) /
-                              max(self.min_rmse, m.rmse))
-            end_resid[i] = (np.abs(self._Y[b, self.here] -
-                                   m.predict(self._X[self.here, :])) /
-                            max(self.min_rmse, m.rmse))
-            slope_resid[i] = (np.abs(m.coef[1] * (self.here - self.start)) /
-                              max(self.min_rmse, m.rmse))
+            start_resid[i] = (
+                np.abs(self._Y[b, self.start] - m.predict(self._X[self.start, :]))
+                / max(self.min_rmse, m.rmse)
+            )
+            end_resid[i] = (
+                np.abs(self._Y[b, self.here] - m.predict(self._X[self.here, :]))
+                / max(self.min_rmse, m.rmse)
+            )
+            slope_resid[i] = (
+                np.abs(m.coef[self.i_x] * (self.here - self.start))
+                / max(self.min_rmse, m.rmse)
+            )
 
-        if np.linalg.norm(start_resid) > self.threshold or \
-                np.linalg.norm(end_resid) > self.threshold or \
-                (self.slope_test and
-                 np.linalg.norm(slope_resid) > self.threshold):
+        if (np.linalg.norm(start_resid) > self.threshold or
+                np.linalg.norm(end_resid) > self.threshold or
+                (self.slope_test and np.linalg.norm(slope_resid) > self.threshold)):
             logger.debug('Training period unstable')
             self.start += 1
             self.here = self._here
@@ -442,44 +437,6 @@ class CCDCesque(YATSM):
             self.X = self.X[m, :]
             self.Y = self.Y[:, m]
             self.here -= 1
-
-    def _fit_models_GLMnet(self, X, Y, bands=None):
-        """ Try to fit models to training period time series """
-        if bands is None:
-            bands = self.fit_indices
-
-        models = []
-
-        for b in bands:
-            lasso = GLMLasso()
-            lasso = lasso.fit(X, Y[b, :], lambdas=20)
-
-            models.append(lasso)
-
-        return np.array(models)
-
-    def _fit_models_LassoCV(self, X, Y, bands=None):
-        """ Try to fit models to training period time series """
-        if bands is None:
-            bands = self.fit_indices
-
-        models = []
-
-        for b in bands:
-            # lasso = LassoCV(n_alphas=100)
-            # lasso = LassoLarsCV(masx_n_alphas=100)
-            lasso = LassoLarsIC(criterion='bic')
-            lasso = lasso.fit(X, Y[b, :])
-            lasso.nobs = Y[b, :].size
-            lasso.coef = np.copy(lasso.coef_)
-            lasso.coef[0] += lasso.intercept_
-            lasso.fittedvalues = lasso.predict(X)
-            lasso.rss = np.sum((Y[b, :] - lasso.fittedvalues) ** 2)
-            lasso.rmse = math.sqrt(lasso.rss / lasso.nobs)
-
-            models.append(lasso)
-
-        return np.array(models)
 
     def _get_model_rmse(self):
         """ Return the normal RMSE of each fitted model

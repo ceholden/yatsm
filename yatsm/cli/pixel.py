@@ -19,13 +19,13 @@ import palettable
 import patsy
 import sklearn
 
+from yatsm.algorithms import postprocess, ccdc
 from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
-import yatsm._cyprep as cyprep
-from yatsm.utils import csvfile_to_dataset
+from yatsm import _cyprep as cyprep
+from yatsm.utils import csvfile_to_dataset, get_image_IDs
 from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm
-from yatsm.algorithms import postprocess, ccdc
 
 avail_plots = ['TS', 'DOY', 'VAL']
 
@@ -77,44 +77,39 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
         raise click.Abort('Cannot find specified colormap in `palettable`')
 
     # Parse config
-    dataset_config, yatsm_config = parse_config_file(config)
-
-    # Override anything in yatsm_config if in --algo_kw
-    for k in algo_kw:
-        if k in yatsm_config:
-            logger.debug('Overriding {k} from {v1} to {v2}'.format(
-                k=k, v1=yatsm_config[k], v2=algo_kw[k]))
-            yatsm_config[k] = type_convert(algo_kw[k], yatsm_config[k])
+    cfg = parse_config_file(config)
 
     # Locate and fetch attributes from data
-    dataset = csvfile_to_dataset(dataset_config['input_file'],
-                                 date_format=dataset_config['date_format'])
-    dates = dataset['dates']
-    sensors = dataset['sensors']
-    images = dataset['images']
+    df = csvfile_to_dataset(cfg['dataset']['input_file'],
+                            date_format=cfg['dataset']['date_format'])
+    df['image_ID'] = get_image_IDs(df['filename'])
 
-    # Read in data and setup Y and X data
-    Y = read_pixel_timeseries(images, px, py)
-    X = patsy.dmatrix(yatsm_config['design_matrix'],
-                      {'x': dates, 'sensor': sensors})
+    # Setup X/Y
+    kws = {'x': df['date']}
+    kws.update(df.to_dict())
+    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], kws)
     design_info = X.design_info
 
+    Y = read_pixel_timeseries(df['filename'], px, py)
+
+    fit_indices = np.arange(cfg['dataset']['n_bands'])
+    if cfg['dataset']['mask_band'] is not None:
+        fit_indices = fit_indices[:-1]
+
     # Mask out of range data
-    valid = cyprep.get_valid_mask(Y[:dataset_config['mask_band'] - 1, :],
-                                  dataset_config['min_values'],
-                                  dataset_config['max_values'])
-    # Add mask band to mask and remove from Y
-    valid = (valid * np.in1d(Y[dataset_config['mask_band'] - 1, :],
-                             dataset_config['mask_values'],
-                             invert=True)).astype(np.bool)
-    Y = np.delete(Y, dataset_config['mask_band'] - 1, axis=0)
+    idx_mask = cfg['dataset']['mask_band'] - 1
+    valid = cyprep.get_valid_mask(Y,
+                                  cfg['dataset']['min_values'],
+                                  cfg['dataset']['max_values']).astype(np.bool)
+    valid *= np.in1d(Y[idx_mask, :], cfg['dataset']['mask_values'],
+                     invert=True).astype(np.bool)
 
     # Apply mask
-    dates = np.array([dt.datetime.fromordinal(d) for d in dates[valid]])
-    Y = Y[:, valid]
+    Y = np.delete(Y, idx_mask, axis=0)[:, valid]
     X = X[valid, :]
+    dates = np.array([dt.datetime.fromordinal(d) for d in df['date'][valid]])
 
-    # # Plot before fitting
+    # Plot before fitting
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
@@ -136,18 +131,14 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.show()
 
     # Eliminate config parameters not algorithm and fit model
-    cfg = yatsm_config.copy()
-    _args = inspect.getargspec(ccdc.CCDCesque.__init__)
-    for k in yatsm_config:
-        if k not in _args.args:
-            del cfg[k]
-    yatsm_model = ccdc.CCDCesque(fit_indices=np.arange(Y.shape[0]),
-                                 design_info=design_info,
-                                 **cfg)
+    yatsm = cfg['YATSM']['algorithm_cls'](fit_indices,
+                                          design_info,
+                                          lm=cfg['YATSM']['prediction'],
+                                          px=px, py=py,
+                                          **cfg[cfg['YATSM']['algorithm']])
+    yatsm.fit(X, Y)
 
-    yatsm_model.fit(X, Y)
-
-    # # Plot after predictions
+    # Plot after predictions
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
@@ -162,7 +153,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
             plt.ylabel('Band {b}'.format(b=band + 1))
 
-            plot_results(band, yatsm_config, yatsm_model, plot_type=_plot)
+            plot_results(band, cfg['YATSM'], yatsm, plot_type=_plot)
 
             if embed and has_embed:
                 IPython_embed()
