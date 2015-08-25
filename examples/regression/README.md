@@ -21,6 +21,8 @@ In [1]: import sklearn.linear_model, sklearn.externals
 
 In [2]: lasso = sklearn.linear_model.Lasso(alpha=20.0)
 
-In [3]: sklearn.externals.joblib.dump(lasso, 'Lasso_alpha20.pkl')
+In [3]: sklearn.externals.joblib.dump(lasso, 'Lasso_alpha20.pkl', compress=3)
 Out[3]: ['Lasso_alpha20.pkl']
 ```
+
+Note that this example uses compression to group all pickled files into one compressed file. If compression is not used and the regression estimator has a NumPy array as an attribute, `joblib` will create separate pickle files for the regression object and the NumPy array attribute.
