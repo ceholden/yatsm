@@ -79,8 +79,8 @@ def read_data(cfg, lines, ravel=True):
     read_cache, write_cache = yatsm.cache.test_cache(cfg)
 
     # Find dataset and read in
-    dataset = yatsm.utils.csvfile_to_dataset(cfg['input_file'],
-                                             date_format=cfg['date_format'])
+    dataset = yatsm.utils.csvfile_to_dataframe(cfg['input_file'],
+                                               date_format=cfg['date_format'])
     dates = dataset['dates']
     sensors = dataset['sensors']
     images = dataset['images']

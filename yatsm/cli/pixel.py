@@ -23,7 +23,7 @@ from yatsm.algorithms import postprocess, ccdc
 from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
 from yatsm import _cyprep as cyprep
-from yatsm.utils import csvfile_to_dataset, get_image_IDs
+from yatsm.utils import csvfile_to_dataframe, get_image_IDs
 from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm
 
@@ -80,8 +80,8 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     cfg = parse_config_file(config)
 
     # Locate and fetch attributes from data
-    df = csvfile_to_dataset(cfg['dataset']['input_file'],
-                            date_format=cfg['dataset']['date_format'])
+    df = csvfile_to_dataframe(cfg['dataset']['input_file'],
+                              date_format=cfg['dataset']['date_format'])
     df['image_ID'] = get_image_IDs(df['filename'])
 
     # Setup X/Y

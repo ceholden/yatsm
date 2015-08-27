@@ -14,7 +14,7 @@ from sklearn.externals import joblib
 
 from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
-from yatsm.utils import distribute_jobs, get_output_name, csvfile_to_dataset
+from yatsm.utils import distribute_jobs, get_output_name, csvfile_to_dataframe
 from yatsm.reader import get_image_attribute
 
 logger = logging.getLogger('yatsm')
@@ -32,7 +32,7 @@ logger = logging.getLogger('yatsm')
 def classify(ctx, config, algo, job_number, total_jobs, resume):
     dataset_config, yatsm_config = parse_config_file(config)
 
-    dates, sensors, images = csvfile_to_dataset(
+    dates, sensors, images = csvfile_to_dataframe(
         dataset_config['input_file'],
         date_format=dataset_config['date_format']
     )

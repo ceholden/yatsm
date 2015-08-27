@@ -13,7 +13,7 @@ from yatsm.config_parser import parse_config_file
 import yatsm._cyprep as cyprep
 from yatsm.errors import TSLengthException
 from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
-                         csvfile_to_dataset)
+                         csvfile_to_dataframe)
 from yatsm.reader import get_image_attribute, read_line
 from yatsm.regression.transforms import harm
 from yatsm.algorithms import ccdc, postprocess
@@ -72,8 +72,8 @@ def line(ctx, config, job_number, total_jobs,
     logger.info('Job {i} of {n} - using config file {f}'.format(i=job_number,
                                                                 n=total_jobs,
                                                                 f=config))
-    df = csvfile_to_dataset(cfg['dataset']['input_file'],
-                            cfg['dataset']['date_format'])
+    df = csvfile_to_dataframe(cfg['dataset']['input_file'],
+                              cfg['dataset']['date_format'])
     df['image_ID'] = get_image_IDs(df['filename'])
 
     # Get attributes of one of the images

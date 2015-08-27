@@ -12,7 +12,7 @@ from yatsm.cache import (get_line_cache_name, get_line_cache_pattern,
                          update_cache_file, write_cache_file)
 from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
-from yatsm.utils import csvfile_to_dataset, distribute_jobs, get_image_IDs
+from yatsm.utils import csvfile_to_dataframe, distribute_jobs, get_image_IDs
 
 logger = logging.getLogger('yatsm')
 
@@ -33,8 +33,8 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
     if not os.path.isdir(dataset_config['cache_line_dir']):
         os.makedirs(dataset_config['cache_line_dir'])
 
-    dataset = csvfile_to_dataset(dataset_config['input_file'],
-                                 date_format=dataset_config['date_format'])
+    dataset = csvfile_to_dataframe(dataset_config['input_file'],
+                                   date_format=dataset_config['date_format'])
     images = dataset['images']
     image_IDs = get_image_IDs(images)
 

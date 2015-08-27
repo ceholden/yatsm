@@ -70,7 +70,7 @@ def get_output_name(dataset_config, line):
 
 
 # IMAGE DATASET READING
-def csvfile_to_dataset(input_file, date_format='%Y%j'):
+def csvfile_to_dataframe(input_file, date_format='%Y%j'):
     """ Return sorted filenames of images from input text file
 
     Args:
@@ -78,7 +78,7 @@ def csvfile_to_dataset(input_file, date_format='%Y%j'):
       date_format (str): format of dates in file
 
     Returns:
-      dict: pd.DataFrame of dates, sensor IDs, and filenames
+      pd.DataFrame: pd.DataFrame of dates, sensor IDs, and filenames
 
     """
     df = pd.read_csv(input_file)
