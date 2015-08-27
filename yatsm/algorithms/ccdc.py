@@ -22,7 +22,7 @@ logger = logging.getLogger('yatsm_algo')
 
 
 class CCDCesque(YATSM):
-    """Initialize a CCDC-esuqe model for data X (spectra) and Y (dates)
+    """Initialize a CCDC-like model for data X (spectra) and Y (dates)
 
     An unofficial and unvalidated port of the Continuous Change Detection and
     Classification (CCDC) algorithm by Zhu and Woodcock, 2014.
