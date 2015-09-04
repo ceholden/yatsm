@@ -57,9 +57,18 @@ CCDCesque:
     remove_noise: True
     dynamic_rmse: False
 
-# Regression estimator
+# Regression estimators
 LassoCV:
     pickle: "/home/ceholden/Documents/yatsm/examples/regression/LassoCV_n100_alpha_0-50.pkl"
+
+Lasso20:
+    pickle: "/home/ceholden/Documents/yatsm/examples/regression/Lasso_alpha20.pkl"
+
+OLS:
+    pickle: "/home/ceholden/Documents/yatsm/examples/regression/OLS.pkl"
+
+GLMNET_LassoCV:
+    pickle: "/home/ceholden/Documents/yatsm/examples/regression/glmnet_LassoCV_n50_lambda_0-35.pkl"
 
 # Section for phenology fitting
 phenology:

@@ -8,9 +8,11 @@ Current examples include:
 1. `Lasso_alpha20.pkl`
     - Lasso regression method where `alpha` is fixed to a value of `20`. This specific parameterization of Lasso regression is used by Zhu Zhe in the CCDC algorithm.
 2. `LassoCV_n100_alpha_0-50.pkl`
-    - Lasso regression method where the `alpha` (usually called `lambda`, the tradeoff between least squares and L1 shrinkage) hyperparameter is crossvalidated among `n=100` values ranging between `0` and `50`.
+    - Lasso regression method where the `alpha` (usually called `lambda`, the tradeoff between least squares and L1 shrinkage) hyperparameter is crossvalidated among `n=100` values ranging between `1e-3` and `50`.
 3. `OLS.pkl`
     * Ordinary Least Squares
+4. `glmnet_LassoCV_n50_lambda_0-35.pkl`
+    - Lasso regression with the `lambda` (`alpha` in `scikit-learn`) chosen by cross-validation among `n=50` values ranging between `1e-4` and `35` (spacing via `np.logspace`)
 
 ## Creation
 
