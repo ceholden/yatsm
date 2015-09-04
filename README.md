@@ -37,9 +37,11 @@ Produces:
     ![Timeseries](docs/media/double_cut_ts_b3.png)
     ![Modeled Timeseries](docs/media/double_cut_ts_fitted_b3.png)
 
-## Requirements
+## Installation
 
 It is strongly encouraged that you install YATSM into an isolated environment, either using [`virtualenv`](https://virtualenv.pypa.io/en/latest/) for `pip` installs or a separate environment using [`conda`](http://conda.pydata.org/docs/), to avoid dependency conflicts with other software.
+
+This package requires an installation of [`GDAL`](http://gdal.org/), including the Python bindings. Note that [`GDAL`](http://gdal.org/) version 2.0 is not yet tested (it probably works, but I haven't tried GDAL 2.x), but recent 1.x versions (likely 1.8+) should work. [`GDAL`](http://gdal.org/) is not installable solely via `pip` and needs to be installed prior to following the `pip` instructions. If you follow the instructions for [`conda`](http://conda.pydata.org/docs/), you will not need to install `GDAL` on your own because [`conda`](http://conda.pydata.org/docs/) packages a compiled copy of the `GDAL` library (yet another reason to use [`conda`](http://conda.pydata.org/docs/)!).
 
 ### pip
 The basic dependencies for YATSM are included in the `requirements.txt` file which is  by PIP as follows:
