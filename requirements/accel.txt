@@ -1,0 +1,4 @@
+# Accelerating computation via Numba
+numba>=0.20.0
+# Faster Enet/Lasso with GLMNET fortran wrapper
+git+git://github.com/ceholden/glmnet-python.git#egg=glmnet

@@ -1,0 +1,28 @@
+# Conda environment file for YATSM
+# Includes optional dependencies since conda makes installing them pretty easy
+name: yatsm
+dependencies:
+    # Base
+    - python=2.7
+    - numpy>=1.8.0
+    - scipy>=0.14.0
+    - Cython>=0.20.1
+    # Statistics
+    - statsmodels>=0.5.0
+    - scikit-learn>=0.15.1
+    - pandas>=0.16.0
+    - patsy>=0.3.0
+    # CLI
+    - click>=4.0
+    # Plotting
+    - matplotlib>=1.4.2
+    # Accelerated functions w/ numba (OPTIONAL)
+    - numba>=0.20.0
+    - pip:
+        # GLMNET (OPTIONAL)
+        - git+git://github.com/ceholden/glmnet-python.git#egg=glmnet
+        # Python interface to R (OPTIONAL)
+        - rpy2>=2.5.6
+        # Required but missing from conda
+        - palettable>=2.0.0
+        - click_plugins>=1.0

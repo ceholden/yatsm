@@ -1,0 +1,17 @@
+# Base
+numpy>=1.8.0
+scipy>=0.14.0
+Cython>=0.20.1
+# Statistics
+statsmodels>=0.5.0
+scikit-learn>=0.15.1
+pandas>=0.16.0
+patsy>=0.3.0
+# CLI
+click>=4.0
+click_plugins>=1.0
+# Plotting
+matplotlib>=1.4.2
+palettable>=2.0.0
+# Config file
+pyyaml>=3.11

@@ -1,0 +1,3 @@
+# Requirements for running all of YATSM modules
+-r common.txt
+-r optional.txt
