@@ -1,6 +1,3 @@
-import inspect
-import StringIO
-
 import numpy as np
 import sklearn.linear_model
 import sklearn.externals.joblib as joblib
@@ -8,8 +5,39 @@ import yaml
 
 from . import algorithms
 from .log_yatsm import logger
-from .version import __version__
 
+
+def convert_config(cfg):
+    """ Convert some configuration values to different values
+
+    Args:
+        cfg (dict): dict: dict of sub-dicts, each sub-dict containing
+            configuration keys and values pertinent to a process or algorithm
+
+    Returns:
+        dict: configuration dict with some items converted to different objects
+
+    Raises:
+        KeyError: raise KeyError if configuration file is not specified
+            correctly
+    """
+    # Expand min/max values to all bands
+    n_bands = cfg['dataset']['n_bands']
+    mins, maxes = cfg['dataset']['min_values'], cfg['dataset']['max_values']
+    if isinstance(mins, (float, int)):
+        cfg['dataset']['min_values'] = np.asarray([mins] * n_bands)
+    if isinstance(maxes, (float, int)):
+        cfg['dataset']['max_values'] = np.asarray([maxes] * n_bands)
+
+    # Load sklearn objects
+    reg = joblib.load(cfg[cfg['YATSM']['prediction']]['pickle'])
+    if reg.__class__.__name__ in dir(sklearn.linear_model):
+        cfg['YATSM']['prediction'] = reg
+    else:
+        raise KeyError('Currently cannot unpickle prediction objects not '
+                       'in sklearn')
+
+    return cfg
 
 def parse_config_file(config_file):
     """ Parse YAML config file
@@ -56,14 +84,6 @@ def parse_config_file(config_file):
         raise KeyError('Could not find algorithm specified (%s) in '
                        '`yatsm.algorithms`' % algo)
 
-    # Expand min/max values to all bands
-    n_bands = cfg['dataset']['n_bands']
-    mins, maxes = cfg['dataset']['min_values'], cfg['dataset']['max_values']
-    if isinstance(mins, (float, int)):
-        cfg['dataset']['min_values'] = np.asarray([mins] * n_bands)
-    if isinstance(maxes, (float, int)):
-        cfg['dataset']['max_values'] = np.asarray([maxes] * n_bands)
-
     # Add in dummy phenology and classification dicts if not included
     if 'phenology' not in cfg:
         cfg['phenology'] = {'enable': False}
@@ -71,12 +91,4 @@ def parse_config_file(config_file):
     if 'classification' not in cfg:
         cfg['classification'] = {'training_image': None}
 
-    # Load sklearn objects
-    reg = joblib.load(cfg[cfg['YATSM']['prediction']]['pickle'])
-    if reg.__class__.__name__ in dir(sklearn.linear_model):
-        cfg['YATSM']['prediction'] = reg
-    else:
-        raise KeyError('Currently cannot unpickle prediction objects not '
-                       'in sklearn')
-
-    return cfg
+    return convert_config(cfg)

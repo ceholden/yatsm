@@ -1,7 +1,6 @@
 """ Command line interface for running YATSM algorithms on individual pixels
 """
 import datetime as dt
-import inspect
 import logging
 import re
 
@@ -17,15 +16,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import palettable
 import patsy
-import sklearn
+import yaml
 
-from yatsm.algorithms import postprocess, ccdc
+from yatsm.algorithms import postprocess  # TODO: implement postprocessors
 from yatsm.cli import options
-from yatsm.config_parser import parse_config_file
+from yatsm.config_parser import convert_config, parse_config_file
 from yatsm import _cyprep as cyprep
 from yatsm.utils import csvfile_to_dataframe, get_image_IDs
 from yatsm.reader import read_pixel_timeseries
-from yatsm.regression.transforms import harm
+from yatsm.regression.transforms import harm  # noqa
 
 avail_plots = ['TS', 'DOY', 'VAL']
 
@@ -78,6 +77,22 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
     # Parse config
     cfg = parse_config_file(config)
+
+    # Apply algorithm overrides
+    revalidate = False
+    for kw in algo_kw:
+        for cfg_key in cfg:
+            if kw in cfg[cfg_key]:
+                # Parse as YAML for type conversions used in config parser
+                value = yaml.load(algo_kw[kw])
+
+                print('Overriding cfg[%s][%s]=%s with %s' %
+                      (cfg_key, kw, cfg[cfg_key][kw], value))
+                cfg[cfg_key][kw] = value
+                revalidate = True
+                
+    if revalidate:
+        cfg = convert_config(cfg)
 
     # Locate and fetch attributes from data
     df = csvfile_to_dataframe(cfg['dataset']['input_file'],
@@ -237,7 +252,8 @@ def plot_results(band, yatsm_config, yatsm_model, plot_type='TS'):
 
 
 def plot_lasso_debug(model):
-    """ See example http://scikit-learn.org/stable/auto_examples/linear_model/plot_lasso_model_selection.html
+    """ See example:
+    http://scikit-learn.org/stable/auto_examples/linear_model/plot_lasso_model_selection.html
     """
     m_log_alphas = -np.log10(model.alphas_)
     plt.plot(m_log_alphas, model.mse_path_, ':')
