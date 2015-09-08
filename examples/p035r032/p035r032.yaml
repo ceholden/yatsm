@@ -1,19 +1,18 @@
-# Example configuration file for YATSM
-# As of v0.5.0, config files are to be written in YAML
+# Example configuration file for YATSM line runner
 #
-# Quotes around strings are optional, but encouraged, except where the leading
-# character would produce a parsing error (e.g., when writing the
-# date_format, "%Y%j")
+# This configuration includes details about the dataset and how YATSM should
+# run
 
+# Version of config
 version: "0.5.0"
 
 dataset:
     # Text file containing dates and images
-    input_file: "/home/ceholden/Documents/yatsm/examples/p022r049_input.csv"
+    input_file: "/home/ceholden/Documents/yatsm/examples/p035r032/images.csv"
     # Input date format
     date_format: "%Y%j"
     # Output location
-    output: "/home/ceholden/Documents/landsat_stack/p022r049/images/YATSM"
+    output: "/home/ceholden/Documents/landsat_stack/p035r032/images/YATSM"
     # Output file prefix (e.g., [prefix]_[line].npz)
     output_prefix: "yatsm_r"
     # Total number of bands
@@ -30,15 +29,15 @@ dataset:
     green_band: 2
     swir1_band: 5
     # Use BIP image reader? If not, use GDAL to read in
-    use_bip_reader: true
+    use_bip_reader: False
     # Directory location for caching dataset lines
-    cache_line_dir: "/home/ceholden/Documents/landsat_stack/p022r049/images/.yatsm_cache"
+    cache_line_dir: "/home/ceholden/Documents/landsat_stack/p035r032/images/.yatsm_cache"
 
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:
     algorithm: "CCDCesque"
     prediction: "LassoCV"
-    design_matrix: "1 + x + harm(x, 1)"
+    design_matrix: "1 + x + harm(x, 1) + harm(x, 2)"
     reverse: False
     robust: False
     commission_alpha:
@@ -46,10 +45,10 @@ YATSM:
 # Parameters for CCDCesque algorithm -- referenced by "algorithm" key in YATSM
 CCDCesque:
     consecutive: 5
-    threshold: 3.0
-    min_obs: 16
+    threshold: 3.5
+    min_obs: 24
     min_rmse: 150
-    test_indices: [2, 4, 5]
+    test_indices: [2, 3, 4, 5]
     retrain_time: 365.25
     screening: RLM
     screening_crit: 400.0
