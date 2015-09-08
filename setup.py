@@ -28,7 +28,6 @@ install_requires = [
     'statsmodels',
     'scikit-learn',
     'matplotlib',
-    'osgeo',
     'click',
     'click_plugins',
     'palettable',
