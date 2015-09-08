@@ -32,7 +32,7 @@ def convert_config(cfg):
     # Load sklearn objects
     reg = joblib.load(cfg[cfg['YATSM']['prediction']]['pickle'])
     if reg.__class__.__name__ in dir(sklearn.linear_model):
-        cfg['YATSM']['prediction'] = reg
+        cfg['YATSM']['prediction_object'] = reg
     else:
         raise KeyError('Currently cannot unpickle prediction objects not '
                        'in sklearn')

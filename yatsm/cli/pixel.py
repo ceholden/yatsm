@@ -146,11 +146,12 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.show()
 
     # Eliminate config parameters not algorithm and fit model
-    yatsm = cfg['YATSM']['algorithm_cls'](fit_indices,
-                                          design_info,
-                                          lm=cfg['YATSM']['prediction'],
-                                          px=px, py=py,
-                                          **cfg[cfg['YATSM']['algorithm']])
+    yatsm = cfg['YATSM']['algorithm_cls'](
+        fit_indices,
+        design_info,
+        lm=cfg['YATSM']['prediction_object'],
+        px=px, py=py,
+        **cfg[cfg['YATSM']['algorithm']])
     yatsm.fit(X, Y)
 
     # Plot after predictions
