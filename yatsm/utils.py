@@ -16,9 +16,9 @@ def distribute_jobs(job_number, total_jobs, n, interlaced=True):
     """ Assign `job_number` out of `total_jobs` a subset of `n` tasks
 
     Args:
-      job_number (int): processor to distribute jobs to
+      job_number (int): 0-indexed processor to distribute jobs to
       total_jobs (int): total number of processors running jobs
-      n (int): number of tasks (lines in image, regions in segment)
+      n (int): number of tasks (e.g., lines in image, regions in segment)
       interlaced (bool, optional): interlace job assignment (default: True)
 
     Returns:
@@ -39,7 +39,7 @@ def distribute_jobs(job_number, total_jobs, n, interlaced=True):
             assigned += 1
         tasks = np.asarray(tasks)
     else:
-        size = int(n / total_jobs) + 1
+        size = int(n / total_jobs)
         i_start = size * job_number
         i_end = size * (job_number + 1)
 
