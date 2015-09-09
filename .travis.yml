@@ -12,25 +12,19 @@ before_install:
     - export PATH=$HOME/anaconda/bin:$PATH
     # Update conda
     - conda update --yes conda
-    # Add in Fortran compiler
-    - sudo apt-get install -y gfortran
+    # Add in Fortran compiler and R
+    - sudo apt-get install -y gfortran r-base
 install:
     # Create conda matching requirements
-    - conda create --yes -n venv python=$TRAVIS_PYTHON_VERSION pip nose numpy scipy cython gdal scikit-learn statsmodels matplotlib
+    - conda create --yes -n venv python=$TRAVIS_PYTHON_VERSION -f environment.yaml
     - source activate venv
-    # Add deps from binstar
-    # Add RPy2 for phenology
-    # - conda install -y -c https://conda.binstar.org/r rpy2
-    # Workaround for Fortran warnings -- install glmnet first and quietly
-    - "pip install -q git+git://github.com/ceholden/glmnet-python.git#egg=glmnet"
     # Rest of dependencies
-    - "pip install -r requirements.txt"
     - "pip install -r requirements-dev.txt"
     - "pip install pytest"
     # Install YATSM
     - "pip install -e ."
 script:
-    - py.test
+    - py.test tests/
     - coverage run --source yatsm -m py.test
 after_success:
     - pip install coveralls
