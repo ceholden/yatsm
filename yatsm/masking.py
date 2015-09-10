@@ -30,26 +30,23 @@ def multitemp_mask(x, Y, n_year, crit=400,
       mask (ndarray): mask where False indicates values to be masked
 
     """
-    n_year = np.ceil(n_year)
+    green = Y.take(green, axis=0)
+    swir1 = Y.take(swir1, axis=0)
 
+    n_year = np.ceil(n_year)
     w = 2.0 * np.pi / ndays
 
-    X = np.array([
-        np.ones_like(x),
-        np.cos(w * x),
-        np.sin(w * x),
-        np.cos(w / n_year * x),
-        np.sin(w / n_year * x)
-    ])
+    X = np.column_stack((np.ones_like(x),
+                         np.cos(w * x),
+                         np.sin(w * x),
+                         np.cos(w / n_year * x),
+                         np.sin(w / n_year * x)))
 
-    green_RLM = rlm.RLM(Y[green, :], X.T,
-                        M=rlm.bisquare)
-    swir1_RLM = rlm.RLM(Y[swir1, :], X.T,
-                        M=rlm.bisquare)
+    green_RLM = rlm.RLM(M=rlm.bisquare, maxiter=maxiter).fit(X, green)
+    swir1_RLM = rlm.RLM(M=rlm.bisquare, maxiter=maxiter).fit(X, swir1)
 
-    mask = ((green_RLM.fit(maxiter=maxiter).resid < crit) *
-            (swir1_RLM.fit(maxiter=maxiter).resid > -crit))
-    # train_plot_debug(x, Y, mask, swir1_RLM.fit(maxiter=maxiter).predict(X.T))
+    mask = ((green - green_RLM.predict(X) < crit) *
+            (swir1 - swir1_RLM.predict(X) > -crit))
 
     return mask
 

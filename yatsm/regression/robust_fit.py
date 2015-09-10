@@ -19,8 +19,8 @@ def bisquare(resid, c=4.685):
     Returns weighting for each residual using bisquare weight function
 
     Args:
-      resid (np.ndarray): residuals to be weighted
-      c (float): tuning constant for Tukey's Biweight (default: 4.685)
+        resid (np.ndarray): residuals to be weighted
+        c (float): tuning constant for Tukey's Biweight (default: 4.685)
 
     Returns:
         weight (ndarray): weights for residuals
@@ -37,12 +37,12 @@ def mad(resid, c=0.6745):
     Returns Median-Absolute-Deviation (MAD) for residuals
 
     Args:
-      resid (np.ndarray): residuals
-      c (float): scale factor to get to ~standard normal (default: 0.6745)
+        resid (np.ndarray): residuals
+        c (float): scale factor to get to ~standard normal (default: 0.6745)
                  (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)
 
     Returns:
-      float: MAD 'robust' variance estimate
+        float: MAD 'robust' variance estimate
 
     Reference:
         http://en.wikipedia.org/wiki/Median_absolute_deviation
@@ -56,17 +56,17 @@ def _check_converge(x0, x, tol=1e-8):
     return not np.any(np.fabs(x0 - x > tol))
 
 
-def _weight_fit(y, X, w):
+def _weight_fit(X, y, w):
     """
     Apply a weighted OLS fit to data
 
     Args:
-      y (ndarray): dependent variable
-      X (ndarray): independent variables
-      w (ndarray): observation weights
+        X (ndarray): independent variables
+        y (ndarray): dependent variable
+        w (ndarray): observation weights
 
     Returns:
-      tuple: coefficients, residual vector, and RSS
+        tuple: coefficients and residual vector
 
     """
     sw = np.sqrt(w)
@@ -77,9 +77,8 @@ def _weight_fit(y, X, w):
     beta, _, _, _ = np.linalg.lstsq(Xw, yw)
 
     resid = y - np.dot(X, beta)
-    rss = (resid ** 2).sum()
 
-    return beta, resid, rss
+    return beta, resid
 
 
 # Robust regression
@@ -91,84 +90,88 @@ class RLM(object):
     Basically a clone from `statsmodels` that should be much faster.
 
     Args:
-      y (np.ndarray): dependent variable vector
-      X (np.ndarray): independent variable matrix
-      scale_est (callable): function for scaling residuals
-      tune (float): tuning constant for scale estimate
+        scale_est (callable): function for scaling residuals
+        tune (float): tuning constant for scale estimate
+        maxiter (int, optional): maximum number of iterations (default: 50)
+        tol (float, optional): convergence tolerance of estimate
+            (default: 1e-8)
+        scale_est (callable): estimate used to scale the weights
+            (default: `mad` for median absolute deviation)
+        scale_constant (float): normalization constant (default: 0.6745)
+        update_scale (bool, optional): update scale estimate for weights
+            across iterations (default: True)
+        M (callable): function for scaling residuals
+        tune (float): tuning constant for scale estimate
 
     Attributes:
-      y (np.ndarray): dependent variable
-      X (np.ndarray): independent variable design matrix
-      M (callable): function for scaling residuals
-      tune (float): tuning constant for scale estimate
-      coefs (np.ndarray): coefficients of fitted model
-      resid (np.ndarray): residuals of the fitted models (y - fitted values)
-      rss (float): Residual Sum of Squares (RSS) of model
+        coef_ (np.ndarray): 1D array of model coefficients
+        intercept_ (float): intercept
+        weights (np.ndarray): 1D array of weights for each observation from a
+            robust iteratively reweighted least squares
 
     """
 
-    def __init__(self, y, X, M=bisquare, tune=4.685):
-        self.y = y
-        self.X = X
+    def __init__(self, M=bisquare, tune=4.685,
+                 scale_est=mad, scale_constant=0.6745,
+                 update_scale=True, maxiter=50, tol=1e-8):
         self.M = M
         self.tune = tune
+        self.scale_est = scale_est
+        self.scale_constant = scale_constant
+        self.update_scale = update_scale
+        self.maxiter = maxiter
+        self.tol = tol
 
-        if self.X.ndim == 1:
-            self.X = self.X[:, np.newaxis]
+        self.coef_ = None
+        self.intercept_ = 0.0
 
-        self.weights = np.ones_like(y)
-
-    def fit(self, maxiter=50, tol=1e-8, scale_est=mad, scale_constant=0.6745,
-            update_scale=True):
-        """ Fit model using iteratively reweighted least squares
+    def fit(self, X, y):
+        """ Fit a model predicting y from X design matrix
 
         Args:
-          maxiter (int, optional): maximum number of iterations (default: 50)
-          tol (float, optional): convergence tolerance of estimate (default:
-            1e-8)
-          scale_est (callable): estimate used to scale the weights (default:
-            `mad` for median absolute deviation)
-          scale_constant (float): normalization constant (default: 0.6745)
-          update_scale (bool, optional): update scale estimate for weights
-            across iterations (default: True)
+            X (np.ndarray): 2D (n_obs x n_features) design matrix
+            y (np.ndarray): 1D independent variable
 
         Returns:
-          self
+            object: return `self` with model results stored for method
+                chaining
 
         """
-        self.scale_est = scale_est
-
-        self.coefs, self.resid, self.rss = \
-            _weight_fit(self.y, self.X, self.weights)
-        self.scale = self.scale_est(self.resid, c=scale_constant)
+        self.coef_, resid = _weight_fit(X, y, np.ones_like(y))
+        self.scale = self.scale_est(resid, c=self.scale_constant)
 
         iteration = 1
         converged = 0
-        while not converged and iteration < maxiter:
-            _coefs = self.coefs.copy()
-            self.weights = self.M(self.resid / self.scale, c=self.tune)
-            self.coefs, self.resid, self.rss = \
-                _weight_fit(self.y, self.X, self.weights)
-            if update_scale is True:
-                self.scale = self.scale_est(self.resid, c=scale_constant)
+        while not converged and iteration < self.maxiter:
+            _coef = self.coef_.copy()
+            self.weights = self.M(resid / self.scale, c=self.tune)
+            self.coef_, resid = _weight_fit(X, y, self.weights)
+            if self.update_scale:
+                self.scale = self.scale_est(resid, c=self.scale_constant)
             iteration += 1
-            converged = _check_converge(self.coefs, _coefs, tol=tol)
+            converged = _check_converge(self.coef_, _coef, tol=self.tol)
 
         return self
 
-    def predict(self, X=None):
-        """ Return linear model prediction after it has been fitted
+    def predict(self, X):
+        """ Predict yhat using model
 
         Args:
-          X (np.ndarray, optional): user provided design matrix
+            X (np.ndarray): 2D (n_obs x n_features) design matrix
 
         Returns:
-          np.ndarray: yhat model predictions
+            np.ndarray: 1D yhat prediction
 
         """
-        if X is None:
-            X = self.X
-        return np.dot(self.X, self.coefs)
+        return np.dot(X, self.coef_) + self.intercept_
+
+    def __str__(self):
+        return ("%s:\n"
+                " * Coefficients: %s\n"
+                " * Intercept = %.5f\n") % (self.__class__.__name__,
+                                            np.array_str(self.coef_,
+                                                         precision=4),
+                                            self.intercept_)
 
 
 if __name__ == '__main__':
@@ -176,14 +179,14 @@ if __name__ == '__main__':
     import timeit
 
     setup = 'from __main__ import RLM; import statsmodels.api as sm; import numpy as np; np.random.seed(123456789); y = np.random.rand(1000); X = np.random.rand(1000, 4)'
-    my_rlm = 'my_rlm = RLM(y, X).fit()'
+    my_rlm = 'my_rlm = RLM().fit(X, y)'
     sm_rlm = 'sm_rlm = sm.RLM(y, X, M=sm.robust.norms.TukeyBiweight()).fit(conv="coefs")'
 
     ns = {}
     exec setup in ns
     exec my_rlm in ns
     exec sm_rlm in ns
-    if np.allclose(ns['my_rlm'].coefs, ns['sm_rlm'].params):
+    if np.allclose(ns['my_rlm'].coef_, ns['sm_rlm'].params):
         print('Pass: Two RLM solutions produce the same answers')
     else:
         print('Error: Two RLM solutions do not produce the same answers')

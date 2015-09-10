@@ -13,6 +13,8 @@ Current examples include:
     * Ordinary Least Squares
 4. `glmnet_LassoCV_n50_lambda_0-35.pkl`
     - Lasso regression with the `lambda` (`alpha` in `scikit-learn`) chosen by cross-validation among `n=50` values ranging between `1e-4` and `35` (spacing via `np.logspace`)
+5. `rlm_maxiter10.pkl`
+    - Robust Linear Model using Iteratively Reweighted Least Squares (RIRLS) with a maximum of 10 iterations (from `yatsm.regression.robust_fit`).
 
 ## Creation
 
