@@ -1,9 +1,7 @@
-""" Test for `yatsm.regression.transforms`
+""" Tests for yatsm.regression.transforms
 """
 import numpy as np
 import patsy
-import py.test
-
 from yatsm.regression.transforms import harm
 
 

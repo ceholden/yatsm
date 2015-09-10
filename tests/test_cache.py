@@ -62,39 +62,39 @@ def test_test_cache(mkdir_permissions):
     assert (True, True) == read_write
 
 
-def test_read_cache_file(cachefile, example_data):
+def test_read_cache_file(cachefile, example_cache):
     assert None is cache.read_cache_file('asdf')
 
-    np.testing.assert_equal(example_data['Y'],
+    np.testing.assert_equal(example_cache['Y'],
                             cache.read_cache_file(cachefile))
 
 
-def test_read_cache_file_imageIDs(cachefile, example_data):
-    image_IDs = example_data['image_IDs']
+def test_read_cache_file_imageIDs(cachefile, example_cache):
+    image_IDs = example_cache['image_IDs']
     # Expect None since image IDs won't match
     assert None is cache.read_cache_file(cachefile,
                                          image_IDs[::-1])
 
-    np.testing.assert_equal(example_data['Y'],
+    np.testing.assert_equal(example_cache['Y'],
                             cache.read_cache_file(cachefile, image_IDs))
 
 
-def test_write_cache_file(cachefile, example_data):
+def test_write_cache_file(cachefile, example_cache):
     cache.write_cache_file('test.npz',
-                           example_data['Y'], example_data['image_IDs'])
+                           example_cache['Y'], example_cache['image_IDs'])
     test = np.load('test.npz')
     Y, image_IDs = test['Y'], test['image_IDs']
     os.remove('test.npz')
 
-    np.testing.assert_equal(Y, example_data['Y'])
-    np.testing.assert_equal(image_IDs, example_data['image_IDs'])
+    np.testing.assert_equal(Y, example_cache['Y'])
+    np.testing.assert_equal(image_IDs, example_cache['image_IDs'])
 
 
-def test_update_cache_file_delete_obs(cachefile, example_data):
-    choice = np.random.choice(example_data['image_IDs'].size,
+def test_update_cache_file_delete_obs(cachefile, example_cache):
+    choice = np.random.choice(example_cache['image_IDs'].size,
                               size=100, replace=False)
-    new_Y = example_data['Y'][:, choice, :]
-    new_image_IDs = example_data['image_IDs'][choice]
+    new_Y = example_cache['Y'][:, choice, :]
+    new_image_IDs = example_cache['image_IDs'][choice]
 
     # For now, just use image_IDs as `images` since we won't be updating
     # from images
@@ -110,14 +110,14 @@ def test_update_cache_file_delete_obs(cachefile, example_data):
     np.testing.assert_equal(new_image_IDs, image_IDs)
 
 
-def test_update_cache_file_add_obs(cachefile, example_data,
+def test_update_cache_file_add_obs(cachefile, example_cache,
                                    example_timeseries):
     """ Grab a subset of test data and see if we get more data back """
     path, stack_images, stack_image_IDs = example_timeseries
     # Presort and subset for comparison
-    sort_idx = np.argsort(example_data['image_IDs'])
-    test_Y = example_data['Y'][:, sort_idx, :]
-    test_IDs = example_data['image_IDs'][sort_idx]
+    sort_idx = np.argsort(example_cache['image_IDs'])
+    test_Y = example_cache['Y'][:, sort_idx, :]
+    test_IDs = example_cache['image_IDs'][sort_idx]
 
     size_1 = 100
     size_2 = 200

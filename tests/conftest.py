@@ -15,7 +15,8 @@ import pytest
 
 here = os.path.dirname(__file__)
 example_cachedir = os.path.join(here, 'data', 'cache')
-example_testfile = os.path.join(example_cachedir, 'yatsm_r0_n447_b8.npy.npz')
+example_cachefile = os.path.join(example_cachedir, 'yatsm_r0_n447_b8.npy.npz')
+example_datafile = os.path.join(here, 'data', 'example_data.npz')
 
 
 # EXAMPLE DATASETS
@@ -41,8 +42,13 @@ def example_timeseries(request):
 
 
 @pytest.fixture(scope='session')
+def example_cache(request):
+    return np.load(example_cachefile)
+
+
+@pytest.fixture(scope='session')
 def example_data(request):
-    return np.load(example_testfile)
+    return np.load(example_datafile)
 
 
 # EXAMPLE CACHE DATA
@@ -53,7 +59,7 @@ def cachedir(request):
 
 @pytest.fixture(scope='function')
 def cachefile(request):
-    return example_testfile
+    return example_cachefile
 
 
 # MISC
