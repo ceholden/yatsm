@@ -16,7 +16,15 @@ def test_get_valid_mask():
     mins = np.repeat(0, n_bands).astype(np.int16)
     maxes = np.repeat(10000, n_bands).astype(np.int16)
 
-    truth = np.all([((b > _min) & (b < _max)) for b, _min, _max in
-                    zip(np.rollaxis(data, 0), mins, maxes)], axis=0)
+    truth = np.all([((b >= _min) & (b <= _max)) for b, _min, _max in
+                    zip(data, mins, maxes)], axis=0)
+    test = cyprep.get_valid_mask(data, mins, maxes).astype(np.bool)
 
-    np.testing.assert_equal(truth, cyprep.get_valid_mask(data, mins, maxes))
+    test_min = data[:, test].min(axis=1)
+    test_max = data[:, test].max(axis=1)
+
+    assert np.array_equal(truth, test)
+    assert np.array_equal(data[:, truth].min(axis=1), test_min)
+    assert np.array_equal(data[:, truth].max(axis=1), test_max)
+    assert np.all(test_min >= mins)
+    assert np.all(test_max <= maxes)
