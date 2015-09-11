@@ -58,8 +58,9 @@ WARN_ON_EMPTY = False
               help='Use time segment before <date> if needed for map')
 @click.option('--qa', is_flag=True,
               help='Add QA band identifying segment type')
-@click.option('--robust', is_flag=True,
-              help='Use robust results for coefficient/prediction maps')
+@click.option('--refit_prefix', default='', show_default=True,
+              help='Use coef/rmse with refit prefix for coefficient/prediction'
+                   ' maps')
 @click.option('--amplitude', is_flag=True,
               help='Export amplitude of sin/cosine pairs instead of '
                    'individual coefficient estimates')
@@ -68,7 +69,7 @@ WARN_ON_EMPTY = False
 @click.pass_context
 def map(ctx, map_type, date, output,
         root, result, image, date_frmt, ndv, gdal_frmt, warn_on_empty,
-        band, coef, after, before, qa, robust, amplitude, predict_proba):
+        band, coef, after, before, qa, refit_prefix, amplitude, predict_proba):
     """
     Map types: coef, predict, class, pheno
 
@@ -97,6 +98,10 @@ def map(ctx, map_type, date, output,
         logger.error('Could not open example image for reading')
         raise
 
+    # Append underscore to prefix if not included
+    if refit_prefix and not refit_prefix.endswith('_'):
+        refit_prefix += '_'
+
     band_names = None
     if map_type == 'class':
         raster, band_names = get_classification(
@@ -108,7 +113,7 @@ def map(ctx, map_type, date, output,
         raster, band_names = get_coefficients(
             date, result, image_ds,
             band, coef,
-            use_robust=robust, amplitude=amplitude,
+            prefix=refit_prefix, amplitude=amplitude,
             after=after, before=before, qa=qa,
             ndv=ndv
         )
@@ -116,7 +121,7 @@ def map(ctx, map_type, date, output,
         raster, band_names = get_prediction(
             date, result, image_ds,
             band,
-            use_robust=robust,
+            prefix=refit_prefix,
             after=after, before=before, qa=qa,
             ndv=ndv
         )
@@ -133,24 +138,25 @@ def map(ctx, map_type, date, output,
 
 
 # UTILITY FUNCTIONS
-def find_result_attributes(results, bands, coefs, use_robust=False):
+def find_result_attributes(results, bands, coefs, prefix=''):
     """ Returns attributes about the dataset from result files
 
     Args:
-      results (list): Result filenames
-      bands (list): Bands to describe for output
-      coefs (list): Coefficients to describe for output
-      use_robust (bool, optional): Search for robust results
+        results (list): Result filenames
+        bands (list): Bands to describe for output
+        coefs (list): Coefficients to describe for output
+        prefix (str, optional): Search for coef/rmse results with given prefix
+            (default: '')
 
     Returns:
-      tuple: Tuple containing `list` of indices for output bands and output
-        coefficients, `bool` for outputting RMSE, `list` of coefficient names,
-        `str` design specification, and `OrderedDict` design_info
-        (i_bands, i_coefs, use_rmse, design, design_info)
+        tuple: Tuple containing `list` of indices for output bands and output
+            coefficients, `bool` for outputting RMSE, `list` of coefficient
+            names, `str` design specification, and `OrderedDict` design_info
+            (i_bands, i_coefs, use_rmse, design, design_info)
 
     """
-    _coef = 'robust_coef' if use_robust else 'coef'
-    _rmse = 'robust_rmse' if use_robust else 'rmse'
+    _coef = prefix + 'coef' if prefix else 'coef'
+    _rmse = prefix + 'rmse' if prefix else 'rmse'
 
     # How many coefficients and bands exist in the results?
     n_bands, n_coefs = None, None
@@ -170,9 +176,9 @@ def find_result_attributes(results, bands, coefs, use_robust=False):
         if _coef not in rec.dtype.names or _rmse not in rec.dtype.names:
             logger.error('Could not find coefficients ({0}) and RMSE ({1}) '
                          'in record'.format(_coef, _rmse))
-            if use_robust:
-                logger.error('Robust coefficients and RMSE not found. Did you '
-                             'calculate them?')
+            if prefix:
+                logger.error('Coefficients and RMSE not found with prefix %s. '
+                             'Did you calculate them?' % prefix)
             raise click.Abort()
 
         try:
@@ -259,23 +265,23 @@ def get_classification(date, result_location, image_ds,
     """ Output raster with classification results
 
     Args:
-      date (int): ordinal date for prediction image
-      result_location (str): Location of the results
-      image_ds (gdal.Dataset): Example dataset
-      after (bool, optional): If date intersects a disturbed period, use next
-        available time segment
-      before (bool, optional): If date does not intersect a model, use previous
-        non-disturbed time segment
-      qa (bool, optional): Add QA flag specifying segment type (intersect,
-        after, or before)
-      pred_proba (bool, optional): Include additional band with classification
-        value probabilities
-      ndv (int, optional): NoDataValue
-      pattern (str, optional): filename pattern of saved record results
+        date (int): ordinal date for prediction image
+        result_location (str): Location of the results
+        image_ds (gdal.Dataset): Example dataset
+        after (bool, optional): If date intersects a disturbed period, use next
+            available time segment
+        before (bool, optional): If date does not intersect a model, use
+            previous non-disturbed time segment
+        qa (bool, optional): Add QA flag specifying segment type (intersect,
+            after, or before)
+        pred_proba (bool, optional): Include additional band with
+            classification value probabilities
+        ndv (int, optional): NoDataValue
+        pattern (str, optional): filename pattern of saved record results
 
     Returns:
-      np.ndarray: 2D numpy array containing the classification map for the date
-        specified
+        np.ndarray: 2D numpy array containing the classification map for the
+            date specified
 
     """
     # Find results
@@ -324,34 +330,34 @@ def get_classification(date, result_location, image_ds,
 
 def get_coefficients(date, result_location, image_ds,
                      bands, coefs,
-                     use_robust=False, amplitude=False,
+                     prefix='', amplitude=False,
                      after=False, before=False, qa=False,
                      ndv=-9999, pattern=_result_record):
     """ Output a raster with coefficients from CCDC
 
     Args:
-      date (int): Ordinal date for prediction image
-      result_location (str): Location of the results
-      bands (list): Bands to predict
-      coefs (list): List of coefficients to output
-      image_ds (gdal.Dataset): Example dataset
-      use_robust (bool, optional): Map robust coefficients and RMSE instead of
-        normal ones
-      amplitude (bool, optional): Map amplitude of seasonality instead of
-        individual coefficient estimates for sin/cosine pair (default: False)
-      after (bool, optional): If date intersects a disturbed period, use next
-        available time segment (default: False)
-      before (bool, optional): If date does not intersect a model, use previous
-        non-disturbed time segment (default: False)
-      qa (bool, optional): Add QA flag specifying segment type (intersect,
-        after, or before) (default: False)
-      ndv (int, optional): NoDataValue (default: -9999)
-      pattern (str, optional): filename pattern of saved record results
+        date (int): Ordinal date for prediction image
+        result_location (str): Location of the results
+        bands (list): Bands to predict
+        coefs (list): List of coefficients to output
+        image_ds (gdal.Dataset): Example dataset
+        prefix (str, optional): Use coef/rmse with refit prefix (default: '')
+        amplitude (bool, optional): Map amplitude of seasonality instead of
+            individual coefficient estimates for sin/cosine pair
+            (default: False)
+        after (bool, optional): If date intersects a disturbed period, use next
+            available time segment (default: False)
+        before (bool, optional): If date does not intersect a model, use
+            previous non-disturbed time segment (default: False)
+        qa (bool, optional): Add QA flag specifying segment type (intersect,
+            after, or before) (default: False)
+        ndv (int, optional): NoDataValue (default: -9999)
+        pattern (str, optional): filename pattern of saved record results
 
     Returns:
-      tuple: A tuple (np.ndarray, list) containing the 3D numpy.ndarray of the
-        coefficients (coefficient x band x pixel), and the band names for
-        the output dataset
+        tuple: A tuple (np.ndarray, list) containing the 3D numpy.ndarray of
+            the coefficients (coefficient x band x pixel), and the band names
+            for the output dataset
 
     """
     # Find results
@@ -359,7 +365,7 @@ def get_coefficients(date, result_location, image_ds,
 
     # Find result attributes to extract
     i_bands, i_coefs, use_rmse, coef_names, _, _ = find_result_attributes(
-        records, bands, coefs, use_robust=use_robust)
+        records, bands, coefs, prefix=prefix)
 
     # Process amplitude transform for seasonality coefficients
     if amplitude:
@@ -390,8 +396,8 @@ def get_coefficients(date, result_location, image_ds,
         band_names.append('SegmentQAQC')
     n_out_bands = n_bands * n_coefs + n_rmse + n_qa
 
-    _coef = 'robust_coef' if use_robust else 'coef'
-    _rmse = 'robust_rmse' if use_robust else 'rmse'
+    _coef = prefix + 'coef' if prefix else 'coef'
+    _rmse = prefix + 'rmse' if prefix else 'rmse'
 
     logger.debug('Allocating memory...')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_out_bands),
@@ -434,31 +440,30 @@ def get_coefficients(date, result_location, image_ds,
 
 
 def get_prediction(date, result_location, image_ds,
-                   bands='all', use_robust=False,
+                   bands='all', prefix='',
                    after=False, before=False, qa=False,
                    ndv=-9999, pattern=_result_record):
     """ Output a raster with the predictions from model fit for a given date
 
     Args:
-      date (int): Ordinal date for prediction image
-      result_location (str): Location of the results
-      image_ds (gdal.Dataset): Example dataset
-      bands (str, list): Bands to predict - 'all' for every band, or specify a
-        list of bands
-      use_robust (bool, optional): Map robust coefficients and RMSE instead of
-        normal ones
-      after (bool, optional): If date intersects a disturbed period, use next
-        available time segment
-      before (bool, optional): If date does not intersect a model, use previous
-        non-disturbed time segment
-      qa (bool, optional): Add QA flag specifying segment type (intersect,
-        after, or before)
-      ndv (int, optional): NoDataValue
-      pattern (str, optional): filename pattern of saved record results
+        date (int): Ordinal date for prediction image
+        result_location (str): Location of the results
+        image_ds (gdal.Dataset): Example dataset
+        bands (str, list): Bands to predict - 'all' for every band, or specify
+            a list of bands
+        prefix (str, optional): Use coef/rmse with refit prefix (default: '')
+        after (bool, optional): If date intersects a disturbed period, use next
+            available time segment
+        before (bool, optional): If date does not intersect a model, use
+            previous non-disturbed time segment
+        qa (bool, optional): Add QA flag specifying segment type (intersect,
+            after, or before)
+        ndv (int, optional): NoDataValue
+        pattern (str, optional): filename pattern of saved record results
 
     Returns:
-      np.ndarray: A 3D numpy.ndarray containing the prediction for each band,
-        for each pixel
+        np.ndarray: A 3D numpy.ndarray containing the prediction for each band,
+            for each pixel
 
     """
     # Find results
@@ -466,7 +471,7 @@ def get_prediction(date, result_location, image_ds,
 
     # Find result attributes to extract
     i_bands, _, _, _, design, design_info = find_result_attributes(
-        records, bands, None, use_robust=use_robust)
+        records, bands, None, prefix=prefix)
 
     n_bands = len(i_bands)
     band_names = ['Band_{0}'.format(b) for b in range(n_bands)]
@@ -518,22 +523,22 @@ def get_phenology(date, result_location, image_ds,
     peak_doy, and pheno_nobs.
 
     Args:
-      date (int): Ordinal date for prediction image
-      result_location (str): Location of the results
-      image_ds (gdal.Dataset): Example dataset
-      after (bool, optional): If date intersects a disturbed period, use next
-        available time segment
-      before (bool, optional): If date does not intersect a model, use previous
-        non-disturbed time segment
-      qa (bool, optional): Add QA flag specifying segment type (intersect,
-        after, or before)
-      ndv (int, optional): NoDataValue
-      pattern (str, optional): filename pattern of saved record results
+        date (int): Ordinal date for prediction image
+        result_location (str): Location of the results
+        image_ds (gdal.Dataset): Example dataset
+        after (bool, optional): If date intersects a disturbed period, use next
+            available time segment
+        before (bool, optional): If date does not intersect a model, use
+            previous non-disturbed time segment
+        qa (bool, optional): Add QA flag specifying segment type (intersect,
+            after, or before)
+        ndv (int, optional): NoDataValue
+        pattern (str, optional): filename pattern of saved record results
 
     Returns:
-      tuple (np.ndarray, list): A tuple (np.ndarray, list) containing the 3D
-        np.ndarray of the phenology metrics, and the band names for
-        the output dataset
+        tuple (np.ndarray, list): A tuple (np.ndarray, list) containing the 3D
+            np.ndarray of the phenology metrics, and the band names for
+            the output dataset
 
     """
     # Find results
