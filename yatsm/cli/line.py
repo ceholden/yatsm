@@ -84,12 +84,12 @@ def line(ctx, config, job_number, total_jobs,
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Calculate X feature input
-    kws = {'x': df['date']}
+    dates = np.asarray(df['date'])
+    kws = {'x': dates}
     kws.update(df.to_dict())
     X = patsy.dmatrix(cfg['YATSM']['design_matrix'], kws)
 
     # Form YATSM class arguments
-    design_info = X.design_info
     fit_indices = np.arange(cfg['dataset']['n_bands'])
     if cfg['dataset']['mask_band'] is not None:
         fit_indices = fit_indices[:-1]
@@ -139,16 +139,16 @@ def line(ctx, config, job_number, total_jobs,
 
             _Y = np.delete(_Y, idx_mask, axis=0)[:, valid]
             _X = X[valid, :]
+            _dates = dates[valid]
 
             # Run model
             algo = cfg['YATSM']['algorithm']
-            yatsm = cfg['YATSM']['algorithm_cls'](
-                fit_indices,
-                design_info,
-                lm=cfg['YATSM']['prediction_object'],
-                px=col, py=line,
-                **cfg[algo])
-            yatsm.fit(_X, _Y)
+            cls = cfg['YATSM']['algorithm_cls']
+            yatsm = cls(lm=cfg['YATSM']['prediction_object'], **cfg[algo])
+            yatsm.px = col
+            yatsm.py = line
+
+            yatsm.fit(_X, _Y, _dates)
 
             # Formulate save file metadata
             md = cfg[algo].copy()

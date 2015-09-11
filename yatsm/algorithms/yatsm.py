@@ -9,69 +9,86 @@ class YATSM(object):
     """ Yet Another TimeSeries Model baseclass
 
     Args:
-      fit_indices (np.ndarray): Fit models for these indices of Y
-      design_info (patsy.DesignInfo): Patsy design information for X
-      test_indices (np.ndarray, optional): Test for changes with these indices
-        of Y. If not provided, all `fit_indices` will be used as test indices
-      lm (sklearn.linear_model predictor): regression model from scikit-learn
-        used to fit and predict timeseries (default: `Lasso(alpha=20)`)
+        test_indices (np.ndarray, optional): Test for changes with these
+            indices of Y. If not provided, all `fit_indices` will be used as
+            test indices
+        lm (sklearn.linear_model predictor): regression model from scikit-learn
+            used to fit and predict timeseries (default: `Lasso(alpha=20)`)
 
     Attributes:
-      models (list): `sklearn` model objects used for fitting / prediction
-      record (np.ndarray): NumPy structured array containing timeseries
-        model attribute information
+        models (list): prediction model objects
+        record (np.ndarray): NumPy structured array containing timeseries model
+            attribute information
+        n_series (int): number of bands in Y
+        n_features (int): number of coefficients in X design matrix
 
     Record structured arrays must contain the following:
 
         * start (int): starting dates of timeseries segments
         * end (int): ending dates of timeseries segments
         * break (int): break dates of timeseries segments
-        * coef (nb x p double): number of bands x number of features
+        * coef (n x p double): number of bands x number of features
             coefficients matrix for predictions
+        * rmse (n double): Root Mean Squared Error for each band
         * px (int): pixel X coordinate
         * py (int): pixel Y coordinate
 
     """
 
-    def __init__(self, fit_indices, design_info, test_indices=None,
+    px = 0
+    py = 0
+    n_series = 0
+    n_features = 0
+
+    def __init__(self, test_indices=None,
                  lm=sklearn.linear_model.Lasso(alpha=20),
                  **kwargs):
-        self.fit_indices = np.asarray(fit_indices)
-
-        self.design_info = design_info
-        if 'x' not in design_info.term_name_slices.keys():
-            raise AttributeError('Design info must specify "x" (slope)')
-        self.i_x = design_info.term_name_slices['x'].start
-
         self.test_indices = np.asarray(test_indices)
-        if self.test_indices is None:
-            self.test_indices = self.fit_indices
-
         self.lm = sklearn.clone(lm)
 
-        self.record_template = np.zeros(1, dtype=[
+        self.n_record = 0
+        self.record = []
+
+    @property
+    def record_template(self):
+        """ Return a YATSM record template for features in X and series in Y
+
+        Record template will set `px` and `py` if defined as class attributes.
+        Otherwise `px` and `py` coordinates will default to 0.
+
+        Returns:
+            np.ndarray: NumPy structured array containing a template of a YATSM
+                record
+
+        """
+        record_template = np.zeros(1, dtype=[
             ('start', 'i4'),
             ('end', 'i4'),
             ('break', 'i4'),
-            ('coef', 'float32', (len(self.design_info.column_names),
-                                 len(self.fit_indices))),
+            ('coef', 'float32', (self.n_coef, self.n_series)),
+            ('rmse', 'float32', (self.n_series)),
             ('px', 'u2'),
             ('py', 'u2')
         ])
-        self.record_template['px'] = kwargs.get('px', 0)
-        self.record_template['py'] = kwargs.get('py', 0)
-        self.n_record = 0
-        self.record = np.copy(self.record_template)
+        record_template['px'] = getattr(self, 'px', 0)
+        record_template['py'] = getattr(self, 'py', 0)
+
+        return record_template
 
 # TIMESERIES ENSEMBLE FIT/PREDICT
     def fit(self, X, Y):
         """ Fit timeseries model
 
         Args:
-          X (np.ndarray): design matrix (number of observations x number of
-            features)
-          Y (np.ndarray): independent variable matrix (number of series x number
-            of observations)
+            X (np.ndarray): design matrix (number of observations x number of
+                features)
+            Y (np.ndarray): independent variable matrix (number of series x
+                number of observations)
+            dates (np.ndarray): ordinal dates for each observation in X/Y
+
+        Returns:
+            np.ndarray: NumPy structured array containing timeseries
+                model attribute information
 
         """
         raise NotImplementedError('Subclasses should implement fit method')
@@ -116,12 +133,12 @@ class YATSM(object):
 
         """
         if bands is None:
-            bands = self.fit_indices
+            bands = np.arange(self.n_series)
 
         models = []
         for b in bands:
             y = Y.take(b, axis=0)
-            model = sklearn.clone(self.lm).fit(X, y)
+            model = sklearn.clone(self.lm).fit(X, y)  # TODO: no clone?
 
             # Add in RMSE calculation  # TODO: numba?
             model.rmse = ((y - model.predict(X)) ** 2).mean(axis=0) ** 0.5
@@ -172,4 +189,4 @@ class YATSM(object):
     def __len__(self):
         """ Return the number of segments in this timeseries model
         """
-        return self.record.shape[0]
+        return len(self.record)
