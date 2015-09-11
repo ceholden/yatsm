@@ -7,8 +7,9 @@ import logging
 import math
 
 import numpy as np
-import numpy.lib.recfunctions
+import numpy.lib.recfunctions as nprf
 import scipy.stats
+import sklearn
 import statsmodels.api as sm
 
 from ..regression import robust_fit as rlm
@@ -204,61 +205,70 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
         return np.all(omission, 1)
 
 
-def robust_record(model):
-    """ Returns a copy of YATSM record output with robustly fitted models
-    using non-zero coefficients from original regression.
+def refit_record(model, prefix, predictor, keep_regularized=False):
+    """ Refit YATSM model segments with a new predictor and update record
 
-    The returned model results should be more representative of the
-    signal found because it will remove influence of outlying observations,
-    such as clouds or shadows.
+    YATSM class model must be ran and contain at least one record before this
+    function is called.
 
-    If YATSM has not yet been run, returns None
+    Args:
+        model (YATSM model): YATSM model to refit
+        prefix (str): prefix for refitted coefficient and RMSE (don't include
+            underscore as it will be added)
+        predictor (object): instance of a scikit-learn compatible prediction
+            object
+        keep_regularized (bool, optional): do not use features with coefficient
+            estimates that are fit to 0 (i.e., if using L1 regularization)
+
+    Returns:
+        np.array: updated model.record NumPy structured array with refitted
+            coefficients and RMSE
+
     """
-    if not model.ran:
+    if not model:
         return None
 
-    # Create new array for robust coefficients and RMSE
-    robust = np.zeros(
-        model.record.shape[0],
-        dtype=[
-            ('robust_coef', 'float32', (model.n_coef, len(model.fit_indices))),
-            ('robust_rmse', 'float32', len(model.fit_indices)),
-        ])
+    refit_coef = prefix + '_coef'
+    refit_rmse = prefix + '_rmse'
 
-    # Update to robust model
-    for i, r in enumerate(model.record):
+    # Create new array for robust coefficients and RMSE
+    n_coef, n_series = model.record[0]['coef'].shape
+    refit = np.zeros(model.record.shape[0], dtype=[
+        (refit_coef, 'float32', (n_coef, n_series)),
+        (refit_rmse, 'float32', (n_series)),
+    ])
+
+    for i_rec, rec in enumerate(model.record):
         # Find matching X and Y in data
-        index = np.where(
-            (model.X[:, model.i_x] >= min(r['start'], r['end'])) &
-            (model.X[:, model.i_x] <= max(r['end'], r['start'])))[0]
-        # Grab matching X and Y
-        _X = model.X[index, :]
-        _Y = model.Y[:, index]
+        # start/end dates are considered in case ran backward
+        index = np.where((model.dates >= min(rec['start'], rec['end'])) &
+                         (model.dates <= max(rec['start'], rec['end'])))[0]
+
+        X = model.X.take(index, axis=0)
+        Y = model.Y.take(index, axis=1)
 
         # Refit each band
-        for i_b, b in enumerate(model.fit_indices):
-            # Find nonzero
-            nonzero = np.nonzero(model.record[i]['coef'][:, i_b])[0]
-
-            if nonzero.size == 0:
-                continue
-
-            # Setup model
-            rirls_model = rlm.RLM(_Y[b, :], _X[:, nonzero], M=rlm.bisquare)
+        for i_y, y in enumerate(Y):
+            if keep_regularized:
+                # Find nonzero in case of regularized regression
+                nonzero = np.nonzero(rec['coef'][:, i_y])[0]
+                if nonzero.size == 0:
+                    refit[i_rec]['rmse'] = rec['rmse']
+                    continue
+            else:
+                nonzero = np.arange(n_series)
 
             # Fit
-            fit = rirls_model.fit()
+            lm = sklearn.clone(predictor)
+            lm = lm.fit(X[:, nonzero], y)
             # Store updated coefficients
-            robust[i]['robust_coef'][nonzero, i_b] = fit.coefs
+            refit[i_rec][refit_coef][nonzero, i_y] = lm.coef_
 
             # Update RMSE
-            robust[i]['robust_rmse'][i_b] = \
-                math.sqrt(rirls_model.rss / index.size)
-
-        logger.debug('Updated record %s to robust results' % i)
+            refit[i_rec][refit_rmse][i_y] = \
+                ((y - lm.predict(X[:, nonzero])) ** 2).mean() ** 0.5
 
     # Merge
-    robust_record = np.lib.recfunctions.merge_arrays((model.record, robust),
-                                                     flatten=True)
+    refit = nprf.merge_arrays((model.record, refit), flatten=True)
 
-    return robust_record
+    return refit

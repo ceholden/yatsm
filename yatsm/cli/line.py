@@ -158,8 +158,10 @@ def line(ctx, config, job_number, total_jobs,
                 yatsm.record = postprocess.commission_test(
                     yatsm, cfg['YATSM']['commission_alpha'])
 
-            if cfg['YATSM']['robust']:
-                yatsm.record = postprocess.robust_record(yatsm)
+            for prefix, lm in zip(cfg['YATSM']['refit']['prefix'],
+                                  cfg['YATSM']['refit']['prediction_object']):
+                yatsm.record = postprocess.refit_record(yatsm, prefix, lm,
+                                                        keep_regularized=True)
 
             if cfg['phenology']['enable']:
                 ltm = pheno.LongTermMeanPhenology(yatsm, **cfg['phenology'])

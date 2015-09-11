@@ -29,15 +29,26 @@ def convert_config(cfg):
     if isinstance(maxes, (float, int)):
         cfg['dataset']['max_values'] = np.asarray([maxes] * n_bands)
 
-    # Load sklearn objects
-    reg = joblib.load(cfg[cfg['YATSM']['prediction']]['pickle'])
-    if reg.__class__.__name__ in dir(sklearn.linear_model):
-        cfg['YATSM']['prediction_object'] = reg
+    # Unpickle main predictor
+    cfg['YATSM']['prediction_object'] = _unpickle_predictor(
+        cfg[cfg['YATSM']['prediction']]['pickle'])
+
+    # Unpickle refit objects
+    if 'refit' in cfg['YATSM']:
+        pickles = []
+        for predictor in cfg['YATSM']['refit']['prediction']:
+            if predictor not in cfg:
+                raise KeyError('Refit predictor specified (%s) not specified '
+                               'as section in config file' % predictor)
+            pickle_file = cfg[predictor]['pickle']
+            pickles.append(_unpickle_predictor(pickle_file))
+        cfg['YATSM']['refit']['prediction_object'] = pickles
     else:
-        raise KeyError('Currently cannot unpickle prediction objects not '
-                       'in sklearn')
+        refit = dict(prefix=[], prediction=[], prediction_object=[])
+        cfg['YATSM']['refit'] = refit
 
     return cfg
+
 
 def parse_config_file(config_file):
     """ Parse YAML config file
@@ -92,3 +103,18 @@ def parse_config_file(config_file):
         cfg['classification'] = {'training_image': None}
 
     return convert_config(cfg)
+
+
+def _unpickle_predictor(pickle):
+    # Load sklearn objects
+    reg = joblib.load(pickle)
+
+    sklearn_attrs = ['fit', 'predict', 'get_params', 'set_params',  # methods
+                       'coef_', 'intercept_']  # attributes
+    if all([m in dir(reg) for m in sklearn_attrs]):
+        return reg
+    else:
+        raise AttributeError('Cannot use prediction object from %s. Prediction'
+                             ' objects must define the following attributes:\n'
+                             '%s'
+                             % (pickle, ', '.join(sklearn_attrs)))

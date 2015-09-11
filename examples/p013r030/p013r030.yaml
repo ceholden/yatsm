@@ -39,8 +39,11 @@ YATSM:
     prediction: "LassoCV"
     design_matrix: "1 + x + harm(x, 1) + harm(x, 2)"
     reverse: False
-    robust: False
     commission_alpha:
+    # Re-fit each segment, adding new coefficients & RMSE info to record
+    refit:
+        prefix: [robust]
+        prediction: [RLM]
 
 # Parameters for CCDCesque algorithm -- referenced by "algorithm" key in YATSM
 CCDCesque:
@@ -68,6 +71,9 @@ OLS:
 
 GLMNET_LassoCV:
     pickle: "/home/ceholden/Documents/yatsm/examples/regression/glmnet_LassoCV_n50_lambda_0-35.pkl"
+
+RLM:
+    pickle: "/home/ceholden/Documents/yatsm/examples/regression/rlm_maxiter10.pkl"
 
 # Section for phenology fitting
 phenology:
