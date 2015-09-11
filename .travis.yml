@@ -1,25 +1,29 @@
 language: python
+sudo: false
 python:
     - "2.7"
 branches:
   only:
     - master
     - /^v[0-9].*$/
+addons:
+    apt:
+        packages:
+            - gfortran
+            - r-base-dev
 before_install:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - ./miniconda.sh -b
-    - export PATH=$HOME/anaconda/bin:$PATH
+    - bash miniconda.sh -b -p $HOME/miniconda
+    - export PATH=$HOME/miniconda/bin:$PATH
+    - conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
     # Update conda
     - conda update --yes conda
-    # Add in Fortran compiler and R
-    - sudo apt-get install -y gfortran r-base
 install:
     # Create conda matching requirements
-    - conda create --yes -n venv python=$TRAVIS_PYTHON_VERSION -f environment.yaml
-    - source activate venv
+    - conda env create -n test python=$TRAVIS_PYTHON_VERSION -f environment.yaml
+    - source activate test
     # Rest of dependencies
-    - "pip install -r requirements-dev.txt"
+    - "pip install -r requirements/dev.txt"
     - "pip install pytest"
     # Install YATSM
     - "pip install -e ."
