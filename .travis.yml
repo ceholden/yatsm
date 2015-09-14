@@ -1,7 +1,12 @@
 language: python
 sudo: false
+cache: pip
 python:
     - "2.7"
+cache:
+  - apt
+  directories:
+    - $HOME/.cache/pip
 branches:
   only:
     - master
