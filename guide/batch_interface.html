@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Interface &mdash; YATSM 0.4.0 documentation</title>
+  <title>Batch Interface &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,12 +28,14 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/>
+
+  
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/>
         <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
         <link rel="prev" title="Model Configuration" href="configuration.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -44,27 +46,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
+          
+          
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -104,16 +121,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -138,38 +156,34 @@
     <li>Batch Interface</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/batch_interface.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/batch_interface" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="batch-interface">
 <span id="guide-batch-interface"></span><h1>Batch Interface<a class="headerlink" href="#batch-interface" title="Permalink to this headline">¶</a></h1>
 <p>The default method for running image stacks is to run each line, or row,
 separately from other lines. In a multiprocessing situation, the total
-number of lines can be broken up among the <tt class="docutils literal"><span class="pre">n</span></tt> available CPUs. Before
+number of lines can be broken up among the <code class="docutils literal"><span class="pre">n</span></code> available CPUs. Before
 using the batch interface, make sure you already have a parameter file
-generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><em>Model Configuration</em></a>.</p>
+generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><span>Model Configuration</span></a>.</p>
 <p>The batch interface which runs each line separately is
-<tt class="docutils literal"><span class="pre">line_yatsm.py</span></tt>. It&#8217;s usage is:</p>
-<div class="highlight-text"><div class="highlight"><pre>$ line_yatsm.py -h
- Yet Another Timeseries Model (YATSM) - run script for lines of images
-
-Usage: line_yatsm.py [options] &lt;config_file&gt; &lt;job_number&gt; &lt;total_jobs&gt;
+<a class="reference internal" href="../scripts/yatsm_line.html#yatsm-line"><span>yatsm line</span></a>. It&#8217;s usage is:</p>
+<div class="highlight-text"><div class="highlight"><pre>$ yatsm line -h
+Usage: yatsm line [OPTIONS] &lt;config&gt; &lt;job_number&gt; &lt;total_jobs&gt;
 
 Options:
-    --check                     Check that images exist
-    --check_cache               Check that cache file contains matching data
-    --resume                    Do not overwrite pre-existing results
-    --do-not-run                Don&#39;t run YATSM (useful for just caching data)
-    -v --verbose                Show verbose debugging messages
-    --verbose-yatsm             Show verbose debugging messages in YATSM
-    -q --quiet                  Show only error messages
-    --version                   Print program version and exit
-    -h --help                   Show help
+  --check_cache    Check that cache file contains matching data
+  --resume         Do not overwrite preexisting results
+  --do-not-run     Do not run YATSM (useful for just caching data)
+  --verbose-yatsm  Show verbose debugging messages in YATSM algorithm
+  -h, --help       Show this message and exit.
 </pre></div>
 </div>
 <p>Let&#8217;s say our image stack contains 1,000 rows. If we use 50 total CPUs
@@ -192,7 +206,7 @@ follows:</p>
 <div class="code sh highlight-python"><div class="highlight"><pre>$ njob=200
 $ for job in $(seq 1 $njob); do
     qsub -j y -V -l h_rt=24:00:00 -N yatsm_$job -b y \
-        $(which python) -u line_yatsm.py --resume -v config.ini $job $njob
+        $(which python) -u yatsm line --resume -v config.ini $job $njob
   done
 </pre></div>
 </div>
@@ -202,13 +216,13 @@ observations for each row in a separate file. The transformed dataset will be
 much easier to read as a timeseries because each processor only needs to read
 in one file instead of finding, opening, seeking through, and reading from
 many individual image files.</p>
-<p>To accomplish this approach, the <tt class="docutils literal"><span class="pre">--do-not-run</span></tt> flag can be combined with a
+<p>To accomplish this approach, the <code class="docutils literal"><span class="pre">--do-not-run</span></code> flag can be combined with a
 specific request for computer nodes with fast ethernet speeds,
-<tt class="docutils literal"><span class="pre">-l</span> <span class="pre">eth_speed</span> <span class="pre">10</span></tt>:</p>
+<code class="docutils literal"><span class="pre">-l</span> <span class="pre">eth_speed</span> <span class="pre">10</span></code>:</p>
 <div class="code sh highlight-python"><div class="highlight"><pre>$ njob=16
 $ for job in $(seq 1 $njob); do
     qsub -j y -V -l h_rt=24:00:00 -l eth_speed=10 -N yatsm_$job -b y \
-        $(which python) -u line_yatsm.py --resume --do-not-run -v config.ini $job $njob
+        $(which python) -u yatsm line --resume --do-not-run -v config.ini $job $njob
   done
 </pre></div>
 </div>
@@ -221,10 +235,10 @@ $ for job in $(seq 1 $njob); do
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="map_static.html" class="btn btn-neutral float-right" title="Mapping Derived Information"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="map_static.html" class="btn btn-neutral float-right" title="Mapping Derived Information" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="configuration.html" class="btn btn-neutral" title="Model Configuration"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral" title="Model Configuration" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -234,12 +248,13 @@ $ for job in $(seq 1 $njob); do
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -254,7 +269,7 @@ $ for job in $(seq 1 $njob); do
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -263,7 +278,7 @@ $ for job in $(seq 1 $njob); do
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.algorithms.yatsm &mdash; YATSM 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../../../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#yatsm-installation">YATSM Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#phenology">Phenology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#classification">Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#missing-values">Missing Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_changes.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_changes.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>yatsm.algorithms.yatsm</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/algorithms/yatsm" class="fa fa-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for yatsm.algorithms.yatsm</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Yet Another TimeSeries Model baseclass</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sklearn</span>
+<span class="kn">import</span> <span class="nn">sklearn.linear_model</span>
+
+
+<div class="viewcode-block" id="YATSM"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM">[docs]</a><span class="k">class</span> <span class="nc">YATSM</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Yet Another TimeSeries Model baseclass</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        test_indices (np.ndarray, optional): Test for changes with these</span>
+<span class="sd">            indices of Y. If not provided, all `fit_indices` will be used as</span>
+<span class="sd">            test indices</span>
+<span class="sd">        lm (sklearn.linear_model predictor): regression model from scikit-learn</span>
+<span class="sd">            used to fit and predict timeseries (default: `Lasso(alpha=20)`)</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        models (list): prediction model objects</span>
+<span class="sd">        record (np.ndarray): NumPy structured array containing timeseries model</span>
+<span class="sd">            attribute information</span>
+<span class="sd">        n_series (int): number of bands in Y</span>
+<span class="sd">        n_features (int): number of coefficients in X design matrix</span>
+
+<span class="sd">    Record structured arrays must contain the following:</span>
+
+<span class="sd">        * start (int): starting dates of timeseries segments</span>
+<span class="sd">        * end (int): ending dates of timeseries segments</span>
+<span class="sd">        * break (int): break dates of timeseries segments</span>
+<span class="sd">        * coef (n x p double): number of bands x number of features</span>
+<span class="sd">          coefficients matrix for predictions</span>
+<span class="sd">        * rmse (n double): Root Mean Squared Error for each band</span>
+<span class="sd">        * px (int): pixel X coordinate</span>
+<span class="sd">        * py (int): pixel Y coordinate</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">px</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n_series</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n_features</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_indices</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">lm</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">linear_model</span><span class="o">.</span><span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">test_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">test_indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lm</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">lm</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_record</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">record_template</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a YATSM record template for features in X and series in Y</span>
+
+<span class="sd">        Record template will set `px` and `py` if defined as class attributes.</span>
+<span class="sd">        Otherwise `px` and `py` coordinates will default to 0.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: NumPy structured array containing a template of a YATSM</span>
+<span class="sd">                record</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">record_template</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">(</span><span class="s">&#39;start&#39;</span><span class="p">,</span> <span class="s">&#39;i4&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s">&#39;end&#39;</span><span class="p">,</span> <span class="s">&#39;i4&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s">&#39;break&#39;</span><span class="p">,</span> <span class="s">&#39;i4&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s">&#39;coef&#39;</span><span class="p">,</span> <span class="s">&#39;float32&#39;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_coef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_series</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s">&#39;rmse&#39;</span><span class="p">,</span> <span class="s">&#39;float32&#39;</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_series</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s">&#39;px&#39;</span><span class="p">,</span> <span class="s">&#39;u2&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s">&#39;py&#39;</span><span class="p">,</span> <span class="s">&#39;u2&#39;</span><span class="p">)</span>
+        <span class="p">])</span>
+        <span class="n">record_template</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">record_template</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;py&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">record_template</span>
+
+<span class="c"># TIMESERIES ENSEMBLE FIT/PREDICT</span>
+<div class="viewcode-block" id="YATSM.fit"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fit timeseries model</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X (np.ndarray): design matrix (number of observations x number of</span>
+<span class="sd">                features)</span>
+<span class="sd">            Y (np.ndarray): independent variable matrix (number of series x</span>
+<span class="sd">                number of observations)</span>
+<span class="sd">            dates (np.ndarray): ordinal dates for each observation in X/Y</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: NumPy structured array containing timeseries</span>
+<span class="sd">                model attribute information</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Subclasses should implement fit method&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="YATSM.predict"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a 2D NumPy array of y-hat predictions for a given X</span>
+
+<span class="sd">        Predictions are made from ensemble of timeseries models such that</span>
+<span class="sd">        predicted values are generated for each date using the model from the</span>
+<span class="sd">        timeseries segment that intersects each date.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          X (np.ndarray): Design matrix (number of observations x number of</span>
+<span class="sd">            features)</span>
+<span class="sd">          series (iterable, optional): Return prediction for subset of series</span>
+<span class="sd">            within timeseries model. If None is provided, returns predictions</span>
+<span class="sd">            from all series</span>
+<span class="sd">          dates (int or np.ndarray, optional): Index of `X`&#39;s features or a</span>
+<span class="sd">            np.ndarray of length X.shape[0] specifying the ordinal dates for</span>
+<span class="sd">            each</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          Y (np.ndarray): Prediction for given X (number of series x number of</span>
+<span class="sd">            observations)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Have not implemented this function yet&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="YATSM.fit_models"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit_models">[docs]</a>    <span class="k">def</span> <span class="nf">fit_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fit timeseries models for `bands` within `Y` for a given `X`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X (np.ndarray): design matrix (number of observations x number of</span>
+<span class="sd">                features)</span>
+<span class="sd">            Y (np.ndarray): independent variable matrix (number of series x</span>
+<span class="sd">                number of observations) observation in the X design matrix</span>
+<span class="sd">            bands (iterable): Subset of bands of `Y` to fit. If None are</span>
+<span class="sd">                provided, fit all bands in Y</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: fitted model objects</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">bands</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_series</span><span class="p">)</span>
+
+        <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lm</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c"># TODO: no clone?</span>
+
+            <span class="c"># Add in RMSE calculation  # TODO: numba?</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">rmse</span> <span class="o">=</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+            <span class="c"># Add intercept to intercept term of design matrix</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">coef</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span>
+
+            <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+
+<span class="c"># DIAGNOSTICS</span></div>
+<div class="viewcode-block" id="YATSM.score"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns some undecided description of timeseries model performance</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          X (np.ndarray): design matrix (number of observations x number of</span>
+<span class="sd">            features)</span>
+<span class="sd">          Y (np.ndarray): independent variable matrix (number of series x number</span>
+<span class="sd">            of observations)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          float: some sort of performance summary statistic</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Have not implemented this function yet&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="YATSM.plot"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Plot the timeseries model results</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          X (np.ndarray): design matrix (number of observations x number of</span>
+<span class="sd">            features)</span>
+<span class="sd">          Y (np.ndarray): independent variable matrix (number of series x number</span>
+<span class="sd">            of observations)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Have not implemented this function yet&#39;</span><span class="p">)</span>
+
+<span class="c"># MAKE ITERABLE</span></div>
+<div class="viewcode-block" id="YATSM.__iter__"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.__iter__">[docs]</a>    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Iterate over the timeseries segment records</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">record</span>
+</div>
+<div class="viewcode-block" id="YATSM.__len__"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.__len__">[docs]</a>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the number of segments in this timeseries model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Mon Sep 14 16:37:15 2015.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

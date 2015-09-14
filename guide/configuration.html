@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Model Configuration &mdash; YATSM 0.4.0 documentation</title>
+  <title>Model Configuration &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,12 +28,14 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/>
+
+  
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/>
         <link rel="next" title="Batch Interface" href="batch_interface.html"/>
         <link rel="prev" title="Timeseries Model Specification" href="model_specification.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -44,27 +46,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
+          
+          
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -104,16 +121,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -138,181 +156,55 @@
     <li>Model Configuration</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/configuration.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/configuration" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="model-configuration">
 <span id="guide-model-config"></span><h1>Model Configuration<a class="headerlink" href="#model-configuration" title="Permalink to this headline">¶</a></h1>
+<p>The issue tracker on Github is being used to track additions to this
+documentation section. Please see
+<a class="reference external" href="https://github.com/ceholden/yatsm/issues/37">ticket 37</a>.</p>
 <div class="section" id="configuration-file">
 <h2>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h2>
-<p>The batch running script uses an <a class="reference external" href="https://wiki.python.org/moin/ConfigParserExamples">INI
+<p>The batch running script uses an <a class="reference external" href="https://en.wikipedia.org/wiki/YAML">YAML
 file</a> to
-parameterize the run. The INI file uses three sections:</p>
+parameterize the run. The YAML file uses several sections:</p>
 <ol class="arabic simple">
-<li><tt class="docutils literal"><span class="pre">[dataset]</span></tt> describes dataset attributes</li>
-<li><tt class="docutils literal"><span class="pre">[YATSM]</span></tt> describes model parameters</li>
-<li><tt class="docutils literal"><span class="pre">[classification]</span></tt> describes classification training data inputs</li>
+<li><code class="docutils literal"><span class="pre">dataset</span></code> describes dataset attributes common to all analysis</li>
+<li><code class="docutils literal"><span class="pre">YATSM</span></code> describes model parameters common to all analysis and declares what change detection algorithm should be run</li>
+<li><code class="docutils literal"><span class="pre">classification</span></code> describes classification training data inputs</li>
+<li><code class="docutils literal"><span class="pre">phenology</span></code> describes phenology fitting parameters</li>
 </ol>
 <p>The following tables describes the meanings of the parameter and values used
 in the configuration file used in YATSM. Any parameters left blank will be
-interpreted as <tt class="docutils literal"><span class="pre">None</span></tt> (e.g., <tt class="docutils literal"><span class="pre">cache_line_dir</span> <span class="pre">=</span></tt>).</p>
+interpreted as <code class="docutils literal"><span class="pre">None</span></code> (e.g., <code class="docutils literal"><span class="pre">cache_line_dir</span> <span class="pre">=</span></code>).</p>
 </div>
 <div class="section" id="dataset-parameters">
 <h2>Dataset Parameters<a class="headerlink" href="#dataset-parameters" title="Permalink to this headline">¶</a></h2>
-<p>The following dataset information is required:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="16%" />
-<col width="12%" />
-<col width="72%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Data Type</th>
-<th class="head">Explanation</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">input_file</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">filename</span></tt></td>
-<td>The filename of a CSV file recording the date and filenames of all images in the dataset</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">date_format</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
-<td>The format of the dates specified in the <tt class="docutils literal"><span class="pre">input_file</span></tt> (e.g., <tt class="docutils literal"><span class="pre">%Y%j</span></tt>)</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">output</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
-<td>Output folder location for results</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">output_prefix</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
-<td>Output file prefix (e.g., <tt class="docutils literal"><span class="pre">[prefix]_[line].npz</span></tt>)</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">n_bands</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
-<td>The number of bands in the images</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mask_band</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
-<td>Band index in each image of the mask band</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mask_values</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
-<td>List of integer values to mask within the mask band</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">valid_range</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
-<td>Valid range of non-mask band data. Specify 1 range for all bands, or specify ranges for each band</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">green_band</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
-<td>Band index in each image of the green band (~520-600 nm)</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">swir1_band</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
-<td>Band index in each image of the shortwave-infrared band (~1550-1750 nm)</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">use_bip_reader</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
-<td>Use <tt class="docutils literal"><span class="pre">fopen</span></tt> style read in for band interleave by pixel (BIP) files, instead of GDAL&#8217;s IO</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cache_line_dir</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
-<td>Directory location for caching dataset lines</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Note</strong>: you can use <tt class="docutils literal"><span class="pre">scripts/gen_date_file.sh</span></tt> to generate the CSV
-file for <tt class="docutils literal"><span class="pre">input_file</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This section is out of date for <cite>v0.5.0</cite> and requires re-writing</p>
+</div>
+<p><strong>Note</strong>: you can use <code class="docutils literal"><span class="pre">scripts/gen_date_file.sh</span></code> to generate the CSV
+file for <code class="docutils literal"><span class="pre">input_file</span></code>.</p>
 </div>
 <div class="section" id="model-parameters">
 <h2>Model Parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h2>
-<p>The change detection is parameterized by:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="19%" />
-<col width="11%" />
-<col width="70%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Data Type</th>
-<th class="head">Explanation</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">consecutive</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
-<td>Consecutive observations to trigger change</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">threshold</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
-<td>Test statistic critical value to trigger change</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">min_obs</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">int</span></tt></td>
-<td>Minimum observations per time segment in model</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">min_rmse</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
-<td>Minimum RMSE in test statistic for each model</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">design_matrix</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
-<td>Patsy style model specification for timeseries model</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">test_indices</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
-<td>Indices of Y to use in change detection</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">retrain_time</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
-<td>Number of days between model fit updates during monitoring period</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">screening</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
-<td>Method for screening timeseries for noise. Options are <tt class="docutils literal"><span class="pre">RLM</span></tt> and <tt class="docutils literal"><span class="pre">LOWESS</span></tt></td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">screening_crit</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
-<td>Critical value for detecting noise in multitemporal cloud/shadow screening</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">remove_noise</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
-<td>Delete observations during monitoring period if observation looks like noise</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dynamic_rmse</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
-<td>Vary RMSE as a function of day of year during monitoring phase</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lassocv</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
-<td>Use <tt class="docutils literal"><span class="pre">sklearn.linear_model.LassoLarsCV</span></tt> instead of <tt class="docutils literal"><span class="pre">glmnet</span></tt></td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">reverse</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
-<td>Run model backward in time, rather than forward</td>
-</tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">robust</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">bool</span></tt></td>
-<td>Return coefficients and RMSE from a robust linear model for each time segment</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">commission_alpha</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">float</span></tt></td>
-<td>Commission test alpha value for test; leave blank to ignore test</td>
-</tr>
-</tbody>
-</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This section is out of date for <cite>v0.5.0</cite> and requires re-writing</p>
+</div>
 </div>
 <div class="section" id="phenology">
 <h2>Phenology<a class="headerlink" href="#phenology" title="Permalink to this headline">¶</a></h2>
-<p>The option for long term mean phenology calculation is an optional addition to <cite>YATSM</cite>. As such, visit <a class="reference internal" href="phenology.html#guide-phenology"><em>the phenology guide page</em></a> for configuration options.</p>
+<p>The option for long term mean phenology calculation is an optional addition to <cite>YATSM</cite>. As such, visit <a class="reference internal" href="phenology.html#guide-phenology"><span>the phenology guide page</span></a> for configuration options.</p>
 </div>
 <div class="section" id="classification">
 <h2>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h2>
@@ -335,28 +227,28 @@ options include:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">training_data</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">training_data</span></code></td>
+<td><code class="docutils literal"><span class="pre">str</span></code></td>
 <td>Training data raster image containing labeled pixels</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mask_values</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">list</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">mask_values</span></code></td>
+<td><code class="docutils literal"><span class="pre">list</span></code></td>
 <td>Values within the training data image to mask or ignore</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">training_start</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">training_start</span></code></td>
+<td><code class="docutils literal"><span class="pre">str</span></code></td>
 <td>Earliest date that training data are applicable. Training data labels will be paired with models that begin at least before this date</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">training_end</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">training_end</span></code></td>
+<td><code class="docutils literal"><span class="pre">str</span></code></td>
 <td>Latest date that training data are applicable. Training data labels will be paired with models that end at least after this date</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">training_date_format</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
-<td>Format specification that maps <tt class="docutils literal"><span class="pre">training_start</span></tt> and <tt class="docutils literal"><span class="pre">training_end</span></tt> to a Python datetime object (e.g., <tt class="docutils literal"><span class="pre">%Y-%m-%d</span></tt>)</td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">training_date_format</span></code></td>
+<td><code class="docutils literal"><span class="pre">str</span></code></td>
+<td>Format specification that maps <code class="docutils literal"><span class="pre">training_start</span></code> and <code class="docutils literal"><span class="pre">training_end</span></code> to a Python datetime object (e.g., <code class="docutils literal"><span class="pre">%Y-%m-%d</span></code>)</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cache_xy</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">str</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">cache_xy</span></code></td>
+<td><code class="docutils literal"><span class="pre">str</span></code></td>
 <td>Filename used for caching paired X features and y training labels</td>
 </tr>
 </tbody>
@@ -365,98 +257,127 @@ options include:</p>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>An example template of the parameter file is located within
-<tt class="docutils literal"><span class="pre">examples/p022r049_example.ini</span></tt>:</p>
-<div class="highlight-ini"><div class="highlight"><pre><span class="c1"># Example configuration file for YATSM line runner</span>
+<code class="docutils literal"><span class="pre">examples/p013r030/p013r030.yaml</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># Example configuration file for YATSM line runner</span>
 <span class="c1">#</span>
 <span class="c1"># This configuration includes details about the dataset and how YATSM should</span>
 <span class="c1"># run</span>
 
 <span class="c1"># Version of config</span>
-<span class="k">[metadata]</span>
-<span class="na">version</span> <span class="o">=</span> <span class="s">0.4</span>
+<span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="s">&quot;0.5.0&quot;</span>
 
-<span class="c1"># Section for Dataset</span>
-<span class="k">[dataset]</span>
-<span class="c1"># Text file containing dates and images</span>
-<span class="na">input_file</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/yatsm/examples/p022r049_input.csv</span>
-<span class="c1"># Input date format</span>
-<span class="na">date_format</span> <span class="o">=</span> <span class="s">%Y%j</span>
-<span class="c1"># Output location</span>
-<span class="na">output</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/landsat_stack/p022r049/images/YATSM</span>
-<span class="c1"># Output file prefix (e.g., [prefix]_[line].npz)</span>
-<span class="na">output_prefix</span> <span class="o">=</span> <span class="s">yatsm_r</span>
-<span class="c1"># Total number of bands</span>
-<span class="na">n_bands</span> <span class="o">=</span> <span class="s">8</span>
-<span class="c1"># Mask band (e.g., Fmask)</span>
-<span class="na">mask_band</span> <span class="o">=</span> <span class="s">8</span>
-<span class="c1"># List of integer values to mask within the mask band</span>
-<span class="na">mask_values</span> <span class="o">=</span> <span class="s">2, 3, 4, 255</span>
-<span class="c1"># Valid range of non-mask band data</span>
-<span class="c1"># specify 1 range for all bands, or specify ranges for each band</span>
-<span class="na">valid_range</span> <span class="o">=</span> <span class="s">0, 10000</span>
-<span class="c1"># Indices for multi-temporal cloud masking (indexed on 1)</span>
-<span class="na">green_band</span> <span class="o">=</span> <span class="s">2</span>
-<span class="na">swir1_band</span> <span class="o">=</span> <span class="s">5</span>
-<span class="c1"># Use BIP image reader? If not, use GDAL to read in</span>
-<span class="na">use_bip_reader</span> <span class="o">=</span> <span class="s">true</span>
-<span class="c1"># Directory location for caching dataset lines</span>
-<span class="na">cache_line_dir</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/landsat_stack/p022r049/images/.yatsm_cache</span>
+<span class="l-Scalar-Plain">dataset</span><span class="p-Indicator">:</span>
+    <span class="c1"># Text file containing dates and images</span>
+    <span class="l-Scalar-Plain">input_file</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/p013r030/images.csv&quot;</span>
+    <span class="c1"># Input date format</span>
+    <span class="l-Scalar-Plain">date_format</span><span class="p-Indicator">:</span> <span class="s">&quot;%Y%j&quot;</span>
+    <span class="c1"># Output location</span>
+    <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/landsat_stack/p013r030/subset/YATSM&quot;</span>
+    <span class="c1"># Output file prefix (e.g., [prefix]_[line].npz)</span>
+    <span class="l-Scalar-Plain">output_prefix</span><span class="p-Indicator">:</span> <span class="s">&quot;yatsm_r&quot;</span>
+    <span class="c1"># Total number of bands</span>
+    <span class="l-Scalar-Plain">n_bands</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8</span>
+    <span class="c1"># Mask band (e.g., Fmask)</span>
+    <span class="l-Scalar-Plain">mask_band</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8</span>
+    <span class="c1"># List of integer values to mask within the mask band</span>
+    <span class="l-Scalar-Plain">mask_values</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">2</span><span class="p-Indicator">,</span> <span class="nv">3</span><span class="p-Indicator">,</span> <span class="nv">4</span><span class="p-Indicator">,</span> <span class="nv">255</span><span class="p-Indicator">]</span>
+    <span class="c1"># Valid range of non-mask band data</span>
+    <span class="c1"># specify 1 range for all bands, or specify ranges for each band</span>
+    <span class="l-Scalar-Plain">min_values</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="l-Scalar-Plain">max_values</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10000</span>
+    <span class="c1"># Indices for multi-temporal cloud masking (indexed on 1)</span>
+    <span class="l-Scalar-Plain">green_band</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2</span>
+    <span class="l-Scalar-Plain">swir1_band</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+    <span class="c1"># Use BIP image reader? If not, use GDAL to read in</span>
+    <span class="l-Scalar-Plain">use_bip_reader</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">False</span>
+    <span class="c1"># Directory location for caching dataset lines</span>
+    <span class="l-Scalar-Plain">cache_line_dir</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/landsat_stack/p013r030/subset/cache&quot;</span>
 
-<span class="c1"># Section for YATSM parameters</span>
-<span class="k">[YATSM]</span>
-<span class="na">consecutive</span> <span class="o">=</span> <span class="s">5</span>
-<span class="na">threshold</span> <span class="o">=</span> <span class="s">3</span>
-<span class="na">min_obs</span> <span class="o">=</span> <span class="s">16</span>
-<span class="na">min_rmse</span> <span class="o">=</span> <span class="s">150</span>
-<span class="c1"># Patsy style model specification for timeseries model</span>
-<span class="na">design_matrix</span> <span class="o">=</span> <span class="s">1 + x + harm(x, 1)</span>
-<span class="na">test_indices</span> <span class="o">=</span> <span class="s">2, 4, 5</span>
-<span class="c1"># Number of days between model fit updates during monitoring period</span>
-<span class="na">retrain_time</span> <span class="o">=</span> <span class="s">365.25</span>
-<span class="c1"># Multitemporal cloud/shadow screening algorithm and threshold</span>
-<span class="na">screening</span> <span class="o">=</span> <span class="s">RLM</span>
-<span class="na">screening_crit</span> <span class="o">=</span> <span class="s">400.0</span>
-<span class="c1"># Remove observation if no change has been detected, but first observation is</span>
-<span class="c1"># above threshold</span>
-<span class="na">remove_noise</span> <span class="o">=</span> <span class="s">True</span>
-<span class="na">dynamic_rmse</span> <span class="o">=</span> <span class="s">False</span>
-<span class="na">lassocv</span> <span class="o">=</span> <span class="s">False</span>
-<span class="na">reverse</span> <span class="o">=</span> <span class="s">False</span>
-<span class="na">robust</span> <span class="o">=</span> <span class="s">False</span>
-<span class="c1"># Commission test alpha value for test; leave blank to ignore test</span>
-<span class="na">commission_alpha</span> <span class="o">=</span>
+<span class="c1"># Parameters common to all timeseries analysis models within YATSM package</span>
+<span class="l-Scalar-Plain">YATSM</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">algorithm</span><span class="p-Indicator">:</span> <span class="s">&quot;CCDCesque&quot;</span>
+    <span class="l-Scalar-Plain">prediction</span><span class="p-Indicator">:</span> <span class="s">&quot;GLMNET_Lasso20&quot;</span>
+    <span class="l-Scalar-Plain">design_matrix</span><span class="p-Indicator">:</span> <span class="s">&quot;1</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">harm(x,</span><span class="nv"> </span><span class="s">1)</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">harm(x,</span><span class="nv"> </span><span class="s">2)&quot;</span>
+    <span class="l-Scalar-Plain">reverse</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">False</span>
+    <span class="l-Scalar-Plain">commission_alpha</span><span class="p-Indicator">:</span>
+    <span class="c1"># Re-fit each segment, adding new coefficients &amp; RMSE info to record</span>
+    <span class="l-Scalar-Plain">refit</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">prefix</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">robust</span><span class="p-Indicator">]</span>
+        <span class="l-Scalar-Plain">prediction</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">RLM</span><span class="p-Indicator">]</span>
+
+<span class="c1"># Parameters for CCDCesque algorithm -- referenced by &quot;algorithm&quot; key in YATSM</span>
+<span class="l-Scalar-Plain">CCDCesque</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">consecutive</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+    <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3.5</span>
+    <span class="l-Scalar-Plain">min_obs</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">24</span>
+    <span class="l-Scalar-Plain">min_rmse</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">150</span>
+    <span class="l-Scalar-Plain">test_indices</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">2</span><span class="p-Indicator">,</span> <span class="nv">3</span><span class="p-Indicator">,</span> <span class="nv">4</span><span class="p-Indicator">,</span> <span class="nv">5</span><span class="p-Indicator">]</span>
+    <span class="l-Scalar-Plain">retrain_time</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">365.25</span>
+    <span class="l-Scalar-Plain">screening</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">RLM</span>
+    <span class="l-Scalar-Plain">screening_crit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">400.0</span>
+    <span class="l-Scalar-Plain">slope_test</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">False</span>
+    <span class="l-Scalar-Plain">remove_noise</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">True</span>
+    <span class="l-Scalar-Plain">dynamic_rmse</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">False</span>
+
+<span class="c1"># Regression estimators</span>
+<span class="l-Scalar-Plain">LassoCV</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/LassoCV_n100_alpha_0-50.pkl&quot;</span>
+
+<span class="l-Scalar-Plain">Lasso20</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/Lasso_alpha20.pkl&quot;</span>
+
+<span class="l-Scalar-Plain">OLS</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/OLS.pkl&quot;</span>
+
+<span class="l-Scalar-Plain">GLMNET_LassoCV</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/glmnet_LassoCV_n50_lambda_0-35.pkl&quot;</span>
+
+<span class="l-Scalar-Plain">GLMNET_Lasso20</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/glmnet_Lasso_lambda_20.pkl&quot;</span>
+
+<span class="l-Scalar-Plain">RLM</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/rlm_maxiter10.pkl&quot;</span>
 
 <span class="c1"># Section for phenology fitting</span>
-<span class="k">[phenology]</span>
-<span class="c1"># Boolean for calculating phenology, or not</span>
-<span class="na">calc_pheno</span> <span class="o">=</span> <span class="s">False</span>
-<span class="c1"># Specification for dataset indices required for EVI based phenology monitoring</span>
-<span class="na">red_index</span> <span class="o">=</span> <span class="s">2</span>
-<span class="na">nir_index</span> <span class="o">=</span> <span class="s">3</span>
-<span class="na">blue_index</span> <span class="o">=</span> <span class="s">0</span>
-<span class="c1"># Scale factor for reflectance bands</span>
-<span class="na">scale</span> <span class="o">=</span> <span class="s">0.0001</span>
-<span class="c1"># You can also specify index of EVI if contained in dataset to override calculation</span>
-<span class="na">evi_index</span> <span class="o">=</span>
-<span class="na">evi_scale</span> <span class="o">=</span>
-<span class="c1"># Number of years to group together when normalizing EVI to upper and lower percentiles</span>
-<span class="na">year_interval</span> <span class="o">=</span> <span class="s">3</span>
-<span class="c1"># Upper and lower percentiles of EVI used for max/min scaling</span>
-<span class="na">q_min</span> <span class="o">=</span> <span class="s">10</span>
-<span class="na">q_max</span> <span class="o">=</span> <span class="s">90</span>
+<span class="l-Scalar-Plain">phenology</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">enable</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">False</span>
+    <span class="c1"># Specification for dataset indices required for EVI based phenology monitoring</span>
+    <span class="l-Scalar-Plain">red_index</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2</span>
+    <span class="l-Scalar-Plain">nir_index</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3</span>
+    <span class="l-Scalar-Plain">blue_index</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="c1"># Scale factor for reflectance bands</span>
+    <span class="l-Scalar-Plain">scale</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0.0001</span>
+    <span class="c1"># You can also specify index of EVI if contained in dataset to override calculation</span>
+    <span class="l-Scalar-Plain">evi_index</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">evi_scale</span><span class="p-Indicator">:</span>
+    <span class="c1"># Number of years to group together when normalizing EVI to upper and lower percentiles</span>
+    <span class="l-Scalar-Plain">year_interval</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3</span>
+    <span class="c1"># Upper and lower percentiles of EVI used for max/min scaling</span>
+    <span class="l-Scalar-Plain">q_min</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10</span>
+    <span class="l-Scalar-Plain">q_max</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">90</span>
+
+<span class="c1"># Section for segmentation</span>
+<span class="l-Scalar-Plain">segment</span><span class="p-Indicator">:</span>
+    <span class="c1"># Segmentation image</span>
+    <span class="l-Scalar-Plain">segmentation</span><span class="p-Indicator">:</span>
+    <span class="c1"># Resegmentation threshold (0 turns off resegmentation)</span>
+    <span class="l-Scalar-Plain">resegment_crit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+    <span class="c1"># Resegmentation size thresholds</span>
+    <span class="l-Scalar-Plain">resegment_minpix</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+    <span class="l-Scalar-Plain">resegment_maxpix</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">50</span>
 
 <span class="c1"># Section for training and classification</span>
-<span class="k">[classification]</span>
-<span class="c1"># Training data file</span>
-<span class="na">training_image</span> <span class="o">=</span> <span class="s">/home/ceholden/Documents/yatsm/examples/training_data.gtif</span>
-<span class="c1"># Training data masked values</span>
-<span class="na">roi_mask_values</span> <span class="o">=</span> <span class="s">0,255</span>
-<span class="c1"># Date range</span>
-<span class="na">training_start</span> <span class="o">=</span> <span class="s">1999-01-01</span>
-<span class="na">training_end</span> <span class="o">=</span> <span class="s">2001-01-01</span>
-<span class="na">training_date_format</span> <span class="o">=</span> <span class="s">%Y-%m-%d</span>
-<span class="c1"># Cache X feature input and y labels for training data image into file?</span>
-<span class="na">cache_training</span> <span class="o">=</span>
+<span class="l-Scalar-Plain">classification</span><span class="p-Indicator">:</span>
+    <span class="c1"># Training data file</span>
+    <span class="l-Scalar-Plain">training_image</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/training_data.gtif&quot;</span>
+    <span class="c1"># Training data masked values</span>
+    <span class="l-Scalar-Plain">roi_mask_values</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">0</span><span class="p-Indicator">,</span> <span class="nv">255</span><span class="p-Indicator">]</span>
+    <span class="c1"># Date range</span>
+    <span class="l-Scalar-Plain">training_start</span><span class="p-Indicator">:</span> <span class="s">&quot;1999-01-01&quot;</span>
+    <span class="l-Scalar-Plain">training_end</span><span class="p-Indicator">:</span> <span class="s">&quot;2001-01-01&quot;</span>
+    <span class="l-Scalar-Plain">training_date_format</span><span class="p-Indicator">:</span> <span class="s">&quot;%Y-%m-%d&quot;</span>
+    <span class="c1"># Cache X feature input and y labels for training data image into file?</span>
+    <span class="l-Scalar-Plain">cache_training</span><span class="p-Indicator">:</span>
 </pre></div>
 </div>
 </div>
@@ -468,10 +389,10 @@ options include:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="batch_interface.html" class="btn btn-neutral float-right" title="Batch Interface"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="batch_interface.html" class="btn btn-neutral float-right" title="Batch Interface" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="model_specification.html" class="btn btn-neutral" title="Timeseries Model Specification"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="model_specification.html" class="btn btn-neutral" title="Timeseries Model Specification" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -481,12 +402,13 @@ options include:</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -501,7 +423,7 @@ options include:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -510,7 +432,7 @@ options include:</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

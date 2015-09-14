@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.regression.recresid &mdash; YATSM 0.5.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="yatsm.regression" href="../regression.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../../../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#yatsm-installation">YATSM Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#developer-installation">Developer Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#platform-support">Platform Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#configuration-file">Configuration File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#phenology">Phenology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#classification">Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#missing-values">Missing Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_changes.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_changes.html#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/phenology.html#configuration">Configuration</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../regression.html">yatsm.regression</a> &raquo;</li>
+      
+    <li>yatsm.regression.recresid</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/recresid" class="fa fa-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for yatsm.regression.recresid</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">u&quot;&quot;&quot; Recursive residuals computation</span>
+
+<span class="sd">Citations:</span>
+<span class="sd">Brown, RL, J Durbin, and JM Evans. 1975. Techniques for Testing the Consistency</span>
+<span class="sd">    of Regression Relationships over Time. Journal of the Royal Statistical</span>
+<span class="sd">    Society. Series B (Methodological) 37 (2): 149-192.</span>
+
+<span class="sd">Judge George G., William E. Griffiths, R. Carter Hill, Helmut Lütkepohl,</span>
+<span class="sd">    and Tsoung-Chao Lee. 1985. The theory and practice of econometrics.</span>
+<span class="sd">    New York: Wiley.</span>
+<span class="sd">    ISBN: 978-0-471-89530-5</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="recresid"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.recresid.html#yatsm.regression.recresid.recresid">[docs]</a><span class="k">def</span> <span class="nf">recresid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">span</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return recursive residuals for y ~ X</span>
+
+<span class="sd">    For matrix :math:`X_j` (:math:`j x K`) of the first :math:`j` rows of</span>
+<span class="sd">    design matrix with :math:`K` features, calculate recursive residuals from</span>
+<span class="sd">    estimate of :math:`y_j` using :math:`\\boldsymbol{b}_j`, which is least</span>
+<span class="sd">    squared estimate of :math:`\\boldsymbol{\\beta}` based on the first</span>
+<span class="sd">    :math:`j` observations.</span>
+
+<span class="sd">    From Judge et al, 1985, chapter 5.5.2b (equation 5.5.13) and Brown, Durbin,</span>
+<span class="sd">    and Evans (1975) (equation 2):</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        e_j^* = \\frac{y_j - \\boldsymbol{x}_j^{\prime}\\boldsymbol{b}_{j-1}}</span>
+<span class="sd">                      {(1 + \\boldsymbol{x}_j^{\prime}S_{j-1}\\boldsymbol{x}_j)^{1/2}}</span>
+<span class="sd">              = \\frac{y_j - \\boldsymbol{x}_j^{\prime}\\boldsymbol{b}_j}</span>
+<span class="sd">                      {(1 - \\boldsymbol{x}_j^{\prime}S_j\\boldsymbol{x}_j)^{1/2}},</span>
+
+<span class="sd">        j = K + 1, K + 2, \ldots, T</span>
+
+<span class="sd">    A quick way of calculating :math:`\\boldsymbol{b}_j` and</span>
+<span class="sd">    :math:`\\boldsymbol{S}_j` is using an update formula (equation 5.5.14 and</span>
+<span class="sd">    5.5.15 in Judge et al; Equations 4 and 5 in Brown, Durbin, and Evans):</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        b_j = b_{j-1} + \\frac{S_{j-1}\\boldsymbol{x}_j(y_j - \\boldsymbol{x}_j^{\prime}\\boldsymbol{b}_{j-1})}</span>
+<span class="sd">                              {1 + \\boldsymbol{x}_j^{\prime}S_{j-1}x_j}</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        S_j = S_{j-1} -</span>
+<span class="sd">            \\frac{S_{j-1}\\boldsymbol{x}_j\\boldsymbol{x}_j^{\prime}S_{j-1}}</span>
+<span class="sd">                  {1 + \\boldsymbol{x}_j^{\prime}S_{j-1}\\boldsymbol{x}_j}</span>
+
+<span class="sd">    See `statsmodels` implementation, which this follows:</span>
+<span class="sd">    https://github.com/statsmodels/statsmodels/blob/88e67f22226bb56f947f5438782e3854d279af79/statsmodels/sandbox/stats/diagnostic.py#L1101</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        X (np.ndarray): 2D (n_features x n_obs) design matrix</span>
+<span class="sd">        y (np.ndarray): 1D independent variable</span>
+<span class="sd">        span (int, optional): minimum number of observations for initial</span>
+<span class="sd">            regression. If ``span`` is None, use the number of features in</span>
+<span class="sd">            ``X``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: array containing recursive residuals standardized by</span>
+<span class="sd">            prediction errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nobs</span><span class="p">,</span> <span class="n">nvars</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">span</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">span</span> <span class="o">=</span> <span class="n">nvars</span>
+
+    <span class="n">recresid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nobs</span><span class="p">))</span>
+    <span class="n">recvar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nobs</span><span class="p">))</span>
+
+    <span class="n">X0</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:</span><span class="n">span</span><span class="p">]</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:</span><span class="n">span</span><span class="p">]</span>
+
+    <span class="c"># Initial fit</span>
+    <span class="n">XTX_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X0</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">X0</span><span class="p">))</span>
+    <span class="n">XTY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X0</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y0</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">XTX_j</span><span class="p">,</span> <span class="n">XTY</span><span class="p">)</span>
+
+    <span class="n">yhat_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">span</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">recresid</span><span class="p">[</span><span class="n">span</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">span</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">yhat_j</span>
+    <span class="n">recvar</span><span class="p">[</span><span class="n">span</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">span</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                                  <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">XTX_j</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">span</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">span</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+        <span class="n">x_j</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">y_j</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+        <span class="c"># Prediction with previous beta</span>
+        <span class="n">yhat_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_j</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">resid_j</span> <span class="o">=</span> <span class="n">y_j</span> <span class="o">-</span> <span class="n">yhat_j</span>
+
+        <span class="c"># Update</span>
+        <span class="n">XTXx_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">XTX_j</span><span class="p">,</span> <span class="n">x_j</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">f_t</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_j</span><span class="p">,</span> <span class="n">XTXx_j</span><span class="p">)</span>
+        <span class="n">XTX_j</span> <span class="o">=</span> <span class="n">XTX_j</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">XTXx_j</span><span class="p">,</span> <span class="n">XTXx_j</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">f_t</span> <span class="c"># eqn 5.5.15</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">+</span> <span class="p">(</span><span class="n">XTXx_j</span> <span class="o">*</span> <span class="n">resid_j</span> <span class="o">/</span> <span class="n">f_t</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>  <span class="c"># eqn 5.5.14</span>
+
+        <span class="n">recresid</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">resid_j</span>
+        <span class="n">recvar</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_t</span>
+
+    <span class="n">recresid_scaled</span> <span class="o">=</span> <span class="n">recresid</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">recvar</span><span class="p">)</span>
+    <span class="n">sigma2</span> <span class="o">=</span> <span class="n">recresid_scaled</span><span class="p">[</span><span class="n">span</span><span class="p">:]</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">recresid_scaled</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2015, Chris Holden.
+      Last updated on Mon Sep 14 16:37:15 2015.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.5.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

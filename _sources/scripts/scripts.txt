@@ -9,10 +9,9 @@ The following are command line utilities include in the ``scripts/`` folder of t
    :maxdepth: 2
 
    gen_date_file
-   run_yatsm
-   line_yatsm
+   yatsm_pixel
+   yatsm_line
+   yatsm_train
+   yatsm_classify
    yatsm_changemap
    yatsm_map
-   train_yatsm
-   classify_yatsm
-

@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm package &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm package &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,10 +28,12 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -42,27 +44,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -102,16 +119,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -136,13 +154,15 @@
     <li>yatsm package</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="yatsm-package">
 <h1>yatsm package<a class="headerlink" href="#yatsm-package" title="Permalink to this headline">¶</a></h1>
@@ -150,6 +170,16 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.algorithms.html">yatsm.algorithms package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.algorithms.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.algorithms.ccdc.html">yatsm.algorithms.ccdc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.algorithms.postprocess.html">yatsm.algorithms.postprocess module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.algorithms.yatsm.html">yatsm.algorithms.yatsm module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.algorithms.html#module-yatsm.algorithms">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.classifiers.html">yatsm.classifiers package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.classifiers.html#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.classifiers.diagnostics.html">yatsm.classifiers.diagnostics module</a></li>
@@ -159,14 +189,36 @@
 <li class="toctree-l2"><a class="reference internal" href="yatsm.classifiers.html#module-yatsm.classifiers">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.cli.html">yatsm.cli package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.cache.html">yatsm.cli.cache module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.changemap.html">yatsm.cli.changemap module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.classify.html">yatsm.cli.classify module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.line.html">yatsm.cli.line module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.main.html">yatsm.cli.main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.map.html">yatsm.cli.map module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.options.html">yatsm.cli.options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.pixel.html">yatsm.cli.pixel module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.segment.html">yatsm.cli.segment module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.train.html">yatsm.cli.train module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.cli.html#module-yatsm.cli">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.html">yatsm.regression package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.regression.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.glmnet_fit.html">yatsm.regression.glmnet_fit module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.numba_accel.html">yatsm.regression.numba_accel module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.recresid.html">yatsm.regression.recresid module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.regression.robust_fit.html">yatsm.regression.robust_fit module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.regression.transforms.html">yatsm.regression.transforms module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.regression.html#module-yatsm.regression">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.segment.html">yatsm.segment package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.segment.html#module-yatsm.segment">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -187,7 +239,6 @@
 <li class="toctree-l1"><a class="reference internal" href="yatsm.utils.html">yatsm.utils module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.vegetation_indices.html">yatsm.vegetation_indices module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.version.html">yatsm.version module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.yatsm.html">yatsm.yatsm module</a></li>
 </ul>
 </div>
 </div>
@@ -206,12 +257,13 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -226,7 +278,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -235,7 +287,7 @@
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

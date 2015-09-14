@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.utils &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.utils &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,11 +28,13 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../../index.html"/>
+
+  
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -43,27 +45,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+        
+
+        
+          <a href="../../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -103,16 +120,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -139,58 +157,71 @@
     <li>yatsm.utils</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/utils.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/utils" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <h1>Source code for yatsm.utils</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
-<span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">log_yatsm</span> <span class="kn">import</span> <span class="n">logger</span>
 
 
 <span class="c"># JOB SPECIFIC FUNCTIONS</span>
-<div class="viewcode-block" id="calculate_lines"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.calculate_lines">[docs]</a><span class="k">def</span> <span class="nf">calculate_lines</span><span class="p">(</span><span class="n">job_number</span><span class="p">,</span> <span class="n">total_jobs</span><span class="p">,</span> <span class="n">nrow</span><span class="p">,</span> <span class="n">interlaced</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Calculate the lines this job processes given nrow, njobs, and job ID</span>
+<div class="viewcode-block" id="distribute_jobs"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.distribute_jobs">[docs]</a><span class="k">def</span> <span class="nf">distribute_jobs</span><span class="p">(</span><span class="n">job_number</span><span class="p">,</span> <span class="n">total_jobs</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">interlaced</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Assign `job_number` out of `total_jobs` a subset of `n` tasks</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      job_number (int): processor to distribute jobs to</span>
+<span class="sd">      job_number (int): 0-indexed processor to distribute jobs to</span>
 <span class="sd">      total_jobs (int): total number of processors running jobs</span>
-<span class="sd">      nrow (int): number of rows in image</span>
-<span class="sd">      interlaced (bool, optional): interlace line assignment (default: True)</span>
+<span class="sd">      n (int): number of tasks (e.g., lines in image, regions in segment)</span>
+<span class="sd">      interlaced (bool, optional): interlace job assignment (default: True)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      rows (np.ndarray): np.ndarray of rows to be processed</span>
+<span class="sd">      np.ndarray: np.ndarray of task IDs to be processed</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      ValueError: raise error if `job_number` and `total_jobs` specified</span>
+<span class="sd">        result in no jobs being assinged (happens if `job_number` and</span>
+<span class="sd">        `total_jobs` are both 1)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">interlaced</span><span class="p">:</span>
         <span class="n">assigned</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">while</span> <span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span> <span class="o">&lt;</span> <span class="n">nrow</span><span class="p">:</span>
-            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_number</span> <span class="o">+</span> <span class="n">total_jobs</span> <span class="o">*</span> <span class="n">assigned</span><span class="p">)</span>
             <span class="n">assigned</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nrow</span> <span class="o">/</span> <span class="n">total_jobs</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="n">total_jobs</span><span class="p">)</span>
         <span class="n">i_start</span> <span class="o">=</span> <span class="n">size</span> <span class="o">*</span> <span class="n">job_number</span>
         <span class="n">i_end</span> <span class="o">=</span> <span class="n">size</span> <span class="o">*</span> <span class="p">(</span><span class="n">job_number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i_start</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">i_end</span><span class="p">,</span> <span class="n">nrow</span><span class="p">))</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i_start</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">i_end</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">rows</span>
+    <span class="k">if</span> <span class="n">tasks</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s">&#39;No jobs assigned for job_number/total_jobs: {j}/{t}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">j</span><span class="o">=</span><span class="n">job_number</span><span class="p">,</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">total_jobs</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">tasks</span>
 
 </div>
 <div class="viewcode-block" id="get_output_name"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_output_name">[docs]</a><span class="k">def</span> <span class="nf">get_output_name</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
@@ -205,13 +236,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output&#39;</span><span class="p">],</span>
-                        <span class="s">&#39;{pref}{line}.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                            <span class="n">pref</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output_prefix&#39;</span><span class="p">],</span>
-                            <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">))</span>
+                        <span class="s">&#39;</span><span class="si">%s%s</span><span class="s">.npz&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;output_prefix&#39;</span><span class="p">],</span> <span class="n">line</span><span class="p">))</span>
 
 
 <span class="c"># IMAGE DATASET READING</span></div>
-<div class="viewcode-block" id="csvfile_to_dataset"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataset">[docs]</a><span class="k">def</span> <span class="nf">csvfile_to_dataset</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s">&#39;%Y-%j&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="csvfile_to_dataframe"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">csvfile_to_dataframe</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s">&#39;%Y%j&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return sorted filenames of images from input text file</span>
 
 <span class="sd">    Args:</span>
@@ -219,52 +248,24 @@
 <span class="sd">      date_format (str): format of dates in file</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      (ndarray, ndarray, ndarray): dates, sensor IDs, and filenames of stacked</span>
-<span class="sd">        images</span>
+<span class="sd">      pd.DataFrame: pd.DataFrame of dates, sensor IDs, and filenames</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Store index of date and image</span>
-    <span class="n">i_date</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">i_sensor</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">i_image</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
 
-    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">sensors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c"># Guess and convert date field</span>
+    <span class="n">date_col</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="k">if</span> <span class="s">&#39;date&#39;</span> <span class="ow">in</span> <span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">date_col</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Could not find date column in input file&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Multiple date columns found in input CSV file. &#39;</span>
+                       <span class="s">&#39;Using </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">date_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">date_col</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">date_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Opening image dataset file&#39;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">],</span> <span class="n">format</span><span class="o">=</span><span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">toordinal</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
-        <span class="c"># Figure out which index is for what</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_date</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Could not parse first column to ordinal date&#39;</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_sensor</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Could not parse second column to ordinal date&#39;</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not parse any columns to ordinal date&#39;</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Input dataset file: {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">input_file</span><span class="p">))</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Date format: {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">date_format</span><span class="p">))</span>
-                <span class="k">raise</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">i_date</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="n">i_sensor</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in image date, sensor, and filenames&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-            <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_date</span><span class="p">],</span> <span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">())</span>
-            <span class="n">sensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_sensor</span><span class="p">])</span>
-            <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i_image</span><span class="p">])</span>
-
-
-        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sensors</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df</span>
 
 </div>
 <div class="viewcode-block" id="get_image_IDs"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_image_IDs">[docs]</a><span class="k">def</span> <span class="nf">get_image_IDs</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
@@ -287,7 +288,7 @@
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Writing output to disk&#39;</span><span class="p">)</span>
 
-    <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="n">gdal_frmt</span><span class="p">)</span>
+    <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">gdal_frmt</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">nband</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -323,9 +324,7 @@
 
         <span class="k">if</span> <span class="n">band_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetDescription</span><span class="p">(</span><span class="n">band_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetMetadata</span><span class="p">({</span>
-                <span class="s">&#39;band_1&#39;</span><span class="p">:</span> <span class="n">band_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">})</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetMetadata</span><span class="p">({</span><span class="s">&#39;band_1&#39;</span><span class="p">:</span> <span class="n">band_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
 
     <span class="n">ds</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="n">image_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">())</span>
     <span class="n">ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">image_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">())</span>
@@ -360,16 +359,17 @@
     <span class="k">return</span> <span class="n">records</span>
 
 </div>
-<div class="viewcode-block" id="iter_records"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.iter_records">[docs]</a><span class="k">def</span> <span class="nf">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="iter_records"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.iter_records">[docs]</a><span class="k">def</span> <span class="nf">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">yield_filename</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Iterates over records, returning result NumPy array</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      records (list): List containing filenames of results</span>
 <span class="sd">      warn_on_empty (bool, optional): Log warning if result contained no</span>
 <span class="sd">        result records (default: False)</span>
+<span class="sd">      yield_filename (bool, optional): Yield the filename and the record</span>
 
 <span class="sd">    Yields:</span>
-<span class="sd">      np.ndarray: Result saved in record</span>
+<span class="sd">      np.ndarray or tuple: Result saved in record and the filename, if desired</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n_records</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
@@ -391,58 +391,10 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Could not find results in {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">r</span><span class="p">))</span>
             <span class="k">continue</span>
 
-        <span class="k">yield</span> <span class="n">rec</span>
-
-
-<span class="c"># CALCULATION UTILITIES</span></div>
-<span class="n">w</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">365.25</span>
-
-
-<div class="viewcode-block" id="make_X"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.make_X">[docs]</a><span class="k">def</span> <span class="nf">make_X</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Create X matrix of Fourier series style independent variables</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        x               base of independent variables - dates</span>
-<span class="sd">        freq            frequency of cosine/sin waves</span>
-<span class="sd">        intercept       include intercept in X matrix</span>
-
-<span class="sd">    Output:</span>
-<span class="sd">        X               matrix X of independent variables</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        call:</span>
-<span class="sd">            make_X(np.array([1, 2, 3]), [1, 2])</span>
-<span class="sd">        returns:</span>
-<span class="sd">            array([[ 1.        ,  1.        ,  1.        ],</span>
-<span class="sd">                   [ 1.        ,  2.        ,  3.        ],</span>
-<span class="sd">                   [ 0.99985204,  0.99940821,  0.99866864],</span>
-<span class="sd">                   [ 0.01720158,  0.03439806,  0.05158437],</span>
-<span class="sd">                   [ 0.99940821,  0.99763355,  0.99467811],</span>
-<span class="sd">                   [ 0.03439806,  0.06875541,  0.10303138]])</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">intercept</span><span class="p">:</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">x</span>
-
-    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">freq</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">)])</span>
-            <span class="p">])</span>
-        <span class="k">elif</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">X</span><span class="p">,</span>
-                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
-                                         <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">)])</span>
-                                <span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">X</span>
+        <span class="k">if</span> <span class="n">yield_filename</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">rec</span><span class="p">,</span> <span class="n">r</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">rec</span>
 
 
 <span class="c"># MISC UTILITIES</span></div>
@@ -478,12 +430,13 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -498,7 +451,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -507,7 +460,7 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

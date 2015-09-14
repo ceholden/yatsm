@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.reader module &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.reader module &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,10 +28,12 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -42,27 +44,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -102,16 +119,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -136,20 +154,22 @@
     <li>yatsm.reader module</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.reader.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.reader" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="module-yatsm.reader">
 <span id="yatsm-reader-module"></span><h1>yatsm.reader module<a class="headerlink" href="#module-yatsm.reader" title="Permalink to this headline">¶</a></h1>
 <p>Functions for reading timeseries data</p>
 <dl class="function">
 <dt id="yatsm.reader.find_stack_images">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">find_stack_images</tt><big>(</big><em>location, folder_pattern='L*', image_pattern='L*stack', date_index_start=9, date_index_end=16, date_format='%Y%j', ignore=['YATSM']</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#find_stack_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.find_stack_images" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.reader.</code><code class="descname">find_stack_images</code><span class="sig-paren">(</span><em>location, folder_pattern='L*', image_pattern='L*stack', date_index_start=9, date_index_end=16, date_format='%Y%j', ignore=['YATSM']</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/reader.html#find_stack_images"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.find_stack_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find and identify dates and filenames of Landsat image stacks</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -185,13 +205,13 @@ images located</p>
 
 <dl class="function">
 <dt id="yatsm.reader.get_image_attribute">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">get_image_attribute</tt><big>(</big><em>image_filename</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#get_image_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.get_image_attribute" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.reader.</code><code class="descname">get_image_attribute</code><span class="sig-paren">(</span><em>image_filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/reader.html#get_image_attribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.get_image_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use GDAL to open image and return some attributes</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image_filename</strong> (<em>string</em>) &#8211; image filename</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image_filename</strong> (<em>str</em>) &#8211; image filename</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> &#8211;
 nrow, ncol, nband, NumPy datatype</td>
@@ -203,8 +223,80 @@ nrow, ncol, nband, NumPy datatype</td>
 </dd></dl>
 
 <dl class="function">
+<dt id="yatsm.reader.read_image">
+<code class="descclassname">yatsm.reader.</code><code class="descname">read_image</code><span class="sig-paren">(</span><em>image_filename</em>, <em>bands=None</em>, <em>dtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/reader.html#read_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return raster image bands as a sequence of NumPy arrays</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image_filename</strong> (<em>str</em>) &#8211; Image filename</li>
+<li><strong>bands</strong> (<em>iterable, optional</em>) &#8211; A sequence of bands to read from image.
+If <cite>bands</cite> is None, function returns all bands in raster. Note that
+bands are indexed on 1 (default: None)</li>
+<li><strong>dtype</strong> (<em>np.dtype</em>) &#8211; NumPy datatype to use for image bands. If <cite>dtype</cite> is
+None, arrays are kept as the image datatype (default: None)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of NumPy arrays for each band specified</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code> &#8211;
+raise IOError if bands specified are not contained within raster</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code> &#8211;
+raised if GDAL encounters errors</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.reader.read_line">
+<code class="descclassname">yatsm.reader.</code><code class="descname">read_line</code><span class="sig-paren">(</span><em>line</em>, <em>images</em>, <em>image_IDs</em>, <em>dataset_config</em>, <em>ncol</em>, <em>nband</em>, <em>dtype</em>, <em>read_cache=False</em>, <em>write_cache=False</em>, <em>validate_cache=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/reader.html#read_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads in dataset from cache or images if required</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>line</strong> (<em>int</em>) &#8211; line to read in from images</li>
+<li><strong>images</strong> (<em>list</em>) &#8211; list of image filenames to read from</li>
+<li><strong>image_IDs</strong> (<em>iterable</em>) &#8211; list image identifying strings</li>
+<li><strong>dataset_config</strong> (<em>dict</em>) &#8211; dictionary of dataset configuration options</li>
+<li><strong>ncol</strong> (<em>int</em>) &#8211; number of columns</li>
+<li><strong>nband</strong> (<em>int</em>) &#8211; number of bands</li>
+<li><strong>dtype</strong> (<em>type</em>) &#8211; NumPy datatype</li>
+<li><strong>read_cache</strong> (<em>bool, optional</em>) &#8211; try to read from cache directory
+(default: False)</li>
+<li><strong>write_cache</strong> (<em>bool, optional</em>) &#8211; try to to write to cache directory
+(default: False)</li>
+<li><strong>validate_cache</strong> (<em>bool, optional</em>) &#8211; validate that cache data come from same
+images specified in <cite>images</cite> (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Y</strong> &#8211;
+3D array of image data (nband, n_image, n_cols)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="yatsm.reader.read_pixel_timeseries">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">read_pixel_timeseries</tt><big>(</big><em>files</em>, <em>px</em>, <em>py</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#read_pixel_timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_pixel_timeseries" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.reader.</code><code class="descname">read_pixel_timeseries</code><span class="sig-paren">(</span><em>files</em>, <em>px</em>, <em>py</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/reader.html#read_pixel_timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_pixel_timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns NumPy array containing timeseries values for one pixel</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -230,7 +322,7 @@ from one pixel</p>
 
 <dl class="function">
 <dt id="yatsm.reader.read_row_BIP">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">read_row_BIP</tt><big>(</big><em>filenames</em>, <em>row</em>, <em>size</em>, <em>dtype</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#read_row_BIP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_row_BIP" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.reader.</code><code class="descname">read_row_BIP</code><span class="sig-paren">(</span><em>filenames</em>, <em>row</em>, <em>size</em>, <em>dtype</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/reader.html#read_row_BIP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_row_BIP" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads in an entire row of data from every image</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -257,7 +349,7 @@ of data</p>
 
 <dl class="function">
 <dt id="yatsm.reader.read_row_GDAL">
-<tt class="descclassname">yatsm.reader.</tt><tt class="descname">read_row_GDAL</tt><big>(</big><em>filenames</em>, <em>row</em><big>)</big><a class="reference internal" href="../_modules/yatsm/reader.html#read_row_GDAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_row_GDAL" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.reader.</code><code class="descname">read_row_GDAL</code><span class="sig-paren">(</span><em>filenames</em>, <em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/reader.html#read_row_GDAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.reader.read_row_GDAL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads in an entire row of data from every image using GDAL</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -292,12 +384,13 @@ of data</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -312,7 +405,7 @@ of data</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -321,7 +414,7 @@ of data</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

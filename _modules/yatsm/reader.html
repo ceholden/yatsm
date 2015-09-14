@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.reader &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.reader &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,11 +28,13 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../../index.html"/>
+
+  
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -43,27 +45,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+        
+
+        
+          <a href="../../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -103,16 +120,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -139,26 +157,33 @@
     <li>yatsm.reader</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/reader.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/reader" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <h1>Source code for yatsm.reader</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot; Functions for reading timeseries data</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span><span class="p">,</span> <span class="n">gdal_array</span>
 
-<span class="kn">from</span> <span class="nn">log_yatsm</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cache</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">log_yatsm</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
 
 <span class="n">gdal</span><span class="o">.</span><span class="n">AllRegister</span><span class="p">()</span>
 <span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span>
@@ -168,7 +193,7 @@
     <span class="sd">&quot;&quot;&quot; Use GDAL to open image and return some attributes</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      image_filename (string): image filename</span>
+<span class="sd">      image_filename (str): image filename</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">      tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype</span>
@@ -188,6 +213,50 @@
         <span class="n">image_ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">nrow</span><span class="p">,</span> <span class="n">ncol</span><span class="p">,</span> <span class="n">nband</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="read_image"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_image">[docs]</a><span class="k">def</span> <span class="nf">read_image</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return raster image bands as a sequence of NumPy arrays</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      image_filename (str): Image filename</span>
+<span class="sd">      bands (iterable, optional): A sequence of bands to read from image.</span>
+<span class="sd">        If `bands` is None, function returns all bands in raster. Note that</span>
+<span class="sd">        bands are indexed on 1 (default: None)</span>
+<span class="sd">      dtype (np.dtype): NumPy datatype to use for image bands. If `dtype` is</span>
+<span class="sd">        None, arrays are kept as the image datatype (default: None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      list: list of NumPy arrays for each band specified</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      IOError: raise IOError if bands specified are not contained within raster</span>
+<span class="sd">      RuntimeError: raised if GDAL encounters errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_ReadOnly</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not read image {i}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">image_filename</span><span class="p">))</span>
+        <span class="k">raise</span>
+
+    <span class="k">if</span> <span class="n">bands</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterCount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&#39;Image {i} ({n} bands) does not contain bands &#39;</span>
+                          <span class="s">&#39;specified (requested {b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">i</span><span class="o">=</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">RasterCount</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">bands</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bands</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ds</span><span class="o">.</span><span class="n">RasterCount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dtype</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">gdal_array</span><span class="o">.</span><span class="n">GDALTypeCodeToNumericTypeCode</span><span class="p">(</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">output</span>
 
 </div>
 <div class="viewcode-block" id="read_pixel_timeseries"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_pixel_timeseries">[docs]</a><span class="k">def</span> <span class="nf">read_pixel_timeseries</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">):</span>
@@ -216,6 +285,71 @@
         <span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_ReadOnly</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nband</span><span class="p">):</span>
             <span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">ReadAsArray</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Y</span>
+
+</div>
+<div class="viewcode-block" id="read_line"><a class="viewcode-back" href="../../yatsm/yatsm.reader.html#yatsm.reader.read_line">[docs]</a><span class="k">def</span> <span class="nf">read_line</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">,</span> <span class="n">dataset_config</span><span class="p">,</span>
+              <span class="n">ncol</span><span class="p">,</span> <span class="n">nband</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span>
+              <span class="n">read_cache</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">write_cache</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">validate_cache</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reads in dataset from cache or images if required</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      line (int): line to read in from images</span>
+<span class="sd">      images (list): list of image filenames to read from</span>
+<span class="sd">      image_IDs (iterable): list image identifying strings</span>
+<span class="sd">      dataset_config (dict): dictionary of dataset configuration options</span>
+<span class="sd">      ncol (int): number of columns</span>
+<span class="sd">      nband (int): number of bands</span>
+<span class="sd">      dtype (type): NumPy datatype</span>
+<span class="sd">      read_cache (bool, optional): try to read from cache directory</span>
+<span class="sd">        (default: False)</span>
+<span class="sd">      write_cache (bool, optional): try to to write to cache directory</span>
+<span class="sd">        (default: False)</span>
+<span class="sd">      validate_cache (bool, optional): validate that cache data come from same</span>
+<span class="sd">        images specified in `images` (default: False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Y (np.ndarray): 3D array of image data (nband, n_image, n_cols)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">read_from_disk</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">cache_filename</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get_line_cache_name</span><span class="p">(</span>
+        <span class="n">dataset_config</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">line</span><span class="p">,</span> <span class="n">nband</span><span class="p">)</span>
+
+    <span class="n">Y_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nband</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">ncol</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">read_cache</span><span class="p">:</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">read_cache_file</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span>
+                                  <span class="n">image_IDs</span> <span class="k">if</span> <span class="n">validate_cache</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">Y_shape</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Read in Y from cache file&#39;</span><span class="p">)</span>
+            <span class="n">read_from_disk</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">elif</span> <span class="n">Y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">Y_shape</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s">&#39;Data from cache file does not meet size requested &#39;</span>
+                <span class="s">&#39;({y} versus {r})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">Y_shape</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">read_from_disk</span><span class="p">:</span>
+        <span class="c"># Read in Y</span>
+        <span class="k">if</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;use_bip_reader&#39;</span><span class="p">]:</span>
+            <span class="c"># Use BIP reader</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in data from disk using BIP reader&#39;</span><span class="p">)</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="n">read_row_BIP</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="p">(</span><span class="n">ncol</span><span class="p">,</span> <span class="n">nband</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Read in data just using GDAL</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in data from disk using GDAL&#39;</span><span class="p">)</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="n">read_row_GDAL</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Took {s}s to read in the data&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">write_cache</span> <span class="ow">and</span> <span class="n">read_from_disk</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Writing Y data to cache file {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">f</span><span class="o">=</span><span class="n">cache_filename</span><span class="p">))</span>
+        <span class="n">cache</span><span class="o">.</span><span class="n">write_cache_file</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Y</span>
 
@@ -473,12 +607,13 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -493,7 +628,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -502,7 +637,7 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

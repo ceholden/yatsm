@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.robust_fit &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.regression.robust_fit &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,11 +28,13 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../../../index.html"/>
+
+  
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../../../index.html"/>
         <link rel="up" title="yatsm.regression" href="../regression.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -43,27 +45,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../../../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+        
+
+        
+          <a href="../../../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -103,16 +120,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -141,13 +159,15 @@
     <li>yatsm.regression.robust_fit</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/robust_fit.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/robust_fit" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <h1>Source code for yatsm.regression.robust_fit</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -161,9 +181,11 @@
 <span class="sd">    http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.linalg</span>
+<span class="kn">import</span> <span class="nn">six</span>
 
 
 <span class="c"># Weight scaling methods</span>
@@ -172,8 +194,8 @@
 <span class="sd">    Returns weighting for each residual using bisquare weight function</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      resid (np.ndarray): residuals to be weighted</span>
-<span class="sd">      c (float): tuning constant for Tukey&#39;s Biweight (default: 4.685)</span>
+<span class="sd">        resid (np.ndarray): residuals to be weighted</span>
+<span class="sd">        c (float): tuning constant for Tukey&#39;s Biweight (default: 4.685)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        weight (ndarray): weights for residuals</span>
@@ -190,12 +212,12 @@
 <span class="sd">    Returns Median-Absolute-Deviation (MAD) for residuals</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      resid (np.ndarray): residuals</span>
-<span class="sd">      c (float): scale factor to get to ~standard normal (default: 0.6745)</span>
+<span class="sd">        resid (np.ndarray): residuals</span>
+<span class="sd">        c (float): scale factor to get to ~standard normal (default: 0.6745)</span>
 <span class="sd">                 (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      float: MAD &#39;robust&#39; variance estimate</span>
+<span class="sd">        float: MAD &#39;robust&#39; variance estimate</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        http://en.wikipedia.org/wiki/Median_absolute_deviation</span>
@@ -209,17 +231,17 @@
     <span class="k">return</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_weight_fit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_weight_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Apply a weighted OLS fit to data</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      y (ndarray): dependent variable</span>
-<span class="sd">      X (ndarray): independent variables</span>
-<span class="sd">      w (ndarray): observation weights</span>
+<span class="sd">        X (ndarray): independent variables</span>
+<span class="sd">        y (ndarray): dependent variable</span>
+<span class="sd">        w (ndarray): observation weights</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      tuple: coefficients, residual vector, and RSS</span>
+<span class="sd">        tuple: coefficients and residual vector</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
@@ -230,98 +252,152 @@
     <span class="n">beta</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">Xw</span><span class="p">,</span> <span class="n">yw</span><span class="p">)</span>
 
     <span class="n">resid</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
-    <span class="n">rss</span> <span class="o">=</span> <span class="p">(</span><span class="n">resid</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">beta</span><span class="p">,</span> <span class="n">resid</span><span class="p">,</span> <span class="n">rss</span>
+    <span class="k">return</span> <span class="n">beta</span><span class="p">,</span> <span class="n">resid</span>
 
 
 <span class="c"># Robust regression</span>
 <div class="viewcode-block" id="RLM"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM">[docs]</a><span class="k">class</span> <span class="nc">RLM</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Robust Linear Model using Iterative Reweighted Least Squares (RIRLS)</span>
+
 <span class="sd">    Perform robust fitting regression via iteratively reweighted least squares</span>
 <span class="sd">    according to weight function and tuning parameter.</span>
 
-<span class="sd">    Basically a clone from `statsmodels` that should be much faster.</span>
+<span class="sd">    Basically a clone from `statsmodels` that should be much faster and follows</span>
+<span class="sd">    the scikit-learn __init__/fit/predict paradigm.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      y (np.ndarray): dependent variable vector</span>
-<span class="sd">      X (np.ndarray): independent variable matrix</span>
-<span class="sd">      scale_est (callable): function for scaling residuals</span>
-<span class="sd">      tune (float): tuning constant for scale estimate</span>
+<span class="sd">        scale_est (callable): function for scaling residuals</span>
+<span class="sd">        tune (float): tuning constant for scale estimate</span>
+<span class="sd">        maxiter (int, optional): maximum number of iterations (default: 50)</span>
+<span class="sd">        tol (float, optional): convergence tolerance of estimate</span>
+<span class="sd">            (default: 1e-8)</span>
+<span class="sd">        scale_est (callable): estimate used to scale the weights</span>
+<span class="sd">            (default: `mad` for median absolute deviation)</span>
+<span class="sd">        scale_constant (float): normalization constant (default: 0.6745)</span>
+<span class="sd">        update_scale (bool, optional): update scale estimate for weights</span>
+<span class="sd">            across iterations (default: True)</span>
+<span class="sd">        M (callable): function for scaling residuals</span>
+<span class="sd">        tune (float): tuning constant for scale estimate</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">      y (np.ndarray): dependent variable</span>
-<span class="sd">      X (np.ndarray): independent variable design matrix</span>
-<span class="sd">      M (callable): function for scaling residuals</span>
-<span class="sd">      tune (float): tuning constant for scale estimate</span>
-<span class="sd">      coefs (np.ndarray): coefficients of fitted model</span>
-<span class="sd">      resid (np.ndarray): residuals of the fitted models (y - fitted values)</span>
-<span class="sd">      rss (float): Residual Sum of Squares (RSS) of model</span>
+<span class="sd">        coef_ (np.ndarray): 1D array of model coefficients</span>
+<span class="sd">        intercept_ (float): intercept</span>
+<span class="sd">        weights (np.ndarray): 1D array of weights for each observation from a</span>
+<span class="sd">            robust iteratively reweighted least squares</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">bisquare</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="mf">4.685</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">bisquare</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="mf">4.685</span><span class="p">,</span>
+                 <span class="n">scale_est</span><span class="o">=</span><span class="n">mad</span><span class="p">,</span> <span class="n">scale_constant</span><span class="o">=</span><span class="mf">0.6745</span><span class="p">,</span>
+                 <span class="n">update_scale</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">M</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tune</span> <span class="o">=</span> <span class="n">tune</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span> <span class="o">=</span> <span class="n">scale_est</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_constant</span> <span class="o">=</span> <span class="n">scale_constant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_scale</span> <span class="o">=</span> <span class="n">update_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span> <span class="o">=</span> <span class="n">maxiter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RLM.fit"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">scale_est</span><span class="o">=</span><span class="n">mad</span><span class="p">,</span> <span class="n">scale_constant</span><span class="o">=</span><span class="mf">0.6745</span><span class="p">,</span>
-            <span class="n">update_scale</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Fit model using iteratively reweighted least squares</span>
+<div class="viewcode-block" id="RLM.fit"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fit a model predicting y from X design matrix</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">          maxiter (int, optional): maximum number of iterations (default: 50)</span>
-<span class="sd">          tol (float, optional): convergence tolerance of estimate (default:</span>
-<span class="sd">            1e-8)</span>
-<span class="sd">          scale_est (callable): estimate used to scale the weights (default:</span>
-<span class="sd">            `mad` for median absolute deviation)</span>
-<span class="sd">          scale_constant (float): normalization constant (default: 0.6745)</span>
-<span class="sd">          update_scale (bool, optional): update scale estimate for weights</span>
-<span class="sd">            across iterations (default: True)</span>
+<span class="sd">            X (np.ndarray): 2D (n_obs x n_features) design matrix</span>
+<span class="sd">            y (np.ndarray): 1D independent variable</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          self</span>
+<span class="sd">            object: return `self` with model results stored for method</span>
+<span class="sd">                chaining</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span> <span class="o">=</span> <span class="n">scale_est</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rss</span> <span class="o">=</span> \
-            <span class="n">_weight_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">scale_constant</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">resid</span> <span class="o">=</span> <span class="n">_weight_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_constant</span><span class="p">)</span>
 
         <span class="n">iteration</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">converged</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="ow">not</span> <span class="n">converged</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="n">maxiter</span><span class="p">:</span>
-            <span class="n">_coefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rss</span> <span class="o">=</span> \
-                <span class="n">_weight_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">update_scale</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">scale_constant</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">converged</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">:</span>
+            <span class="n">_coef</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">(</span><span class="n">resid</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tune</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">resid</span> <span class="o">=</span> <span class="n">_weight_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_scale</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_constant</span><span class="p">)</span>
             <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">converged</span> <span class="o">=</span> <span class="n">_check_converge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">,</span> <span class="n">_coefs</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+            <span class="n">converged</span> <span class="o">=</span> <span class="n">_check_converge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">_coef</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 </div>
-<div class="viewcode-block" id="RLM.predict"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Return linear model prediction after it has been fitted</span>
+<div class="viewcode-block" id="RLM.predict"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Predict yhat using model</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">          X (np.ndarray, optional): user provided design matrix</span>
+<span class="sd">            X (np.ndarray): 2D (n_obs x n_features) design matrix</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          np.ndarray: yhat model predictions</span>
+<span class="sd">            np.ndarray: 1D yhat prediction</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span>
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">:</span><span class="se">\n</span><span class="s">&quot;</span>
+                <span class="s">&quot; * Coefficients: </span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span>
+                <span class="s">&quot; * Intercept = </span><span class="si">%.5f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                            <span class="n">np</span><span class="o">.</span><span class="n">array_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span>
+                                                         <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span><span class="p">)</span>
+
+    <span class="c"># SUPPORT CLONING VIA sklearn</span>
+<div class="viewcode-block" id="RLM.get_params"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return parameters for this estimator</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            deep (bool): return the parameters from parameters of this</span>
+<span class="sd">                estimator that are also estimators</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: parameter names mapped to their values</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Get our own __init__ signature</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__init__</span><span class="p">)</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c"># remove `self` from __init__</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">deep</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s">&#39;get_params&#39;</span><span class="p">):</span>
+                <span class="n">deep_items</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">key</span> <span class="o">+</span> <span class="s">&#39;__&#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">deep_items</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">params</span>
+</div>
+<div class="viewcode-block" id="RLM.set_params"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.set_params">[docs]</a>    <span class="k">def</span> <span class="nf">set_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set parameters for estimator</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params (dict): dict of parameter=value to set</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="n">_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_params</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid parameter </span><span class="si">%s</span><span class="s"> for </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                                 <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span>
 
 </div></div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
@@ -329,14 +405,14 @@
     <span class="kn">import</span> <span class="nn">timeit</span>
 
     <span class="n">setup</span> <span class="o">=</span> <span class="s">&#39;from __main__ import RLM; import statsmodels.api as sm; import numpy as np; np.random.seed(123456789); y = np.random.rand(1000); X = np.random.rand(1000, 4)&#39;</span>
-    <span class="n">my_rlm</span> <span class="o">=</span> <span class="s">&#39;my_rlm = RLM(y, X).fit()&#39;</span>
+    <span class="n">my_rlm</span> <span class="o">=</span> <span class="s">&#39;my_rlm = RLM().fit(X, y)&#39;</span>
     <span class="n">sm_rlm</span> <span class="o">=</span> <span class="s">&#39;sm_rlm = sm.RLM(y, X, M=sm.robust.norms.TukeyBiweight()).fit(conv=&quot;coefs&quot;)&#39;</span>
 
     <span class="n">ns</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">exec</span> <span class="n">setup</span> <span class="ow">in</span> <span class="n">ns</span>
     <span class="k">exec</span> <span class="n">my_rlm</span> <span class="ow">in</span> <span class="n">ns</span>
     <span class="k">exec</span> <span class="n">sm_rlm</span> <span class="ow">in</span> <span class="n">ns</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ns</span><span class="p">[</span><span class="s">&#39;my_rlm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">coefs</span><span class="p">,</span> <span class="n">ns</span><span class="p">[</span><span class="s">&#39;sm_rlm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ns</span><span class="p">[</span><span class="s">&#39;my_rlm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">ns</span><span class="p">[</span><span class="s">&#39;sm_rlm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">params</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s">&#39;Pass: Two RLM solutions produce the same answers&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">print</span><span class="p">(</span><span class="s">&#39;Error: Two RLM solutions do not produce the same answers&#39;</span><span class="p">)</span>
@@ -358,12 +434,13 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -378,7 +455,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -387,7 +464,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

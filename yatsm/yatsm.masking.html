@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.masking module &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.masking module &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,10 +28,12 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -42,27 +44,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -102,16 +119,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -136,19 +154,21 @@
     <li>yatsm.masking module</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.masking.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.masking" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="module-yatsm.masking">
 <span id="yatsm-masking-module"></span><h1>yatsm.masking module<a class="headerlink" href="#module-yatsm.masking" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="yatsm.masking.multitemp_mask">
-<tt class="descclassname">yatsm.masking.</tt><tt class="descname">multitemp_mask</tt><big>(</big><em>x</em>, <em>Y</em>, <em>n_year</em>, <em>crit=400</em>, <em>green=1</em>, <em>swir1=4</em>, <em>maxiter=10</em><big>)</big><a class="reference internal" href="../_modules/yatsm/masking.html#multitemp_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.multitemp_mask" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.masking.</code><code class="descname">multitemp_mask</code><span class="sig-paren">(</span><em>x</em>, <em>Y</em>, <em>n_year</em>, <em>crit=400</em>, <em>green=1</em>, <em>swir1=4</em>, <em>maxiter=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/masking.html#multitemp_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.multitemp_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multi-temporal masking using RLM</p>
 <p>Taken directly from CCDC (Zhu and Woodcock, 2014). This &#8220;temporal masking&#8221;
 procedure was ported from CCDC v9.3.</p>
@@ -161,8 +181,9 @@ procedure was ported from CCDC v9.3.</p>
 <li><strong>Y</strong> (<em>ndarray</em>) &#8211; matrix of observed spectra</li>
 <li><strong>n_year</strong> (<em>float</em>) &#8211; &#8220;number of years to mask&#8221;</li>
 <li><strong>crit</strong> (<em>float, optional</em>) &#8211; critical value for masking clouds/shadows</li>
-<li><strong>green</strong> (<em>int, optional</em>) &#8211; 0 indexed value for green band in Y</li>
-<li><strong>swir1</strong> (<em>int, optional</em>) &#8211; 0 indexed value for SWIR (~1.55-1.75um) band in Y</li>
+<li><strong>green</strong> (<em>int, optional</em>) &#8211; 0 indexed value for green band in Y (default: 1)</li>
+<li><strong>swir1</strong> (<em>int, optional</em>) &#8211; 0 indexed value for SWIR (~1.55-1.75um) band in Y
+(default: 4)</li>
 <li><strong>maxiter</strong> (<em>int, optional</em>) &#8211; maximum iterations for RLM fit</li>
 </ul>
 </td>
@@ -180,7 +201,7 @@ mask where False indicates values to be masked</p>
 
 <dl class="function">
 <dt id="yatsm.masking.smooth_mask">
-<tt class="descclassname">yatsm.masking.</tt><tt class="descname">smooth_mask</tt><big>(</big><em>x</em>, <em>Y</em>, <em>span</em>, <em>crit=400</em>, <em>green=1</em>, <em>swir1=4</em>, <em>maxiter=5</em><big>)</big><a class="reference internal" href="../_modules/yatsm/masking.html#smooth_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.smooth_mask" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.masking.</code><code class="descname">smooth_mask</code><span class="sig-paren">(</span><em>x</em>, <em>Y</em>, <em>span</em>, <em>crit=400</em>, <em>green=1</em>, <em>swir1=4</em>, <em>maxiter=5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/masking.html#smooth_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.smooth_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multi-temporal masking using LOWESS</p>
 <p>Taken directly from newer version of CCDC than Zhu and Woodcock, 2014. This
 &#8220;temporal masking&#8221; replaced the older method which used robust linear
@@ -202,8 +223,9 @@ models. This version uses a regular LOWESS instead of robust LOWESS</p>
 <li><strong>Y</strong> (<em>ndarray</em>) &#8211; matrix of observed spectra</li>
 <li><strong>span</strong> (<em>int</em>) &#8211; span of LOWESS</li>
 <li><strong>crit</strong> (<em>float, optional</em>) &#8211; critical value for masking clouds/shadows</li>
-<li><strong>green</strong> (<em>int, optional</em>) &#8211; 0 indexed value for green band in Y</li>
-<li><strong>swir1</strong> (<em>int, optional</em>) &#8211; 0 indexed value for SWIR (~1.55-1.75um) band in Y</li>
+<li><strong>green</strong> (<em>int, optional</em>) &#8211; 0 indexed value for green band in Y (default: 1)</li>
+<li><strong>swir1</strong> (<em>int, optional</em>) &#8211; 0 indexed value for SWIR (~1.55-1.75um) band in Y
+(default: 4)</li>
 <li><strong>maxiter</strong> (<em>int, optional</em>) &#8211; maximum increases to span when checking for
 NaN in LOWESS results</li>
 </ul>
@@ -227,7 +249,7 @@ need to impute missing data somehow...</dd>
 
 <dl class="function">
 <dt id="yatsm.masking.train_plot_debug">
-<tt class="descclassname">yatsm.masking.</tt><tt class="descname">train_plot_debug</tt><big>(</big><em>x</em>, <em>Y</em>, <em>mask</em>, <em>fit</em>, <em>band=4</em><big>)</big><a class="reference internal" href="../_modules/yatsm/masking.html#train_plot_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.train_plot_debug" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.masking.</code><code class="descname">train_plot_debug</code><span class="sig-paren">(</span><em>x</em>, <em>Y</em>, <em>mask</em>, <em>fit</em>, <em>band=4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/masking.html#train_plot_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.train_plot_debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>Training / historical period multitemporal cloud masking debug</p>
 </dd></dl>
 
@@ -243,12 +265,13 @@ need to impute missing data somehow...</dd>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -263,7 +286,7 @@ need to impute missing data somehow...</dd>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -272,7 +295,7 @@ need to impute missing data somehow...</dd>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.config_parser module &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.config_parser module &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,10 +28,12 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -42,27 +44,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -102,16 +119,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -136,42 +154,63 @@
     <li>yatsm.config_parser module</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.config_parser.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.config_parser" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="module-yatsm.config_parser">
 <span id="yatsm-config-parser-module"></span><h1>yatsm.config_parser module<a class="headerlink" href="#module-yatsm.config_parser" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="yatsm.config_parser.parse_algorithm_config">
-<tt class="descclassname">yatsm.config_parser.</tt><tt class="descname">parse_algorithm_config</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="../_modules/yatsm/config_parser.html#parse_algorithm_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config_parser.parse_algorithm_config" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="yatsm.config_parser.parse_classification_config">
-<tt class="descclassname">yatsm.config_parser.</tt><tt class="descname">parse_classification_config</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="../_modules/yatsm/config_parser.html#parse_classification_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config_parser.parse_classification_config" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="yatsm.config_parser.convert_config">
+<code class="descclassname">yatsm.config_parser.</code><code class="descname">convert_config</code><span class="sig-paren">(</span><em>cfg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/config_parser.html#convert_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config_parser.convert_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert some configuration values to different values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cfg</strong> (<em>dict</em>) &#8211; dict: dict of sub-dicts, each sub-dict containing
+configuration keys and values pertinent to a process or algorithm</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">configuration dict with some items converted to different objects</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211;
+raise KeyError if configuration file is not specified
+correctly</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="yatsm.config_parser.parse_config_file">
-<tt class="descclassname">yatsm.config_parser.</tt><tt class="descname">parse_config_file</tt><big>(</big><em>config_file</em><big>)</big><a class="reference internal" href="../_modules/yatsm/config_parser.html#parse_config_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config_parser.parse_config_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses config file into dictionary of attributes</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.config_parser.parse_dataset_config">
-<tt class="descclassname">yatsm.config_parser.</tt><tt class="descname">parse_dataset_config</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="../_modules/yatsm/config_parser.html#parse_dataset_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config_parser.parse_dataset_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses config for dataset section</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.config_parser.parse_phenology_config">
-<tt class="descclassname">yatsm.config_parser.</tt><tt class="descname">parse_phenology_config</tt><big>(</big><em>config</em><big>)</big><a class="reference internal" href="../_modules/yatsm/config_parser.html#parse_phenology_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config_parser.parse_phenology_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse phenology config</p>
+<code class="descclassname">yatsm.config_parser.</code><code class="descname">parse_config_file</code><span class="sig-paren">(</span><em>config_file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/config_parser.html#parse_config_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config_parser.parse_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse YAML config file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config_file</strong> (<em>str</em>) &#8211; path to YAML config file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict of sub-dicts, each sub-dict containing configuration keys
+and values pertinent to a process or algorithm. Pickled <cite>sklearn</cite>
+models will be loaded and returned as an object within the dict</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211;
+raise KeyError if configuration file is not specified
+correctly</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -186,12 +225,13 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -206,7 +246,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -215,7 +255,7 @@
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

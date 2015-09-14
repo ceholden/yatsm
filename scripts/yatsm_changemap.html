@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm_changemap.py &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm changemap &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,13 +28,15 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/>
-        <link rel="up" title="Command Line Utilities" href="scripts.html"/>
-        <link rel="next" title="yatsm_map.py" href="yatsm_map.html"/>
-        <link rel="prev" title="line_yatsm.py" href="line_yatsm.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/>
+        <link rel="up" title="Command Line Utilities" href="scripts.html"/>
+        <link rel="next" title="yatsm map" href="yatsm_map.html"/>
+        <link rel="prev" title="yatsm classify" href="yatsm_classify.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -45,27 +47,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -105,16 +122,17 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Command Line Utilities</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href=""><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href=""><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -138,46 +156,39 @@
       
           <li><a href="scripts.html">Command Line Utilities</a> &raquo;</li>
       
-    <li><cite>yatsm_changemap.py</cite></li>
+    <li><cite>yatsm changemap</cite></li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/scripts/yatsm_changemap.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/scripts/yatsm_changemap" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
-  <div class="section" id="yatsm-changemap-py">
-<span id="yatsm-changemap"></span><h1><cite>yatsm_changemap.py</cite><a class="headerlink" href="#yatsm-changemap-py" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="yatsm-changemap">
+<span id="id1"></span><h1><cite>yatsm changemap</cite><a class="headerlink" href="#yatsm-changemap" title="Permalink to this headline">¶</a></h1>
 <p>Create maps of change information from YATSM outupt:</p>
-<div class="highlight-text"><div class="highlight"><pre>$ yatsm_changemap.py -h
- Make changemap of YATSM output for a given date
+<div class="highlight-text"><div class="highlight"><pre>$ yatsm changemap -h
+Usage: yatsm changemap [OPTIONS] &lt;map_type&gt; &lt;start_date&gt; &lt;end_date&gt; &lt;output&gt;
 
-Usage:
-    yatsm_changemap.py [options] (first | last | num) &lt;start_date&gt; &lt;end_date&gt;
-        &lt;output&gt;
+  Examples: TODO
 
 Options:
-    --root &lt;dir&gt;            Root time series directory [default: ./]
-    -r --result &lt;dir&gt;       Directory of results [default: YATSM]
-    -i --image &lt;image&gt;      Example image [default: example_img]
-    --ndv &lt;NoDataValue&gt;     No data value for map [default: 0]
-    -f --format &lt;format&gt;    Output raster format [default: GTiff]
-    --date &lt;format&gt;         Input date format [default: %Y-%m-%d]
-    --warn-on-empty         Warn user when reading in empty result files
-    --version               Show program version
-    -v --verbose            Show verbose debugging messages
-    -h --help               Show help messages
-
-Change date options:
-    --magnitude             Add magnitude of change as extra image (pattern
-                                is [name]_mag[ext])
-    --out_date &lt;format&gt;     Output date format [default: %Y%j]
-
-Examples:
-    # TODO
+  --root &lt;directory&gt;        Root timeseries directory  [default: ./]
+  -r, --result &lt;directory&gt;  Directory of results  [default: YATSM]
+  -i, --image &lt;image&gt;       Example timeseries image  [default: example_img]
+  --date &lt;format&gt;           Date format  [default: %Y-%m-%d]
+  --ndv &lt;NoDataValue&gt;       Output NoDataValue  [default: -9999]
+  -f, --format &lt;driver&gt;     Output format driver  [default: GTiff]
+  --out_date &lt;format&gt;       Output date format  [default: %Y%j]
+  --warn-on-empty           Warn user when reading in empty results files
+  --magnitude               Add magnitude of change as extra image (pattern is
+                            [name]_mag[ext])
+  -h, --help                Show this message and exit.
 </pre></div>
 </div>
 </div>
@@ -188,10 +199,10 @@ Examples:
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="yatsm_map.html" class="btn btn-neutral float-right" title="yatsm_map.py"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="yatsm_map.html" class="btn btn-neutral float-right" title="yatsm map" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="line_yatsm.html" class="btn btn-neutral" title="line_yatsm.py"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="yatsm_classify.html" class="btn btn-neutral" title="yatsm classify" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -201,12 +212,13 @@ Examples:
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -221,7 +233,7 @@ Examples:
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -230,7 +242,7 @@ Examples:
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

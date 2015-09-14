@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.utils module &mdash; YATSM 0.4.0 documentation</title>
+  <title>yatsm.utils module &mdash; YATSM 0.5.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,10 +28,12 @@
   
 
   
-    <link rel="top" title="YATSM 0.4.0 documentation" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -42,27 +44,42 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> YATSM</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> YATSM
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtualenv">virtualenv</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#python-dependencies">Python Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#quick-installation">Quick Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#conda">Conda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#yatsm-installation">YATSM Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#virtual-machine-image">Virtual Machine Image</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
 </ul>
 </li>
@@ -102,16 +119,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/run_yatsm.html"><cite>run_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/line_yatsm.html"><cite>line_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm_changemap.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm_map.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/train_yatsm.html"><cite>train_yatsm.py</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/classify_yatsm.html"><cite>classify_yatsm.py</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
 </ul>
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -136,46 +154,21 @@
     <li>yatsm.utils module</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.utils.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.utils" class="fa fa-github"> Edit on GitHub</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="module-yatsm.utils">
 <span id="yatsm-utils-module"></span><h1>yatsm.utils module<a class="headerlink" href="#module-yatsm.utils" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="yatsm.utils.calculate_lines">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">calculate_lines</tt><big>(</big><em>job_number</em>, <em>total_jobs</em>, <em>nrow</em>, <em>interlaced=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#calculate_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.calculate_lines" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the lines this job processes given nrow, njobs, and job ID</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>job_number</strong> (<em>int</em>) &#8211; processor to distribute jobs to</li>
-<li><strong>total_jobs</strong> (<em>int</em>) &#8211; total number of processors running jobs</li>
-<li><strong>nrow</strong> (<em>int</em>) &#8211; number of rows in image</li>
-<li><strong>interlaced</strong> (<em>bool, optional</em>) &#8211; interlace line assignment (default: True)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rows</strong> &#8211;
-np.ndarray of rows to be processed</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.utils.csvfile_to_dataset">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">csvfile_to_dataset</tt><big>(</big><em>input_file</em>, <em>date_format='%Y-%j'</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#csvfile_to_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.csvfile_to_dataset" title="Permalink to this definition">¶</a></dt>
+<dt id="yatsm.utils.csvfile_to_dataframe">
+<code class="descclassname">yatsm.utils.</code><code class="descname">csvfile_to_dataframe</code><span class="sig-paren">(</span><em>input_file</em>, <em>date_format='%Y%j'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#csvfile_to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.csvfile_to_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return sorted filenames of images from input text file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -187,11 +180,10 @@ np.ndarray of rows to be processed</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dates, sensor IDs, and filenames of stacked
-images</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">pd.DataFrame of dates, sensor IDs, and filenames</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(ndarray, ndarray, ndarray)</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
 </td>
 </tr>
 </tbody>
@@ -200,7 +192,7 @@ images</p>
 
 <dl class="function">
 <dt id="yatsm.utils.date2index">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">date2index</tt><big>(</big><em>dates</em>, <em>d</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#date2index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.date2index" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.utils.</code><code class="descname">date2index</code><span class="sig-paren">(</span><em>dates</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#date2index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.date2index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns index of sorted array <cite>dates</cite> containing the date <cite>d</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -223,8 +215,40 @@ images</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="yatsm.utils.distribute_jobs">
+<code class="descclassname">yatsm.utils.</code><code class="descname">distribute_jobs</code><span class="sig-paren">(</span><em>job_number</em>, <em>total_jobs</em>, <em>n</em>, <em>interlaced=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#distribute_jobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.distribute_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign <cite>job_number</cite> out of <cite>total_jobs</cite> a subset of <cite>n</cite> tasks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>job_number</strong> (<em>int</em>) &#8211; 0-indexed processor to distribute jobs to</li>
+<li><strong>total_jobs</strong> (<em>int</em>) &#8211; total number of processors running jobs</li>
+<li><strong>n</strong> (<em>int</em>) &#8211; number of tasks (e.g., lines in image, regions in segment)</li>
+<li><strong>interlaced</strong> (<em>bool, optional</em>) &#8211; interlace job assignment (default: True)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray of task IDs to be processed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.ndarray</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211;
+raise error if <cite>job_number</cite> and <cite>total_jobs</cite> specified
+result in no jobs being assinged (happens if <cite>job_number</cite> and
+<cite>total_jobs</cite> are both 1)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="yatsm.utils.find_results">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">find_results</tt><big>(</big><em>location</em>, <em>pattern</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#find_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.find_results" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.utils.</code><code class="descname">find_results</code><span class="sig-paren">(</span><em>location</em>, <em>pattern</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#find_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.find_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create list of result files and return sorted</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -249,7 +273,7 @@ list of file paths for results found</p>
 
 <dl class="function">
 <dt id="yatsm.utils.get_image_IDs">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">get_image_IDs</tt><big>(</big><em>filenames</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#get_image_IDs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.get_image_IDs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.utils.</code><code class="descname">get_image_IDs</code><span class="sig-paren">(</span><em>filenames</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#get_image_IDs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.get_image_IDs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns image IDs for each filename (basename of dirname of file)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -267,7 +291,7 @@ list of file paths for results found</p>
 
 <dl class="function">
 <dt id="yatsm.utils.get_output_name">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">get_output_name</tt><big>(</big><em>dataset_config</em>, <em>line</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#get_output_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.get_output_name" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.utils.</code><code class="descname">get_output_name</code><span class="sig-paren">(</span><em>dataset_config</em>, <em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#get_output_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.get_output_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns output name for specified config and line number</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -292,13 +316,13 @@ output filename</p>
 
 <dl class="function">
 <dt id="yatsm.utils.is_integer">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">is_integer</tt><big>(</big><em>s</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#is_integer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.is_integer" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.utils.</code><code class="descname">is_integer</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#is_integer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.is_integer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if <cite>s</cite> is an integer</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="yatsm.utils.iter_records">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">iter_records</tt><big>(</big><em>records</em>, <em>warn_on_empty=False</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#iter_records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.iter_records" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.utils.</code><code class="descname">iter_records</code><span class="sig-paren">(</span><em>records</em>, <em>warn_on_empty=False</em>, <em>yield_filename=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#iter_records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.iter_records" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterates over records, returning result NumPy array</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -308,58 +332,21 @@ output filename</p>
 <li><strong>records</strong> (<em>list</em>) &#8211; List containing filenames of results</li>
 <li><strong>warn_on_empty</strong> (<em>bool, optional</em>) &#8211; Log warning if result contained no
 result records (default: False)</li>
+<li><strong>yield_filename</strong> (<em>bool, optional</em>) &#8211; Yield the filename and the record</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>np.ndarray</em> &#8211;
-Result saved in record</p>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>np.ndarray or tuple</em> &#8211;
+Result saved in record and the filename, if desired</p>
 </td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.utils.make_X">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">make_X</tt><big>(</big><em>x</em>, <em>freq</em>, <em>intercept=True</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#make_X"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.make_X" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create X matrix of Fourier series style independent variables</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>base of independent variables - dates</strong> (<em>x</em>) &#8211; </li>
-<li><strong>frequency of cosine/sin waves</strong> (<em>freq</em>) &#8211; </li>
-<li><strong>include intercept in X matrix</strong> (<em>intercept</em>) &#8211; </li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>Output:</dt>
-<dd>X               matrix X of independent variables</dd>
-</dl>
-<p class="rubric">Example</p>
-<dl class="docutils">
-<dt>call:</dt>
-<dd>make_X(np.array([1, 2, 3]), [1, 2])</dd>
-<dt>returns:</dt>
-<dd><dl class="first last docutils">
-<dt>array([[ 1.        ,  1.        ,  1.        ],</dt>
-<dd>[ 1.        ,  2.        ,  3.        ],
-[ 0.99985204,  0.99940821,  0.99866864],
-[ 0.01720158,  0.03439806,  0.05158437],
-[ 0.99940821,  0.99763355,  0.99467811],
-[ 0.03439806,  0.06875541,  0.10303138]])</dd>
-</dl>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="yatsm.utils.write_output">
-<tt class="descclassname">yatsm.utils.</tt><tt class="descname">write_output</tt><big>(</big><em>raster</em>, <em>output</em>, <em>image_ds</em>, <em>gdal_frmt</em>, <em>ndv</em>, <em>band_names=None</em><big>)</big><a class="reference internal" href="../_modules/yatsm/utils.html#write_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.write_output" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.utils.</code><code class="descname">write_output</code><span class="sig-paren">(</span><em>raster</em>, <em>output</em>, <em>image_ds</em>, <em>gdal_frmt</em>, <em>ndv</em>, <em>band_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#write_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.write_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write raster to output file</p>
 </dd></dl>
 
@@ -375,12 +362,13 @@ Result saved in record</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Thu 23 Apr 2015 05:44:41 PM EDT.
+      Last updated on Mon Sep 14 16:37:15 2015.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -395,7 +383,7 @@ Result saved in record</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.4.0',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -404,7 +392,7 @@ Result saved in record</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
