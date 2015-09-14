@@ -109,8 +109,7 @@ def _unpickle_predictor(pickle):
     # Load sklearn objects
     reg = joblib.load(pickle)
 
-    sklearn_attrs = ['fit', 'predict', 'get_params', 'set_params',  # methods
-                       'coef_', 'intercept_']  # attributes
+    sklearn_attrs = ['fit', 'predict', 'get_params', 'set_params']
     if all([m in dir(reg) for m in sklearn_attrs]):
         return reg
     else:
