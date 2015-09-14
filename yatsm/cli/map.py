@@ -47,7 +47,7 @@ WARN_ON_EMPTY = False
 @options.opt_format
 @click.option('--warn-on-empty', is_flag=True,
               help='Warn user when reading in empty results files')
-@click.option('--band', '-b', multiple=True, metavar='<band>',
+@click.option('--band', '-b', multiple=True, metavar='<band>', type=int,
               help='Bands to export for coefficient/prediction maps')
 @click.option('--coef', '-c', multiple=True, metavar='<coef>',
               type=click.Choice(design_coefs), default=('all', ),
@@ -81,8 +81,12 @@ def map(ctx, map_type, date, output,
 
     \b
     Examples:
-    > yatsm map --coef "intercept, slope" --band "3, 4, 5" --ndv -9999 coef
-    ... 2000-01-01 coef_map.gtif
+    > yatsm map --coef intercept --coef slope \
+    ... --band 3 --band 4 --band 5 --ndv -9999 \
+    ... coef 2000-01-01 coef_map.gtif
+
+    > yatsm map -c intercept -c slope -b 3 -b 4 -b 5 --ndv -9999 \
+    ... coef 2000-01-01 coef_map.gtif
 
     > yatsm map --date "%Y-%j" predict 2000-001 prediction.gtif
 
@@ -97,6 +101,8 @@ def map(ctx, map_type, date, output,
     except:
         logger.error('Could not open example image for reading')
         raise
+
+    date = date.toordinal()
 
     # Append underscore to prefix if not included
     if refit_prefix and not refit_prefix.endswith('_'):
