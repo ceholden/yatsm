@@ -32,7 +32,8 @@ def commission_test(model, alpha=0.001):
     .. math::
         \\frac{[RSS_r - (RSS_1 + RSS_2)] / k}{(RSS_1 + RSS_2) / (n - 2k)}
 
-    where
+    where:
+
         - :math:`RSS_u` is the RSS of the combined, or, restricted model
         - :math:`RSS_1` is the RSS of the first model
         - :math:`RSS_2` is the RSS of the second model

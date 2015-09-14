@@ -6,10 +6,16 @@ Submodules
 
 .. toctree::
 
-   yatsm.cli.cli
+   yatsm.cli.cache
+   yatsm.cli.changemap
+   yatsm.cli.classify
    yatsm.cli.line
    yatsm.cli.main
+   yatsm.cli.map
+   yatsm.cli.options
+   yatsm.cli.pixel
    yatsm.cli.segment
+   yatsm.cli.train
 
 Module contents
 ---------------

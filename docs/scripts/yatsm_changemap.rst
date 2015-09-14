@@ -1,9 +1,9 @@
 .. _yatsm_changemap:
 
 
-`yatsm_changemap.py`
+`yatsm changemap`
 --------------------
 
 Create maps of change information from YATSM outupt:
 
-.. command-output:: yatsm_changemap.py -h
+.. command-output:: yatsm changemap -h

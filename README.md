@@ -28,10 +28,12 @@ The simplest way of using YATSM would be the pixel-by-pixel command line interfa
 
 We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ceholden/landsat_stack) for this demonstration:
 
+``` bash
     > run_yatsm.py --consecutive=5 --threshold=3 --min_obs=16 \
     ... --freq=1 --min_rmse 100 --test_indices "2 4 5" --screening RLM \
     ... --plot_index=2 --plot_style xkcd \
     ... ../landsat_stack/p022r049/images/ 133 106
+```
 
 Produces:
     ![Timeseries](docs/media/double_cut_ts_b3.png)
@@ -46,7 +48,9 @@ This package requires an installation of [`GDAL`](http://gdal.org/), including t
 ### pip
 The basic dependencies for YATSM are included in the `requirements.txt` file which is  by PIP as follows:
 
+``` bash
     pip install -r requirements.txt
+```
 
 Additional dependencies are required for some timeseries analysis algorithms or for accelerating the computation in YATSM. These requirements are separate from the common base installation requirements so that YATSM may be more modular:
 
@@ -60,7 +64,9 @@ Additional dependencies are required for some timeseries analysis algorithms or 
 
 A complete installation of YATSM, including acceleration dependencies and additional timeseries analysis dependencies, may be installed using the `requirements/all.txt` file:
 
+``` bash
     pip install -r requirements/all.txt
+```
 
 ### Conda
 Requirements for YATSM may also be installed using [`conda`](http://conda.pydata.org/docs/), Python's cross-platform and platform agnostic binary package manager from [ContinuumIO](http://continuum.io/). [`conda`](http://conda.pydata.org/docs/) makes installation of Python packages, especially scientific packages, a breeze because it includes compiled library dependencies that remove the need for a compiler or pre-installed libraries.
@@ -69,7 +75,9 @@ Installation instructions for `conda` are available on their docs site [conda.py
 
 Since [`conda`](http://conda.pydata.org/docs/) makes installation so easy, installation through [`conda`](http://conda.pydata.org/docs/) will install all non-developer dependencies. Install YATSM using [`conda`](http://conda.pydata.org/docs/) into an isolated environment by using the `environment.yaml` file as follows:
 
+``` bash
     # Install
     conda env create -n yatsm -f environment.yaml
     # Activate
     source activate yatsm
+```

@@ -12,7 +12,6 @@ import sklearn.linear_model
 from .yatsm import YATSM
 from ..errors import TSLengthException
 from ..masking import smooth_mask, multitemp_mask
-from ..regression.glmnet_fit import GLMLasso
 from ..regression import robust_fit as rlm
 from ..utils import date2index
 

@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    yatsm.algorithms
     yatsm.classifiers
     yatsm.cli
     yatsm.regression
@@ -27,7 +28,6 @@ Submodules
    yatsm.utils
    yatsm.vegetation_indices
    yatsm.version
-   yatsm.yatsm
 
 Module contents
 ---------------

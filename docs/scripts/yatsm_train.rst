@@ -1,10 +1,9 @@
-.. _train_yatsm:
+.. _yatsm_train:
 
-`train_yatsm.py`
+`yatsm train`
 ----------------
 
 Train classifier predicting land cover for each time segment within YATSM
 output:
 
-.. command-output:: train_yatsm.py -h
-
+.. command-output:: yatsm train -h

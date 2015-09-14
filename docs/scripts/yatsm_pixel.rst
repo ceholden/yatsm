@@ -1,8 +1,8 @@
-.. _run_yatsm:
+.. _yatsm_pixel:
 
-`run_yatsm.py`
+`yatsm pixel`
 --------------
 
 Run YATSM for individual pixels with specified parameters:
 
-.. command-output:: run_yatsm.py -h
+.. command-output:: yatsm pixel -h

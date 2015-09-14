@@ -1,7 +1,7 @@
-yatsm.cli.cli module
+yatsm.cli.map module
 ====================
 
-.. automodule:: yatsm.cli.cli
+.. automodule:: yatsm.cli.map
     :members:
     :undoc-members:
     :show-inheritance:

@@ -28,7 +28,7 @@ class YATSM(object):
         * end (int): ending dates of timeseries segments
         * break (int): break dates of timeseries segments
         * coef (n x p double): number of bands x number of features
-            coefficients matrix for predictions
+          coefficients matrix for predictions
         * rmse (n double): Root Mean Squared Error for each band
         * px (int): pixel X coordinate
         * py (int): pixel Y coordinate

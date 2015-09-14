@@ -4,7 +4,7 @@
 Mapping Changes
 ===============
 
-To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the :ref:`yatsm_changemap.py <yatsm_changemap>`.
+To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the :ref:`yatsm changemap <yatsm_changemap>`.
 
 Examples
 ========
@@ -15,12 +15,12 @@ For example, consider these mapping situations:
 
     for y1 in $(seq 2000 2010); do
         y2=$(expr $y1 + 1)
-        yatsm_changemap.py first $y1-01-01 $y2-01-01 change_$y1-$y2.gtif
+        yatsm changemap first $y1-01-01 $y2-01-01 change_$y1-$y2.gtif
     done
 
 2. Create a map of the total number of changes, per pixel, for the 2000 to 2010 decade::
 
-    yatsm_changemap.py num 2000-01-01 2010-01-01 changenumber_2000-2010.gtif
+    yatsm changemap num 2000-01-01 2010-01-01 changenumber_2000-2010.gtif
 
 Docs TODO
 =========
