@@ -1,36 +1,38 @@
 language: python
+sudo: false
+cache: pip
 python:
     - "2.7"
+cache:
+  - apt
+  directories:
+    - $HOME/.cache/pip
 branches:
   only:
     - master
     - /^v[0-9].*$/
+addons:
+    apt:
+        packages:
+            - gfortran
 before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-2.2.2-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - ./miniconda.sh -b
-    - export PATH=$HOME/anaconda/bin:$PATH
+    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    - bash miniconda.sh -b -p $HOME/miniconda
+    - export PATH=$HOME/miniconda/bin:$PATH
+    - conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
     # Update conda
     - conda update --yes conda
-    # Add in Fortran compiler
-    - sudo apt-get install -y gfortran
 install:
     # Create conda matching requirements
-    - conda create --yes -n venv python=$TRAVIS_PYTHON_VERSION pip nose numpy scipy cython gdal scikit-learn statsmodels matplotlib
-    - source activate venv
-    # Add deps from binstar
-    # Add RPy2 for phenology
-    # - conda install -y -c https://conda.binstar.org/r rpy2
-    # Workaround for Fortran warnings -- install glmnet first and quietly
-    - "pip install -q git+git://github.com/ceholden/glmnet-python.git#egg=glmnet"
+    - conda env create -n test python=$TRAVIS_PYTHON_VERSION -f environment.yaml
+    - source activate test
     # Rest of dependencies
-    - "pip install -r requirements.txt"
-    - "pip install -r requirements-dev.txt"
+    - "pip install -r requirements/dev.txt"
     - "pip install pytest"
     # Install YATSM
     - "pip install -e ."
 script:
-    - py.test
+    - py.test tests/
     - coverage run --source yatsm -m py.test
 after_success:
     - pip install coveralls

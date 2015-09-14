@@ -6,7 +6,8 @@ Submodules
 
 .. toctree::
 
-   yatsm.regression.glmnet_fit
+   yatsm.regression.numba_accel
+   yatsm.regression.recresid
    yatsm.regression.robust_fit
    yatsm.regression.transforms
 

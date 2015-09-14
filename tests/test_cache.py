@@ -1,189 +1,145 @@
-#!/usr/bin/env python
-""" Tests for `yatsm.cache`
+""" Tests for yatsm.cache
 """
-import logging
 import os
-import unittest
+import tempfile
 
 import numpy as np
-
-from utils_testing import create_dir, remove_dir, TestStackDataset
+import pytest
 from yatsm import cache, reader
-from yatsm.log_yatsm import logger
 
-logger.setLevel(logging.DEBUG)
-
-
-class TestCache(TestStackDataset):
-
-    @classmethod
-    def setUpClass(cls):
-        """ Setup test data """
-        super(TestCache, cls).setUpClass()
-        # Setup a config dict with relevant info
-        cls.config = {}
-        cls.config['cache_line_dir'] = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'data', 'cache')
-
-        # Setup attributes for example cache dataset
-        cls.n_images = 447
-        cls.n_bands = 8
-        cls.n_row = 0
-
-        # Test output file
-        cls.test_file = os.path.join(cls.config['cache_line_dir'],
-                                     'yatsm_r0_n447_b8.npy.npz')
-        cls.test_data = np.load(cls.test_file)
-        cls.test_stack = 'data/subset'
-
-    def tearDown(self):
-        pass
-
-    def test_get_line_cache_name(self):
-        name = cache.get_line_cache_name(
-            self.config, self.n_images, self.n_row, self.n_bands)
-        self.assertEqual(name, self.test_file)
-
-    def test_get_line_cache_pattern_glob(self):
-        import glob
-        pattern = cache.get_line_cache_pattern(
-            self.n_row, self.n_bands, regex=False)
-
-        found = glob.glob('{d}/{p}'.format(
-            d=self.config['cache_line_dir'], p=pattern))[0]
-
-        self.assertEqual(found, self.test_file)
-
-    def test_get_line_cache_pattern_regex(self):
-        import re
-        pattern = cache.get_line_cache_pattern(
-            self.n_row, self.n_bands, regex=True)
-
-        found = [f for f in os.listdir(self.config['cache_line_dir'])
-                 if re.match(pattern, f)]
-        found = os.path.join(self.config['cache_line_dir'], found[0])
-
-        self.assertEqual(found, self.test_file)
-
-    def test_cache_permissions_readF_writeF(self):
-        # False / False
-        test_dir = 'test/test_f_f'
-        create_dir(test_dir, read=False, write=False)
-        self.assertEqual((False, False),
-                         cache.test_cache({'cache_line_dir': test_dir}))
-        remove_dir(test_dir)
-
-    def test_cache_permissions_readT_writeF(self):
-        # True / False
-        test_dir = 'test/test_t_f'
-        create_dir(test_dir, read=True, write=False)
-        self.assertEqual((True, False),
-                         cache.test_cache({'cache_line_dir': test_dir}))
-        remove_dir(test_dir)
-
-    def test_cache_permissions_readF_writeT(self):
-        # False / True
-        test_dir = 'test/test_f_t'
-        create_dir(test_dir, read=False, write=True)
-        self.assertEqual((False, True),
-                         cache.test_cache({'cache_line_dir': test_dir}))
-        remove_dir(test_dir)
-
-    def test_cache_permissions_readT_writeT(self):
-        # False / False
-        test_dir = 'test/test_t_t'
-        create_dir(test_dir, read=True, write=True)
-        self.assertEqual((True, True),
-                         cache.test_cache({'cache_line_dir': test_dir}))
-        remove_dir(test_dir)
-
-    def test_cache_permissions_create(self):
-        test_dir = 'test/'
-        self.assertEqual((True, True),
-                         cache.test_cache({'cache_line_dir': test_dir}))
-        remove_dir(test_dir)
-
-    def test_read_cache_file(self):
-        # Expect None from non-existent file
-        self.assertIsNone(cache.read_cache_file('asdf'))
-
-        # Expect correct data without image ID check
-        np.testing.assert_equal(self.test_data['Y'],
-                                cache.read_cache_file(self.test_file))
-
-    def test_read_cache_file_imageIDs(self):
-        # Expect None because image IDs won't match
-        image_IDs = self.test_data['image_IDs'][:-1]
-
-        self.assertIsNone(cache.read_cache_file(self.test_file, image_IDs))
-
-        # Expect correct data with image ID check
-        np.testing.assert_equal(
-            self.test_data['Y'],
-            cache.read_cache_file(self.test_file,
-                                  self.test_data['image_IDs']))
-
-    def test_write_cache_file(self):
-        cache.write_cache_file('test_write_1.npz',
-                               self.test_data['Y'],
-                               self.test_data['image_IDs'])
-        test = np.load('test_write_1.npz')
-        np.testing.assert_equal(test['Y'], self.test_data['Y'])
-        np.testing.assert_equal(test['image_IDs'], self.test_data['image_IDs'])
-        os.remove('test_write_1.npz')
-
-    def test_update_cache_file_delete_obs(self):
-        choice = np.random.choice(self.test_data['image_IDs'].size,
-                                  size=100, replace=False)
-        new_Y = self.test_data['Y'][:, choice, :]
-        new_image_IDs = self.test_data['image_IDs'][choice]
-
-        # For now, just use image_IDs as `images` since we won't be updating
-        # from images
-        cache.update_cache_file(new_image_IDs, new_image_IDs,
-                                self.test_file,
-                                'test_write_2.npz',
-                                0, reader.read_row_GDAL)
-
-        new_cache = np.load('test_write_2.npz')
-
-        np.testing.assert_equal(new_Y, new_cache['Y'])
-        np.testing.assert_equal(new_image_IDs, new_cache['image_IDs'])
-
-        os.remove('test_write_2.npz')
-
-    def test_update_cache_file_add_obs(self):
-        """ Grab a subset of test data and see if we get more data back """
-        # Presort and subset for comparison
-        sort_idx = np.argsort(self.test_data['image_IDs'])
-        test_Y = self.test_data['Y'][:, sort_idx, :]
-        test_IDs = self.test_data['image_IDs'][sort_idx]
-
-        size_1 = 100
-        size_2 = 200
-
-        sort_idx = np.argsort(self.stack_image_IDs)[:size_2]
-        stack_images = self.stack_images[sort_idx]
-        stack_IDs = self.stack_image_IDs[sort_idx]
-
-        # Create reduced dataset to add to
-        np.savez_compressed('test_write_3.npz',
-                            Y=test_Y[:, :size_1, :],
-                            image_IDs=test_IDs[:size_1])
-
-        # Write update and read back
-        cache.update_cache_file(stack_images, stack_IDs,
-                                'test_write_3.npz', 'test_write_new_3.npz',
-                                0, reader.read_row_GDAL)
-        updated = np.load('test_write_new_3.npz')
-
-        # Test and clean update
-        np.testing.assert_equal(test_Y[:, :size_2, :], updated['Y'])
-        np.testing.assert_equal(test_IDs[:size_2], updated['image_IDs'])
-
-        os.remove('test_write_3.npz')
-        os.remove('test_write_new_3.npz')
+cache_params = pytest.mark.parametrize('n_images,n_row,n_bands', [(447, 0, 8)])
 
 
-if __name__ == '__main__':
-    unittest.main()
+@cache_params
+def test_get_line_cache_name(cachedir, cachefile, n_images, n_row, n_bands):
+    cfg = dict(cache_line_dir=cachedir)
+    assert cachefile == cache.get_line_cache_name(cfg,
+                                                  n_images, n_row, n_bands)
+
+
+@cache_params
+def test_get_line_cache_pattern_glob(cachedir, cachefile,
+                                     n_images, n_row, n_bands):
+    import glob
+    pattern = cache.get_line_cache_pattern(n_row, n_bands, regex=False)
+    found = glob.glob('%s/%s' % (cachedir, pattern))[0]
+
+    assert found == cachefile
+
+
+@cache_params
+def test_get_line_cache_pattern_regex(cachedir, cachefile,
+                                      n_images, n_row, n_bands):
+    import re
+    pattern = cache.get_line_cache_pattern(n_row, n_bands, regex=True)
+
+    found = [f for f in os.listdir(cachedir) if re.match(pattern, f)]
+    found = os.path.join(cachedir, found[0])
+
+    assert found == cachefile
+
+
+def test_test_cache(mkdir_permissions):
+    # Test when cache dir exists already
+    path = mkdir_permissions(read=False, write=False)
+    assert (False, False) == cache.test_cache(dict(cache_line_dir=path))
+
+    path = mkdir_permissions(read=False, write=True)
+    assert (False, True) == cache.test_cache(dict(cache_line_dir=path))
+
+    path = mkdir_permissions(read=True, write=False)
+    assert (True, False) == cache.test_cache(dict(cache_line_dir=path))
+
+    path = mkdir_permissions(read=True, write=True)
+    assert (True, True) == cache.test_cache(dict(cache_line_dir=path))
+
+    # Test when cache dir doesn't exist
+    tmp = os.path.join(tempfile.tempdir,
+                       next(tempfile._get_candidate_names()) + '_yatsm')
+    read_write = cache.test_cache(dict(cache_line_dir=tmp))
+    os.removedirs(tmp)
+
+    assert (True, True) == read_write
+
+
+def test_read_cache_file(cachefile, example_cache):
+    assert None is cache.read_cache_file('asdf')
+
+    np.testing.assert_equal(example_cache['Y'],
+                            cache.read_cache_file(cachefile))
+
+
+def test_read_cache_file_imageIDs(cachefile, example_cache):
+    image_IDs = example_cache['image_IDs']
+    # Expect None since image IDs won't match
+    assert None is cache.read_cache_file(cachefile,
+                                         image_IDs[::-1])
+
+    np.testing.assert_equal(example_cache['Y'],
+                            cache.read_cache_file(cachefile, image_IDs))
+
+
+def test_write_cache_file(cachefile, example_cache):
+    cache.write_cache_file('test.npz',
+                           example_cache['Y'], example_cache['image_IDs'])
+    test = np.load('test.npz')
+    Y, image_IDs = test['Y'], test['image_IDs']
+    os.remove('test.npz')
+
+    np.testing.assert_equal(Y, example_cache['Y'])
+    np.testing.assert_equal(image_IDs, example_cache['image_IDs'])
+
+
+def test_update_cache_file_delete_obs(cachefile, example_cache):
+    choice = np.random.choice(example_cache['image_IDs'].size,
+                              size=100, replace=False)
+    new_Y = example_cache['Y'][:, choice, :]
+    new_image_IDs = example_cache['image_IDs'][choice]
+
+    # For now, just use image_IDs as `images` since we won't be updating
+    # from images
+    cache.update_cache_file(new_image_IDs, new_image_IDs,
+                            cachefile,
+                            'test.npz',
+                            0, reader.read_row_GDAL)
+    test = np.load('test.npz')
+    Y, image_IDs = test['Y'], test['image_IDs']
+    os.remove('test.npz')
+
+    np.testing.assert_equal(new_Y, Y)
+    np.testing.assert_equal(new_image_IDs, image_IDs)
+
+
+def test_update_cache_file_add_obs(cachefile, example_cache,
+                                   example_timeseries):
+    """ Grab a subset of test data and see if we get more data back """
+    path, stack_images, stack_image_IDs = example_timeseries
+    # Presort and subset for comparison
+    sort_idx = np.argsort(example_cache['image_IDs'])
+    test_Y = example_cache['Y'][:, sort_idx, :]
+    test_IDs = example_cache['image_IDs'][sort_idx]
+
+    size_1 = 100
+    size_2 = 200
+
+    sort_idx = np.argsort(stack_image_IDs)[:size_2]
+    stack_images = stack_images[sort_idx]
+    stack_IDs = stack_image_IDs[sort_idx]
+
+    # Create reduced dataset to add to
+    np.savez_compressed('test.npz',
+                        Y=test_Y[:, :size_1, :],
+                        image_IDs=test_IDs[:size_1])
+
+    # Write update and read back
+    cache.update_cache_file(stack_images, stack_IDs,
+                            'test.npz', 'test_new.npz',
+                            0, reader.read_row_GDAL)
+    updated = np.load('test_new.npz')
+
+    # Test and clean update
+    np.testing.assert_equal(test_Y[:, :size_2, :], updated['Y'])
+    np.testing.assert_equal(test_IDs[:size_2], updated['image_IDs'])
+
+    os.remove('test.npz')
+    os.remove('test_new.npz')

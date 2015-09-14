@@ -88,6 +88,8 @@ def plot(yatsm, band, freq, ylim=None):
       ylim (tuple): tuple of floats for y-axes limits
 
     """
+    raise Exception('This function is depricated in v0.5.0. Use YATSM object'
+                    ' for plotting')
     from utils import make_X
 
     dates = map(dt.fromordinal, yatsm.X[:, 1].astype(np.uint32))

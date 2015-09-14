@@ -9,7 +9,8 @@ except ImportError:
     import configparser
 import logging
 
-from sklearn_helper import RandomForestHelper
+from .sklearn_helper import RandomForestHelper
+from .diagnostics import kfold_scores, SpatialKFold, SpatialKFold_ROI
 
 logger = logging.getLogger('yatsm')
 

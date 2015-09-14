@@ -11,9 +11,9 @@ using the batch interface, make sure you already have a parameter file
 generated as described by :ref:`guide_model_config`.
 
 The batch interface which runs each line separately is
-``line_yatsm.py``. It's usage is:
+:ref:`yatsm line <yatsm_line>`. It's usage is:
 
-.. command-output:: line_yatsm.py -h
+.. command-output:: yatsm line -h
 
 Let's say our image stack contains 1,000 rows. If we use 50 total CPUs
 to process the image stack, then each CPU will be responsible for only
@@ -41,7 +41,7 @@ follows:
     $ njob=200
     $ for job in $(seq 1 $njob); do
         qsub -j y -V -l h_rt=24:00:00 -N yatsm_$job -b y \
-            $(which python) -u line_yatsm.py --resume -v config.ini $job $njob
+            $(which python) -u yatsm line --resume -v config.ini $job $njob
       done
 
 One useful tip is to optimize the use of the CPU nodes by first transforming the
@@ -60,5 +60,8 @@ specific request for computer nodes with fast ethernet speeds,
     $ njob=16
     $ for job in $(seq 1 $njob); do
         qsub -j y -V -l h_rt=24:00:00 -l eth_speed=10 -N yatsm_$job -b y \
-            $(which python) -u line_yatsm.py --resume --do-not-run -v config.ini $job $njob
+            $(which python) -u yatsm line --resume --do-not-run -v config.ini $job $njob
       done
+
+
+.. |yatsm_line| replace:: ``yatsm line <yatsm_line_>``

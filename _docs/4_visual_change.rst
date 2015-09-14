@@ -1,4 +1,0 @@
-Visualizing Changes
-===================
-
-#TODO

@@ -1,5 +1,5 @@
-Yet Another Timeseries Model (YATSM)
-------------------------------------
+# Yet Another Timeseries Model (YATSM)
+
 [![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=v0.4.0)](https://coveralls.io/r/ceholden/yatsm?branch=v0.4.0) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.17129.svg)](http://dx.doi.org/10.5281/zenodo.17129)
 
 ## About
@@ -28,36 +28,56 @@ The simplest way of using YATSM would be the pixel-by-pixel command line interfa
 
 We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ceholden/landsat_stack) for this demonstration:
 
+``` bash
     > run_yatsm.py --consecutive=5 --threshold=3 --min_obs=16 \
     ... --freq=1 --min_rmse 100 --test_indices "2 4 5" --screening RLM \
     ... --plot_index=2 --plot_style xkcd \
     ... ../landsat_stack/p022r049/images/ 133 106
+```
 
 Produces:
     ![Timeseries](docs/media/double_cut_ts_b3.png)
     ![Modeled Timeseries](docs/media/double_cut_ts_fitted_b3.png)
 
-## Requirements
-#### Main dependencies:
+## Installation
 
-    Python (2.7.x tested)
-    GDAL (1.10.0 tested)
+It is strongly encouraged that you install YATSM into an isolated environment, either using [`virtualenv`](https://virtualenv.pypa.io/en/latest/) for `pip` installs or a separate environment using [`conda`](http://conda.pydata.org/docs/), to avoid dependency conflicts with other software.
 
-#### Python dependencies:
-Listed below are the Python library requirements for running YATSM. The version numbers listed are the versions I've used for development, but I suspect the versions are flexible.
+This package requires an installation of [`GDAL`](http://gdal.org/), including the Python bindings. Note that [`GDAL`](http://gdal.org/) version 2.0 is not yet tested (it probably works, but I haven't tried GDAL 2.x), but recent 1.x versions (likely 1.8+) should work. [`GDAL`](http://gdal.org/) is not installable solely via `pip` and needs to be installed prior to following the `pip` instructions. If you follow the instructions for [`conda`](http://conda.pydata.org/docs/), you will not need to install `GDAL` on your own because [`conda`](http://conda.pydata.org/docs/) packages a compiled copy of the `GDAL` library (yet another reason to use [`conda`](http://conda.pydata.org/docs/)!).
 
-    cython >= 0.20.1
-    numpy >= 1.8.1
-    pandas >= 0.13.1
-    statsmodels >= 0.5.0
-    glmnet = 1.1-5 (see: https://github.com/dwf/glmnet-python)
-    scikit-learn >= 0.15.1
-    ggplot >= 0.5.8
-    docopt >= 0.6.1
-    patsy >= 0.3.0
+### pip
+The basic dependencies for YATSM are included in the `requirements.txt` file which is  by PIP as follows:
 
-These are listed in the `requirements.txt` file, which is usable by PIP as follows:
-
+``` bash
     pip install -r requirements.txt
+```
 
-The R statistical software environment and the `rpy2` Python to R interface are required for calculation of phenology metrics. You can find this requirement in `requirements-pheno.txt`.
+Additional dependencies are required for some timeseries analysis algorithms or for accelerating the computation in YATSM. These requirements are separate from the common base installation requirements so that YATSM may be more modular:
+
+* Long term mean phenological calculations from Melaas *et al.*, 2013
+    * Requires the R statistical software environment and the `rpy2` Python to R interface
+    * `pip install -r requirements/pheno.txt`
+* Computation acceleration
+    * GLMNET Fortran wrapper for accelerating Elastic Net or Lasso regularized regression
+    * Numba for speeding up computation through just in time compilation (JIT)
+    * `pip install -r requirements/accel.txt`
+
+A complete installation of YATSM, including acceleration dependencies and additional timeseries analysis dependencies, may be installed using the `requirements/all.txt` file:
+
+``` bash
+    pip install -r requirements/all.txt
+```
+
+### Conda
+Requirements for YATSM may also be installed using [`conda`](http://conda.pydata.org/docs/), Python's cross-platform and platform agnostic binary package manager from [ContinuumIO](http://continuum.io/). [`conda`](http://conda.pydata.org/docs/) makes installation of Python packages, especially scientific packages, a breeze because it includes compiled library dependencies that remove the need for a compiler or pre-installed libraries.
+
+Installation instructions for `conda` are available on their docs site [conda.pydata.org](http://conda.pydata.org/docs/get-started.html)
+
+Since [`conda`](http://conda.pydata.org/docs/) makes installation so easy, installation through [`conda`](http://conda.pydata.org/docs/) will install all non-developer dependencies. Install YATSM using [`conda`](http://conda.pydata.org/docs/) into an isolated environment by using the `environment.yaml` file as follows:
+
+``` bash
+    # Install
+    conda env create -n yatsm -f environment.yaml
+    # Activate
+    source activate yatsm
+```

@@ -1,46 +1,57 @@
 from __future__ import division
 
-import csv
 from datetime import datetime as dt
 import fnmatch
 import os
 import sys
 
 import numpy as np
+import pandas as pd
 
 from log_yatsm import logger
 
 
 # JOB SPECIFIC FUNCTIONS
-def calculate_lines(job_number, total_jobs, nrow, interlaced=True):
-    """ Calculate the lines this job processes given nrow, njobs, and job ID
+def distribute_jobs(job_number, total_jobs, n, interlaced=True):
+    """ Assign `job_number` out of `total_jobs` a subset of `n` tasks
 
     Args:
-      job_number (int): processor to distribute jobs to
+      job_number (int): 0-indexed processor to distribute jobs to
       total_jobs (int): total number of processors running jobs
-      nrow (int): number of rows in image
-      interlaced (bool, optional): interlace line assignment (default: True)
+      n (int): number of tasks (e.g., lines in image, regions in segment)
+      interlaced (bool, optional): interlace job assignment (default: True)
 
     Returns:
-      rows (np.ndarray): np.ndarray of rows to be processed
+      np.ndarray: np.ndarray of task IDs to be processed
+
+    Raises:
+      ValueError: raise error if `job_number` and `total_jobs` specified
+        result in no jobs being assinged (happens if `job_number` and
+        `total_jobs` are both 1)
 
     """
     if interlaced:
         assigned = 0
-        rows = []
+        tasks = []
 
-        while job_number + total_jobs * assigned < nrow:
-            rows.append(job_number + total_jobs * assigned)
+        while job_number + total_jobs * assigned < n:
+            tasks.append(job_number + total_jobs * assigned)
             assigned += 1
-        rows = np.array(rows)
+        tasks = np.asarray(tasks)
     else:
-        size = int(nrow / total_jobs) + 1
+        size = int(n / total_jobs)
         i_start = size * job_number
         i_end = size * (job_number + 1)
 
-        rows = np.arange(i_start, min(i_end, nrow))
+        tasks = np.arange(i_start, min(i_end, n))
 
-    return rows
+    if tasks.size == 0:
+        raise ValueError(
+            'No jobs assigned for job_number/total_jobs: {j}/{t}'.format(
+                j=job_number,
+                t=total_jobs))
+
+    return tasks
 
 
 def get_output_name(dataset_config, line):
@@ -55,13 +66,11 @@ def get_output_name(dataset_config, line):
 
     """
     return os.path.join(dataset_config['output'],
-                        '{pref}{line}.npz'.format(
-                            pref=dataset_config['output_prefix'],
-                            line=line))
+                        '%s%s.npz' % (dataset_config['output_prefix'], line))
 
 
 # IMAGE DATASET READING
-def csvfile_to_dataset(input_file, date_format='%Y-%j'):
+def csvfile_to_dataframe(input_file, date_format='%Y%j'):
     """ Return sorted filenames of images from input text file
 
     Args:
@@ -69,52 +78,24 @@ def csvfile_to_dataset(input_file, date_format='%Y-%j'):
       date_format (str): format of dates in file
 
     Returns:
-      (ndarray, ndarray, ndarray): dates, sensor IDs, and filenames of stacked
-        images
+      pd.DataFrame: pd.DataFrame of dates, sensor IDs, and filenames
 
     """
-    # Store index of date and image
-    i_date = 0
-    i_sensor = 1
-    i_image = 2
+    df = pd.read_csv(input_file)
 
-    dates = []
-    images = []
-    sensors = []
+    # Guess and convert date field
+    date_col = [i for i, n in enumerate(df.columns) if 'date' in n.lower()]
+    if not date_col:
+        raise KeyError('Could not find date column in input file')
+    if len(date_col) > 1:
+        logger.warning('Multiple date columns found in input CSV file. '
+                       'Using %s' % df.columns[date_col[0]])
+    date_col = df.columns[date_col[0]]
 
-    logger.debug('Opening image dataset file')
-    with open(input_file, 'rb') as f:
-        reader = csv.reader(f)
+    df[date_col] = pd.to_datetime(
+        df[date_col], format=date_format).map(lambda x: dt.toordinal(x))
 
-        # Figure out which index is for what
-        row = reader.next()
-
-        try:
-            dt.strptime(row[i_date], date_format).toordinal()
-        except:
-            logger.debug('Could not parse first column to ordinal date')
-            try:
-                dt.strptime(row[i_sensor], date_format).toordinal()
-            except:
-                logger.debug('Could not parse second column to ordinal date')
-                logger.error('Could not parse any columns to ordinal date')
-                logger.error('Input dataset file: {f}'.format(f=input_file))
-                logger.error('Date format: {f}'.format(f=date_format))
-                raise
-            else:
-                i_date = 1
-                i_sensor = 0
-
-        f.seek(0)
-
-        logger.debug('Reading in image date, sensor, and filenames')
-        for row in reader:
-            dates.append(dt.strptime(row[i_date], date_format).toordinal())
-            sensors.append(row[i_sensor])
-            images.append(row[i_image])
-
-
-        return (np.array(dates), np.array(sensors), np.array(images))
+    return df
 
 
 def get_image_IDs(filenames):
@@ -137,7 +118,7 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
     logger.debug('Writing output to disk')
 
-    driver = gdal.GetDriverByName(gdal_frmt)
+    driver = gdal.GetDriverByName(str(gdal_frmt))
 
     if len(raster.shape) > 2:
         nband = raster.shape[2]
@@ -173,9 +154,7 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
         if band_names is not None:
             ds.GetRasterBand(1).SetDescription(band_names[0])
-            ds.GetRasterBand(1).SetMetadata({
-                'band_1': band_names[0]
-            })
+            ds.GetRasterBand(1).SetMetadata({'band_1': band_names[0]})
 
     ds.SetProjection(image_ds.GetProjection())
     ds.SetGeoTransform(image_ds.GetGeoTransform())
@@ -246,57 +225,6 @@ def iter_records(records, warn_on_empty=False, yield_filename=False):
             yield rec, r
         else:
             yield rec
-
-
-# CALCULATION UTILITIES
-w = 2 * np.pi / 365.25
-
-
-def make_X(x, freq, intercept=True):
-    """ Create X matrix of Fourier series style independent variables
-
-    Args:
-        x               base of independent variables - dates
-        freq            frequency of cosine/sin waves
-        intercept       include intercept in X matrix
-
-    Output:
-        X               matrix X of independent variables
-
-    Example:
-        call:
-            make_X(np.array([1, 2, 3]), [1, 2])
-        returns:
-            array([[ 1.        ,  1.        ,  1.        ],
-                   [ 1.        ,  2.        ,  3.        ],
-                   [ 0.99985204,  0.99940821,  0.99866864],
-                   [ 0.01720158,  0.03439806,  0.05158437],
-                   [ 0.99940821,  0.99763355,  0.99467811],
-                   [ 0.03439806,  0.06875541,  0.10303138]])
-
-    """
-    if isinstance(x, int) or isinstance(x, float):
-        x = np.array(x)
-
-    if intercept:
-        X = np.array([np.ones_like(x), x])
-    else:
-        X = x
-
-    for f in freq:
-        if X.ndim == 2:
-            X = np.vstack([X, np.array([
-                np.cos(f * w * x),
-                np.sin(f * w * x)])
-            ])
-        elif X.ndim == 1:
-            X = np.concatenate((X,
-                                np.array([
-                                         np.cos(f * w * x),
-                                         np.sin(f * w * x)])
-                                ))
-
-    return X
 
 
 # MISC UTILITIES

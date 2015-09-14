@@ -1,10 +1,6 @@
-numpy>=1.8.0
-scipy>=0.14.0
-Cython>=0.20.1
-statsmodels>=0.5.0
-scikit-learn>=0.15.1
-git+git://github.com/ceholden/glmnet-python.git#egg=glmnet
-matplotlib>=1.4.2
-docopt>=0.6.2
-brewer2mpl>=1.4.1
-patsy>=0.3.0
+# By default just install the minimum requirements from "common"
+# Install requirements with pip as:
+#   pip install -r requirements.txt
+# Install requirements with conda as:
+#   conda create -n <name> --file requirements.txt
+-r requirements/common.txt

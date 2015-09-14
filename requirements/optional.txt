@@ -1,0 +1,4 @@
+# Phenology calculation requirements
+-r pheno.txt
+# Accelerating computation via Numba and GLMNET Fortran wrapper
+-r accel.txt

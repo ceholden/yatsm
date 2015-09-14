@@ -1,39 +1,31 @@
-import unittest
-
 import numpy as np
-
+import pytest
 from yatsm import utils
 
 
-class TestUtils(unittest.TestCase):
+@pytest.mark.parametrize('nrow,njob', [(793, 13), (700, 1), (700, 700)])
+def test_distribute_jobs_interlaced(nrow, njob):
+    assigned = []
+    for i in range(njob):
+        assigned.extend(utils.distribute_jobs(i, njob, nrow, interlaced=True))
 
-    def test_calculate_lines_interlaced(self):
-        nrow = 7937
-        total_jobs = 13
+    assigned = np.sort(np.asarray(assigned))
+    all_rows = np.arange(0, nrow)
+    np.testing.assert_equal(assigned, all_rows)
 
-        assigned = []
-        for i in xrange(total_jobs):
-            assigned.extend(utils.calculate_lines(i, total_jobs, nrow,
-                                                  interlaced=True))
 
-        assigned = np.sort(np.asarray(assigned))
-        all_rows = np.arange(0, nrow)
+@pytest.mark.parametrize('nrow,njob', [(793, 13), (700, 1), (700, 700)])
+def test_distribute_jobs_sequential(nrow, njob):
+    assigned = []
+    for i in range(njob):
+        assigned.extend(utils.distribute_jobs(i, njob, nrow, interlaced=False))
 
-        np.testing.assert_equal(assigned, all_rows)
+    assigned = np.sort(np.asarray(assigned))
+    all_rows = np.arange(0, nrow)
+    np.testing.assert_equal(assigned, all_rows)
 
-    def test_calculate_lines_sequential(self):
-        nrow = 7937
-        total_jobs = 13
 
-        assigned = []
-        for i in xrange(total_jobs):
-            assigned.extend(utils.calculate_lines(i, total_jobs, nrow,
-                                                  interlaced=False))
-
-        assigned = np.asarray(assigned)
-        all_rows = np.arange(0, nrow)
-
-        np.testing.assert_equal(assigned, all_rows)
-
-if __name__ == '__main__':
-    unittest.main()
+@pytest.mark.parametrize('nrow,njob', [(700, 1)])
+def test_distribute_jobs_sequential_onejob(nrow, njob):
+    with pytest.raises(ValueError):
+        utils.distribute_jobs(nrow, nrow, njob, interlaced=False)
