@@ -29,10 +29,7 @@ The simplest way of using YATSM would be the pixel-by-pixel command line interfa
 We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ceholden/landsat_stack) for this demonstration:
 
 ``` bash
-    > run_yatsm.py --consecutive=5 --threshold=3 --min_obs=16 \
-    ... --freq=1 --min_rmse 100 --test_indices "2 4 5" --screening RLM \
-    ... --plot_index=2 --plot_style xkcd \
-    ... ../landsat_stack/p022r049/images/ 133 106
+    > yatsm pixel --band 2 --style xkcd examples/p022r049/p022r049.yaml 133 106
 ```
 
 Produces:
