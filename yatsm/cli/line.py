@@ -97,6 +97,21 @@ def line(ctx, config, job_number, total_jobs,
     if cfg['YATSM']['reverse']:
         X = np.flipud(X)
 
+    # Create output metadata to save
+    md = cfg[cfg['YATSM']['algorithm']].copy()
+    md.update({
+        'algorithm': cfg['YATSM']['algorithm'],
+        'design': cfg['YATSM']['design_matrix'],
+        'design_matrix': X.design_info.column_name_indexes,
+        'prediction': cfg['YATSM']['prediction']
+    })
+    if cfg['phenology']['enable']:
+        md.update({
+            'year_interval': cfg['phenology']['year_interval'],
+            'q_min': cfg['phenology']['q_min'],
+            'q_max': cfg['phenology']['q_max']
+        })
+
     # Begin process
     start_time_all = time.time()
     for line in job_lines:
@@ -142,16 +157,13 @@ def line(ctx, config, job_number, total_jobs,
             _dates = dates[valid]
 
             # Run model
-            algo = cfg['YATSM']['algorithm']
             cls = cfg['YATSM']['algorithm_cls']
-            yatsm = cls(lm=cfg['YATSM']['prediction_object'], **cfg[algo])
+            yatsm = cls(lm=cfg['YATSM']['prediction_object'],
+                        **cfg[cfg['YATSM']['algorithm']])
             yatsm.px = col
             yatsm.py = line
 
             yatsm.fit(_X, _Y, _dates)
-
-            # Formulate save file metadata
-            md = cfg[algo].copy()
 
             # Postprocess
             if cfg['YATSM']['commission_alpha']:
@@ -169,7 +181,6 @@ def line(ctx, config, job_number, total_jobs,
                     year_interval=cfg['phenology']['year_interval'],
                     q_min=cfg['phenology']['q_min'],
                     q_max=cfg['phenology']['q_max'])
-                md.update(cfg['YATSM']['phenology'])
 
             output.extend(yatsm.record)
 
