@@ -118,7 +118,7 @@ def write_output(raster, output, image_ds, gdal_frmt, ndv, band_names=None):
 
     logger.debug('Writing output to disk')
 
-    driver = gdal.GetDriverByName(gdal_frmt)
+    driver = gdal.GetDriverByName(str(gdal_frmt))
 
     if len(raster.shape) > 2:
         nband = raster.shape[2]
