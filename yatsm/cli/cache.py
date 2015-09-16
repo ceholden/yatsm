@@ -28,17 +28,16 @@ logger = logging.getLogger('yatsm')
               help='Assign rows interlaced by job instead of sequentially')
 @click.pass_context
 def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
-    dataset_config, yatsm_config = parse_config_file(config)
+    cfg = parse_config_file(config)
 
-    if not os.path.isdir(dataset_config['cache_line_dir']):
-        os.makedirs(dataset_config['cache_line_dir'])
+    if not os.path.isdir(cfg['dataset']['cache_line_dir']):
+        os.makedirs(cfg['dataset']['cache_line_dir'])
 
-    dataset = csvfile_to_dataframe(dataset_config['input_file'],
-                                   date_format=dataset_config['date_format'])
-    images = dataset['images']
-    image_IDs = get_image_IDs(images)
+    df = csvfile_to_dataframe(cfg['dataset']['input_file'],
+                              cfg['dataset']['date_format'])
+    df['image_IDs'] = get_image_IDs(df['filename'])
 
-    nrow, ncol, nband, dtype = reader.get_image_attribute(images[0])
+    nrow, ncol, nband, dtype = reader.get_image_attribute(df['filename'][0])
 
     # Determine lines to work on
     job_lines = distribute_jobs(job_number, total_jobs, nrow,
@@ -46,7 +45,7 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Determine file reader
-    if dataset_config['use_bip_reader']:
+    if cfg['dataset']['use_bip_reader']:
         logger.debug('Reading in data from disk using BIP reader')
         image_reader = reader.read_row_BIP
         image_reader_kwargs = {'size': (ncol, nband),
@@ -60,17 +59,17 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
     previous_cache = None
     if update_pattern:
         previous_cache = fnmatch.filter(
-            os.listdir(dataset_config['cache_line_dir']), update_pattern)
+            os.listdir(cfg['dataset']['cache_line_dir']), update_pattern)
 
         if not previous_cache:
-            logger.warning('Could not find cache files to update with pattern'
-                           '{p}'.format(p=update_pattern))
+            logger.warning('Could not find cache files to update with pattern '
+                           '%s' % update_pattern)
         else:
-            logger.debug('Found {n} previously cached files to update'.format(
-                n=len(previous_cache)))
+            logger.debug('Found %s previously cached files to update' %
+                         len(previous_cache))
 
     for job_line in job_lines:
-        cache_filename = get_line_cache_name(dataset_config, len(images),
+        cache_filename = get_line_cache_name(cfg['dataset'], len(df),
                                              job_line, nband)
         logger.debug('Caching line {l} to {f}'.format(
             l=job_line, f=cache_filename))
@@ -89,27 +88,29 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
             elif len(potential) > 1:
                 logger.info('Found more than one previous cache file for '
                             'line {l}. Keeping first'.format(l=job_line))
-                update = os.path.join(dataset_config['cache_line_dir'],
+                update = os.path.join(cfg['dataset']['cache_line_dir'],
                                       potential[0])
             else:
-                update = os.path.join(dataset_config['cache_line_dir'],
+                update = os.path.join(cfg['dataset']['cache_line_dir'],
                                       potential[0])
 
             logger.info('Updating from cache file {f}'.format(f=update))
 
         if update:
-            update_cache_file(images, image_IDs, update, cache_filename,
+            update_cache_file(df['filename'], df['image_IDs'],
+                              update, cache_filename,
                               job_line, image_reader, image_reader_kwargs)
         else:
-            if dataset_config['use_bip_reader']:
+            if cfg['dataset']['use_bip_reader']:
                 # Use BIP reader
                 logger.debug('Reading in data from disk using BIP reader')
-                Y = reader.read_row_BIP(images, job_line, (ncol, nband), dtype)
+                Y = reader.read_row_BIP(df['filename'], job_line,
+                                        (ncol, nband), dtype)
             else:
                 # Read in data just using GDAL
                 logger.debug('Reading in data from disk using GDAL')
-                Y = reader.read_row_GDAL(images, job_line)
-            write_cache_file(cache_filename, Y, image_IDs)
+                Y = reader.read_row_GDAL(df['filename'], job_line)
+            write_cache_file(cache_filename, Y, df['image_IDs'])
 
         logger.debug('Took {s}s to cache the data'.format(
             s=round(time.time() - start_time, 2)))
