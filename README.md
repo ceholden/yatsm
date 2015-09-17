@@ -1,6 +1,6 @@
 # Yet Another Timeseries Model (YATSM)
 
-[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=v0.4.0)](https://coveralls.io/r/ceholden/yatsm?branch=v0.4.0) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.17129.svg)](http://dx.doi.org/10.5281/zenodo.17129)
+[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=v0.4.0)](https://coveralls.io/r/ceholden/yatsm?branch=v0.4.0) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.17129.svg)](http://dx.doi.org/10.5281/zenodo.17129) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ceholden/yatsm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 
 ## About
 The Yet Another TimeSeries Model (YATSM) algorithm is designed to monitor land
