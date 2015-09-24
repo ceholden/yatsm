@@ -11,6 +11,7 @@ except ImportError:
     from scandir import walk
 
 import numpy as np
+import pandas as pd
 import pytest
 
 here = os.path.dirname(__file__)
@@ -49,6 +50,16 @@ def example_cache(request):
 @pytest.fixture(scope='session')
 def example_data(request):
     return np.load(example_datafile)
+
+
+@pytest.fixture(scope='function')
+def airquality(request):
+    airquality = pd.read_csv(os.path.join(here, 'data', 'airquality.csv'))
+    airquality.columns = ['Unnamed', 'Ozone', 'SolarR', 'Wind',
+                          'Temp', 'Month', 'Day']
+    airquality = airquality.dropna()
+
+    return airquality
 
 
 # EXAMPLE CACHE DATA
