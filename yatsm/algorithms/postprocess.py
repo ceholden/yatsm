@@ -55,7 +55,7 @@ def commission_test(model, alpha=0.001):
     if model.record.size == 1:
         return model.record
 
-    k = model.n_coef
+    k = model.record[0]['coef'].shape[0]
 
     models = []
     merged = False
