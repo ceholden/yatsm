@@ -1,10 +1,12 @@
+import difflib
+import os
+
 import numpy as np
-import sklearn.linear_model
+import six
 import sklearn.externals.joblib as joblib
 import yaml
 
 from . import algorithms
-from .log_yatsm import logger
 
 
 def convert_config(cfg):
@@ -68,6 +70,7 @@ def parse_config_file(config_file):
     """
     with open(config_file) as f:
         cfg = yaml.safe_load(f)
+    cfg = expand_envvars(cfg)
 
     # Ensure algorithm & prediction sections are specified
     if 'YATSM' not in cfg:
@@ -117,3 +120,34 @@ def _unpickle_predictor(pickle):
                              ' objects must define the following attributes:\n'
                              '%s'
                              % (pickle, ', '.join(sklearn_attrs)))
+
+
+def expand_envvars(d):
+    """ Recursively convert lookup that look like environment vars in a dict
+
+    This function things that environmental variables are values that begin
+    with '$' and are evaluated with ``os.path.expandvars``. No exception will
+    be raised if an environment variable is not set.
+
+    Args:
+        d (dict): expand environment variables used in the values of this
+            dictionary
+
+    Returns:
+        dict: input dictionary with environment variables expanded
+
+    """
+    _d = d.copy()
+    for k, v in six.iteritems(_d):
+        if isinstance(v, dict):
+            _d[k] = expand_envvars(v)
+        elif isinstance(v, str):
+            _d[k] = os.path.expandvars(v)
+        elif isinstance(v, (list, tuple)):
+            n_v = []
+            for _v in v:
+                if isinstance(_v, str):
+                    _v = os.path.expandvars(_v)
+                n_v.append(_v)
+            _d[k] = n_v
+    return _d
