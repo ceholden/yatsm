@@ -1,4 +1,4 @@
-import difflib
+import logging
 import os
 
 import numpy as np
@@ -7,6 +7,9 @@ import sklearn.externals.joblib as joblib
 import yaml
 
 from . import algorithms
+from .regression.packaged import find_packaged_regressor, packaged_regressions
+
+logger = logging.getLogger('yatsm')
 
 
 def convert_config(cfg):
@@ -85,9 +88,20 @@ def parse_config_file(config_file):
 
     if 'prediction' not in cfg['YATSM']:
         raise KeyError('YATSM section does not declare a prediction method')
-    if cfg['YATSM']['prediction'] not in cfg:
-        raise KeyError('Prediction method specified (%s) is not parameterized '
-                       'in configuration file' % cfg['YATSM']['prediction'])
+
+    pred_method = cfg['YATSM']['prediction']
+    if pred_method not in cfg:
+        # Try to use pre-packaged regression method
+        if pred_method not in packaged_regressions:
+            raise KeyError(
+                'Prediction method specified (%s) is not parameterized '
+                'in configuration file nor available from the YATSM package'
+                % pred_method)
+        else:
+            pred_method_path = find_packaged_regressor(pred_method)
+            logger.debug('Using pre-packaged prediction method %s from %s' %
+                         (pred_method, pred_method_path))
+            cfg[pred_method] = {'pickle': pred_method_path}
 
     # Embed algorithm in YATSM key
     if algo not in algorithms.available:

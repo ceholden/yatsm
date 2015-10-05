@@ -61,22 +61,22 @@ CCDCesque:
 
 # Regression estimators
 LassoCV:
-    pickle: "/home/ceholden/Documents/yatsm/examples/regression/LassoCV_n100_alpha_0-50.pkl"
+    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n100.pkl"
 
 Lasso20:
-    pickle: "/home/ceholden/Documents/yatsm/examples/regression/Lasso_alpha20.pkl"
+    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_Lasso20.pkl"
 
 OLS:
-    pickle: "/home/ceholden/Documents/yatsm/examples/regression/OLS.pkl"
+    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/OLS.pkl"
 
 GLMNET_LassoCV:
-    pickle: "/home/ceholden/Documents/yatsm/examples/regression/glmnet_LassoCV_n50_lambda_0-35.pkl"
+    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n50.pkl"
 
 GLMNET_Lasso20:
-    pickle: "/home/ceholden/Documents/yatsm/examples/regression/glmnet_Lasso_lambda_20.pkl"
+    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl"
 
 RLM:
-    pickle: "/home/ceholden/Documents/yatsm/examples/regression/rlm_maxiter10.pkl"
+    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/rlm_maxiter10.pkl"
 
 # Section for phenology fitting
 phenology:

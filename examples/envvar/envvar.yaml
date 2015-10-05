@@ -61,19 +61,19 @@ CCDCesque:
 
 # Regression estimators
 LassoCV:
-    pickle: "$PICKLES/LassoCV_n100_alpha_0-50.pkl"
+    pickle: "$PICKLES/glmnet_LassoCV_n100.pkl"
 
 Lasso20:
-    pickle: "$PICKLES/Lasso_alpha20.pkl"
+    pickle: "$PICKLES/sklearn_Lasso20.pkl"
 
 OLS:
     pickle: "$PICKLES/OLS.pkl"
 
 GLMNET_LassoCV:
-    pickle: "$PICKLES/glmnet_LassoCV_n50_lambda_0-35.pkl"
+    pickle: "$PICKLES/glmnet_LassoCV_n50.pkl"
 
 GLMNET_Lasso20:
-    pickle: "$PICKLES/glmnet_Lasso_lambda_20.pkl"
+    pickle: "$PICKLES/glmnet_Lasso20.pkl"
 
 RLM:
     pickle: "$PICKLES/rlm_maxiter10.pkl"

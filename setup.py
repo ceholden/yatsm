@@ -1,4 +1,6 @@
+import glob
 import logging
+import os
 import sys
 
 from setuptools import setup
@@ -61,6 +63,11 @@ ext_modules = cythonize([
     Extension('yatsm._cyprep', ['yatsm/_cyprep.pyx'], **ext_opts)
 ])
 
+# Pre-packaged regression algorithms included in installation
+package_data = {
+    'yatsm': [os.path.join('regression', 'pickles', '*.pkl')]
+}
+
 # Setup
 packages = ['yatsm',
             'yatsm.algorithms',
@@ -84,16 +91,22 @@ entry_points = '''
     changemap=yatsm.cli.changemap:changemap
 '''
 
+desc = ('Algorithms for remote sensing land cover and condition monitoring '
+        'in Python')
+
 setup_dict = dict(
     name='yatsm',
     version=version,
     author='Chris Holden',
     author_email='ceholden@gmail.com',
     packages=packages,
+    package_data=package_data,
+    include_package_data=True,
     entry_points=entry_points,
     url='https://github.com/ceholden/yatsm',
     license='MIT',
-    description='Land cover monitoring based on CCDC in Python',
+    description=desc,
+    zip_safe=False,
     long_description=readme,
     ext_modules=ext_modules,
     install_requires=install_requires
