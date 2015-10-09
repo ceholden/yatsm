@@ -42,15 +42,35 @@ def convert_config(cfg):
     if 'refit' in cfg['YATSM']:
         pickles = []
         for predictor in cfg['YATSM']['refit']['prediction']:
-            if predictor not in cfg:
-                raise KeyError('Refit predictor specified (%s) not specified '
+            if predictor in cfg:
+                pickle_file = cfg[predictor]['pickle']
+            elif predictor in packaged_regressions:
+                pickle_file = find_packaged_regressor(predictor)
+                logger.debug('Using pre-packaged prediction method %s from %s '
+                             'for refitting' % (predictor, pickle_file))
+            else:
+                raise KeyError('Refit predictor specified (%s) is not a '
+                               'pre-packaged predictor and is not specified '
                                'as section in config file' % predictor)
-            pickle_file = cfg[predictor]['pickle']
             pickles.append(_unpickle_predictor(pickle_file))
         cfg['YATSM']['refit']['prediction_object'] = pickles
     else:
         refit = dict(prefix=[], prediction=[], prediction_object=[])
         cfg['YATSM']['refit'] = refit
+
+    pred_method = cfg['YATSM']['prediction']
+    if pred_method not in cfg:
+        # Try to use pre-packaged regression method
+        if pred_method not in packaged_regressions:
+            raise KeyError(
+                'Prediction method specified (%s) is not parameterized '
+                'in configuration file nor available from the YATSM package'
+                % pred_method)
+        else:
+            pred_method_path = find_packaged_regressor(pred_method)
+            logger.debug('Using pre-packaged prediction method %s from %s' %
+                         (pred_method, pred_method_path))
+            cfg[pred_method] = {'pickle': pred_method_path}
 
     return cfg
 
@@ -88,20 +108,6 @@ def parse_config_file(config_file):
 
     if 'prediction' not in cfg['YATSM']:
         raise KeyError('YATSM section does not declare a prediction method')
-
-    pred_method = cfg['YATSM']['prediction']
-    if pred_method not in cfg:
-        # Try to use pre-packaged regression method
-        if pred_method not in packaged_regressions:
-            raise KeyError(
-                'Prediction method specified (%s) is not parameterized '
-                'in configuration file nor available from the YATSM package'
-                % pred_method)
-        else:
-            pred_method_path = find_packaged_regressor(pred_method)
-            logger.debug('Using pre-packaged prediction method %s from %s' %
-                         (pred_method, pred_method_path))
-            cfg[pred_method] = {'pickle': pred_method_path}
 
     # Embed algorithm in YATSM key
     if algo not in algorithms.available:
