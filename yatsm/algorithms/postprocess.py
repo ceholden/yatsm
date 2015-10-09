@@ -67,10 +67,10 @@ def commission_test(model, alpha=0.001):
             m_1 = model.record[i]
         m_2 = model.record[i + 1]
 
-        m_1_start = date2index(model.X[:, model.i_x], m_1['start'])
-        m_1_end = date2index(model.X[:, model.i_x], m_1['end'])
-        m_2_start = date2index(model.X[:, model.i_x], m_2['start'])
-        m_2_end = date2index(model.X[:, model.i_x], m_2['end'])
+        m_1_start = date2index(model.dates, m_1['start'])
+        m_1_end = date2index(model.dates, m_1['end'])
+        m_2_start = date2index(model.dates, m_2['start'])
+        m_2_end = date2index(model.dates, m_2['end'])
 
         m_r_start = m_1_start
         m_r_end = m_2_end
@@ -181,8 +181,8 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
             continue
         # Find matching X and Y in data
         index = np.where(
-            (model.X[:, model.i_x] >= min(r['start'], r['end'])) &
-            (model.X[:, model.i_x] <= max(r['end'], r['start'])))[0]
+            (model.dates >= min(r['start'], r['end'])) &
+            (model.dates <= max(r['end'], r['start'])))[0]
         # Grab matching X and Y
         _X = model.X[index, :]
         _Y = model.Y[:, index]
