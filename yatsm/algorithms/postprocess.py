@@ -45,11 +45,12 @@ def commission_test(model, alpha=0.001):
     values from `model.test_indices`.
 
     Args:
-      alpha (float): significance level for F-statistic (default: 0.01)
+        model (YATSM model): fitted YATSM model to check for commission errors
+        alpha (float): significance level for F-statistic (default: 0.01)
 
     Returns:
-      np.ndarray: updated copy of `model.record` with spurious models
-        combined into unified model
+        np.ndarray: updated copy of `model.record` with spurious models
+            combined into unified model
 
     """
     if model.record.size == 1:
@@ -146,18 +147,18 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
     on result from `statsmodels.stats.diagnostic.breaks_cusumolsresid`.
 
     Args:
-      crit (float, optional): Critical p-value for rejection of null
-        hypothesis that data contain no structural change
-      behavior (str, optional): Method for dealing with multiple
-        `test_indices`. `ANY` will return True if any one test index
-        rejects the null hypothesis. `ALL` will only return True if ALL
-        test indices reject the null hypothesis.
-      indices (np.ndarray, optional): Array indices to test. User provided
-        indices must be a subset of `model.test_indices`.
+        crit (float, optional): Critical p-value for rejection of null
+            hypothesis that data contain no structural change
+        behavior (str, optional): Method for dealing with multiple
+            `test_indices`. `ANY` will return True if any one test index
+            rejects the null hypothesis. `ALL` will only return True if ALL
+            test indices reject the null hypothesis.
+        indices (np.ndarray, optional): Array indices to test. User provided
+            indices must be a subset of `model.test_indices`.
 
     Returns:
-      np.ndarray: Array of True or False for each record where
-        True indicates omitted break point
+        np.ndarray: Array of True or False for each record where
+            True indicates omitted break point
 
     """
     if behavior.lower() not in ['any', 'all']:
