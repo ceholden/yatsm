@@ -7,7 +7,8 @@ import pkg_resources
 logger = logging.getLogger('yatsm')
 
 packaged_regressions = ['OLS', 'sklearn_Lasso20', 'glmnet_Lasso20',
-                        'glmnet_LassoCV_n50', 'glmnet_LassoCV_n100']
+                        'glmnet_LassoCV_n50', 'glmnet_LassoCV_n100',
+                        'rlm_maxiter10']
 
 
 def find_packaged_regressor(name):
