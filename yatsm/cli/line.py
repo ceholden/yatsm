@@ -163,7 +163,10 @@ def line(ctx, config, job_number, total_jobs,
             yatsm.px = col
             yatsm.py = line
 
-            yatsm.fit(_X, _Y, _dates)
+            try:
+                yatsm.fit(_X, _Y, _dates)
+            except TSLengthException:
+                continue
 
             # Postprocess
             if cfg['YATSM']['commission_alpha']:
