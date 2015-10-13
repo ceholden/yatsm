@@ -3,15 +3,23 @@
 [![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=master&service=github)](https://coveralls.io/github/ceholden/yatsm?branch=master) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.17129.svg)](http://dx.doi.org/10.5281/zenodo.17129) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ceholden/yatsm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 
 ## About
-The Yet Another TimeSeries Model (YATSM) algorithm is designed to monitor land
-surface phenomena, including land cover and land use change, using timeseries
-of remote sensing observations. The algorithm seeks to find distinct time
-periods, or time segments, within the timeseries by monitoring for disturbances. These time segments may be used to infer continuous periods of stable land cover, with breaks separating the segments representing ephemeral disturbances or permanent conversions in land cover or land use.
+Yet Another Timeseries Model (YATSM) is a Python package for utilizing a collection of timeseries algorithms and methods designed to monitor the land surface using remotely sensed imagery.
 
-The ["Yet Another..."](http://en.wikipedia.org/wiki/Yet_another) part of the algorithm name is an acknowledgement of the influence a previously published timeseries algorithm - the Continuous Change Detection and Classification (CCDC) (Zhu and Woodcock, 2014) algorithm. While YATSM began as an extension from CCDC, it was never intended as a 1 to 1 port of CCDC and will continue to diverge in its own direction.
+The ["Yet Another..."](http://en.wikipedia.org/wiki/Yet_another) part of the package name is a reference to the algorithms implemented:
 
-This algorithm is also influenced by other remote sensing algorithms which, like CCDC, are based in theory on tests for structural change from econometrics
-literature (Chow, 1960; Andrews, 1993; Chu *et al*, 1996; Zeileis, 2005). These other remote sensing algorithms include Break detection For Additive Season and Trend (BFAST) (Verbesselt *et al*, 2012) and LandTrendr (Kennedy *et al*, 2010). By combining ideas from CCDC, BFAST, and LandTrendr, this "Yet Another..." algorithm hopes to overcome weaknesses present in any single approach.
+* Continuous Change Detection and Classification (CCDC)
+    - Citation: Zhu and Woodcock, 2014; Zhu, Woodcock, Holden, and Yang 2015
+    - Note: Unvalidated, non-reference implementation
+* Long term mean phenology fitting using Landsat data
+    - Citation: Melaas, Friedl, and Zhu 2013
+    - Note: validated against Melaas *et al*'s code, but not a reference implementation
+* Commission detection via *p*-of-*F* (e.g., Chow test) test similar to what is used in LandTrendr (Kennedy, *et al*, 2010)
+* ...
+* More to come! Please reach out if you would like to help contribute
+
+Note that the algorithms implemented within YATSM are not to be considered "reference" implementations unless otherwise noted.
+
+The objective of making many methods of analyzing remote sensing timeseries in one package is to leverage the strengths of multiple methods to overcome the weaknesses in any one approach. The opening of the Landsat archive in 2008 made timeseries analysis of Landsat data finally possible and kickstarted a "big bang" of methods that have evolved and proliferated since then. Over the years, it has become obvious that each individual algorithm is designed to monitor slightly different processes or leverages different aspects of the same datasets. Recent comparative analysis studies (Healey, Cohen, *et al*, forthcoming) strongly suggest that an ensemble of such algorithms is more accurate and informative than any one result alone. A suite of weak learners combined intelligently does indeed create a more powerful ensemble learner. By using a common set of vocabulary and making these algorithms available in one place, the YATSM package hopes to make such an ensemble possible.
 
 Please consider citing as:
 
@@ -26,10 +34,10 @@ Contributions to the documentation, especially for the user guide, is more than 
 ## Example
 The simplest way of using YATSM would be the pixel-by-pixel command line interface - `run_yatsm.py`.
 
-We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ceholden/landsat_stack) for this demonstration:
+We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ceholden/landsat_stack) in combination with the "CCDCesque" Python implementation of the Continuous Change Detection and Classification (Zhu and Woodcock, 2014; Zhu, Woodcock, Holden, and Yang 2015) for this demonstration:
 
 ``` bash
-    > yatsm pixel --band 2 --style xkcd examples/p022r049/p022r049.yaml 133 106
+    > yatsm pixel --band 3 --style xkcd examples/p022r049/p022r049.yaml 133 106
 ```
 
 Produces:
