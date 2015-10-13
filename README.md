@@ -19,17 +19,11 @@ The ["Yet Another..."](http://en.wikipedia.org/wiki/Yet_another) part of the pac
 
 Note that the algorithms implemented within YATSM are not to be considered "reference" implementations unless otherwise noted.
 
-The objective of making many methods of analyzing remote sensing timeseries in one package is to leverage the strengths of multiple methods to overcome the weaknesses in any one approach. The opening of the Landsat archive in 2008 made timeseries analysis of Landsat data finally possible and kickstarted a "big bang" of methods that have evolved and proliferated since then. Over the years, it has become obvious that each individual algorithm is designed to monitor slightly different processes or leverages different aspects of the same datasets. Recent comparative analysis studies (Healey, Cohen, *et al*, forthcoming) strongly suggest that an ensemble of such algorithms is more accurate and informative than any one result alone. A suite of weak learners combined intelligently does indeed create a more powerful ensemble learner. By using a common set of vocabulary and making these algorithms available in one place, the YATSM package hopes to make such an ensemble possible.
+The objective of making many methods of analyzing remote sensing timeseries available in one package is to leverage the strengths of multiple methods to overcome the weaknesses in any one approach. The opening of the Landsat archive in 2008 made timeseries analysis of Landsat data finally possible and kickstarted a "big bang" of methods that have evolved and proliferated since then. Over the years, it has become obvious that each individual algorithm is designed to monitor slightly different processes or leverages different aspects of the same datasets. Recent comparative analysis studies (Healey, Cohen, *et al*, forthcoming) strongly suggest that an ensemble of such algorithms is more accurate and informative than any one result alone. A suite of weak learners combined intelligently does indeed create a more powerful ensemble learner. By using a common set of vocabulary and making these algorithms available in one place, the YATSM package hopes to make such an ensemble possible.
 
 Please consider citing as:
 
     Christopher E. Holden. (2015). Yet Another Time Series Model (YATSM). Zenodo. 10.5281/zenodo.17129
-
-## Documentation
-
-Documentation is available [here](http://ceholden.github.io/yatsm/).
-
-Contributions to the documentation, especially for the user guide, is more than welcomed. The documentation for this project is built using [Sphinx](http://sphinx-doc.org/) using the [ReadTheDocs](https://readthedocs.org/) theme. See the `docs/` folder for documentation source material.
 
 ## Example
 The simplest way of using YATSM would be the pixel-by-pixel command line interface - `run_yatsm.py`.
@@ -43,6 +37,14 @@ We'll use the example [Landsat stack from Chiapas, Mexico](https://github.com/ce
 Produces:
     ![Timeseries](docs/media/double_cut_ts_b3.png)
     ![Modeled Timeseries](docs/media/double_cut_ts_fitted_b3.png)
+
+For further visualization of timeseries of remotely sensed images, I encourage you to try the ["TSTools" QGIS plugin](https://github.com/ceholden/TSTools) which allows users to easily and rapidly explore both the time and space dimensions of such datasets. Timeseries "drivers", or methods of linking data and algorithms with the plugin, are available for the reference CCDC implementation and the YATSM "CCDCesque" implementation, as well as for the combined visualization of Landsat data with radar and meteorological data timeseries.
+
+## Documentation
+
+Documentation is available [here](http://ceholden.github.io/yatsm/).
+
+Contributions to the documentation, especially for the user guide, is more than welcomed. The documentation for this project is built using [Sphinx](http://sphinx-doc.org/) using the [ReadTheDocs](https://readthedocs.org/) theme. See the `docs/` folder for documentation source material.
 
 ## Installation
 
