@@ -68,6 +68,9 @@ class SpatialKFold(object):
 
     def __init__(self, y, row, col, n_folds=3, shuffle=False,
                  random_state=None):
+        if y.size != row.size or y.size != col.size:
+            raise ValueError('Labels provided (y) must be the same size as '
+                             'the row and columns provided')
         self.y = y
         self.row = row
         self.col = col
