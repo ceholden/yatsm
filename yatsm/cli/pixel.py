@@ -73,7 +73,8 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     elif hasattr(palettable.wesanderson, cmap):
         mpl_cmap = getattr(palettable.wesanderson, cmap).mpl_colormap
     else:
-        raise click.Abort('Cannot find specified colormap in `palettable`')
+        click.secho('Cannot find specified colormap in `palettable`', fg='red')
+        raise click.Abort()
 
     # Parse config
     cfg = parse_config_file(config)

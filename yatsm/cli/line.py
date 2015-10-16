@@ -49,8 +49,9 @@ def line(ctx, config, job_number, total_jobs,
     cfg = parse_config_file(config)
 
     if ('phenology' in cfg and 'calc_pheno' in cfg['phenology']) and not pheno:
-        raise click.Abort('Could not import yatsm.phenology but phenology '
-                          'metrics are requested')
+        click.secho('Could not import yatsm.phenology but phenology metrics '
+                    'are requested', fg='red')
+        raise click.Abort()
 
     # Make sure output directory exists and is writable
     output_dir = cfg['dataset']['output']
@@ -61,10 +62,14 @@ def line(ctx, config, job_number, total_jobs,
         if e.errno == 17:
             pass
         elif e.errno == 13:
-            raise click.Abort('Cannot create output directory %s' % output_dir)
+            click.secho('Cannot create output directory %s' % output_dir,
+                        fg='red')
+            raise click.Abort()
 
     if not os.access(output_dir, os.W_OK):
-        raise click.Abort('Cannot write to output directory %s' % output_dir)
+        click.secho('Cannot write to output directory %s' % output_dir,
+                    fg='red')
+        raise click.Abort()
 
     # Test existence of cache directory
     read_cache, write_cache = test_cache(cfg['dataset'])
