@@ -35,8 +35,26 @@ def convert_config(cfg):
         cfg['dataset']['max_values'] = np.asarray([maxes] * n_bands)
 
     # Unpickle main predictor
+    pred_method = cfg['YATSM']['prediction']
+    if pred_method not in cfg:
+        # Try to use pre-packaged regression method
+        if pred_method not in packaged_regressions:
+            raise KeyError(
+                'Prediction method specified (%s) is not parameterized '
+                'in configuration file nor available from the YATSM package'
+                % pred_method)
+        else:
+            pred_method_path = find_packaged_regressor(pred_method)
+            logger.debug('Using pre-packaged prediction method %s from %s' %
+                         (pred_method, pred_method_path))
+            cfg[pred_method] = {'pickle': pred_method_path}
+    else:
+        logger.debug('Predicting using "%s" pickle specified from '
+                     'configuration file (%s)' %
+                     (pred_method, cfg[pred_method]['pickle']))
+
     cfg['YATSM']['prediction_object'] = _unpickle_predictor(
-        cfg[cfg['YATSM']['prediction']]['pickle'])
+        cfg[pred_method]['pickle'])
 
     # Unpickle refit objects
     if 'refit' in cfg['YATSM']:
@@ -57,20 +75,6 @@ def convert_config(cfg):
     else:
         refit = dict(prefix=[], prediction=[], prediction_object=[])
         cfg['YATSM']['refit'] = refit
-
-    pred_method = cfg['YATSM']['prediction']
-    if pred_method not in cfg:
-        # Try to use pre-packaged regression method
-        if pred_method not in packaged_regressions:
-            raise KeyError(
-                'Prediction method specified (%s) is not parameterized '
-                'in configuration file nor available from the YATSM package'
-                % pred_method)
-        else:
-            pred_method_path = find_packaged_regressor(pred_method)
-            logger.debug('Using pre-packaged prediction method %s from %s' %
-                         (pred_method, pred_method_path))
-            cfg[pred_method] = {'pickle': pred_method_path}
 
     return cfg
 
