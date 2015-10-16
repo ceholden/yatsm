@@ -1,9 +1,13 @@
 """ Plots useful for YATSM
 """
 from datetime import datetime as dt
+import logging
+import re
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+logger = logging.getLogger('yatsm')
 
 
 def plot_crossvalidation_scores(kfold_scores, test_labels):
@@ -15,13 +19,14 @@ def plot_crossvalidation_scores(kfold_scores, test_labels):
       test_labels (list): n length list of KFold label names
 
     """
+    return
     ind = np.arange(kfold_scores.shape[0])
     width = 0.5
 
     fig, ax = plt.subplots()
     bars = ax.bar(ind, kfold_scores[:, 0], width)
     _, caplines, _ = ax.errorbar(ind + width / 2.0, kfold_scores[:, 0],
-                                 fmt=None,
+                                 fmt='none',
                                  yerr=kfold_scores[:, 1],
                                  capsize=10, elinewidth=3)
     for capline in caplines:
@@ -30,10 +35,11 @@ def plot_crossvalidation_scores(kfold_scores, test_labels):
         capline.set_color('red')
 
     for i, bar in enumerate(bars):
+        txt = r'%.3f $\pm$ %.3f' % (kfold_scores[i, 0], kfold_scores[i, 1])
         ax.text(ind[i] + width / 2.0,
-                kfold_scores[i, 0] + kfold_scores[i, 1] * 1.1,
-                str(round(kfold_scores[i, 0], 3)),
-                ha='center', va='bottom')
+                kfold_scores[i, 0] / 2.0,
+                txt,
+                ha='center', va='bottom', size='large')
 
     ax.set_xticks(ind + width / 2.0)
     ax.set_xticklabels(test_labels, ha='center')
@@ -47,35 +53,66 @@ def plot_crossvalidation_scores(kfold_scores, test_labels):
     plt.show()
 
 
-def plot_feature_importance(algo, dataset_config, yatsm_config):
+def plot_feature_importance(algo, cfg):
     """ Plots Random Forest feature importance as barplot
+
+    If YATSM configuration (cfg['YATSM']) contains Patsy design information in
+    'design_info', then this plot will show more specific labels for each
+    feature.
 
     Args:
       algo (sklearn.ensemble.RandomForestClassifier): Random Forest algorithm
-      dataset_config (dict): dataset configuration details
-      yatsm_config (dict): YATSM model run details
+      cfg (dict): YATSM configuration dictionary
 
     """
     ind = np.arange(algo.feature_importances_.size)
     width = 0.5
 
-    betas = range(0, 2 + 2 * len(yatsm_config['freq']))
-    bands = range(1, dataset_config['n_bands'] + 1)
-    bands.remove(dataset_config['mask_band'] + 1)  # band is now index so + 1
+    n_bands = cfg['dataset']['n_bands'] - 1
 
-    names = [r'Band {b} $\beta_{i}$'.format(b=b, i=i)
-             for i in betas for b in bands]
-    names += [r'Band {b} $RMSE$'.format(b=b) for b in bands]
+    # Form betas from design matrix
+    if 'design_info' not in cfg['YATSM']:
+        logger.warning('Design info not provided to plot -- will use less '
+                       'coefficient labels')
+        # First remove out RMSE  # TODO: check if we used RMSE
+        n_feat = algo.feature_importances_.size - n_bands
+        # All bands have same n_coef, so leftover are other variables
+        betas = range(0, int(n_feat / n_bands))
+    else:
+        # Rename slope, convert harm.*[0] to cos, and harm.*[1] to sin
+        betas = []
+        for _beta in cfg['YATSM']['design_info'].keys():
+            _beta = re.sub(r'^x$', 'slope', _beta)
+            _beta = re.sub(r'harm(.*)\[0\]', r'cos\1', _beta)
+            _beta = re.sub(r'harm(.*)\[1\]', r'sin\1', _beta)
+
+            betas.append(_beta)
+    betas.append('RMSE')  # TODO: check if we used RMSE
+
+    # Grab bands
+    bands = range(1, cfg['dataset']['n_bands'] + 1)
+    bands.remove(cfg['dataset']['mask_band'])  # band is now index so + 1
+
+    # names = [r'Band %i $\beta_{%s}$' % (b, i)
+    #          for i in betas for b in bands]
+    # names += [r'Band %i $RMSE$' % b for b in bands]
+    names = ['Band %i' % b for b in bands * (len(betas) + 1)]
 
     fig, ax = plt.subplots()
     ax.bar(ind, algo.feature_importances_, width)
     ax.set_xticks(ind + width / 2.0)
-    ax.set_xticklabels(names, rotation=90, ha='center')
-    ax.vlines(ind[::dataset_config['n_bands'] - 1],
-              algo.feature_importances_.min(),
-              algo.feature_importances_.max())
+    ax.set_xticklabels(names, ha='center', rotation=90)
+    for i_b in ind[::n_bands]:
+        ax.axvline(i_b, c='k', lw=2)
+    for i, _beta in enumerate(betas):
+        _x = i * len(bands) + len(bands) / 2.0
+        ax.annotate(_beta,
+                    (_x, 0), xycoords='data',
+                    xytext=(0, 5), textcoords='offset points',
+                    ha='center', size='large')
     plt.title('Feature Importance')
     plt.ylabel('Importance')
+    plt.xlabel('Feature')
     plt.show()
 
 
