@@ -3,8 +3,10 @@
 # See sklearn implementation API here:
 # http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
 
-# Specify algorithm and hyperparameters
 algorithm: RandomForest
+
+# Specify algorithm and hyperparameters
+RandomForest:
     # Number of trees in forest
     n_estimators: 500
     # Criterion for qualify of split ['gini', 'entropy']

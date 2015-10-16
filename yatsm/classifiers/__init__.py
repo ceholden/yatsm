@@ -3,53 +3,56 @@
 Contains utilities and helper classes for classifying timeseries generated
 using YATSM change detection.
 """
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser
 import logging
 
-from .sklearn_helper import RandomForestHelper
-from .diagnostics import kfold_scores, SpatialKFold, SpatialKFold_ROI
+from sklearn.ensemble import RandomForestClassifier
+import yaml
+
+from ..errors import AlgorithmNotFoundException
 
 logger = logging.getLogger('yatsm')
 
 _algorithms = {
-    'RandomForest': RandomForestHelper
+    'RandomForest': RandomForestClassifier
 }
 
 
-class AlgorithmNotFoundException(Exception):
-    """ Custom exception for algorithm config files without handlers """
-    pass
-
-
-def ini_to_algorthm(config_file):
+def cfg_to_algorithm(config_file):
     """ Return instance of classification algorithm helper from config file
 
     Args:
-      config_file (str): location of configuration file for algorithm
+        config_file (str): location of configuration file for algorithm
+
+    Returns:
+        sklearn classifier
 
     """
     # Determine which algorithm is used
-    config = configparser.ConfigParser()
     try:
-        config.read(config_file)
+        with open(config_file, 'r') as f:
+            config = yaml.safe_load(f)
     except:
-        logger.error('Could not read config file {f}'.format(f=config_file))
+        logger.error('Could not read config file %s' % config_file)
         raise
 
-    algo_name = config.get('metadata', 'Algorithm')
-
+    algo_name = config['algorithm']
     if algo_name not in _algorithms.keys():
         raise AlgorithmNotFoundException(
-            'Could not process algorithm named "{n}"'.format(n=algo_name))
+            'Could not process unknown algorithm named "%s"' % algo_name)
     else:
         algo = _algorithms[algo_name]
 
-    # Re-read using defaults
-    config = configparser.ConfigParser(defaults=algo.defaults)
-    config.read(config_file)
+    if algo_name not in config:
+        logger.warning('%s algorithm parameters not found in config file %s. '
+                       'Using default values.' % (algo_name, config_file))
+        config[algo_name] = {}
 
-    # Return instance of algorithm
-    return algo(config)
+    # Try to load algorithm using hyperparameters from config
+    try:
+        sklearn_algo = algo(**config[algo_name])
+    except TypeError:
+        logger.error('Cannot initialize %s classifier. Config file %s '
+                     'contains unknown options' % (algo_name, config_file))
+        raise
+
+    return sklearn_algo
