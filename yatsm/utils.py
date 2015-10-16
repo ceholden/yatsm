@@ -8,6 +8,11 @@ import sys
 import numpy as np
 import pandas as pd
 
+try:
+    from scandir import walk
+except:
+    from os import walk
+
 from log_yatsm import logger
 
 
@@ -176,13 +181,12 @@ def find_results(location, pattern):
     """
     # Note: already checked for location existence in main()
     records = []
-    for root, dirnames, filenames in os.walk(location):
+    for root, dirnames, filenames in walk(location):
         for filename in fnmatch.filter(filenames, pattern):
             records.append(os.path.join(root, filename))
 
     if len(records) == 0:
-        logger.error('Error: could not find results in: {0}'.format(location))
-        sys.exit(1)
+        raise IOError('Could not find results in: %s' % location)
 
     records.sort()
 
