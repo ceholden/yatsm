@@ -173,6 +173,9 @@ def line(ctx, config, job_number, total_jobs,
             except TSLengthException:
                 continue
 
+            if yatsm.record is None:
+                continue
+
             # Postprocess
             if cfg['YATSM']['commission_alpha']:
                 yatsm.record = postprocess.commission_test(
