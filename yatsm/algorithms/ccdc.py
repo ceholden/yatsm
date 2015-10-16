@@ -432,10 +432,7 @@ class CCDCesque(YATSM):
             self.record[self.n_record]['magnitude'][self.test_indices] = \
                 np.mean(scores, axis=0)
 
-            try:
-                self.record = np.append(self.record, self.record_template)
-            except:
-                from IPython.core.debugger import Pdb; Pdb().set_trace()
+            self.record = np.append(self.record, self.record_template)
             self.n_record += 1
 
             # Reset _X and _Y for re-training
