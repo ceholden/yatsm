@@ -173,7 +173,7 @@ def line(ctx, config, job_number, total_jobs,
             except TSLengthException:
                 continue
 
-            if yatsm.record is None:
+            if yatsm.record is None or len(yatsm.record) == 0:
                 continue
 
             # Postprocess
