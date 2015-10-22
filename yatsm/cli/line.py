@@ -187,11 +187,18 @@ def line(ctx, config, job_number, total_jobs,
                                                         keep_regularized=True)
 
             if cfg['phenology']['enable']:
-                ltm = pheno.LongTermMeanPhenology(yatsm, **cfg['phenology'])
+                pcfg = cfg['phenology']
+                ltm = pheno.LongTermMeanPhenology(yatsm,
+                                                  pcfg.get('red_index'),
+                                                  pcfg.get('nir_index'),
+                                                  pcfg.get('blue_index'),
+                                                  pcfg.get('scale'),
+                                                  pcfg.get('evi_index'),
+                                                  pcfg.get('evi_scale'))
                 yatsm.record = ltm.fit(
-                    year_interval=cfg['phenology']['year_interval'],
-                    q_min=cfg['phenology']['q_min'],
-                    q_max=cfg['phenology']['q_max'])
+                    year_interval=pcfg['year_interval'],
+                    q_min=pcfg['q_min'],
+                    q_max=pcfg['q_max'])
 
             output.extend(yatsm.record)
 
