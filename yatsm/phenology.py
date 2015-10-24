@@ -104,6 +104,22 @@ def CRAN_spline(x, y, spar=0.55):
     return lambda _x: np.array(Rstats.predict_smooth_spline(spl, _x)[1])
 
 
+def halfmax(x):
+    """ Return index of the observation closest to the half of some data
+
+    Assumes that data are scaled between [0, 1] and half-max is 0.5
+
+    Args:
+        x (np.ndarray): a one dimensional vector
+
+    Returns:
+        int: the index of the observation closest to the half-max of the data
+
+    """
+    return np.argmin(np.abs(x - np.nanmin(x)) / (np.nanmax(x) - np.nanmin(x)) -
+                     0.5)
+
+
 def ordinal2yeardoy(ordinal):
     """ Convert ordinal dates to two arrays of year and doy
 
@@ -234,19 +250,15 @@ class LongTermMeanPhenology(object):
         # Compute half-maximum of spring logistic for "ruling in" image dates
         # (points) for anomaly calculation
         # Note: we add + 1 to go from index (on 0) to day of year (on 1)
-        ltm_spring = np.argmin(
-            np.abs(
-                (evi_smooth_spring - np.nanmin(evi_smooth_spring)) /
-                (np.nanmax(evi_smooth_spring) - np.nanmin(evi_smooth_spring))
-                - 0.5)
-        ) + 1
+        if evi_smooth_spring.size > 0:
+            ltm_spring = halfmax(evi_smooth_spring) + 1
+        else:
+            ltm_spring = 0
 
-        ltm_autumn = np.argmin(
-            np.abs(
-                (evi_smooth_autumn - np.nanmin(evi_smooth_autumn)) /
-                (np.nanmax(evi_smooth_autumn) - np.nanmin(evi_smooth_autumn))
-                - 0.5)
-        ) + 1 + peak_doy + 1
+        if evi_smooth_autumn.size > 0:
+            ltm_autumn = halfmax(evi_smooth_autumn) + 1 + peak_doy + 1
+        else:
+            ltm_autumn = 0
 
         return (ltm_spring, ltm_autumn, pheno_cor,
                 peak_evi, peak_doy, evi_smooth)
