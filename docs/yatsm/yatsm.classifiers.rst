@@ -7,7 +7,6 @@ Submodules
 .. toctree::
 
    yatsm.classifiers.diagnostics
-   yatsm.classifiers.sklearn_helper
 
 Module contents
 ---------------
