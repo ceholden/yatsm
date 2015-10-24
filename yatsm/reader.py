@@ -73,8 +73,8 @@ def read_image(image_filename, bands=None, dtype=None):
     if bands:
         if not all([b in range(1, ds.RasterCount + 1) for b in bands]):
             raise IOError('Image {i} ({n} bands) does not contain bands '
-                          'specified (requested {b}'.format(
-                            i=image_filename, n=ds.RasterCount, b=bands))
+                          'specified (requested {b})'.
+                          format(i=image_filename, n=ds.RasterCount, b=bands))
     else:
         bands = range(1, ds.RasterCount + 1)
 
@@ -106,8 +106,8 @@ def read_pixel_timeseries(files, px, py):
 
     if px < 0 or px >= ncol or py < 0 or py >= nrow:
         raise IndexError('Row/column {r}/{c} is outside of image '
-                         '(nrow/ncol: {nrow}/{ncol})'.format(
-                            r=py, c=px, nrow=nrow, ncol=ncol))
+                         '(nrow/ncol: {nrow}/{ncol})'.
+                         format(r=py, c=px, nrow=nrow, ncol=ncol))
 
     Y = np.zeros((nband, len(files)), dtype=dtype)
 
