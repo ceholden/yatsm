@@ -41,8 +41,21 @@ follows:
     $ njob=200
     $ for job in $(seq 1 $njob); do
         qsub -j y -V -l h_rt=24:00:00 -N yatsm_$job -b y \
-            $(which python) -u yatsm line --resume -v config.ini $job $njob
+            yatsm line --resume -v config.ini $job $njob
       done
+
+By setting the environment variable, `PYTHONUNBUFFERED`, to a nonzero and
+non-empty value, Python will keep stdout and stderr unbuffered. This is handy
+to use when trying to diagnose a problem or when trying to guage the progress
+of YATSM when logging to a file (e.g., in a `qsub` job) because unbuffered
+output is flushed or written immediately to the log file. Be aware that the
+constant writing to the log file may incur a penalty cost. You can run
+YATSM jobs with unbuffered output as follows in the example for `yatsm line`:
+
+.. code:: sh
+
+    $ qsub -j y -V -l h_rt=24:00:00 -N yatsm -b y \
+        PYTHONUNBUFFERED=1 yatsm line --resume -v config.ini 1 1
 
 One useful tip is to optimize the use of the CPU nodes by first transforming the
 dataset from an image based format to a timeseries format by saving all
@@ -60,7 +73,7 @@ specific request for computer nodes with fast ethernet speeds,
     $ njob=16
     $ for job in $(seq 1 $njob); do
         qsub -j y -V -l h_rt=24:00:00 -l eth_speed=10 -N yatsm_$job -b y \
-            $(which python) -u yatsm line --resume --do-not-run -v config.ini $job $njob
+            yatsm line --resume --do-not-run -v config.ini $job $njob
       done
 
 

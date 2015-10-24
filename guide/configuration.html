@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Model Configuration &mdash; YATSM 0.5.0 documentation</title>
+  <title>Model Configuration &mdash; YATSM 0.5.3 documentation</title>
   
 
   
@@ -30,12 +30,12 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/>
         <link rel="next" title="Batch Interface" href="batch_interface.html"/>
         <link rel="prev" title="Timeseries Model Specification" href="model_specification.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -45,17 +45,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-        
-          <a href="../index.html" class="icon icon-home"> YATSM
-        
+          
+            <a href="../index.html" class="icon icon-home"> YATSM
+          
 
-        
-        </a>
+          
+          </a>
 
-        
+          
+            
+            
+              <div class="version">
+                0.5.3
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -64,27 +74,15 @@
   </form>
 </div>
 
-        
-      </div>
+          
+        </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-          
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#examples">Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="install.html#conda">Conda</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
-<li class="toctree-l3"><a class="reference internal" href="install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#yatsm-installation">YATSM Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="install.html#platform-support">Platform Support</a></li>
-</ul>
-</li>
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
@@ -97,44 +95,20 @@
 <li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="map_static.html#missing-values">Missing Values</a></li>
-<li class="toctree-l2"><a class="reference internal" href="map_static.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="map_static.html#docs-todo">Docs TODO</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="map_changes.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="map_changes.html#docs-todo">Docs TODO</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="phenology.html#configuration">Configuration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -149,7 +123,13 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
@@ -164,7 +144,8 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="model-configuration">
 <span id="guide-model-config"></span><h1>Model Configuration<a class="headerlink" href="#model-configuration" title="Permalink to this headline">¶</a></h1>
@@ -291,12 +272,13 @@ options include:</p>
     <span class="c1"># Use BIP image reader? If not, use GDAL to read in</span>
     <span class="l-Scalar-Plain">use_bip_reader</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">False</span>
     <span class="c1"># Directory location for caching dataset lines</span>
-    <span class="l-Scalar-Plain">cache_line_dir</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/landsat_stack/p013r030/subset/cache&quot;</span>
+    <span class="c1"># cache_line_dir: &quot;/home/ceholden/Documents/landsat_stack/p013r030/subset/cache&quot;</span>
+    <span class="l-Scalar-Plain">cache_line_dir</span><span class="p-Indicator">:</span>
 
 <span class="c1"># Parameters common to all timeseries analysis models within YATSM package</span>
 <span class="l-Scalar-Plain">YATSM</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">algorithm</span><span class="p-Indicator">:</span> <span class="s">&quot;CCDCesque&quot;</span>
-    <span class="l-Scalar-Plain">prediction</span><span class="p-Indicator">:</span> <span class="s">&quot;GLMNET_Lasso20&quot;</span>
+    <span class="l-Scalar-Plain">prediction</span><span class="p-Indicator">:</span> <span class="s">&quot;glmnet_Lasso20&quot;</span>
     <span class="l-Scalar-Plain">design_matrix</span><span class="p-Indicator">:</span> <span class="s">&quot;1</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">harm(x,</span><span class="nv"> </span><span class="s">1)</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">harm(x,</span><span class="nv"> </span><span class="s">2)&quot;</span>
     <span class="l-Scalar-Plain">reverse</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">False</span>
     <span class="l-Scalar-Plain">commission_alpha</span><span class="p-Indicator">:</span>
@@ -321,22 +303,22 @@ options include:</p>
 
 <span class="c1"># Regression estimators</span>
 <span class="l-Scalar-Plain">LassoCV</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/LassoCV_n100_alpha_0-50.pkl&quot;</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n100.pkl&quot;</span>
 
 <span class="l-Scalar-Plain">Lasso20</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/Lasso_alpha20.pkl&quot;</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_Lasso20.pkl&quot;</span>
 
 <span class="l-Scalar-Plain">OLS</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/OLS.pkl&quot;</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/OLS.pkl&quot;</span>
 
 <span class="l-Scalar-Plain">GLMNET_LassoCV</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/glmnet_LassoCV_n50_lambda_0-35.pkl&quot;</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n50.pkl&quot;</span>
 
 <span class="l-Scalar-Plain">GLMNET_Lasso20</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/glmnet_Lasso_lambda_20.pkl&quot;</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl&quot;</span>
 
 <span class="l-Scalar-Plain">RLM</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/examples/regression/rlm_maxiter10.pkl&quot;</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/rlm_maxiter10.pkl&quot;</span>
 
 <span class="c1"># Section for phenology fitting</span>
 <span class="l-Scalar-Plain">phenology</span><span class="p-Indicator">:</span>
@@ -384,6 +366,7 @@ options include:</p>
 </div>
 
 
+           </div>
           </div>
           <footer>
   
@@ -402,10 +385,11 @@ options include:</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon Sep 14 16:37:15 2015.
+      Last updated on Fri 23 Oct 2015 09:43:16 PM EDT.
+
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -423,7 +407,7 @@ options include:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.0',
+            VERSION:'0.5.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.cache module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.regression.packaged module &mdash; YATSM 0.5.3 documentation</title>
   
 
   
@@ -123,11 +123,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>yatsm.cli.cache module</li>
+    <li>yatsm.regression.packaged module</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.cli.cache" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.regression.packaged" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -137,9 +137,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.cli.cache">
-<span id="yatsm-cli-cache-module"></span><h1>yatsm.cli.cache module<a class="headerlink" href="#module-yatsm.cli.cache" title="Permalink to this headline">¶</a></h1>
-<p>Command line interface for working with cached data for YATSM algorithms</p>
+  <div class="section" id="module-yatsm.regression.packaged">
+<span id="yatsm-regression-packaged-module"></span><h1>yatsm.regression.packaged module<a class="headerlink" href="#module-yatsm.regression.packaged" title="Permalink to this headline">¶</a></h1>
+<p>Module for finding regression algorithms packaged with YATSM</p>
+<dl class="function">
+<dt id="yatsm.regression.packaged.find_packaged_regressor">
+<code class="descclassname">yatsm.regression.packaged.</code><code class="descname">find_packaged_regressor</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/packaged.html#find_packaged_regressor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.packaged.find_packaged_regressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find location of a regression method packaged with YATSM</p>
+<p>See <code class="docutils literal"><span class="pre">yatsm.regression.packaged.packaged_regressions</span></code> for a list of
+available pre-packaged regressors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> (<em>str</em>) &#8211; name of packaged regression object. Check</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">path to packaged regression method</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">str</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211;
+raise KeyError if user specifies unknown regressor</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code> &#8211;
+raise IOError if the packaged regressor cannot be found</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 

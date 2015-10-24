@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.train &mdash; YATSM 0.5.0 documentation</title>
+  <title>yatsm.cli.train &mdash; YATSM 0.5.3 documentation</title>
   
 
   
@@ -30,11 +30,11 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.0 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -44,17 +44,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-        
-          <a href="../../../index.html" class="icon icon-home"> YATSM
-        
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
 
-        
-        </a>
+          
+          </a>
 
-        
+          
+            
+            
+              <div class="version">
+                0.5.3
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -63,77 +73,33 @@
   </form>
 </div>
 
-        
-      </div>
+          
+        </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-          
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#examples">Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#conda">Conda</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#yatsm-installation">YATSM Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/install.html#platform-support">Platform Support</a></li>
-</ul>
-</li>
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#configuration-file">Configuration File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#model-parameters">Model Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#phenology">Phenology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#classification">Classification</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/configuration.html#example">Example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#missing-values">Missing Values</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_static.html#docs-todo">Docs TODO</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_changes.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/map_changes.html#docs-todo">Docs TODO</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../guide/phenology.html#configuration">Configuration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a></li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -148,7 +114,13 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../../../index.html">Docs</a> &raquo;</li>
       
@@ -165,7 +137,8 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <h1>Source code for yatsm.cli.train</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot; Command line interface for training classifiers on YATSM output &quot;&quot;&quot;</span>
@@ -186,6 +159,7 @@
 <span class="kn">from</span> <span class="nn">yatsm.config_parser</span> <span class="kn">import</span> <span class="n">parse_config_file</span>
 <span class="kn">from</span> <span class="nn">yatsm</span> <span class="kn">import</span> <span class="n">classifiers</span>
 <span class="kn">from</span> <span class="nn">yatsm.classifiers</span> <span class="kn">import</span> <span class="n">diagnostics</span>
+<span class="kn">from</span> <span class="nn">yatsm.errors</span> <span class="kn">import</span> <span class="n">TrainingDataException</span>
 <span class="kn">from</span> <span class="nn">yatsm</span> <span class="kn">import</span> <span class="n">plots</span>
 <span class="kn">from</span> <span class="nn">yatsm</span> <span class="kn">import</span> <span class="n">reader</span>
 <span class="kn">from</span> <span class="nn">yatsm</span> <span class="kn">import</span> <span class="n">utils</span>
@@ -222,6 +196,7 @@
 <span class="sd">    file &lt;model&gt;. Dataset configuration is specified by &lt;yatsm_config&gt; and</span>
 <span class="sd">    classifier and classifier parameters are specified by &lt;classifier_config&gt;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Setup</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.pkl&#39;</span><span class="p">):</span>
         <span class="n">model</span> <span class="o">+=</span> <span class="s">&#39;.pkl&#39;</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
@@ -231,264 +206,58 @@
     <span class="k">if</span> <span class="n">seed</span><span class="p">:</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
-    <span class="c"># Parse YATSM config</span>
-    <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span> <span class="o">=</span> <span class="n">parse_config_file</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="c"># Parse config &amp; algorithm config</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">parse_config_file</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">classifiers</span><span class="o">.</span><span class="n">cfg_to_algorithm</span><span class="p">(</span><span class="n">classifier_config</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_image&#39;</span><span class="p">]</span> <span class="ow">or</span> \
-            <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_image&#39;</span><span class="p">]):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Training data image {f} does not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">f</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_image&#39;</span><span class="p">]))</span>
+    <span class="n">training_image</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_image&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">training_image</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">training_image</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Training data image </span><span class="si">%s</span><span class="s"> does not exist&#39;</span> <span class="o">%</span> <span class="n">training_image</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span>
 
-    <span class="c"># Parse classifier config</span>
-    <span class="n">algorithm_helper</span> <span class="o">=</span> <span class="n">classifiers</span><span class="o">.</span><span class="n">ini_to_algorthm</span><span class="p">(</span><span class="n">classifier_config</span><span class="p">)</span>
+    <span class="c"># Find information from results -- e.g., design info</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">find_result_attributes</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
 
-    <span class="n">main</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">,</span> <span class="n">algorithm_helper</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span>
-         <span class="n">diagnostics</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="TrainingDataException"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.TrainingDataException">[docs]</a><span class="k">class</span> <span class="nc">TrainingDataException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Custom exception for errors with training data &quot;&quot;&quot;</span>
-    <span class="k">pass</span>
-
-</div>
-<div class="viewcode-block" id="is_cache_old"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.is_cache_old">[docs]</a><span class="k">def</span> <span class="nf">is_cache_old</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="n">training_file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Indicates if cache file is older than training data file</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      cache_file (str): filename of the cache file</span>
-<span class="sd">      training_file (str): filename of the training data file_</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      old (bool): True if the cache file is older than the training data file</span>
-<span class="sd">        and needs to be updated; False otherwise</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">cache_file</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cache_file</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span> <span class="o">&lt;</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">training_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
-
-</div>
-<div class="viewcode-block" id="get_training_inputs"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.get_training_inputs">[docs]</a><span class="k">def</span> <span class="nf">get_training_inputs</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">exit_on_missing</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns X features and y labels specified in config file</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      dataset_config (dict): dataset configuration</span>
-<span class="sd">      exit_on_missing (bool, optional): exit if input feature cannot be found</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      X (np.ndarray): matrix of feature inputs for each training data sample</span>
-<span class="sd">      y (np.ndarray): array of labeled training data samples</span>
-<span class="sd">      row (np.ndarray): row pixel locations of `y`</span>
-<span class="sd">      col (np.ndarray): column pixel locations of `y`</span>
-<span class="sd">      labels (np.ndarraY): label of `y` if found, else None</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Find and parse training data</span>
-    <span class="n">roi</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_image&#39;</span><span class="p">])</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Read in training data&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">roi</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Found labels for ROIs -- including in output&#39;</span><span class="p">)</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">roi</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="c"># Determine start and end dates of training sample relevance</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">training_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
-            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_start&#39;</span><span class="p">],</span>
-            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_date_format&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
-        <span class="n">training_end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
-            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_end&#39;</span><span class="p">],</span>
-            <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_date_format&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Failed to parse training data start or end dates&#39;</span><span class="p">)</span>
-        <span class="k">raise</span>
-
-    <span class="c"># Loop through samples in ROI extracting features</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;roi_mask_values&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">roi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
-
-    <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">out_y</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">out_row</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">out_col</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="n">rec</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">_row_previous</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">for</span> <span class="n">_row</span><span class="p">,</span> <span class="n">_col</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="c"># Load result</span>
-        <span class="k">if</span> <span class="n">_row</span> <span class="o">!=</span> <span class="n">_row_previous</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">rec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_output_name</span><span class="p">(</span>
-                    <span class="n">dataset_config</span><span class="p">,</span> <span class="n">_row</span><span class="p">))[</span><span class="s">&#39;record&#39;</span><span class="p">]</span>
-                <span class="n">_row_previous</span> <span class="o">=</span> <span class="n">_row</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not open saved result file {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">f</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">get_output_name</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">_row</span><span class="p">)))</span>
-                <span class="k">if</span> <span class="n">exit_on_missing</span><span class="p">:</span>
-                    <span class="k">raise</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">continue</span>
-        <span class="c"># Find intersecting time segment</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">training_start</span><span class="p">)</span> <span class="o">&amp;</span>
-                     <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">training_end</span><span class="p">)</span> <span class="o">&amp;</span>
-                     <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">_col</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s">&#39;Could not find model for label {l} at x/y {c}/{r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">l</span><span class="o">=</span><span class="n">_y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">_col</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">_row</span><span class="p">))</span>
-            <span class="k">continue</span>
-        <span class="k">elif</span> <span class="n">i</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">TrainingDataException</span><span class="p">(</span><span class="s">&#39;Found more than one valid model for </span><span class="se">\</span>
-<span class="s">                label {l} at x/y {x}/{y}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="n">_y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">_col</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_row</span><span class="p">))</span>
-
-        <span class="c"># Extract coefficients with intercept term rescaled</span>
-        <span class="n">coef</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;coef&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span>
-                      <span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;end&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
-
-        <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">coef</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">coef</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;rmse&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span>
-        <span class="n">out_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_y</span><span class="p">)</span>
-        <span class="n">out_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_row</span><span class="p">)</span>
-        <span class="n">out_col</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_col</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">out_y</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not find any matching timeseries segments&#39;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Found matching time segments for {m} out of {n} labels&#39;</span><span class="o">.</span>
-                <span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">out_y</span><span class="p">),</span> <span class="n">n</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
-
-    <span class="n">out_row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_row</span><span class="p">)</span>
-    <span class="n">out_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_col</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">out_row</span><span class="p">,</span> <span class="n">out_col</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_y</span><span class="p">),</span>
-            <span class="n">out_row</span><span class="p">,</span> <span class="n">out_col</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="algo_diagnostics"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.algo_diagnostics">[docs]</a><span class="k">def</span> <span class="nf">algo_diagnostics</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
-                     <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">make_plots</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Display algorithm diagnostics for a given X and y</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      dataset_config (dict): dict of dataset configuration options</span>
-<span class="sd">      yatsm_config (dict): dict of YATSM algorithm options</span>
-<span class="sd">      X (np.ndarray): X feature input used in classification</span>
-<span class="sd">      y (np.ndarray): y labeled examples</span>
-<span class="sd">      row (np.ndarray): row pixel locations of `y`</span>
-<span class="sd">      col (np.ndarray): column pixel locations of `y`</span>
-<span class="sd">      algo (sklearn classifier): classifier used from scikit-learn</span>
-<span class="sd">      n_fold (int): number of folds for crossvalidation</span>
-<span class="sd">      make_plots (bool, optional): show diagnostic plots (default: True)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Print algorithm diagnostics without crossvalidation</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;----- DIAGNOSTICS -----&gt;&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="s">&#39;oob_score_&#39;</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Out of Bag score: {p}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">algo</span><span class="o">.</span><span class="n">oob_score_</span><span class="p">))</span>
-
-    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;-----------------------&gt;&#39;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;KFold crossvalidation scores:&#39;</span><span class="p">)</span>
-    <span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="n">n_fold</span><span class="p">)</span>
-    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">kfold_summary</span><span class="p">,</span>
-                              <span class="n">diagnostics</span><span class="o">.</span><span class="n">kfold_scores</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">kf</span><span class="p">)</span>
-                               <span class="p">))</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;-----------------------&gt;&#39;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Stratified KFold crossvalidation scores:&#39;</span><span class="p">)</span>
-    <span class="n">kf</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="n">n_fold</span><span class="p">)</span>
-    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">kfold_summary</span><span class="p">,</span>
-                              <span class="n">diagnostics</span><span class="o">.</span><span class="n">kfold_scores</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">kf</span><span class="p">)</span>
-                               <span class="p">))</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;-----------------------&gt;&#39;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Spatialized shuffled KFold crossvalidation scores:&#39;</span><span class="p">)</span>
-    <span class="n">kf</span> <span class="o">=</span> <span class="n">diagnostics</span><span class="o">.</span><span class="n">SpatialKFold</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="n">n_fold</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">kfold_summary</span><span class="p">,</span>
-                              <span class="n">diagnostics</span><span class="o">.</span><span class="n">kfold_scores</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">kf</span><span class="p">)</span>
-                               <span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">make_plots</span><span class="p">:</span>
-        <span class="n">test_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;KFold&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;Stratified KFold&#39;</span><span class="p">,</span>
-                      <span class="s">&#39;Spatial KFold (shuffle)&#39;</span>
-                      <span class="p">]</span>
-        <span class="n">plots</span><span class="o">.</span><span class="n">plot_crossvalidation_scores</span><span class="p">(</span><span class="n">kfold_summary</span><span class="p">,</span> <span class="n">test_names</span><span class="p">)</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;-----------------------&gt;&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="s">&#39;feature_importances_&#39;</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Feature importance:&#39;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">make_plots</span><span class="p">:</span>
-            <span class="n">plots</span><span class="o">.</span><span class="n">plot_feature_importance</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">model_filename</span><span class="p">,</span>
-         <span class="n">run_diagnostics</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">make_plots</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; YATSM trainining main</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      dataset_config (dict): options for the dataset</span>
-<span class="sd">      yatsm_config (dict): options for the change detection algorithm</span>
-<span class="sd">      algo (sklearn classifier): classification algorithm helper class</span>
-<span class="sd">      model_filename (str): filename for pickled algorithm object</span>
-<span class="sd">      run_diagnostics (bool): Run KFold diagnostics</span>
-<span class="sd">      n_fold (int): number of folds for crossvalidation</span>
-<span class="sd">      make_plots (bool, optional): show diagnostic plots (default: True)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Cache file for training data</span>
     <span class="n">has_cache</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="k">if</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]:</span>
+    <span class="n">training_cache</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;cache_training&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">training_cache</span><span class="p">:</span>
         <span class="c"># If doesn&#39;t exist, retrieve it</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">training_cache</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Could not retrieve cache file for Xy&#39;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;    file: {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">f</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;    file: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">training_cache</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Restoring X/y from cache file&#39;</span><span class="p">)</span>
             <span class="n">has_cache</span> <span class="o">=</span> <span class="bp">True</span>
 
+    <span class="n">training_image</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_image&#39;</span><span class="p">]</span>
     <span class="c"># Check if we need to regenerate the cache file because training data is</span>
     <span class="c">#   newer than the cache</span>
-    <span class="n">regenerate_cache</span> <span class="o">=</span> <span class="n">is_cache_old</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">],</span>
-                                    <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;training_image&#39;</span><span class="p">])</span>
+    <span class="n">regenerate_cache</span> <span class="o">=</span> <span class="n">is_cache_old</span><span class="p">(</span><span class="n">training_cache</span><span class="p">,</span> <span class="n">training_image</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">regenerate_cache</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Existing cache file older than training data ROI&#39;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Regenerating cache file&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">has_cache</span> <span class="ow">or</span> <span class="n">regenerate_cache</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in X/y&#39;</span><span class="p">)</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">get_training_inputs</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">get_training_inputs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Done reading in X/y&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in X/y from cache file {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">f</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]))</span>
-        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">])</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Reading in X/y from cache file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">training_cache</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">training_cache</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;X&#39;</span><span class="p">]</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">]</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;row&#39;</span><span class="p">]</span>
             <span class="n">col</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;col&#39;</span><span class="p">]</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;labels&#39;</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Read in X/y from cache file {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">f</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Read in X/y from cache file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">training_cache</span><span class="p">)</span>
 
     <span class="c"># If cache didn&#39;t exist but is specified, create it for first time</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_cache</span> <span class="ow">and</span> <span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Saving X/y to cache file {f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">f</span><span class="o">=</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_cache</span> <span class="ow">and</span> <span class="n">training_cache</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Saving X/y to cache file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">training_cache</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="s">&#39;cache_training&#39;</span><span class="p">],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">training_cache</span><span class="p">,</span>
                      <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not save X/y to cache file&#39;</span><span class="p">)</span>
@@ -500,13 +269,213 @@
 
     <span class="c"># Serialize algorithm to file</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Pickling classifier with sklearn.externals.joblib&#39;</span><span class="p">)</span>
-    <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">model_filename</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
     <span class="c"># Diagnostics</span>
-    <span class="k">if</span> <span class="n">run_diagnostics</span><span class="p">:</span>
-        <span class="n">algo_diagnostics</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">make_plots</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">diagnostics</span><span class="p">:</span>
+        <span class="n">algo_diagnostics</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="is_cache_old"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.is_cache_old">[docs]</a><span class="k">def</span> <span class="nf">is_cache_old</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="n">training_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Indicates if cache file is older than training data file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cache_file (str): filename of the cache file</span>
+<span class="sd">        training_file (str): filename of the training data file_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the cache file is older than the training data file</span>
+<span class="sd">            and needs to be updated; False otherwise</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cache_file</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cache_file</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span> <span class="o">&lt;</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">training_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="find_result_attributes"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.find_result_attributes">[docs]</a><span class="k">def</span> <span class="nf">find_result_attributes</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return result attributes relevant for training a classifier</span>
+
+<span class="sd">    At this time, the only relevant information is the design information.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfg (dict): YATSM configuration dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: dictionary of result attributes. Includes &#39;design_info&#39; key.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;design_info&#39;</span><span class="p">:</span> <span class="bp">None</span>
+    <span class="p">}</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_results</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;output&#39;</span><span class="p">],</span>
+                                 <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;output_prefix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="s">&#39;design_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;design_matrix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">attrs</span>
+    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Could not find following attributes in results: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                         <span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="get_training_inputs"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.get_training_inputs">[docs]</a><span class="k">def</span> <span class="nf">get_training_inputs</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">exit_on_missing</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns X features and y labels specified in config file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfg (dict): YATSM configuration dictionary</span>
+<span class="sd">        exit_on_missing (bool, optional): exit if input feature cannot be found</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        X (np.ndarray): matrix of feature inputs for each training data sample</span>
+<span class="sd">        y (np.ndarray): array of labeled training data samples</span>
+<span class="sd">        row (np.ndarray): row pixel locations of `y`</span>
+<span class="sd">        col (np.ndarray): column pixel locations of `y`</span>
+<span class="sd">        labels (np.ndarraY): label of `y` if found, else None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Find and parse training data</span>
+    <span class="n">roi</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_image&#39;</span><span class="p">])</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Read in training data&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">roi</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Found labels for ROIs -- including in output&#39;</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">roi</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c"># Determine start and end dates of training sample relevance</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">training_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_start&#39;</span><span class="p">],</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_date_format&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
+        <span class="n">training_end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_end&#39;</span><span class="p">],</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_date_format&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Failed to parse training data start or end dates&#39;</span><span class="p">)</span>
+        <span class="k">raise</span>
+
+    <span class="c"># Loop through samples in ROI extracting features</span>
+    <span class="n">mask_values</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;roi_mask_values&#39;</span><span class="p">]</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">mask_values</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">roi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">out_y</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">out_row</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">out_col</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">_row_previous</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">_row</span><span class="p">,</span> <span class="n">_col</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="c"># Load result</span>
+        <span class="k">if</span> <span class="n">_row</span> <span class="o">!=</span> <span class="n">_row_previous</span><span class="p">:</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_output_name</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">],</span> <span class="n">_row</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">output_name</span><span class="p">)[</span><span class="s">&#39;record&#39;</span><span class="p">]</span>
+                <span class="n">_row_previous</span> <span class="o">=</span> <span class="n">_row</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not open saved result file </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                             <span class="n">output_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">exit_on_missing</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+        <span class="c"># Find intersecting time segment</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">training_start</span><span class="p">)</span> <span class="o">&amp;</span>
+                     <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">training_end</span><span class="p">)</span> <span class="o">&amp;</span>
+                     <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">_col</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Could not find model for label </span><span class="si">%i</span><span class="s"> at x/y </span><span class="si">%i</span><span class="s">/</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span>
+                         <span class="p">(</span><span class="n">_y</span><span class="p">,</span> <span class="n">_col</span><span class="p">,</span> <span class="n">_row</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="k">elif</span> <span class="n">i</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TrainingDataException</span><span class="p">(</span>
+                <span class="s">&#39;Found more than one valid model for label </span><span class="si">%i</span><span class="s"> at x/y </span><span class="si">%i</span><span class="s">/</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span>
+                <span class="p">(</span><span class="n">_y</span><span class="p">,</span> <span class="n">_col</span><span class="p">,</span> <span class="n">_row</span><span class="p">))</span>
+
+        <span class="c"># Extract coefficients with intercept term rescaled</span>
+        <span class="n">coef</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;coef&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span>
+                      <span class="n">coef</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;end&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+
+        <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">coef</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">coef</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">&#39;rmse&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span>
+        <span class="n">out_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_y</span><span class="p">)</span>
+        <span class="n">out_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_row</span><span class="p">)</span>
+        <span class="n">out_col</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_col</span><span class="p">)</span>
+
+    <span class="n">out_row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_row</span><span class="p">)</span>
+    <span class="n">out_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_col</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">out_row</span><span class="p">,</span> <span class="n">out_col</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_y</span><span class="p">),</span> <span class="n">out_row</span><span class="p">,</span> <span class="n">out_col</span><span class="p">,</span> <span class="n">labels</span>
+
+</div>
+<div class="viewcode-block" id="algo_diagnostics"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.algo_diagnostics">[docs]</a><span class="k">def</span> <span class="nf">algo_diagnostics</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+                     <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">make_plots</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Display algorithm diagnostics for a given X and y</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfg (dict): YATSM configuration dictionary</span>
+<span class="sd">        X (np.ndarray): X feature input used in classification</span>
+<span class="sd">        y (np.ndarray): y labeled examples</span>
+<span class="sd">        row (np.ndarray): row pixel locations of `y`</span>
+<span class="sd">        col (np.ndarray): column pixel locations of `y`</span>
+<span class="sd">        algo (sklearn classifier): classifier used from scikit-learn</span>
+<span class="sd">        n_fold (int): number of folds for crossvalidation</span>
+<span class="sd">        make_plots (bool, optional): show diagnostic plots (default: True)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Print algorithm diagnostics without crossvalidation</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;----- DIAGNOSTICS -----&gt;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="s">&#39;oob_score_&#39;</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Out of Bag score: </span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">algo</span><span class="o">.</span><span class="n">oob_score_</span><span class="p">)</span>
+
+    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">test_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;KFold&#39;</span><span class="p">,</span> <span class="s">&#39;Stratified KFold&#39;</span><span class="p">,</span> <span class="s">&#39;Spatial KFold (shuffle)&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="n">kf</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;-----------------------&gt;&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> crossvalidation scores:&#39;</span> <span class="o">%</span> <span class="n">kf</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="n">diagnostics</span><span class="o">.</span><span class="n">kfold_scores</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">kf</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Could not perform </span><span class="si">%s</span><span class="s"> cross-validation: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                           <span class="p">(</span><span class="n">kf</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">scores</span>
+
+    <span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="n">n_fold</span><span class="p">)</span>
+    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">kfold_summary</span><span class="p">,</span> <span class="n">report</span><span class="p">(</span><span class="n">kf</span><span class="p">)))</span>
+
+    <span class="n">kf</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="n">n_fold</span><span class="p">)</span>
+    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">kfold_summary</span><span class="p">,</span> <span class="n">report</span><span class="p">(</span><span class="n">kf</span><span class="p">)))</span>
+
+    <span class="n">kf</span> <span class="o">=</span> <span class="n">diagnostics</span><span class="o">.</span><span class="n">SpatialKFold</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">n_folds</span><span class="o">=</span><span class="n">n_fold</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">kfold_summary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">kfold_summary</span><span class="p">,</span> <span class="n">report</span><span class="p">(</span><span class="n">kf</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">make_plots</span><span class="p">:</span>
+        <span class="n">plots</span><span class="o">.</span><span class="n">plot_crossvalidation_scores</span><span class="p">(</span><span class="n">kfold_summary</span><span class="p">,</span> <span class="n">test_names</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&lt;-----------------------&gt;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="s">&#39;feature_importances_&#39;</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Feature importance:&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">algo</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">make_plots</span><span class="p">:</span>
+            <span class="n">plots</span><span class="o">.</span><span class="n">plot_feature_importance</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span></div>
 </pre></div>
 
+           </div>
           </div>
           <footer>
   
@@ -516,10 +485,11 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon Sep 14 16:37:15 2015.
+      Last updated on Fri 23 Oct 2015 09:43:16 PM EDT.
+
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -537,7 +507,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.0',
+            VERSION:'0.5.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

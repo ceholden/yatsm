@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.recresid module &mdash; YATSM 0.5.0 documentation</title>
+  <title>yatsm.regression.recresid module &mdash; YATSM 0.5.3 documentation</title>
   
 
   
@@ -30,10 +30,10 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -43,17 +43,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
 
-        
-          <a href="../index.html" class="icon icon-home"> YATSM
-        
+          
+            <a href="../index.html" class="icon icon-home"> YATSM
+          
 
-        
-        </a>
+          
+          </a>
 
-        
+          
+            
+            
+              <div class="version">
+                0.5.3
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -62,77 +72,33 @@
   </form>
 </div>
 
-        
-      </div>
+          
+        </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-          
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#examples">Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#conda">Conda</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#ubuntu-14-04">Ubuntu 14.04</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../guide/install.html#virtualenv-and-pip">virtualenv and PIP</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#yatsm-installation">YATSM Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#developer-installation">Developer Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/install.html#platform-support">Platform Support</a></li>
-</ul>
-</li>
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#configuration-file">Configuration File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#dataset-parameters">Dataset Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#model-parameters">Model Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#phenology">Phenology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#classification">Classification</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/configuration.html#example">Example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../guide/batch_interface.html#sun-grid-engine">Sun Grid Engine</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../guide/map_static.html#missing-values">Missing Values</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/map_static.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/map_static.html#docs-todo">Docs TODO</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../guide/map_changes.html#examples">Examples</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../guide/map_changes.html#docs-todo">Docs TODO</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../guide/phenology.html#configuration">Configuration</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_line.html"><cite>yatsm line</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_train.html"><cite>yatsm train</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_classify.html"><cite>yatsm classify</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../scripts/yatsm_map.html"><cite>yatsm map</cite></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -147,7 +113,13 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
@@ -162,7 +134,8 @@
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="module-yatsm.regression.recresid">
 <span id="yatsm-regression-recresid-module"></span><h1>yatsm.regression.recresid module<a class="headerlink" href="#module-yatsm.regression.recresid" title="Permalink to this headline">¶</a></h1>
@@ -181,31 +154,43 @@ ISBN: 978-0-471-89530-5</dd>
 <dl class="function">
 <dt id="yatsm.regression.recresid.recresid">
 <code class="descclassname">yatsm.regression.recresid.</code><code class="descname">recresid</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>span=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/recresid.html#recresid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.recresid.recresid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return recursive residuals for y ~ X</p>
-<p>For matrix <span class="math">\(X_j\)</span> (<span class="math">\(j x K\)</span>) of the first <span class="math">\(j\)</span> rows of
-design matrix with <span class="math">\(K\)</span> features, calculate recursive residuals from
-estimate of <span class="math">\(y_j\)</span> using <span class="math">\(\boldsymbol{b}_j\)</span>, which is least
-squared estimate of <span class="math">\(\boldsymbol{\beta}\)</span> based on the first
-<span class="math">\(j\)</span> observations.</p>
-<p>From Judge et al, 1985, chapter 5.5.2b (equation 5.5.13) and Brown, Durbin,
-and Evans (1975) (equation 2):</p>
+<dd><p>Return standardized recursive residuals for y ~ X</p>
+<p>For a matrix <span class="math">\(X_t\)</span> of <span class="math">\(T\)</span> total observations of <span class="math">\(n\)</span>
+variables, the <span class="math">\(t\)</span> th recursive residual is the forecast prediction
+error for <span class="math">\(y_t\)</span> using a regression fit on the first <span class="math">\(t - 1\)</span>
+observations. Recursive residuals are scaled and standardized so they are
+N(0, 1) distributed.</p>
+<p>Using notation from Brown, Durbin, and Evans (1975) and Judge, et al
+(1985):</p>
 <div class="math">
-\[e_j^* = \frac{y_j - \boldsymbol{x}_j^{\prime}\boldsymbol{b}_{j-1}}
-              {(1 + \boldsymbol{x}_j^{\prime}S_{j-1}\boldsymbol{x}_j)^{1/2}}
-      = \frac{y_j - \boldsymbol{x}_j^{\prime}\boldsymbol{b}_j}
-              {(1 - \boldsymbol{x}_j^{\prime}S_j\boldsymbol{x}_j)^{1/2}},\]\[j = K + 1, K + 2, \ldots, T\]</div>
-<p>A quick way of calculating <span class="math">\(\boldsymbol{b}_j\)</span> and
-<span class="math">\(\boldsymbol{S}_j\)</span> is using an update formula (equation 5.5.14 and
-5.5.15 in Judge et al; Equations 4 and 5 in Brown, Durbin, and Evans):</p>
+\[w_r =
+    \frac{y_r - \boldsymbol{x}_r^{\prime}\boldsymbol{b}_{r-1}}
+          {\sqrt{(1 + \boldsymbol{x}_r^{\prime}
+           S_{r-1}\boldsymbol{x}_r)}}
+    =
+    \frac
+        {y_r - \boldsymbol{x}_r^{\prime}\boldsymbol{b}_r}
+        {\sqrt{1 - \boldsymbol{x}_r^{\prime}S_r\boldsymbol{x}_r}}\]\[r = k + 1, \ldots, T,\]</div>
+<p>where <span class="math">\(S_{r}\)</span> is the residual sum of squares after
+fitting the model on <span class="math">\(r\)</span> observations.</p>
+<p>A quick way of calculating <span class="math">\(\boldsymbol{b}_r\)</span> and
+<span class="math">\(S_r\)</span> is using an update formula (Equations 4 and 5 in
+Brown, Durbin, and Evans; Equation 5.5.14 and 5.5.15 in Judge et al):</p>
 <div class="math">
-\[b_j = b_{j-1} + \frac{S_{j-1}\boldsymbol{x}_j(y_j - \boldsymbol{x}_j^{\prime}\boldsymbol{b}_{j-1})}
-                      {1 + \boldsymbol{x}_j^{\prime}S_{j-1}x_j}\]</div>
+\[\boldsymbol{b}_r
+    =
+    b_{r-1} +
+    \frac
+        {S_{r-1}\boldsymbol{x}_j
+            (y_r - \boldsymbol{x}_r^{\prime}\boldsymbol{b}_{r-1})}
+        {1 + \boldsymbol{x}_r^{\prime}S_{r-1}x_r}\]</div>
 <div class="math">
-\[S_j = S_{j-1} -
-    \frac{S_{j-1}\boldsymbol{x}_j\boldsymbol{x}_j^{\prime}S_{j-1}}
-          {1 + \boldsymbol{x}_j^{\prime}S_{j-1}\boldsymbol{x}_j}\]</div>
-<p>See <cite>statsmodels</cite> implementation, which this follows:
-<a class="reference external" href="https://github.com/statsmodels/statsmodels/blob/88e67f22226bb56f947f5438782e3854d279af79/statsmodels/sandbox/stats/diagnostic.py#L1101">https://github.com/statsmodels/statsmodels/blob/88e67f22226bb56f947f5438782e3854d279af79/statsmodels/sandbox/stats/diagnostic.py#L1101</a></p>
+\[S_r =
+    S_{j-1} -
+    \frac{S_{j-1}\boldsymbol{x}_r\boldsymbol{x}_r^{\prime}S_{j-1}}
+          {1 + \boldsymbol{x}_r^{\prime}S_{j-1}\boldsymbol{x}_r}\]</div>
+<p>See the recursive residuals implementation that this follows,
+<cite>recursive_olsresiduals</cite>, within the <cite>statsmodels.stats.diagnostic</cite> module.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -220,7 +205,7 @@ regression. If <code class="docutils literal"><span class="pre">span</span></cod
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">array containing recursive residuals standardized by
-prediction errors</p>
+prediction error variance</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -233,6 +218,7 @@ prediction errors</p>
 </div>
 
 
+           </div>
           </div>
           <footer>
   
@@ -242,10 +228,11 @@ prediction errors</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon Sep 14 16:37:15 2015.
+      Last updated on Fri 23 Oct 2015 09:43:16 PM EDT.
+
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -263,7 +250,7 @@ prediction errors</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.0',
+            VERSION:'0.5.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
