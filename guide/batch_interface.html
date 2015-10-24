@@ -186,13 +186,13 @@ $ for job in $(seq 1 $njob); do
   done
 </pre></div>
 </div>
-<p>By setting the environment variable, <cite>PYTHONUNBUFFERED</cite>, to a nonzero and
+<p>By setting the environment variable, <code class="docutils literal"><span class="pre">PYTHONUNBUFFERED</span></code>, to a nonzero and
 non-empty value, Python will keep stdout and stderr unbuffered. This is handy
 to use when trying to diagnose a problem or when trying to guage the progress
-of YATSM when logging to a file (e.g., in a <cite>qsub</cite> job) because unbuffered
+of YATSM when logging to a file (e.g., in a <code class="docutils literal"><span class="pre">qsub</span></code> job) because unbuffered
 output is flushed or written immediately to the log file. Be aware that the
 constant writing to the log file may incur a penalty cost. You can run
-YATSM jobs with unbuffered output as follows in the example for <cite>yatsm line</cite>:</p>
+YATSM jobs with unbuffered output as follows in the example for <code class="docutils literal"><span class="pre">yatsm</span> <span class="pre">line</span></code>:</p>
 <div class="code sh highlight-python"><div class="highlight"><pre>$ qsub -j y -V -l h_rt=24:00:00 -N yatsm -b y \
     PYTHONUNBUFFERED=1 yatsm line --resume -v config.ini 1 1
 </pre></div>
@@ -236,7 +236,7 @@ $ for job in $(seq 1 $njob); do
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:43:16 PM EDT.
+      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
 
     </p>
   </div>

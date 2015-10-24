@@ -44,13 +44,13 @@ follows:
             yatsm line --resume -v config.ini $job $njob
       done
 
-By setting the environment variable, `PYTHONUNBUFFERED`, to a nonzero and
+By setting the environment variable, ``PYTHONUNBUFFERED``, to a nonzero and
 non-empty value, Python will keep stdout and stderr unbuffered. This is handy
 to use when trying to diagnose a problem or when trying to guage the progress
-of YATSM when logging to a file (e.g., in a `qsub` job) because unbuffered
+of YATSM when logging to a file (e.g., in a ``qsub`` job) because unbuffered
 output is flushed or written immediately to the log file. Be aware that the
 constant writing to the log file may incur a penalty cost. You can run
-YATSM jobs with unbuffered output as follows in the example for `yatsm line`:
+YATSM jobs with unbuffered output as follows in the example for ``yatsm line``:
 
 .. code:: sh
 
