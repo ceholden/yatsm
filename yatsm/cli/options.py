@@ -12,15 +12,15 @@ def valid_int_gt_zero(ctx, param, value):
         try:
             value = int(value)
         except Exception as e:
-            raise click.BadParameter('Band must be integer above zero: %s'
-                                     % e.message)
+            raise click.BadParameter('%s must be integer above zero: %s'
+                                     % (param.metavar, e.message))
         if value <= 0:
             raise click.BadParameter('%s must be an integer above zero'
                                      % param.metavar)
         return value
 
     if param.multiple:
-         return [_validator(param, v) for v in value]
+        return [_validator(param, v) for v in value]
     else:
         return _validator(param, value)
 
