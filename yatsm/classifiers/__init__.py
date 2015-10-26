@@ -24,7 +24,7 @@ def cfg_to_algorithm(config_file):
         config_file (str): location of configuration file for algorithm
 
     Returns:
-        sklearn classifier
+        tuple: scikit-learn estimator (object) and configuration file (dict)
 
     """
     # Determine which algorithm is used
@@ -49,10 +49,10 @@ def cfg_to_algorithm(config_file):
 
     # Try to load algorithm using hyperparameters from config
     try:
-        sklearn_algo = algo(**config[algo_name])
+        sklearn_algo = algo(**config[algo_name].get('init', {}))
     except TypeError:
         logger.error('Cannot initialize %s classifier. Config file %s '
                      'contains unknown options' % (algo_name, config_file))
         raise
 
-    return sklearn_algo
+    return sklearn_algo, config

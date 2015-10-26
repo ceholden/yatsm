@@ -147,11 +147,12 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.show()
 
     # Eliminate config parameters not algorithm and fit model
+    algo_cfg = cfg[cfg['YATSM']['algorithm']]
     yatsm = cfg['YATSM']['algorithm_cls'](lm=cfg['YATSM']['prediction_object'],
-                                          **cfg[cfg['YATSM']['algorithm']])
+                                          **algo_cfg.get('init', {}))
     yatsm.px = px
     yatsm.py = py
-    yatsm.fit(X, Y, np.asarray(df['date'][valid]))
+    yatsm.fit(X, Y, np.asarray(df['date'][valid]), **algo_cfg.get('fit', {}))
 
     # Plot after predictions
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):

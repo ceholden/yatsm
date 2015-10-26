@@ -163,13 +163,15 @@ def line(ctx, config, job_number, total_jobs,
 
             # Run model
             cls = cfg['YATSM']['algorithm_cls']
+            algo_cfg = cfg[cfg['YATSM']['algorithm']]
+
             yatsm = cls(lm=cfg['YATSM']['prediction_object'],
-                        **cfg[cfg['YATSM']['algorithm']])
+                        **algo_cfg.get('init', {}))
             yatsm.px = col
             yatsm.py = line
 
             try:
-                yatsm.fit(_X, _Y, _dates)
+                yatsm.fit(_X, _Y, _dates, **algo_cfg.get('fit', {}))
             except TSLengthException:
                 continue
 
@@ -177,7 +179,7 @@ def line(ctx, config, job_number, total_jobs,
                 continue
 
             # Postprocess
-            if cfg['YATSM']['commission_alpha']:
+            if cfg['YATSM'].get('commission_alpha'):
                 yatsm.record = postprocess.commission_test(
                     yatsm, cfg['YATSM']['commission_alpha'])
 

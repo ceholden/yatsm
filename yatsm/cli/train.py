@@ -65,7 +65,7 @@ def train(ctx, config, classifier_config, model, n_fold, seed,
 
     # Parse config & algorithm config
     cfg = parse_config_file(config)
-    algo = classifiers.cfg_to_algorithm(classifier_config)
+    algo, algo_cfg = classifiers.cfg_to_algorithm(classifier_config)
 
     training_image = cfg['classification']['training_image']
     if not training_image or not os.path.isfile(training_image):
@@ -122,7 +122,7 @@ def train(ctx, config, classifier_config, model, n_fold, seed,
 
     # Do modeling
     logger.info('Training classifier')
-    algo.fit(X, y)
+    algo.fit(X, y, **algo_cfg.get('fit', {}))
 
     # Serialize algorithm to file
     logger.info('Pickling classifier with sklearn.externals.joblib')
