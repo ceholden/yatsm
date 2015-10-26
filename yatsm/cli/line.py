@@ -19,8 +19,9 @@ from yatsm.regression.transforms import harm
 from yatsm.algorithms import postprocess
 try:
     import yatsm.phenology as pheno
-except ImportError:
+except ImportError as e:
     pheno = None
+    pheno_exception = e.message
 from yatsm.version import __version__
 
 logger = logging.getLogger('yatsm')
@@ -48,9 +49,10 @@ def line(ctx, config, job_number, total_jobs,
     # Parse config
     cfg = parse_config_file(config)
 
-    if ('phenology' in cfg and 'calc_pheno' in cfg['phenology']) and not pheno:
+    if ('phenology' in cfg and cfg['phenology'].get('enable')) and not pheno:
         click.secho('Could not import yatsm.phenology but phenology metrics '
                     'are requested', fg='red')
+        click.secho('Error: %s' % pheno_exception, fg='red')
         raise click.Abort()
 
     # Make sure output directory exists and is writable

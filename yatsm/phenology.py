@@ -22,7 +22,7 @@ import rpy2.robjects.numpy2ri
 rpy2.robjects.numpy2ri.activate()
 Rstats = importr('stats')
 
-from vegetation_indices import EVI
+from .vegetation_indices import EVI
 
 
 def group_years(years, interval=3):
@@ -184,7 +184,7 @@ class LongTermMeanPhenology(object):
         q_max (float, optional): upper percentile for scaling EVI (default: 90)
 
     """
-    def __init__(self, model, red_index=2, nir_index=3, blue_index=0,
+    def __init__(self, red_index=2, nir_index=3, blue_index=0,
                  scale=0.0001, evi_index=None, evi_scale=None,
                  year_interval=3, q_min=10, q_max=90):
         self.red_index = red_index
@@ -281,16 +281,17 @@ class LongTermMeanPhenology(object):
         """ Fit phenology metrics for each time segment within a YATSM model
 
         Args:
-        model (yatsm.YATSM): instance of `yatsm.YATSM` that has been run for
-            change detection
+            model (yatsm.YATSM): instance of `yatsm.YATSM` that has been run
+                for change detection
 
         Returns:
-          np.ndarray: updated copy of YATSM model instance with phenology
-            added into yatsm.record structured array
+            np.ndarray: updated copy of YATSM model instance with phenology
+                added into yatsm.record structured array
 
         """
+        self.model = model
         # Preprocess EVI and create our `self.pheno` record
-        _fit_prep(model)
+        self._fit_prep(model)
 
         for i, _record in enumerate(self.model.record):
             # Subset variables to range of current record
