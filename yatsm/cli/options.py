@@ -6,14 +6,23 @@ import click
 
 
 # CLI VALIDATORS
-def valid_band(ctx, param, value):
-    """ Check image band validity (band >= 1)"""
-    try:
-        band = int(value)
-        assert band >= 1
-    except:
-        raise click.BadParameter('Band must be integer above 1')
-    return band
+def valid_int_gt_zero(ctx, param, value):
+    """ Validator for integers > 0 (value >= 1)"""
+    def _validator(param, value):
+        try:
+            value = int(value)
+        except Exception as e:
+            raise click.BadParameter('Band must be integer above zero: %s'
+                                     % e.message)
+        if value <= 0:
+            raise click.BadParameter('%s must be an integer above zero'
+                                     % param.metavar)
+        return value
+
+    if param.multiple:
+         return [_validator(param, v) for v in value]
+    else:
+        return _validator(param, value)
 
 
 # CLI ARGUMENTS

@@ -48,6 +48,7 @@ WARN_ON_EMPTY = False
 @click.option('--warn-on-empty', is_flag=True,
               help='Warn user when reading in empty results files')
 @click.option('--band', '-b', multiple=True, metavar='<band>', type=int,
+              callback=options.valid_int_gt_zero,
               help='Bands to export for coefficient/prediction maps')
 @click.option('--coef', '-c', multiple=True, metavar='<coef>',
               type=click.Choice(design_coefs), default=('all', ),
