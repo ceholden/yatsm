@@ -95,6 +95,7 @@ def line(ctx, config, job_number, total_jobs,
     kws = {'x': dates}
     kws.update(df.to_dict())
     X = patsy.dmatrix(cfg['YATSM']['design_matrix'], kws)
+    cfg['YATSM']['design'] = X.design_info.column_name_indexes
 
     # Form YATSM class arguments
     fit_indices = np.arange(cfg['dataset']['n_bands'])
@@ -105,19 +106,12 @@ def line(ctx, config, job_number, total_jobs,
         X = np.flipud(X)
 
     # Create output metadata to save
-    md = cfg[cfg['YATSM']['algorithm']].copy()
-    md.update({
-        'algorithm': cfg['YATSM']['algorithm'],
-        'design': cfg['YATSM']['design_matrix'],
-        'design_matrix': X.design_info.column_name_indexes,
-        'prediction': cfg['YATSM']['prediction']
-    })
+    md = {
+        'YATSM': cfg['YATSM'],
+        cfg['YATSM']['algorithm']: cfg[cfg['YATSM']['algorithm']]
+    }
     if cfg['phenology']['enable']:
-        md.update({
-            'year_interval': cfg['phenology']['year_interval'],
-            'q_min': cfg['phenology']['q_min'],
-            'q_max': cfg['phenology']['q_max']
-        })
+        md.update({'phenology': cfg['phenology']})
 
     # Begin process
     start_time_all = time.time()
@@ -199,9 +193,9 @@ def line(ctx, config, job_number, total_jobs,
 
         logger.debug('    Saving YATSM output to %s' % out)
         np.savez(out,
-                 version=__version__,
                  record=np.array(output),
-                 **{k: v for k, v in md.iteritems()})
+                 version=__version__,
+                 metadata=md)
 
         run_time = time.time() - start_time
         logger.debug('Line %s took %ss to run' % (line, run_time))
