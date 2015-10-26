@@ -16,7 +16,7 @@ from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
                          csvfile_to_dataframe)
 from yatsm.reader import get_image_attribute, read_line
 from yatsm.regression.transforms import harm
-from yatsm.algorithms import ccdc, postprocess
+from yatsm.algorithms import postprocess
 try:
     import yatsm.phenology as pheno
 except ImportError:
@@ -188,17 +188,8 @@ def line(ctx, config, job_number, total_jobs,
 
             if cfg['phenology']['enable']:
                 pcfg = cfg['phenology']
-                ltm = pheno.LongTermMeanPhenology(yatsm,
-                                                  pcfg.get('red_index'),
-                                                  pcfg.get('nir_index'),
-                                                  pcfg.get('blue_index'),
-                                                  pcfg.get('scale'),
-                                                  pcfg.get('evi_index'),
-                                                  pcfg.get('evi_scale'))
-                yatsm.record = ltm.fit(
-                    year_interval=pcfg['year_interval'],
-                    q_min=pcfg['q_min'],
-                    q_max=pcfg['q_max'])
+                ltm = pheno.LongTermMeanPhenology(**pcfg.get('init', {}))
+                yatsm.record = ltm.fit(yatsm, **pcfg.get('fit', {}))
 
             output.extend(yatsm.record)
 

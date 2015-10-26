@@ -147,53 +147,67 @@ class LongTermMeanPhenology(object):
     on fitting smoothing splines to timeseries of EVI.
 
     Attributes:
-      self.pheno (np.ndarray): NumPy structured array containing phenology
-        metrics. These metrics include:
+        self.pheno (np.ndarray): NumPy structured array containing phenology
+            metrics. These metrics include:
 
-        - spring_doy: the long term mean day of year of the start of spring
-        - autumn_doy: the long term mean day of year of the start of autumn
-        - pheno_cor: the correlation coefficient of the observed EVI and
-          the smoothed prediction
-        - peak_evi: the highest smoothed EVI value within the year (maximum
-          amplitude of EVI)
-        - peak_doy: the day of year corresponding to the peak EVI value
-        - spline_evi: the smoothing spline prediction of EVI for days of
-          year between 1 and 365
-        - pheno_nobs: the number of observations used to fit the smoothing
-          spline
+            - spring_doy: the long term mean day of year of the start of spring
+            - autumn_doy: the long term mean day of year of the start of autumn
+            - pheno_cor: the correlation coefficient of the observed EVI and
+            the smoothed prediction
+            - peak_evi: the highest smoothed EVI value within the year (maximum
+            amplitude of EVI)
+            - peak_doy: the day of year corresponding to the peak EVI value
+            - spline_evi: the smoothing spline prediction of EVI for days of
+            year between 1 and 365
+            - pheno_nobs: the number of observations used to fit the smoothing
+            spline
 
     Args:
-      model (yatsm.YATSM): instance of `yatsm.YATSM` that has been run for
-        change detection
-      red_index (int, optional): index of model.Y containing red band
-        (default: 2)
-      nir_index (int, optional): index of model.Y containing NIR band
-        (default: 3)
-      blue_index (int, optional): index of model.Y containing blue band
-        (default: 0)
-      scale (float or np.ndarray, optional): scale factor for reflectance
-        bands in model.Y to transform data into [0, 1] (default: 0.0001)
-      evi_index (int, optional): if EVI is already used within timeseries
-        model, provide index of model.Y containing EVI to override
-        computation from red/nir/blue bands (default: None)
-      evi_scale (float, optional): if EVI is already used within timeseries
-        model, provide scale factor to transform EVI into [0, 1] range
-        (default: None)
+        red_index (int, optional): index of model.Y containing red band
+            (default: 2)
+        nir_index (int, optional): index of model.Y containing NIR band
+            (default: 3)
+        blue_index (int, optional): index of model.Y containing blue band
+            (default: 0)
+        scale (float or np.ndarray, optional): scale factor for reflectance
+            bands in model.Y to transform data into [0, 1] (default: 0.0001)
+        evi_index (int, optional): if EVI is already used within timeseries
+            model, provide index of model.Y containing EVI to override
+            computation from red/nir/blue bands (default: None)
+        evi_scale (float, optional): if EVI is already used within timeseries
+            model, provide scale factor to transform EVI into [0, 1] range
+            (default: None)
+        year_interval (int, optional): number of years to group together when
+            normalizing EVI to upper and lower percentiles of EVI within the
+            group (default: 3)
+        q_min (float, optional): lower percentile for scaling EVI (default: 10)
+        q_max (float, optional): upper percentile for scaling EVI (default: 90)
 
     """
     def __init__(self, model, red_index=2, nir_index=3, blue_index=0,
-                 scale=0.0001, evi_index=None, evi_scale=None):
-        self.model = model
-        if evi_index:
-            if not isinstance(evi_scale, float):
-                raise ValueError('Must provide scale factor for EVI')
-            self.evi = model.Y[evi_index, :] * evi_scale
-        else:
-            self.evi = EVI(model.Y[red_index, :] * scale,
-                           model.Y[nir_index, :] * scale,
-                           model.Y[blue_index, :] * scale)
+                 scale=0.0001, evi_index=None, evi_scale=None,
+                 year_interval=3, q_min=10, q_max=90):
+        self.red_index = red_index
+        self.nir_index = nir_index
+        self.blue_index = blue_index
+        self.scale = scale
+        self.evi_index = evi_index
+        self.evi_scale = evi_scale
+        self.year_interval = year_interval
+        self.q_min = q_min
+        self.q_max = q_max
 
-        self.ordinal = model.X[:, 1].astype(np.uint32)
+    def _fit_prep(self, model):
+        if self.evi_index:
+            if not isinstance(self.evi_scale, float):
+                raise ValueError('Must provide scale factor for EVI')
+            self.evi = model.Y[self.evi_index, :] * self.evi_scale
+        else:
+            self.evi = EVI(model.Y[self.red_index, :] * self.scale,
+                           model.Y[self.nir_index, :] * self.scale,
+                           model.Y[self.blue_index, :] * self.scale)
+
+        self.ordinal = model.dates.astype(np.uint32)
         self.yeardoy = ordinal2yeardoy(self.ordinal)
 
         # Mask based on unusual EVI values
@@ -263,23 +277,21 @@ class LongTermMeanPhenology(object):
         return (ltm_spring, ltm_autumn, pheno_cor,
                 peak_evi, peak_doy, evi_smooth)
 
-    def fit(self, year_interval=3, q_min=10, q_max=90):
+    def fit(self, model):
         """ Fit phenology metrics for each time segment within a YATSM model
 
         Args:
-          year_interval (int, optional): number of years to group together when
-            normalizing EVI to upper and lower percentiles of EVI within the
-            group (default: 3)
-          q_min (float, optional): lower percentile for scaling EVI
-            (default: 10)
-          q_max (float, optional): upper percentile for scaling EVI
-            (default: 90)
+        model (yatsm.YATSM): instance of `yatsm.YATSM` that has been run for
+            change detection
 
         Returns:
           np.ndarray: updated copy of YATSM model instance with phenology
             added into yatsm.record structured array
 
         """
+        # Preprocess EVI and create our `self.pheno` record
+        _fit_prep(model)
+
         for i, _record in enumerate(self.model.record):
             # Subset variables to range of current record
             rec_range = np.where((self.ordinal >= _record['start']) &
@@ -292,7 +304,8 @@ class LongTermMeanPhenology(object):
 
             # Fit and save results
             _result = self._fit_record(_evi, _yeardoy,
-                                       year_interval, q_min, q_max)
+                                       self.year_interval,
+                                       self.q_min, self.q_max)
 
             self.pheno[i]['spring_doy'] = _result[0]
             self.pheno[i]['autumn_doy'] = _result[1]
