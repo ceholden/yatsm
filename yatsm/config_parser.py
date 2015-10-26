@@ -103,15 +103,15 @@ def parse_config_file(config_file):
     if 'YATSM' not in cfg:
         raise KeyError('YATSM must be a section in configuration YAML file')
 
+    if 'prediction' not in cfg['YATSM']:
+        raise KeyError('YATSM section does not declare a prediction method')
+
     if 'algorithm' not in cfg['YATSM']:
         raise KeyError('YATSM section does not declare an algorithm')
     algo = cfg['YATSM']['algorithm']
     if algo not in cfg:
         raise KeyError('Algorithm specified (%s) is not parameterized in '
                        'configuration file' % algo)
-
-    if 'prediction' not in cfg['YATSM']:
-        raise KeyError('YATSM section does not declare a prediction method')
 
     # Embed algorithm in YATSM key
     if algo not in algorithms.available:

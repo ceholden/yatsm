@@ -1,8 +1,6 @@
 """ Command line interface for creating maps of YATSM algorithm output
 """
-import datetime as dt
 import logging
-import os
 import re
 
 import click
@@ -172,8 +170,16 @@ def find_result_attributes(results, bands, coefs, prefix=''):
         try:
             _result = np.load(r)
             rec = _result['record']
-            design = _result['design_matrix'].item()
-            design_str = _result['design'].item()
+            # Handle pre/post v0.5.4 (see issue #53)
+            if 'metadata' in _result.files:
+                logger.debug('Finding X design info for version>=v0.5.4')
+                md = _result['metadata'].item()
+                design = md['YATSM']['design']
+                design_str = md['YATSM']['design_matrix']
+            else:
+                logger.debug('Finding X design info for version<0.5.4')
+                design = _result['design_matrix'].item()
+                design_str = _result['design'].item()
         except:
             continue
 
@@ -328,7 +334,7 @@ def get_classification(date, result_location, image_ds,
             if pred_proba:
                 raster[rec['py'][index],
                        rec['px'][index], 1] = \
-                            rec['class_proba'][index].max(axis=1) * 10000
+                    rec['class_proba'][index].max(axis=1) * 10000
             if qa:
                 raster[rec['py'][index], rec['px'][index], -1] = _qa
 
@@ -419,8 +425,8 @@ def get_coefficients(date, result_location, image_ds,
             if n_coefs > 0:
                 # Normalize intercept to mid-point in time segment
                 rec[_coef][index, 0, :] += (
-                    (rec['start'][index] + rec['end'][index])
-                        / 2.0)[:, np.newaxis] * \
+                    (rec['start'][index] + rec['end'][index]) /
+                    2.0)[:, np.newaxis] * \
                     rec[_coef][index, 1, :]
 
                 # If we want amplitude, calculate it

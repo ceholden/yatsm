@@ -16,11 +16,12 @@ from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
                          csvfile_to_dataframe)
 from yatsm.reader import get_image_attribute, read_line
 from yatsm.regression.transforms import harm
-from yatsm.algorithms import ccdc, postprocess
+from yatsm.algorithms import postprocess
 try:
     import yatsm.phenology as pheno
-except ImportError:
+except ImportError as e:
     pheno = None
+    pheno_exception = e.message
 from yatsm.version import __version__
 
 logger = logging.getLogger('yatsm')
@@ -48,9 +49,10 @@ def line(ctx, config, job_number, total_jobs,
     # Parse config
     cfg = parse_config_file(config)
 
-    if ('phenology' in cfg and 'calc_pheno' in cfg['phenology']) and not pheno:
+    if ('phenology' in cfg and cfg['phenology'].get('enable')) and not pheno:
         click.secho('Could not import yatsm.phenology but phenology metrics '
                     'are requested', fg='red')
+        click.secho('Error: %s' % pheno_exception, fg='red')
         raise click.Abort()
 
     # Make sure output directory exists and is writable
@@ -93,6 +95,7 @@ def line(ctx, config, job_number, total_jobs,
     kws = {'x': dates}
     kws.update(df.to_dict())
     X = patsy.dmatrix(cfg['YATSM']['design_matrix'], kws)
+    cfg['YATSM']['design'] = X.design_info.column_name_indexes
 
     # Form YATSM class arguments
     fit_indices = np.arange(cfg['dataset']['n_bands'])
@@ -103,19 +106,12 @@ def line(ctx, config, job_number, total_jobs,
         X = np.flipud(X)
 
     # Create output metadata to save
-    md = cfg[cfg['YATSM']['algorithm']].copy()
-    md.update({
-        'algorithm': cfg['YATSM']['algorithm'],
-        'design': cfg['YATSM']['design_matrix'],
-        'design_matrix': X.design_info.column_name_indexes,
-        'prediction': cfg['YATSM']['prediction']
-    })
+    md = {
+        'YATSM': cfg['YATSM'],
+        cfg['YATSM']['algorithm']: cfg[cfg['YATSM']['algorithm']]
+    }
     if cfg['phenology']['enable']:
-        md.update({
-            'year_interval': cfg['phenology']['year_interval'],
-            'q_min': cfg['phenology']['q_min'],
-            'q_max': cfg['phenology']['q_max']
-        })
+        md.update({'phenology': cfg['phenology']})
 
     # Begin process
     start_time_all = time.time()
@@ -163,13 +159,15 @@ def line(ctx, config, job_number, total_jobs,
 
             # Run model
             cls = cfg['YATSM']['algorithm_cls']
+            algo_cfg = cfg[cfg['YATSM']['algorithm']]
+
             yatsm = cls(lm=cfg['YATSM']['prediction_object'],
-                        **cfg[cfg['YATSM']['algorithm']])
+                        **algo_cfg.get('init', {}))
             yatsm.px = col
             yatsm.py = line
 
             try:
-                yatsm.fit(_X, _Y, _dates)
+                yatsm.fit(_X, _Y, _dates, **algo_cfg.get('fit', {}))
             except TSLengthException:
                 continue
 
@@ -177,7 +175,7 @@ def line(ctx, config, job_number, total_jobs,
                 continue
 
             # Postprocess
-            if cfg['YATSM']['commission_alpha']:
+            if cfg['YATSM'].get('commission_alpha'):
                 yatsm.record = postprocess.commission_test(
                     yatsm, cfg['YATSM']['commission_alpha'])
 
@@ -188,25 +186,16 @@ def line(ctx, config, job_number, total_jobs,
 
             if cfg['phenology']['enable']:
                 pcfg = cfg['phenology']
-                ltm = pheno.LongTermMeanPhenology(yatsm,
-                                                  pcfg.get('red_index'),
-                                                  pcfg.get('nir_index'),
-                                                  pcfg.get('blue_index'),
-                                                  pcfg.get('scale'),
-                                                  pcfg.get('evi_index'),
-                                                  pcfg.get('evi_scale'))
-                yatsm.record = ltm.fit(
-                    year_interval=pcfg['year_interval'],
-                    q_min=pcfg['q_min'],
-                    q_max=pcfg['q_max'])
+                ltm = pheno.LongTermMeanPhenology(**pcfg.get('init', {}))
+                yatsm.record = ltm.fit(yatsm, **pcfg.get('fit', {}))
 
             output.extend(yatsm.record)
 
         logger.debug('    Saving YATSM output to %s' % out)
         np.savez(out,
-                 version=__version__,
                  record=np.array(output),
-                 **{k: v for k, v in md.iteritems()})
+                 version=__version__,
+                 metadata=md)
 
         run_time = time.time() - start_time
         logger.debug('Line %s took %ss to run' % (line, run_time))

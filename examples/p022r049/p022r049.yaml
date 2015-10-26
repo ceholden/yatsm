@@ -48,17 +48,18 @@ YATSM:
 
 # Parameters for CCDCesque algorithm -- referenced by "algorithm" key in YATSM
 CCDCesque:
-    consecutive: 5
-    threshold: 3.0
-    min_obs: 16
-    min_rmse: 150
-    test_indices: [2, 4, 5]
-    retrain_time: 365.25
-    screening: RLM
-    screening_crit: 400.0
-    slope_test: False
-    remove_noise: True
-    dynamic_rmse: False
+    init:  # hyperparameters
+        consecutive: 5
+        threshold: 3.0
+        min_obs: 16
+        min_rmse: 150
+        test_indices: [2, 4, 5]
+        retrain_time: 365.25
+        screening: RLM
+        screening_crit: 400.0
+        slope_test: False
+        remove_noise: True
+        dynamic_rmse: False
 
 # Regression estimators
 LassoCV:
