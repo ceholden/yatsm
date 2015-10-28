@@ -35,9 +35,9 @@ if '--num_threads' in sys.argv:
     try:
         n_threads = int(n_threads)
     except ValueError as e:
-        click.secho('Cannot parse <threads> to an integer (--num_threads=%s)'
-                    % n_threads, fg='red')
-        click.Abort()
+        raise click.BadParameter('Cannot parse <threads> to an integer '
+                                 '(--num_threads=%s): %s' % 
+                                 (n_threads, e.message))
     else:
         set_np_thread_vars(n_threads)
 else:
