@@ -7,6 +7,7 @@ https://github.com/mapbox/rasterio/blob/master/rasterio/rio/main.py
 import logging
 import os
 from pkg_resources import iter_entry_points
+import sys
 
 import click
 import click_plugins
@@ -14,7 +15,34 @@ import click_plugins
 import yatsm
 from . import options
 
+logger = logging.getLogger('yatsm')
+
+# NumPy linear algebra multithreading related variables
 NP_THREAD_VARS = ['OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS', 'OPM_NUM_THREADS']
+
+
+def set_np_thread_vars(n):
+    for envvar in NP_THREAD_VARS:
+        if envvar in os.environ:
+            logger.warning('Overriding %s with --num_threads=%i'
+                           % (envvar, n))
+        os.environ[envvar] = str(n)
+
+# If --num_threads set, parse it before click CLI interface so envvars are
+# set BEFORE numpy is imported
+if '--num_threads' in sys.argv:
+    n_threads = sys.argv[sys.argv.index('--num_threads') + 1]
+    try:
+        n_threads = int(n_threads)
+    except ValueError as e:
+        click.secho('Cannot parse <threads> to an integer (--num_threads=%s)'
+                    % n_threads, fg='red')
+        click.Abort()
+    else:
+        set_np_thread_vars(n_threads)
+else:
+    # Default to 1
+    set_np_thread_vars(1)
 
 # YATSM CLI group
 _context = dict(
@@ -35,14 +63,7 @@ _context = dict(
 @click.pass_context
 def cli(ctx, num_threads, verbose, quiet):
     # Logging config
-    logger = logging.getLogger('yatsm')
     if verbose:
         logger.setLevel(logging.DEBUG)
     if quiet:
         logger.setLevel(logging.WARNING)
-
-    # Set num_threads for NumPy linear algebra via MKL, OPENBLAS, or OPM
-    for envvar in NP_THREAD_VARS:
-        if envvar in os.environ:
-            logger.warning('Overriding %s with %i' % (envvar, num_threads))
-        os.environ[envvar] = str(num_threads)
