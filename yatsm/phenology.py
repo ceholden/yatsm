@@ -9,6 +9,7 @@ See:
 from __future__ import division
 
 from datetime import datetime as dt
+import logging
 import math
 
 import numpy as np
@@ -23,6 +24,8 @@ rpy2.robjects.numpy2ri.activate()
 Rstats = importr('stats')
 
 from .vegetation_indices import EVI
+
+logger = logging.getLogger('yatsm')
 
 
 def group_years(years, interval=3):
@@ -233,6 +236,9 @@ class LongTermMeanPhenology(object):
 
         # Mask out np.nan
         valid = np.isfinite(evi_norm)
+        if not np.any(valid):
+            logger.debug('No valid EVI in segment -- skipping')
+            return
         yeardoy = yeardoy[valid, :]
         evi_norm = evi_norm[valid]
 
@@ -307,6 +313,8 @@ class LongTermMeanPhenology(object):
             _result = self._fit_record(_evi, _yeardoy,
                                        self.year_interval,
                                        self.q_min, self.q_max)
+            if _result is None:
+                continue
 
             self.pheno[i]['spring_doy'] = _result[0]
             self.pheno[i]['autumn_doy'] = _result[1]
