@@ -91,7 +91,7 @@ opt_date_format = click.option(
     metavar='<format>',
     show_default=True,
     is_eager=True,
-    help='Date format')
+    help='Input date format')
 
 
 opt_format = click.option(
