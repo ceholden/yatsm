@@ -225,7 +225,7 @@ class LongTermMeanPhenology(object):
             ('pheno_cor', 'f4'),
             ('peak_evi', 'f4'),
             ('peak_doy', 'u2'),
-            ('spline_evi', 'f8', 365),
+            ('spline_evi', 'f8', 366),
             ('pheno_nobs', 'u2')
         ])
 
@@ -256,7 +256,7 @@ class LongTermMeanPhenology(object):
 
         # Fit spline and predict EVI
         spl_pred = CRAN_spline(pad_doy, pad_evi_norm, spar=0.55)
-        evi_smooth = spl_pred(np.arange(1, 366))
+        evi_smooth = spl_pred(np.arange(1, 367))  # 366 to include leap years
 
         # Check correlation
         pheno_cor = np.corrcoef(evi_smooth[yeardoy[:, 1] - 1], evi_norm)[0, 1]
