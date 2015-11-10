@@ -23,7 +23,7 @@ import rpy2.robjects.numpy2ri
 rpy2.robjects.numpy2ri.activate()
 Rstats = importr('stats')
 
-from .vegetation_indices import EVI
+from ..vegetation_indices import EVI
 
 logger = logging.getLogger('yatsm')
 

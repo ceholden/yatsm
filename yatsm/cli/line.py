@@ -18,7 +18,7 @@ from yatsm.reader import get_image_attribute, read_line
 from yatsm.regression.transforms import harm
 from yatsm.algorithms import postprocess
 try:
-    import yatsm.phenology as pheno
+    import yatsm.phenology.longtermmean as pheno
 except ImportError as e:
     pheno = None
     pheno_exception = e.message
