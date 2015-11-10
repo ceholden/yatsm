@@ -119,8 +119,9 @@ def halfmax(x):
         int: the index of the observation closest to the half-max of the data
 
     """
-    return np.argmin(np.abs(x - np.nanmin(x)) / (np.nanmax(x) - np.nanmin(x)) -
-                     0.5)
+    return np.argmin(np.abs(
+        (x - np.nanmin(x)) /
+        (np.nanmax(x) - np.nanmin(x)) - 0.5))
 
 
 def ordinal2yeardoy(ordinal):

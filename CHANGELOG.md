@@ -5,10 +5,14 @@ All notable changes will appear in this log that begins with the release of
 
 For information on the style of this change log, see [keepachangelog.com](http://keepachangelog.com/).
 
-## [UNRELEASED]
+## [UNRELEASED](https://github.com/ceholden/yatsm/compare/v0.5.4...HEAD)
+
+### Changed
+- Reorganize long term mean phenology code into generic phenology related submodule.
 
 ### Fixed
 - Fix bug with spline EVI prediction in LTM phenology module when data include last day in leap year (366) [#56](https://github.com/ceholden/yatsm/issues/56)
+- Fix bug with phenology half-max calculation that created erroneous transition dates [#58](https://github.com/ceholden/yatsm/issues/58)
 
 ## [v0.5.4](https://github.com/ceholden/yatsm/compare/v0.5.3...v0.5.4) - 2015-10-28
 
