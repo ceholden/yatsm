@@ -1,4 +1,5 @@
-from robust_fit import RLM, bisquare
+from . import packaged
+from .robust_fit import RLM, bisquare
 
 
 # Possible coefficients
