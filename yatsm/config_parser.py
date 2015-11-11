@@ -31,8 +31,20 @@ def convert_config(cfg):
     mins, maxes = cfg['dataset']['min_values'], cfg['dataset']['max_values']
     if isinstance(mins, (float, int)):
         cfg['dataset']['min_values'] = np.asarray([mins] * n_bands)
+    else:
+        if len(mins) != n_bands:
+            raise ValueError('Dataset minimum values must be specified for '
+                             '"n_bands" (got %i values, needed %i)' %
+                             (len(mins), n_bands))
+        cfg['dataset']['min_values'] = np.asarray(mins)
     if isinstance(maxes, (float, int)):
         cfg['dataset']['max_values'] = np.asarray([maxes] * n_bands)
+    else:
+        if len(maxes) != n_bands:
+            raise ValueError('Dataset maximum values must be specified for '
+                             '"n_bands" (got %i values, needed %i)' %
+                             (len(maxes), n_bands))
+        cfg['dataset']['max_values'] = np.asarray(maxes)
 
     # Unpickle main predictor
     pred_method = cfg['YATSM']['prediction']
