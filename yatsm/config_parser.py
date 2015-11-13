@@ -69,7 +69,8 @@ def convert_config(cfg):
         cfg[pred_method]['pickle'])
 
     # Unpickle refit objects
-    if 'refit' in cfg['YATSM']:
+    if ('refit' in cfg['YATSM'] and
+            cfg['YATSM']['refit'].get('prediction', None)):
         pickles = []
         for predictor in cfg['YATSM']['refit']['prediction']:
             if predictor in cfg:
