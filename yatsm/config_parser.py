@@ -174,17 +174,25 @@ def expand_envvars(d):
         dict: input dictionary with environment variables expanded
 
     """
+    def check_envvar(k, v):
+        """ Warn if value looks un-expanded """
+        if '$' in v:
+            logger.warning('Config key=value pair might still contain '
+                            'environment variables: "%s=%s"' % (k, v))
+
     _d = d.copy()
     for k, v in six.iteritems(_d):
         if isinstance(v, dict):
             _d[k] = expand_envvars(v)
         elif isinstance(v, str):
             _d[k] = os.path.expandvars(v)
+            check_envvar(k, v)
         elif isinstance(v, (list, tuple)):
             n_v = []
             for _v in v:
                 if isinstance(_v, str):
                     _v = os.path.expandvars(_v)
+                    check_envvar(k, _v)
                 n_v.append(_v)
             _d[k] = n_v
     return _d
