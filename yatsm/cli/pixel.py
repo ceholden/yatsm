@@ -170,7 +170,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
             plt.ylabel('Band {b}'.format(b=band + 1))
 
-            plot_results(band, cfg['YATSM'], yatsm, plot_type=_plot)
+            plot_results(band, cfg, yatsm, design_info, plot_type=_plot)
 
             if embed and has_embed:
                 IPython_embed()
@@ -221,17 +221,30 @@ def plot_VAL(dates, y, mpl_cmap, reps=2):
     plt.xlabel('Day of Year')
 
 
-def plot_results(band, yatsm_config, yatsm_model, plot_type='TS'):
-    step = -1 if yatsm_config['reverse'] else 1
-    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '', yatsm_config['design_matrix'])
+def plot_results(band, cfg, model, design_info, plot_type='TS'):
+    # Handle reverse
+    step = -1 if cfg['YATSM']['reverse'] else 1
 
-    for i, r in enumerate(yatsm_model.record):
+    from IPython.core.debugger import Pdb
+    Pdb().set_trace()
+
+    # Remove categorical info from predictions
+    design = re.sub(r'[\+\-][\ ]+C\(.*\)', '',
+                    cfg['YATSM']['design_matrix'])
+
+    i_coef = []
+    for k, v in design_info.column_name_indexes.iteritems():
+        if not re.match('C\(.*\)', k):
+            i_coef.append(v)
+    i_coef = np.asarray(i_coef)
+
+    for i, r in enumerate(model.record):
         label = 'Model {i}'.format(i=i)
         if plot_type == 'TS':
             mx = np.arange(r['start'], r['end'], step)
             mX = patsy.dmatrix(design, {'x': mx}).T
 
-            my = np.dot(r['coef'][:, band], mX)
+            my = np.dot(r['coef'][i_coef, band], mX)
             mx_date = np.array([dt.datetime.fromordinal(int(_x)) for _x in mx])
 
         elif plot_type == 'DOY':
@@ -243,7 +256,7 @@ def plot_results(band, yatsm_config, yatsm_model, plot_type='TS'):
                            dt.date(yr_mid + 1, 1, 1).toordinal(), 1)
             mX = patsy.dmatrix(design, {'x': mx}).T
 
-            my = np.dot(r['coef'][:, band], mX)
+            my = np.dot(r['coef'][i_coef, band], mX)
             mx_date = np.array([dt.datetime.fromordinal(d).timetuple().tm_yday
                                 for d in mx])
 
