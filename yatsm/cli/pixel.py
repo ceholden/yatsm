@@ -109,7 +109,8 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     if Y.shape[0] != cfg['dataset']['n_bands']:
         logger.error('Number of bands in image %s (%i) do not match number '
                      'in configuration file (%i)' %
-                     (df['filename'][0], nband, cfg['dataset']['n_bands']))
+                     (df['filename'][0], Y.shape[0],
+                      cfg['dataset']['n_bands']))
         raise click.Abort()
 
     # Mask out of range data
