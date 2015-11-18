@@ -91,10 +91,8 @@ def line(ctx, config, job_number, total_jobs,
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Calculate X feature input
-    dates = np.asarray(df['date'])
-    kws = {'x': dates}
-    kws.update(df.to_dict())
-    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], kws)
+    df['x'] = df['date']
+    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], data=df)
     cfg['YATSM']['design'] = X.design_info.column_name_indexes
 
     # Form YATSM class arguments

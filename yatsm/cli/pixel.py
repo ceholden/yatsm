@@ -101,9 +101,8 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     df['image_ID'] = get_image_IDs(df['filename'])
 
     # Setup X/Y
-    kws = {'x': df['date']}
-    kws.update(df.to_dict())
-    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], kws)
+    df['x'] = df['date']
+    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], data=df)
     design_info = X.design_info
 
     Y = read_pixel_timeseries(df['filename'], px, py)
