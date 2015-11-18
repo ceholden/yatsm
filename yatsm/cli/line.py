@@ -85,6 +85,11 @@ def line(ctx, config, job_number, total_jobs,
 
     # Get attributes of one of the images
     nrow, ncol, nband, dtype = get_image_attribute(df['filename'][0])
+    if nband != cfg['dataset']['n_bands']:
+        logger.error('Number of bands in image %s (%i) do not match number '
+                     'in configuration file (%i)' %
+                     (df['filename'][0], nband, cfg['dataset']['n_bands']))
+        raise click.Abort()
 
     # Calculate the lines this job ID works on
     job_lines = distribute_jobs(job_number, total_jobs, nrow)
