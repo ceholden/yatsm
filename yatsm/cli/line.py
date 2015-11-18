@@ -153,7 +153,7 @@ def line(ctx, config, job_number, total_jobs,
 
             _Y = np.delete(_Y, idx_mask, axis=0)[:, valid]
             _X = X[valid, :]
-            _dates = dates[valid]
+            _dates = df['date'].values[valid]
 
             # Run model
             cls = cfg['YATSM']['algorithm_cls']
