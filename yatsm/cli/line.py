@@ -95,11 +95,6 @@ def line(ctx, config, job_number, total_jobs,
     X = patsy.dmatrix(cfg['YATSM']['design_matrix'], data=df)
     cfg['YATSM']['design'] = X.design_info.column_name_indexes
 
-    # Form YATSM class arguments
-    fit_indices = np.arange(cfg['dataset']['n_bands'])
-    if cfg['dataset']['mask_band'] is not None:
-        fit_indices = fit_indices[:-1]
-
     if cfg['YATSM']['reverse']:
         X = np.flipud(X)
 

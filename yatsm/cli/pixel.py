@@ -107,10 +107,6 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
     Y = read_pixel_timeseries(df['filename'], px, py)
 
-    fit_indices = np.arange(cfg['dataset']['n_bands'])
-    if cfg['dataset']['mask_band'] is not None:
-        fit_indices = fit_indices[:-1]
-
     # Mask out of range data
     idx_mask = cfg['dataset']['mask_band'] - 1
     valid = cyprep.get_valid_mask(Y,
