@@ -8,6 +8,7 @@ import patsy
 
 from .utils import find_result_attributes, find_indices
 from ..utils import find_results, iter_records
+from ..regression.transforms import harm
 
 logger = logging.getLogger('yatsm')
 
@@ -186,7 +187,7 @@ def get_prediction(date, result_location, image_ds,
                      dtype=np.int16) * int(ndv)
 
     logger.debug('Processing results')
-    for rec in iter_records(records, warn_on_empty=WARN_ON_EMPTY):
+    for rec in iter_records(records, warn_on_empty=warn_on_empty):
         for _qa, index in find_indices(rec, date, after=after, before=before):
             if index.shape[0] == 0:
                 continue

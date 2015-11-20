@@ -11,16 +11,11 @@ from yatsm.mapping import (get_classification, get_phenology,
                            get_coefficients, get_prediction)
 from yatsm.utils import write_output
 from yatsm.regression import design_coefs
-from yatsm.regression.transforms import harm
 
 gdal.AllRegister()
 gdal.UseExceptions()
 
 logger = logging.getLogger('yatsm')
-
-# number of days in year
-_days = 365.25
-w = 2 * np.pi / _days
 
 
 @click.command(short_help='Make map of YATSM output for a given date')
