@@ -85,6 +85,7 @@ def map(ctx, map_type, date, output,
     \b
     > yatsm map --result "YATSM_new" --after class 2000-01-01 LCmap.gtif
 
+    \b
     Notes:
         - Image predictions will not use categorical information in timeseries
           models.
