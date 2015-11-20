@@ -85,6 +85,9 @@ def map(ctx, map_type, date, output,
         - Image predictions will not use categorical information in timeseries
           models.
     """
+    if len(band) == 0:
+        band = 'all'
+
     try:
         image_ds = gdal.Open(image, gdal.GA_ReadOnly)
     except:
