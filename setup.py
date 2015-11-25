@@ -73,6 +73,7 @@ packages = ['yatsm',
             'yatsm.algorithms',
             'yatsm.cli',
             'yatsm.classifiers',
+            'yatsm.mapping',
             'yatsm.phenology',
             'yatsm.regression',
             'yatsm.segment']
