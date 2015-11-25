@@ -5,19 +5,24 @@ All notable changes will appear in this log that begins with the release of
 
 For information on the style of this change log, see [keepachangelog.com](http://keepachangelog.com/).
 
-## [UNRELEASED](https://github.com/ceholden/yatsm/compare/v0.5.4...HEAD)
+## [v0.5.5](https://github.com/ceholden/yatsm/compare/v0.5.4...v0.5.5) - 2015-11-24
+
+[Milestone v0.5.5](https://github.com/ceholden/yatsm/milestones/v0.5.5)
 
 ### Added
 - Abort if config file 'n_bands' looks incorrect ([commit](https://github.com/ceholden/yatsm/commit/01a6adec1fcd567c194e28b98fa488c13cdbdd45))
 
 ### Changed
 - Reorganize long term mean phenology code into generic phenology related submodule.
+- Reorganize changemap and map logic to separate module [#60](https://github.com/ceholden/yatsm/issues/60)
 
 ### Fixed
 - Fix bug with spline EVI prediction in LTM phenology module when data include last day in leap year (366) [#56](https://github.com/ceholden/yatsm/issues/56)
 - Fix bug with phenology half-max calculation that created erroneous transition dates [#58](https://github.com/ceholden/yatsm/issues/58)
+- Fix bug with phenology calculation for 100% masked data pixels [#54](https://github.com/ceholden/yatsm/issues/54)
 - Fix `yatsm pixel` to correctly plot designs that include categorical variables ([commit](https://github.com/ceholden/yatsm/commit/966edd8b4a95e3c19d677eb71e2b76a155911d88))
-- Add missing `phenology` module to `setup.py`
+- Fix passing of a list of dataset min/max values within config files instead of 1 number [#59](https://github.com/ceholden/yatsm/issues/59)
+- Add missing `phenology` module to `setup.py` ([commit](https://github.com/ceholden/yatsm/commit/9d49d737316b34d2465b18db55647d7104d17758))
 
 
 ## [v0.5.4](https://github.com/ceholden/yatsm/compare/v0.5.3...v0.5.4) - 2015-10-28
