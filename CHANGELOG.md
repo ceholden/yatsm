@@ -8,7 +8,7 @@ For information on the style of this change log, see [keepachangelog.com](http:/
 ## [UNRELEASED](https://github.com/ceholden/yatsm/compare/v0.5.4...HEAD)
 
 ### Added
-- Abort if config file 'n_bands' looks incorrect (01a6adec1fcd567c194e28b98fa488c13cdbdd45)
+- Abort if config file 'n_bands' looks incorrect ([commit](https://github.com/ceholden/yatsm/commit/01a6adec1fcd567c194e28b98fa488c13cdbdd45))
 
 ### Changed
 - Reorganize long term mean phenology code into generic phenology related submodule.
@@ -16,7 +16,9 @@ For information on the style of this change log, see [keepachangelog.com](http:/
 ### Fixed
 - Fix bug with spline EVI prediction in LTM phenology module when data include last day in leap year (366) [#56](https://github.com/ceholden/yatsm/issues/56)
 - Fix bug with phenology half-max calculation that created erroneous transition dates [#58](https://github.com/ceholden/yatsm/issues/58)
-- Fix `yatsm pixel` to correctly plot designs that include categorical variables (966edd8b4a95e3c19d677eb71e2b76a155911d88)
+- Fix `yatsm pixel` to correctly plot designs that include categorical variables ([commit](https://github.com/ceholden/yatsm/commit/966edd8b4a95e3c19d677eb71e2b76a155911d88))
+- Add missing `phenology` module to `setup.py`
+
 
 ## [v0.5.4](https://github.com/ceholden/yatsm/compare/v0.5.3...v0.5.4) - 2015-10-28
 
