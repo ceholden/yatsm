@@ -5,6 +5,11 @@ All notable changes will appear in this log that begins with the release of
 
 For information on the style of this change log, see [keepachangelog.com](http://keepachangelog.com/).
 
+## [UNRELEASED](https://github.com/ceholden/yatsm/compare/v0.5.4...HEAD)
+
+### Changed
+- Improve `yatsm pixel` `--embed` option ([commit](https://github.com/ceholden/yatsm/commit/b1cf47ff3feeeb93b9f671bccc4379a9da1ad808))
+
 ## [v0.5.5](https://github.com/ceholden/yatsm/compare/v0.5.4...v0.5.5) - 2015-11-24
 
 [Milestone v0.5.5](https://github.com/ceholden/yatsm/milestones/v0.5.5)
