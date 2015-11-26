@@ -4,12 +4,6 @@ import datetime as dt
 import logging
 import re
 
-try:
-    from IPython import embed as IPython_embed
-    has_embed = True
-except:
-    has_embed = False
-
 import click
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -19,7 +13,7 @@ import patsy
 import yaml
 
 from yatsm.algorithms import postprocess  # TODO: implement postprocessors
-from yatsm.cli import options
+from yatsm.cli import options, console
 from yatsm.config_parser import convert_config, parse_config_file
 from yatsm import _cyprep as cyprep
 from yatsm.utils import csvfile_to_dataframe, get_image_IDs
@@ -53,7 +47,7 @@ logger = logging.getLogger('yatsm')
 @click.option('--cmap', metavar='<cmap>', default='perceptual_rainbow_16',
               show_default=True, help='DOY plot colormap')
 @click.option('--embed', is_flag=True,
-              help='Drop to embedded IPython shell at various points')
+              help='Drop to (I)Python interpreter at various points')
 @click.option('--seed', help='Set NumPy RNG seed value')
 @click.option('--algo_kw', multiple=True, callback=options.callback_dict,
               help='Algorithm parameter overrides')
@@ -140,10 +134,6 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
                 plt.ylim(ylim)
             plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
             plt.ylabel('Band {b}'.format(b=band + 1))
-
-            if embed and has_embed:
-                IPython_embed()
-
             plt.tight_layout()
             plt.show()
 
@@ -172,20 +162,40 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
             plot_results(band, cfg, yatsm, design_info, plot_type=_plot)
 
-            if embed and has_embed:
-                IPython_embed()
-
             plt.tight_layout()
             plt.show()
 
+    if embed:
+        console.open_interpreter(
+            yatsm,
+            message=("Additional functions:\n"
+                     "plot_TS, plot_DOY, plot_VAL, plot_results"),
+            funcs={
+                'plot_TS': plot_TS, 'plot_DOY': plot_DOY,
+                'plot_VAL': plot_VAL, 'plot_results': plot_results
+            }
+        )
 
 def plot_TS(dates, y):
+    """ Create a standard timeseries plot
+
+    Args:
+        dates (iterable): sequence of datetime
+        y (np.ndarray): variable to plot
+    """
     # Plot data
     plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
     plt.xlabel('Date')
 
 
 def plot_DOY(dates, y, mpl_cmap):
+    """ Create a DOY plot
+
+    Args:
+        dates (iterable): sequence of datetime
+        y (np.ndarray): variable to plot
+        mpl_cmap (colormap): matplotlib colormap
+    """
     doy = np.array([d.timetuple().tm_yday for d in dates])
     year = np.array([d.year for d in dates])
 
@@ -205,6 +215,14 @@ def plot_DOY(dates, y, mpl_cmap):
 
 
 def plot_VAL(dates, y, mpl_cmap, reps=2):
+    """ Create a "Valerie Pasquarella" plot (repeated DOY plot)
+
+    Args:
+        dates (iterable): sequence of datetime
+        y (np.ndarray): variable to plot
+        mpl_cmap (colormap): matplotlib colormap
+        reps (int, optional): number of additional repetitions
+    """
     doy = np.array([d.timetuple().tm_yday for d in dates])
     year = np.array([d.year for d in dates])
 
@@ -222,11 +240,17 @@ def plot_VAL(dates, y, mpl_cmap, reps=2):
 
 
 def plot_results(band, cfg, model, design_info, plot_type='TS'):
+    """ Create a DOY plot
+
+    Args:
+        band (int): plot results for this band
+        cfg (dict): YATSM configuration dictionary
+        model (YATSM model): fitted YATSM timeseries model
+        design_info (patsy.DesignInfo): patsy design information
+        plot_type (str): type of plot to add results to (TS, DOY, or VAL)
+    """
     # Handle reverse
     step = -1 if cfg['YATSM']['reverse'] else 1
-
-    from IPython.core.debugger import Pdb
-    Pdb().set_trace()
 
     # Remove categorical info from predictions
     design = re.sub(r'[\+\-][\ ]+C\(.*\)', '',
