@@ -343,15 +343,16 @@ class CCDCesque(YATSM):
             return
 
         # After noise removal, try to fit models
-        models = self.fit_models(self._X[self.start:self.here + 1, :],
-                                 self._Y[:, self.start:self.here + 1],
-                                 bands=self.test_indices)
+        self.fit_models(self._X[self.start:self.here + 1, :],
+                        self._Y[:, self.start:self.here + 1],
+                        bands=self.test_indices)
 
         # Ensure first and last points aren't unusual
         start_resid = np.zeros(len(self.test_indices))
         end_resid = np.zeros(len(self.test_indices))
         slope_resid = np.zeros(len(self.test_indices))
-        for i, (b, m) in enumerate(zip(self.test_indices, models)):
+        for i, b in enumerate(self.test_indices):
+            m = self.models[b]
             _rmse = max(self.min_rmse, m.rmse)
             start_resid[i] = (np.abs(self._Y[b, self.start] -
                               m.predict(self._X[self.start, :])) /
@@ -386,8 +387,8 @@ class CCDCesque(YATSM):
                          str(self.dates[self.here] - self.trained_date))
 
             # Fit timeseries models
-            self.models = self.fit_models(self.X[self.start:self.here + 1, :],
-                                          self.Y[:, self.start:self.here + 1])
+            self.fit_models(self.X[self.start:self.here + 1, :],
+                            self.Y[:, self.start:self.here + 1])
 
             # Update record
             self.record[self.n_record]['start'] = self.dates[self.start]

@@ -10,10 +10,11 @@ class YATSM(object):
 
     Args:
         test_indices (np.ndarray, optional): Test for changes with these
-            indices of Y. If not provided, all `fit_indices` will be used as
+            indices of Y. If not provided, all series in Y will be used as
             test indices
-        lm (sklearn.linear_model predictor): regression model from scikit-learn
-            used to fit and predict timeseries (default: `Lasso(alpha=20)`)
+        estimator (sklearn compatible estimator): estimation model from
+            scikit-learn used to fit and predict timeseries
+            (default: ``Lasso(alpha=20)``)
 
     Attributes:
         models (list): prediction model objects
@@ -40,11 +41,13 @@ class YATSM(object):
     n_series = 0
     n_features = 0
 
-    def __init__(self, test_indices=None,
-                 lm=sklearn.linear_model.Lasso(alpha=20),
+    def __init__(self,
+                 test_indices=None,
+                 estimator=sklearn.linear_model.Lasso(alpha=20),
                  **kwargs):
         self.test_indices = np.asarray(test_indices)
-        self.lm = sklearn.clone(lm)
+        self.estimator = sklearn.clone(estimator)
+        self.models = []  # leave empty, fill in during `fit`
 
         self.n_record = 0
         self.record = []
@@ -76,7 +79,7 @@ class YATSM(object):
         return record_template
 
 # TIMESERIES ENSEMBLE FIT/PREDICT
-    def fit(self, X, Y):
+    def fit(self, X, Y, dates):
         """ Fit timeseries model
 
         Args:
@@ -101,24 +104,26 @@ class YATSM(object):
         timeseries segment that intersects each date.
 
         Args:
-          X (np.ndarray): Design matrix (number of observations x number of
-            features)
-          series (iterable, optional): Return prediction for subset of series
-            within timeseries model. If None is provided, returns predictions
-            from all series
-          dates (int or np.ndarray, optional): Index of `X`'s features or a
-            np.ndarray of length X.shape[0] specifying the ordinal dates for
-            each
+            X (np.ndarray): Design matrix (number of observations x number of
+                features)
+            series (iterable, optional): Return prediction for subset of series
+                within timeseries model. If None is provided, returns
+                predictions from all series
+            dates (int or np.ndarray, optional): Index of `X`'s features or a
+                np.ndarray of length X.shape[0] specifying the ordinal dates
+                for each
 
         Returns:
-          Y (np.ndarray): Prediction for given X (number of series x number of
-            observations)
+            Y (np.ndarray): Prediction for given X (number of series x number
+                of observations)
 
         """
         raise NotImplementedError('Have not implemented this function yet')
 
     def fit_models(self, X, Y, bands=None):
         """ Fit timeseries models for `bands` within `Y` for a given `X`
+
+        Updates or initializes fit for ``self.models``
 
         Args:
             X (np.ndarray): design matrix (number of observations x number of
@@ -128,17 +133,23 @@ class YATSM(object):
             bands (iterable): Subset of bands of `Y` to fit. If None are
                 provided, fit all bands in Y
 
-        Returns:
-            np.ndarray: fitted model objects
-
         """
         if bands is None:
             bands = np.arange(self.n_series)
 
-        models = []
+        # Populate self.models if necessary
+        if len(self.models) == 0:
+            self.models = [sklearn.clone(self.estimator) for
+                           i in range(self.n_series)]
+            for m in self.models:  # initialize additional attributes
+                m.rmse = 0.0
+                m.coef = np.zeros(self.X.shape[1])
+
         for b in bands:
             y = Y.take(b, axis=0)
-            model = sklearn.clone(self.lm).fit(X, y)  # TODO: no clone?
+
+            model = self.models[b]
+            model.fit(X, y)
 
             # Add in RMSE calculation  # TODO: numba?
             model.rmse = ((y - model.predict(X)) ** 2).mean(axis=0) ** 0.5
@@ -147,19 +158,15 @@ class YATSM(object):
             model.coef = model.coef_.copy()
             model.coef[0] += model.intercept_
 
-            models.append(model)
-
-        return np.array(models)
-
 # DIAGNOSTICS
     def score(self, X, Y):
         """ Returns some undecided description of timeseries model performance
 
         Args:
-          X (np.ndarray): design matrix (number of observations x number of
-            features)
-          Y (np.ndarray): independent variable matrix (number of series x number
-            of observations)
+            X (np.ndarray): design matrix (number of observations x number of
+                features)
+            Y (np.ndarray): independent variable matrix (number of series x
+                number of observations)
 
         Returns:
           float: some sort of performance summary statistic
@@ -171,10 +178,10 @@ class YATSM(object):
         """ Plot the timeseries model results
 
         Args:
-          X (np.ndarray): design matrix (number of observations x number of
-            features)
-          Y (np.ndarray): independent variable matrix (number of series x number
-            of observations)
+            X (np.ndarray): design matrix (number of observations x number of
+                features)
+            Y (np.ndarray): independent variable matrix (number of series x
+                number of observations)
 
         """
         raise NotImplementedError('Have not implemented this function yet')
