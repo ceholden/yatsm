@@ -12,9 +12,6 @@ import sys
 import click
 import click_plugins
 
-import yatsm
-from . import options
-
 logger = logging.getLogger('yatsm')
 
 # NumPy linear algebra multithreading related variables
@@ -36,13 +33,17 @@ if '--num_threads' in sys.argv:
         n_threads = int(n_threads)
     except ValueError as e:
         raise click.BadParameter('Cannot parse <threads> to an integer '
-                                 '(--num_threads=%s): %s' % 
+                                 '(--num_threads=%s): %s' %
                                  (n_threads, e.message))
     else:
         set_np_thread_vars(n_threads)
 else:
     # Default to 1
     set_np_thread_vars(1)
+
+# Resume YATSM imports after NumPy has been configured
+import yatsm  # flake8: noqa
+from . import options  # flake8: noqa
 
 # YATSM CLI group
 _context = dict(
