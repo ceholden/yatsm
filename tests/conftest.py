@@ -11,13 +11,11 @@ except ImportError:
     from scandir import walk
 
 import numpy as np
-import pandas as pd
 import pytest
 
 here = os.path.dirname(__file__)
 example_cachedir = os.path.join(here, 'data', 'cache')
 example_cachefile = os.path.join(example_cachedir, 'yatsm_r0_n447_b8.npy.npz')
-example_datafile = os.path.join(here, 'data', 'example_data.npz')
 
 
 # EXAMPLE DATASETS
@@ -29,7 +27,6 @@ def example_timeseries(request):
     tgz = os.path.join(here, 'data', 'p035r032_subset.tar.gz')
     with tarfile.open(tgz) as tgz:
         tgz.extractall(path)
-    print(path)
     request.addfinalizer(partial(shutil.rmtree, path))
 
     subset_path = os.path.join(path, 'subset')
@@ -45,21 +42,6 @@ def example_timeseries(request):
 @pytest.fixture(scope='session')
 def example_cache(request):
     return np.load(example_cachefile)
-
-
-@pytest.fixture(scope='session')
-def example_data(request):
-    return np.load(example_datafile)
-
-
-@pytest.fixture(scope='function')
-def airquality(request):
-    airquality = pd.read_csv(os.path.join(here, 'data', 'airquality.csv'))
-    airquality.columns = ['Unnamed', 'Ozone', 'SolarR', 'Wind',
-                          'Temp', 'Month', 'Day']
-    airquality = airquality.dropna()
-
-    return airquality
 
 
 # EXAMPLE CACHE DATA
