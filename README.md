@@ -1,6 +1,7 @@
 # Yet Another Timeseries Model (YATSM)
 
-[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm) [![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=master&service=github)](https://coveralls.io/github/ceholden/yatsm?branch=master) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.17129.svg)](http://dx.doi.org/10.5281/zenodo.17129) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ceholden/yatsm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+[![Build Status](https://travis-ci.org/ceholden/yatsm.svg)](https://travis-ci.org/ceholden/yatsm)
+[![Coverage Status](https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=master&service=github)](https://coveralls.io/github/ceholden/yatsm?branch=master&q=q) [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.17129.svg)](http://dx.doi.org/10.5281/zenodo.17129) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ceholden/yatsm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 
 ## About
 Yet Another Timeseries Model (YATSM) is a Python package for utilizing a collection of timeseries algorithms and methods designed to monitor the land surface using remotely sensed imagery.
