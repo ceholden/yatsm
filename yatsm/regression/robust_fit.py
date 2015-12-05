@@ -8,15 +8,20 @@ Reference:
     http://cran.r-project.org/web/packages/robustreg/index.html
     http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf
 
+Run this file to test performance gains. Implementation is ~3x faster than
+statesmodels and can reach ~4x faster if Numba is available to accelerate.
+
 """
 import inspect
 
 import numpy as np
-import scipy.linalg
 import six
+
+from yatsm.accel import try_jit
 
 
 # Weight scaling methods
+@try_jit(nopython=True)
 def bisquare(resid, c=4.685):
     """
     Returns weighting for each residual using bisquare weight function
@@ -35,6 +40,7 @@ def bisquare(resid, c=4.685):
     return (np.abs(resid) < c) * (1 - (resid / c) ** 2) ** 2
 
 
+@try_jit(nopython=True)
 def mad(resid, c=0.6745):
     """
     Returns Median-Absolute-Deviation (MAD) for residuals
@@ -55,10 +61,12 @@ def mad(resid, c=0.6745):
 
 
 # Utility functions
+@try_jit(nopython=True)
 def _check_converge(x0, x, tol=1e-8):
     return not np.any(np.fabs(x0 - x > tol))
 
 
+@try_jit(nopython=True)
 def _weight_fit(X, y, w):
     """
     Apply a weighted OLS fit to data
