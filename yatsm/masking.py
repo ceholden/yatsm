@@ -3,11 +3,13 @@ from __future__ import division
 import numpy as np
 import statsmodels.api as sm
 
-from regression import robust_fit as rlm
+from .accel import try_jit
+from .regression import robust_fit as rlm
 
 ndays = 365.25
 
 
+@try_jit
 def multitemp_mask(x, Y, n_year, crit=400,
                    green=1, swir1=4,
                    maxiter=10):
@@ -105,19 +107,4 @@ def smooth_mask(x, Y, span, crit=400, green=1, swir1=4,
     mask = (((Y[green, :] - green_lowess[:, 1]) < crit) *
             ((Y[swir1, :] - swir1_lowess[:, 1]) > -crit))
 
-#    train_plot_debug(x, Y, mask, swir1_lowess)
-#    train_plot_debug(x, Y, mask, green_lowess, band=1)
     return mask
-
-
-def train_plot_debug(x, Y, mask, fit, band=4):
-    """ Training / historical period multitemporal cloud masking debug """
-    import matplotlib.pyplot as plt
-
-    clear = np.where(mask == 1)[0]
-    cloud = np.where(mask == 0)[0]
-
-    plt.plot(x[clear], Y[band, clear], 'ko', ls='')
-    plt.plot(x[cloud], Y[band, cloud], 'rx', ls='')
-    plt.plot(fit[:, 0], fit[:, 1], 'b-')
-    plt.show()
