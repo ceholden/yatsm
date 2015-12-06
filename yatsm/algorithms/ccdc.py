@@ -203,10 +203,17 @@ class CCDCesque(YATSM):
 
             self.here += 1
 
+        # Update record for last model
+        self.record[self.n_record]['start'] = self.dates[self.start]
+        self.record[self.n_record]['end'] = self.dates[self.here - 1]
+        for i, m in enumerate(self.models):
+            self.record[self.n_record]['coef'][:, i] = m.coef
+            self.record[self.n_record]['rmse'][i] = m.rmse
+
         # If we ended without being able to monitor again, delete last model
         # since it will be empty
         # TODO: fit this time period with median
-        if self.record[-1]['start'] == 0 and self.record[-1]['end'] == 0:
+        if not self.monitoring:
             self.record = self.record[:-1]
 
         return self.record
@@ -390,18 +397,7 @@ class CCDCesque(YATSM):
             self.fit_models(self.X[self.start:self.here + 1, :],
                             self.Y[:, self.start:self.here + 1])
 
-            # Update record
-            self.record[self.n_record]['start'] = self.dates[self.start]
-            self.record[self.n_record]['end'] = self.dates[self.here]
-            for i, m in enumerate(self.models):
-                self.record[self.n_record]['coef'][:, i] = m.coef
-                self.record[self.n_record]['rmse'][i] = m.rmse
-            logger.debug('Monitoring - updated ')
-
             self.trained_date = self.dates[self.here]
-        else:
-            # Update record with new end date
-            self.record[self.n_record]['end'] = self.dates[self.here]
 
     def monitor(self):
         """ Monitor for changes in time series """
@@ -427,8 +423,14 @@ class CCDCesque(YATSM):
         if np.all(mag > self.threshold):
             logger.debug('CHANGE DETECTED')
 
-            # Record break date
+            # Update record for last model
+            self.record[self.n_record]['start'] = self.dates[self.start]
+            self.record[self.n_record]['end'] = self.dates[self.here]
             self.record[self.n_record]['break'] = self.dates[self.here + 1]
+            for i, m in enumerate(self.models):
+                self.record[self.n_record]['coef'][:, i] = m.coef
+                self.record[self.n_record]['rmse'][i] = m.rmse
+
             # Record magnitude of difference for tested indices
             self.record[self.n_record]['magnitude'][self.test_indices] = \
                 np.mean(scores, axis=0)
