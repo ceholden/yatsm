@@ -355,10 +355,10 @@ class CCDCesque(YATSM):
             m = self.models[b]
             _rmse = max(self.min_rmse, m.rmse)
             start_resid[i] = (np.abs(self._Y[b, self.start] -
-                              m.predict(self._X[self.start, :])) /
+                              m.predict(self._X[self.start, :][None, :])) /
                               _rmse)
             end_resid[i] = (np.abs(self._Y[b, self.here] -
-                            m.predict(self._X[self.here, :])) /
+                            m.predict(self._X[self.here, :][None, :])) /
                             _rmse)
             slope_resid[i] = (np.abs(m.coef_[self.idx_slope] *
                               (self.here - self.start)) /
@@ -417,7 +417,7 @@ class CCDCesque(YATSM):
                 # Get test score for future observations
                 scores[i, i_b] = (
                     (self.Y[b, self.here + i] -
-                        m.predict(self.X[self.here + i, :])) /
+                        m.predict(self.X[self.here + i, :][None, :])) /
                     max(self.min_rmse, rmse[i_b])
                 )
 
