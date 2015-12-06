@@ -1,9 +1,15 @@
 import os
 
+import numpy as np
 import pandas as pd
 import pytest
 
 here = os.path.dirname(__file__)
+
+
+@pytest.fixture(scope='function')
+def prng():
+    return np.random.RandomState(123456789)
 
 
 @pytest.fixture(scope='function')
