@@ -47,7 +47,9 @@ def test_accel_nb_3():
     @accel.try_jit(nopython=True)
     def fn():
         return np.ones(100) * 5
+    fn()
     assert isinstance(fn, nb.targets.registry.CPUOverloaded)
+    assert len(fn.nopython_signatures) > 0
 
 
 @pytest.mark.skipif("not has_numba")
@@ -61,8 +63,10 @@ def test_accel_nb_4(fn):
 def test_accel_nb_5(fn):
     """ JIT with function, with kwargs"""
     accel.has_numba = True
-    assert isinstance(accel.try_jit(fn, nopython=True),
-                      nb.targets.registry.CPUOverloaded)
+    fn = accel.try_jit(fn, nopython=True)
+    fn()
+    assert isinstance(fn, nb.targets.registry.CPUOverloaded)
+    assert len(fn.nopython_signatures) > 0
 
 
 def test_accel_no_nb(fn):

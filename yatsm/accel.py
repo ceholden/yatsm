@@ -25,10 +25,10 @@ def _doublewrap(f):
         if len(args) == 1 and len(kwargs) == 0 and callable(args[0]):
             # called as @decorator
             return f(args[0])
-        if len(args) == 1 and callable(args[0]):
+        elif len(args) == 1 and callable(args[0]):
             # called as decorator(f, **kwargs)
             return f(args[0], **kwargs)
-        elif len(args) == 0:
+        elif len(args) == 0 and len(kwargs) == 0:
             # called as @decorator()
             return f
         else:
@@ -55,6 +55,6 @@ def try_jit(f, *args, **kwargs):
         @wraps(f)
         def wrap(*args, **kwargs):
             return nb.jit(*args, **kwargs)
-        return wrap(f)
+        return wrap(f, *args, **kwargs)
     else:
         return f
