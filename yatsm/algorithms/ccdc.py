@@ -4,7 +4,6 @@ import logging
 import sys
 
 import numpy as np
-import numpy.lib.recfunctions
 
 import sklearn.linear_model
 
@@ -217,9 +216,14 @@ class CCDCesque(YATSM):
 
             self.here += 1
 
+        from IPython.core.debugger import Pdb; Pdb().set_trace()
+
         # Update record for last model
         self.record[self.n_record]['start'] = self.dates[self.start]
-        self.record[self.n_record]['end'] = self.dates[self.here - 1]
+        # Re-adjust end for consecutive, and for two ``self.here += 1`` calls
+        offset = 1 + (1 if self.monitoring else 0)
+        self.record[self.n_record]['end'] = self.dates[
+            self.here - self.consecutive - offset]
         for i, m in enumerate(self.models):
             self.record[self.n_record]['coef'][:, i] = m.coef
             self.record[self.n_record]['rmse'][i] = m.rmse
