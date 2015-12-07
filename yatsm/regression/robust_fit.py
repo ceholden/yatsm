@@ -60,13 +60,16 @@ def mad(resid, c=0.6745):
     return np.median(np.fabs(resid)) / c
 
 
-# Utility functions
-@try_jit(nopython=True)
+# UTILITY FUNCTIONS
+# np.any prevents nopython
+@try_jit()
 def _check_converge(x0, x, tol=1e-8):
     return not np.any(np.fabs(x0 - x > tol))
 
 
-@try_jit(nopython=True)
+# Broadcast on sw prevents nopython
+# TODO: check implementation https://github.com/numba/numba/pull/1542
+@try_jit()
 def _weight_fit(X, y, w):
     """
     Apply a weighted OLS fit to data
