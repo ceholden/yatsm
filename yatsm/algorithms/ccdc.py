@@ -9,13 +9,26 @@ import numpy.lib.recfunctions
 import sklearn.linear_model
 
 from .yatsm import YATSM
+from ..accel import try_jit
 from ..errors import TSLengthException
 from ..masking import smooth_mask, multitemp_mask
-from ..regression import robust_fit as rlm
 from ..regression.diagnostics import rmse
 
 # Setup
 logger = logging.getLogger('yatsm_algo')
+
+
+@try_jit(nopython=True)
+def _monitor_calc_scores(X, Y, here, scores, predictions, rmse,
+                         test_indices, min_rmse):
+    """ Calculate monitoring period scaled residuals
+    """
+    for i in range(scores.shape[1]):
+        for i_b, b in enumerate(test_indices):
+            scores[i_b, i] = (
+                (Y[b, here + i] - predictions[i_b, i]) /
+                max(min_rmse, rmse[i_b])
+            )
 
 
 class CCDCesque(YATSM):
@@ -338,13 +351,11 @@ class CCDCesque(YATSM):
             self.predictions[idx, :] = model.predict(
                 self.X[self.here:self.here + self.consecutive, :])
 
-        for i in range(self.consecutive):
-            for i_b, b in enumerate(self.test_indices):
-                # Get test score for future observations
-                self.scores[i_b, i] = (
-                    (self.Y[b, self.here + i] - self.predictions[i_b, i]) /
-                    max(self.min_rmse, _rmse[i_b])
-                )
+        _monitor_calc_scores(self.X, self.Y, self.here,
+                             self.scores,
+                             self.predictions, _rmse,
+                             self.test_indices,
+                             self.min_rmse)
 
         # Check for scores above critical value
         mag = np.linalg.norm(self.scores, axis=0)
