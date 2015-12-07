@@ -25,6 +25,9 @@ def _doublewrap(f):
         if len(args) == 1 and len(kwargs) == 0 and callable(args[0]):
             # called as @decorator
             return f(args[0])
+        if len(args) == 1 and callable(args[0]):
+            # called as decorator(f, **kwargs)
+            return f(args[0], **kwargs)
         elif len(args) == 0:
             # called as @decorator()
             return f
