@@ -111,6 +111,12 @@ def line(ctx, config, job_number, total_jobs,
     if cfg['phenology']['enable']:
         md.update({'phenology': cfg['phenology']})
 
+    # Initialize timeseries model
+    cls = cfg['YATSM']['algorithm_cls']
+    algo_cfg = cfg[cfg['YATSM']['algorithm']]
+    yatsm = cls(estimator=cfg['YATSM']['prediction_object'],
+                **algo_cfg.get('init', {}))
+
     # Begin process
     start_time_all = time.time()
     for line in job_lines:
@@ -156,11 +162,6 @@ def line(ctx, config, job_number, total_jobs,
             _dates = df['date'].values[valid]
 
             # Run model
-            cls = cfg['YATSM']['algorithm_cls']
-            algo_cfg = cfg[cfg['YATSM']['algorithm']]
-
-            yatsm = cls(lm=cfg['YATSM']['prediction_object'],
-                        **algo_cfg.get('init', {}))
             yatsm.px = col
             yatsm.py = line
 
