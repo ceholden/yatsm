@@ -139,8 +139,9 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
     # Eliminate config parameters not algorithm and fit model
     algo_cfg = cfg[cfg['YATSM']['algorithm']]
-    yatsm = cfg['YATSM']['algorithm_cls'](lm=cfg['YATSM']['prediction_object'],
-                                          **algo_cfg.get('init', {}))
+    yatsm = cfg['YATSM']['algorithm_cls'](
+        estimator=cfg['YATSM']['prediction_object'],
+        **algo_cfg.get('init', {}))
     yatsm.px = px
     yatsm.py = py
     yatsm.fit(X, Y, np.asarray(df['date'][valid]), **algo_cfg.get('fit', {}))
@@ -265,11 +266,16 @@ def plot_results(band, cfg, model, design_info, plot_type='TS'):
     for i, r in enumerate(model.record):
         label = 'Model {i}'.format(i=i)
         if plot_type == 'TS':
+            # Prediction
             mx = np.arange(r['start'], r['end'], step)
             mX = patsy.dmatrix(design, {'x': mx}).T
 
             my = np.dot(r['coef'][i_coef, band], mX)
             mx_date = np.array([dt.datetime.fromordinal(int(_x)) for _x in mx])
+            # Break
+            if r['break']:
+                bx = dt.datetime.fromordinal(r['break'])
+                plt.axvline(bx, c='red', lw=2)
 
         elif plot_type == 'DOY':
             yr_end = dt.datetime.fromordinal(r['end']).year
@@ -287,7 +293,8 @@ def plot_results(band, cfg, model, design_info, plot_type='TS'):
             label = 'Model {i} - {yr}'.format(i=i, yr=yr_mid)
 
         plt.plot(mx_date, my, lw=2, label=label)
-        plt.legend()
+    leg = plt.legend()
+    leg.draggable(state=True)
 
 
 def plot_lasso_debug(model):
