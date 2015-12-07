@@ -25,7 +25,6 @@ except ImportError as e:
 from yatsm.version import __version__
 
 logger = logging.getLogger('yatsm')
-logger_algo = logging.getLogger('yatsm_algo')
 
 
 @click.command(short_help='Run YATSM on an entire image line by line')
@@ -38,14 +37,9 @@ logger_algo = logging.getLogger('yatsm_algo')
               help='Do not overwrite preexisting results')
 @click.option('--do-not-run', is_flag=True,
               help='Do not run YATSM (useful for just caching data)')
-@click.option('--verbose-yatsm', is_flag=True,
-              help='Show verbose debugging messages in YATSM algorithm')
 @click.pass_context
 def line(ctx, config, job_number, total_jobs,
-         resume, check_cache, do_not_run, verbose_yatsm):
-    if verbose_yatsm:
-        logger_algo.setLevel(logging.DEBUG)
-
+         resume, check_cache, do_not_run):
     # Parse config
     cfg = parse_config_file(config)
 
@@ -178,10 +172,11 @@ def line(ctx, config, job_number, total_jobs,
                 yatsm.record = postprocess.commission_test(
                     yatsm, cfg['YATSM']['commission_alpha'])
 
-            for prefix, lm in zip(cfg['YATSM']['refit']['prefix'],
-                                  cfg['YATSM']['refit']['prediction_object']):
-                yatsm.record = postprocess.refit_record(yatsm, prefix, lm,
-                                                        keep_regularized=True)
+            for prefix, estimator in zip(
+                    cfg['YATSM']['refit']['prefix'],
+                    cfg['YATSM']['refit']['prediction_object']):
+                yatsm.record = postprocess.refit_record(
+                    yatsm, prefix, estimator, keep_regularized=True)
 
             if cfg['phenology']['enable']:
                 pcfg = cfg['phenology']

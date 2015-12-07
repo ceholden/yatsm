@@ -13,6 +13,7 @@ import click
 import click_plugins
 
 logger = logging.getLogger('yatsm')
+logger_algo = logging.getLogger('yatsm_algo')
 
 # NumPy linear algebra multithreading related variables
 NP_THREAD_VARS = ['OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS', 'OPM_NUM_THREADS']
@@ -60,11 +61,16 @@ _context = dict(
               show_default=True, callback=options.valid_int_gt_zero,
               help='Number of threads for OPENBLAS/MKL/OMP used in NumPy')
 @click.option('--verbose', '-v', is_flag=True, help='Be verbose')
+@click.option('--verbose-yatsm', is_flag=True,
+              help='Show verbose debugging messages in YATSM algorithm')
 @click.option('--quiet', '-q', is_flag=True, help='Be quiet')
 @click.pass_context
-def cli(ctx, num_threads, verbose, quiet):
+def cli(ctx, num_threads, verbose, verbose_yatsm, quiet):
     # Logging config
     if verbose:
         logger.setLevel(logging.DEBUG)
+    if verbose_yatsm:
+        logger_algo.setLevel(logging.DEBUG)
     if quiet:
         logger.setLevel(logging.WARNING)
+        logger_algo.setLevel(logging.WARNING)
