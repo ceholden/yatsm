@@ -9,7 +9,7 @@ from .regression import robust_fit as rlm
 ndays = 365.25
 
 
-@try_jit
+@try_jit()  # np.array prevents nopython
 def multitemp_mask(x, Y, n_year, crit=400,
                    green=1, swir1=4,
                    maxiter=10):
@@ -32,17 +32,17 @@ def multitemp_mask(x, Y, n_year, crit=400,
       mask (ndarray): mask where False indicates values to be masked
 
     """
-    green = Y.take(green, axis=0)
-    swir1 = Y.take(swir1, axis=0)
+    green = Y[green, :]
+    swir1 = Y[swir1, :]
 
     n_year = np.ceil(n_year)
     w = 2.0 * np.pi / ndays
 
-    X = np.column_stack((np.ones_like(x),
-                         np.cos(w * x),
-                         np.sin(w * x),
-                         np.cos(w / n_year * x),
-                         np.sin(w / n_year * x)))
+    X = np.array([np.ones_like(x),
+                  np.cos(w * x),
+                  np.sin(w * x),
+                  np.cos(w / n_year * x),
+                  np.sin(w / n_year * x)]).T
 
     green_RLM = rlm.RLM(M=rlm.bisquare, maxiter=maxiter).fit(X, green)
     swir1_RLM = rlm.RLM(M=rlm.bisquare, maxiter=maxiter).fit(X, swir1)
