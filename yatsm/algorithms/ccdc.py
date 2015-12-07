@@ -6,14 +6,13 @@ import sys
 import numpy as np
 import numpy.lib.recfunctions
 
-import scipy.linalg
 import sklearn.linear_model
 
 from .yatsm import YATSM
 from ..errors import TSLengthException
 from ..masking import smooth_mask, multitemp_mask
 from ..regression import robust_fit as rlm
-from ..utils import date2index
+from ..regression.diagnostics import rmse
 
 # Setup
 logger = logging.getLogger('yatsm_algo')
@@ -173,7 +172,10 @@ class CCDCesque(YATSM):
         # Set or reset state variables
         self.reset()
 
-        self.X, self.Y, self.dates = X, Y, dates
+        # self.X, self.Y, self.dates = X, Y, dates
+        self.X = np.asarray(X, dtype=np.float64)
+        self.Y = np.asarray(Y, dtype=np.float64)
+        self.dates = dates
         self.n_features = X.shape[1]
         self.n_series = Y.shape[0]
 
@@ -221,12 +223,175 @@ class CCDCesque(YATSM):
     def reset(self):
         """ Reset state information required for model fittings
         """
+        # Location information
         self.start = 0
         self.here = self.min_obs
         self._here = self.here
         self.trained_date = 0
         self.monitoring = False
+        # Training period test calculations
+        self.start_resid = np.zeros(len(self.test_indices))
+        self.end_resid = np.zeros(len(self.test_indices))
+        self.slope_resid = np.zeros(len(self.test_indices))
+        # Monitoring period calculations
+        self.predictions = np.zeros((len(self.test_indices), self.consecutive),
+                                    dtype=np.float64)
+        self.scores = np.zeros((len(self.test_indices), self.consecutive),
+                               dtype=np.float64)
 
+    def train(self):
+        """ Train time series model if stability criteria are met
+
+        Stability criteria (Equation 5 in Zhu and Woodcock, 2014) include a
+        test on the change in reflectance over the training period (slope test)
+        and a test on the magnitude of the residuals for the first and last
+        observations in the training period. Training periods with large slopes
+        can indicate that a disturbance process is still in progress. Large
+        residuals on the first or last observations have high leverage on the
+        estimated regression and should be excluded from the training period.
+
+        1. Slope test:
+
+        .. math::
+            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
+                \left|\\beta_{slope,b}(t_{end}-t_{start})\\right|}
+                {RMSE_b} > T_{crit}
+
+        2. First and last residual tests:
+
+        .. math::
+            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
+                \left|\hat\\rho_{b,i=1} - \\rho_{b,i=1}\\right|}
+                {RMSE_b} > T_{crit}
+
+            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
+                \left|\hat\\rho_{b,i=N} - \\rho_{b,i=N}\\right|}
+                {RMSE_b} > T_{crit}
+
+        """
+        # Test if we can train yet
+        if self.span_time <= self.ndays or self.span_index < self.n_features:
+            logger.debug('Could not train - moving forward')
+            return
+
+        # Check if screening was OK
+        if not self.screen_timeseries():
+            return
+
+        # Test if we can still run after noise removal
+        if self.here >= self._X.shape[0]:
+            logger.debug('Not enough observations to proceed after noise '
+                         'removal')
+            # raise TSLengthException('Not enough observations to proceed '
+            #                          after noise removal')
+            return
+
+        # After noise removal, try to fit models
+        self.fit_models(self._X[self.start:self.here + 1, :],
+                        self._Y[:, self.start:self.here + 1],
+                        bands=self.test_indices)
+
+        # Ensure first and last points aren't unusual
+        for i, b in enumerate(self.test_indices):
+            m = self.models[b]
+            _rmse = max(self.min_rmse, m.rmse)
+            self.start_resid[i] = (
+                np.abs(self._Y[b, self.start] -
+                       m.predict(self._X[self.start, :][None, :])) /
+                _rmse)
+            self.end_resid[i] = (
+                np.abs(self._Y[b, self.here] -
+                       m.predict(self._X[self.here, :][None, :])) /
+                _rmse)
+            self.slope_resid[i] = (
+                np.abs(m.coef_[self.idx_slope] * (self.here - self.start)) /
+                _rmse)
+
+        test_start = np.linalg.norm(self.start_resid)
+        test_end = np.linalg.norm(self.end_resid)
+        test_slope = np.linalg.norm(self.slope_resid)
+        if (test_start > self.threshold or test_end > self.threshold or
+                (self.slope_test and test_slope > self.threshold)):
+            logger.debug('Training period unstable')
+            self.start += 1
+            self.here = self._here
+            return
+
+        self.X = self._X
+        self.Y = self._Y
+        self.dates = self._dates
+
+        logger.debug('Entering monitoring period')
+        self.monitoring = True
+
+    def monitor(self):
+        """ Monitor for changes in time series """
+        _rmse = self.get_rmse()
+
+        for idx, model in enumerate(self.models[self.test_indices]):
+            self.predictions[idx, :] = model.predict(
+                self.X[self.here:self.here + self.consecutive, :])
+
+        for i in range(self.consecutive):
+            for i_b, b in enumerate(self.test_indices):
+                # Get test score for future observations
+                self.scores[i_b, i] = (
+                    (self.Y[b, self.here + i] - self.predictions[i_b, i]) /
+                    max(self.min_rmse, _rmse[i_b])
+                )
+
+        # Check for scores above critical value
+        mag = np.linalg.norm(self.scores, axis=0)
+
+        if np.all(mag > self.threshold):
+            logger.debug('CHANGE DETECTED')
+
+            # Update record for last model
+            self.record[self.n_record]['start'] = self.dates[self.start]
+            self.record[self.n_record]['end'] = self.dates[self.here]
+            self.record[self.n_record]['break'] = self.dates[self.here + 1]
+            for i, m in enumerate(self.models):
+                self.record[self.n_record]['coef'][:, i] = m.coef
+                self.record[self.n_record]['rmse'][i] = m.rmse
+
+            # Record magnitude of difference for tested indices
+            self.record[self.n_record]['magnitude'][self.test_indices] = \
+                np.mean(self.scores, axis=1)
+
+            self.record = np.append(self.record, self.record_template)
+            self.n_record += 1
+
+            # Reset _X and _Y for re-training
+            self._X = self.X
+            self._Y = self.Y
+            self.start = self.here + 1
+
+            self.trained_date = 0
+            self.monitoring = False
+
+        elif mag[0] > self.threshold and self.remove_noise:
+            # Masking way of deleting is faster than `np.delete`
+            m = np.ones(self.X.shape[0], dtype=bool)
+            m[self.here] = False
+            self.X = self.X[m, :]
+            self.Y = self.Y[:, m]
+            self.dates = self.dates[m]
+            self.here -= 1
+
+    def _update_model(self):
+        # Only train if enough time has past
+        if (abs(self.dates[self.here] - self.trained_date) >
+                self.retrain_time):
+            logger.debug('Monitoring - retraining (%s days since last)' %
+                         str(self.dates[self.here] - self.trained_date))
+
+            # Fit timeseries models
+            self.fit_models(self.X[self.start:self.here + 1, :],
+                            self.Y[:, self.start:self.here + 1])
+
+            self.trained_date = self.dates[self.here]
+
+# MULTITEMP SCREENING
     def _screen_timeseries_LOWESS(self, span=None):
         """ Screen entire dataset for noise before training using LOWESS
 
@@ -302,159 +467,7 @@ class CCDCesque(YATSM):
 
         return True
 
-    def train(self):
-        """ Train time series model if stability criteria are met
-
-        Stability criteria (Equation 5 in Zhu and Woodcock, 2014) include a
-        test on the change in reflectance over the training period (slope test)
-        and a test on the magnitude of the residuals for the first and last
-        observations in the training period. Training periods with large slopes
-        can indicate that a disturbance process is still in progress. Large
-        residuals on the first or last observations have high leverage on the
-        estimated regression and should be excluded from the training period.
-
-        1. Slope test:
-
-        .. math::
-            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
-                \left|\\beta_{slope,b}(t_{end}-t_{start})\\right|}
-                {RMSE_b} > T_{crit}
-
-        2. First and last residual tests:
-
-        .. math::
-            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
-                \left|\hat\\rho_{b,i=1} - \\rho_{b,i=1}\\right|}
-                {RMSE_b} > T_{crit}
-
-            \\frac{1}{n}\sum\limits_{b\in B_{test}}\\frac{
-                \left|\hat\\rho_{b,i=N} - \\rho_{b,i=N}\\right|}
-                {RMSE_b} > T_{crit}
-
-        """
-        # Test if we can train yet
-        if self.span_time <= self.ndays or self.span_index < self.n_features:
-            logger.debug('Could not train - moving forward')
-            return
-
-        # Check if screening was OK
-        if not self.screen_timeseries():
-            return
-
-        # Test if we can still run after noise removal
-        if self.here >= self._X.shape[0]:
-            logger.debug('Not enough observations to proceed after noise '
-                         'removal')
-            # raise TSLengthException('Not enough observations to proceed after noise '
-            #                         'removal')
-            return
-
-        # After noise removal, try to fit models
-        self.fit_models(self._X[self.start:self.here + 1, :],
-                        self._Y[:, self.start:self.here + 1],
-                        bands=self.test_indices)
-
-        # Ensure first and last points aren't unusual
-        start_resid = np.zeros(len(self.test_indices))
-        end_resid = np.zeros(len(self.test_indices))
-        slope_resid = np.zeros(len(self.test_indices))
-        for i, b in enumerate(self.test_indices):
-            m = self.models[b]
-            _rmse = max(self.min_rmse, m.rmse)
-            start_resid[i] = (np.abs(self._Y[b, self.start] -
-                              m.predict(self._X[self.start, :][None, :])) /
-                              _rmse)
-            end_resid[i] = (np.abs(self._Y[b, self.here] -
-                            m.predict(self._X[self.here, :][None, :])) /
-                            _rmse)
-            slope_resid[i] = (np.abs(m.coef_[self.idx_slope] *
-                              (self.here - self.start)) /
-                              _rmse)
-
-        if (np.linalg.norm(start_resid) > self.threshold or
-                np.linalg.norm(end_resid) > self.threshold or
-                (self.slope_test and
-                    np.linalg.norm(slope_resid) > self.threshold)):
-            logger.debug('Training period unstable')
-            self.start += 1
-            self.here = self._here
-            return
-
-        self.X = self._X
-        self.Y = self._Y
-        self.dates = self._dates
-
-        logger.debug('Entering monitoring period')
-        self.monitoring = True
-
-    def _update_model(self):
-        # Only train if enough time has past
-        if (abs(self.dates[self.here] - self.trained_date) > self.retrain_time):
-            logger.debug('Monitoring - retraining (%s days since last)' %
-                         str(self.dates[self.here] - self.trained_date))
-
-            # Fit timeseries models
-            self.fit_models(self.X[self.start:self.here + 1, :],
-                            self.Y[:, self.start:self.here + 1])
-
-            self.trained_date = self.dates[self.here]
-
-    def monitor(self):
-        """ Monitor for changes in time series """
-        # Store test scores
-        scores = np.zeros((self.consecutive, len(self.test_indices)),
-                          dtype=np.float32)
-
-        rmse = self.get_rmse()
-
-        for i in range(self.consecutive):
-            for i_b, b in enumerate(self.test_indices):
-                m = self.models[b]
-                # Get test score for future observations
-                scores[i, i_b] = (
-                    (self.Y[b, self.here + i] -
-                        m.predict(self.X[self.here + i, :][None, :])) /
-                    max(self.min_rmse, rmse[i_b])
-                )
-
-        # Check for scores above critical value
-        mag = np.linalg.norm(np.abs(scores), axis=1)
-
-        if np.all(mag > self.threshold):
-            logger.debug('CHANGE DETECTED')
-
-            # Update record for last model
-            self.record[self.n_record]['start'] = self.dates[self.start]
-            self.record[self.n_record]['end'] = self.dates[self.here]
-            self.record[self.n_record]['break'] = self.dates[self.here + 1]
-            for i, m in enumerate(self.models):
-                self.record[self.n_record]['coef'][:, i] = m.coef
-                self.record[self.n_record]['rmse'][i] = m.rmse
-
-            # Record magnitude of difference for tested indices
-            self.record[self.n_record]['magnitude'][self.test_indices] = \
-                np.mean(scores, axis=0)
-
-            self.record = np.append(self.record, self.record_template)
-            self.n_record += 1
-
-            # Reset _X and _Y for re-training
-            self._X = self.X
-            self._Y = self.Y
-            self.start = self.here + 1
-
-            self.trained_date = 0
-            self.monitoring = False
-
-        elif mag[0] > self.threshold and self.remove_noise:
-            # Masking way of deleting is faster than `np.delete`
-            m = np.ones(self.X.shape[0], dtype=bool)
-            m[self.here] = False
-            self.X = self.X[m, :]
-            self.Y = self.Y[:, m]
-            self.dates = self.dates[m]
-            self.here -= 1
-
+# RMSE CALCULATION
     def _get_model_rmse(self):
         """ Return the normal RMSE of each fitted model
 
@@ -483,12 +496,10 @@ class CCDCesque(YATSM):
                    self.dates[self.here + self.consecutive],
                    self.ndays))[:self.min_obs]
 
-        rmse = np.zeros(len(self.test_indices), np.float32)
+        _rmse = np.zeros(len(self.test_indices), np.float32)
         _X = self.X.take(i_doy, axis=0)
         for i_b, b in enumerate(self.test_indices):
             m = self.models[b]
-            rmse[i_b] = (
-                ((self.Y[b, :].take(i_doy) - m.predict(_X)) ** 2).mean(axis=0)
-            ).sum(axis=0) ** 0.5
+            _rmse[i_b] = rmse(self.Y[b, :].take(i_doy), m.predict(_X))
 
-        return rmse
+        return _rmse
