@@ -17,7 +17,7 @@ class YATSM(object):
             (default: ``Lasso(alpha=20)``)
 
     Attributes:
-        models (list): prediction model objects
+        models (np.ndarray): prediction model objects
         record (np.ndarray): NumPy structured array containing timeseries model
             attribute information
         n_series (int): number of bands in Y
@@ -119,44 +119,6 @@ class YATSM(object):
 
         """
         raise NotImplementedError('Have not implemented this function yet')
-
-    def fit_models(self, X, Y, bands=None):
-        """ Fit timeseries models for `bands` within `Y` for a given `X`
-
-        Updates or initializes fit for ``self.models``
-
-        Args:
-            X (np.ndarray): design matrix (number of observations x number of
-                features)
-            Y (np.ndarray): independent variable matrix (number of series x
-                number of observations) observation in the X design matrix
-            bands (iterable): Subset of bands of `Y` to fit. If None are
-                provided, fit all bands in Y
-
-        """
-        if bands is None:
-            bands = np.arange(self.n_series)
-
-        # Populate self.models if necessary
-        if len(self.models) == 0:
-            self.models = [sklearn.clone(self.estimator) for
-                           i in range(self.n_series)]
-            for m in self.models:  # initialize additional attributes
-                m.rmse = 0.0
-                m.coef = np.zeros(self.X.shape[1])
-
-        for b in bands:
-            y = Y.take(b, axis=0)
-
-            model = self.models[b]
-            model.fit(X, y)
-
-            # Add in RMSE calculation  # TODO: numba?
-            model.rmse = ((y - model.predict(X)) ** 2).mean(axis=0) ** 0.5
-
-            # Add intercept to intercept term of design matrix
-            model.coef = model.coef_.copy()
-            model.coef[0] += model.intercept_
 
 # DIAGNOSTICS
     def score(self, X, Y):

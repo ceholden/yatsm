@@ -28,8 +28,8 @@ class CCDCesque(YATSM):
         test_indices (np.ndarray, optional): Test for changes with these
             indices of Y. If not provided, all series in `Y` will be used as
             test indices
-        lm (sklearn compatible predictor): prediction model from scikit-learn
-            used to fit and predict timeseries
+        estimator (sklearn compatible predictor): prediction model from
+            scikit-learn used to fit and predict timeseries
         consecutive (int, optional): Consecutive observations to trigger change
         threshold (float): Test statistic threshold for change
         min_obs (int): Minimum observations in model
@@ -63,13 +63,13 @@ class CCDCesque(YATSM):
 
     def __init__(self,
                  test_indices=None,
-                 lm=sklearn.linear_model.Lasso(alpha=20),
+                 estimator=sklearn.linear_model.Lasso(alpha=20),
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  retrain_time=365.25, screening='RLM', screening_crit=400.0,
                  remove_noise=True, green_band=1, swir1_band=4,
                  dynamic_rmse=False, slope_test=False, idx_slope=1):
         # Parent sets up test_indices and lm
-        super(CCDCesque, self).__init__(test_indices, lm)
+        super(CCDCesque, self).__init__(test_indices, estimator)
 
         # Store model hyperparameters
         self.consecutive = consecutive
@@ -169,10 +169,6 @@ class CCDCesque(YATSM):
         if len(dates) != X.shape[0] or len(dates) != Y.shape[1]:
             raise ValueError('X/Y/dates must have same number of observations')
 
-        # Set or reset state variables
-        self.reset()
-
-        # self.X, self.Y, self.dates = X, Y, dates
         self.X = np.asarray(X, dtype=np.float64)
         self.Y = np.asarray(Y, dtype=np.float64)
         self.dates = dates
@@ -181,6 +177,9 @@ class CCDCesque(YATSM):
 
         if self.test_indices is None:
             self.test_indices = np.arange(self.n_series)
+
+        # Set or reset state variables
+        self.reset()
 
         if len(dates) < self.here + self.consecutive:
             raise TSLengthException('Not enough observations (n = %s)' %
@@ -229,6 +228,13 @@ class CCDCesque(YATSM):
         self._here = self.here
         self.trained_date = 0
         self.monitoring = False
+        # Populate prediction models
+        if len(self.models) == 0:
+            self.models = np.array([sklearn.clone(self.estimator) for
+                                    i in range(self.n_series)])
+            for m in self.models:  # initialize additional attributes
+                m.rmse = 0.0
+                m.coef = np.zeros(self.X.shape[1])
         # Training period test calculations
         self.start_resid = np.zeros(len(self.test_indices))
         self.end_resid = np.zeros(len(self.test_indices))
@@ -280,16 +286,16 @@ class CCDCesque(YATSM):
 
         # Test if we can still run after noise removal
         if self.here >= self._X.shape[0]:
-            logger.debug('Not enough observations to proceed after noise '
-                         'removal')
-            # raise TSLengthException('Not enough observations to proceed '
-            #                          after noise removal')
-            return
+            # logger.debug('Not enough observations to proceed after noise '
+            #              'removal')
+            # return
+            raise TSLengthException('Not enough observations to proceed '
+                                    'after noise removal')
 
         # After noise removal, try to fit models
-        self.fit_models(self._X[self.start:self.here + 1, :],
-                        self._Y[:, self.start:self.here + 1],
-                        bands=self.test_indices)
+        self._fit_models(self._X[self.start:self.here + 1, :],
+                         self._Y[:, self.start:self.here + 1],
+                         bands=self.test_indices)
 
         # Ensure first and last points aren't unusual
         for i, b in enumerate(self.test_indices):
@@ -378,6 +384,7 @@ class CCDCesque(YATSM):
             self.dates = self.dates[m]
             self.here -= 1
 
+# MODEL FITTING UTILITIES
     def _update_model(self):
         # Only train if enough time has past
         if (abs(self.dates[self.here] - self.trained_date) >
@@ -386,10 +393,40 @@ class CCDCesque(YATSM):
                          str(self.dates[self.here] - self.trained_date))
 
             # Fit timeseries models
-            self.fit_models(self.X[self.start:self.here + 1, :],
-                            self.Y[:, self.start:self.here + 1])
+            self._fit_models(self.X[self.start:self.here + 1, :],
+                             self.Y[:, self.start:self.here + 1])
 
             self.trained_date = self.dates[self.here]
+
+    def _fit_models(self, X, Y, bands=None):
+        """ Fit timeseries models for `bands` within `Y` for a given `X`
+
+        Updates or initializes fit for ``self.models``
+
+        Args:
+            X (np.ndarray): design matrix (number of observations x number of
+                features)
+            Y (np.ndarray): independent variable matrix (number of series x
+                number of observations) observation in the X design matrix
+            bands (iterable): Subset of bands of `Y` to fit. If None are
+                provided, fit all bands in Y
+
+        """
+        if bands is None:
+            bands = np.arange(self.n_series)
+
+        for b in bands:
+            y = Y.take(b, axis=0)
+
+            model = self.models[b]
+            model.fit(X, y)
+
+            # Add in RMSE calculation  # TODO: numba?
+            model.rmse = rmse(y, model.predict(X))
+
+            # Add intercept to intercept term of design matrix
+            model.coef = model.coef_.copy()
+            model.coef[0] += model.intercept_
 
 # MULTITEMP SCREENING
     def _screen_timeseries_LOWESS(self, span=None):

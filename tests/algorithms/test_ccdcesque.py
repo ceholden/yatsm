@@ -10,14 +10,14 @@ import numpy as np
 import pytest
 import sklearn.linear_model
 
-from yatsm.algorithms import CCDCesque
+from yatsm.algorithms.ccdc import CCDCesque
 
 
 @pytest.fixture(scope='function')
 def model():
     model = CCDCesque(
         test_indices=np.array([2, 3, 4, 5]),
-        lm=sklearn.linear_model.Lasso(alpha=20),
+        estimator=sklearn.linear_model.Lasso(alpha=20),
         consecutive=6,
         threshold=3.5,
         min_obs=24,
