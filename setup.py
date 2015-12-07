@@ -1,12 +1,38 @@
 import logging
 import os
+import shutil
 import sys
 
+from distutils.command.clean import clean as Clean
 from setuptools import find_packages, setup
 from setuptools.extension import Extension
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
+
+# Extra cleaning with MyClean
+class MyClean(Clean):
+    description = 'Remove files generated during build process'
+    def run(self):
+        Clean.run(self)
+        if os.path.exists('build'):
+            shutil.rmtree('build')
+        for dirpath, dirnames, filenames in os.walk('yatsm'):
+            for filename in filenames:
+                if any(filename.endswith(suffix) for suffix in
+                       ('.c', '.so', '.pyd', '.pyc')):
+                    os.unlink(os.path.join(dirpath, filename))
+                    continue
+                if (any(filename.endswith(suffix) for suffix in
+                        ('.pkl', '.json')) and
+                        os.path.basename(dirpath) == 'pickles'):
+                   os.unlink(os.path.join(dirpath, filename))
+            for dirname in dirnames:
+                if dirname == '__pycache__':
+                    shutil.rmtree(os.path.join(dirpath, dirname))
+
+cmdclass = {'clean': MyClean}
+
 
 # Get version
 with open('yatsm/version.py') as f:
@@ -113,7 +139,8 @@ setup_dict = dict(
     zip_safe=False,
     long_description=readme,
     ext_modules=ext_modules,
-    install_requires=install_requires
+    install_requires=install_requires,
+    cmdclass=cmdclass
 )
 
 setup(**setup_dict)
