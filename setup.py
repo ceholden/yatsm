@@ -1,12 +1,11 @@
-import glob
 import logging
 import os
 import sys
 
-from setuptools import setup
+from setuptools import find_packages, setup
 from setuptools.extension import Extension
 
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
 # Get version
@@ -21,6 +20,12 @@ with open('yatsm/version.py') as f:
 # Get README
 with open('README.md') as f:
     readme = f.read()
+
+# Build pickles
+here = os.path.dirname(__file__)
+sys.path.append(os.path.join(here, 'yatsm', 'regression', 'pickles'))
+from yatsm.regression.pickles import serialize as serialize_pickles  # flake8: noqa
+serialize_pickles.make_pickles()
 
 # Installation requirements
 install_requires = [
@@ -65,18 +70,15 @@ ext_modules = cythonize([
 
 # Pre-packaged regression algorithms included in installation
 package_data = {
-    'yatsm': [os.path.join('regression', 'pickles', '*.pkl')]
+    'yatsm': [
+        os.path.join('regression', 'pickles', 'pickles.json'),
+        os.path.join('regression', 'pickles', '*.pkl')
+    ]
 }
 
 # Setup
-packages = ['yatsm',
-            'yatsm.algorithms',
-            'yatsm.cli',
-            'yatsm.classifiers',
-            'yatsm.mapping',
-            'yatsm.phenology',
-            'yatsm.regression',
-            'yatsm.segment']
+packages = find_packages(exclude=['tests', 'yatsm.regression.pickles'])
+packages.sort()
 
 entry_points = '''
     [console_scripts]
