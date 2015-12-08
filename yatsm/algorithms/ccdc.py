@@ -216,8 +216,6 @@ class CCDCesque(YATSM):
 
             self.here += 1
 
-        from IPython.core.debugger import Pdb; Pdb().set_trace()
-
         # Update record for last model
         self.record[self.n_record]['start'] = self.dates[self.start]
         # Re-adjust end for consecutive, and for two ``self.here += 1`` calls

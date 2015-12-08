@@ -5,10 +5,26 @@ All notable changes will appear in this log that begins with the release of
 
 For information on the style of this change log, see [keepachangelog.com](http://keepachangelog.com/).
 
-## [UNRELEASED](https://github.com/ceholden/yatsm/compare/v0.5.4...HEAD)
+## [UNRELEASED (`v0.6.0`)](https://github.com/ceholden/yatsm/compare/v0.5.5...HEAD)
+
+[Milestone v0.6.0](https://github.com/ceholden/yatsm/milestones/v0.6.0)
 
 ### Changed
-- Improve `yatsm pixel` `--embed` option ([commit](https://github.com/ceholden/yatsm/commit/b1cf47ff3feeeb93b9f671bccc4379a9da1ad808))
+- `CCDCesque`: Optimize algorithm implementation. Performance estimates show 2x speed gain [#70](https://github.com/ceholden/yatsm/issues/70)
+- CLI: Improve `yatsm pixel` `--embed` option ([commit](https://github.com/ceholden/yatsm/commit/b1cf47ff3feeeb93b9f671bccc4379a9da1ad808))
+- CLI: Add `--verbose-yatsm` to main `yatsm` command so it works with all programs running a YATSM algorithm ([commit](https://github.com/ceholden/yatsm/commit/772badc980c56d2d5c4185a40bf856bc6875be91))
+
+### Added
+- Add submodule `yatsm.regression.diagnostics` for regression diagostics, including RMSE ([commit](https://github.com/ceholden/yatsm/commit/df582d235a6e6c8e114053015a7b7392bee8f570))
+- Add new module `yatsm.accel` with decorator (`try_jit`) that applies `numba.jit` to functions only if `numba` is available [#70](https://github.com/ceholden/yatsm/issues/70)
+- Apply `yatsm.accel.try_jit` to calculation of `yatsm.regression.diagnostics.rmse`, `yatsm.regression.robust_fit.RLM`, and others [#70](https://github.com/ceholden/yatsm/issues/70)
+- asv
+- Improve `clean` target in package's `setup.py` so it deletes built estimator pickles and `.c`/`.so` built with Cython ([commit](https://github.com/ceholden/yatsm/commit/bb868922a2f6f2f68c9f71153c4307e8727468cb))
+
+### Fixed
+- `CCDCesque`: Fix bug in calculation of `end` attribute for last timeseries record [#72](https://github.com/ceholden/yatsm/issues/72)
+- "Packaged" estimator pickles are built on installation of YATSM so they will work with user versions of libraries ([commit](https://github.com/ceholden/yatsm/commit/d9b4b80c1c70137525abfde7fc7933e34bcf6820))
+- Fix `DeprecationWarnings` with `scikit-learn>=0.17.0` ([commit](https://github.com/ceholden/yatsm/commit/29ddd4c0da29904b49fca7e452ee23ca1f938261))
 
 ## [v0.5.5](https://github.com/ceholden/yatsm/compare/v0.5.4...v0.5.5) - 2015-11-24
 
