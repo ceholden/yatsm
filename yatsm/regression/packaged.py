@@ -45,7 +45,7 @@ def find_packaged_regressor(name):
         raise IOError('Cannot find packaged regressors in %s. Did you install '
                       'YATSM via setuptools?' % path)
 
-    resource = os.path.join('pickles', name)
+    resource = os.path.join('pickles', name + '.pkl')
     if not pkg_resources.resource_exists(__name__, resource):
         raise IOError('Cannot find packaged regression method %s, but package '
                       'directory exists. Check the contents of %s if possible'

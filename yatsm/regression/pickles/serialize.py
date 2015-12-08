@@ -61,7 +61,7 @@ def make_pickles():
     for pickle in pickles:
         for fname, obj in six.iteritems(pickle):
             jl.dump(obj, os.path.join(here, fname), compress=5)
-            packaged[fname] = obj.__class__.__name__
+            packaged[os.path.splitext(fname)[0]] = obj.__class__.__name__
 
     with open(pickles_json, 'w') as f:
         json.dump(packaged, f, indent=4)
