@@ -7,7 +7,7 @@ import yatsm.masking
 
 @pytest.fixture(scope='module')
 def masking_data(request):
-     # Two years, 8 day repeat
+    # Two years, 8 day repeat
     x = np.arange(735851, 735851 + 365 * 2, 8)
 
     # Simulate some timeseries in green & swir1

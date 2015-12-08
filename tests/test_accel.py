@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pytest
 
@@ -8,6 +10,14 @@ try:
     import numba as nb
 except ImportError:
     has_numba = False
+
+# Alter expected JIT'd function class based on environment variable
+if os.environ.get('NUMBA_DISABLE_JIT') is not None:
+    jitd_class = nb.decorators.DisableJitWrapper
+    jit_enabled = False
+else:
+    jitd_class = nb.targets.registry.CPUOverloaded
+    jit_enabled = True
 
 
 @pytest.fixture
@@ -25,7 +35,7 @@ def test_accel_nb_1():
     @accel.try_jit
     def fn():
         return np.ones(100) * 5
-    assert isinstance(fn, nb.targets.registry.CPUOverloaded)
+    assert isinstance(fn, jitd_class)
 
 
 @pytest.mark.skipif("not has_numba")
@@ -36,7 +46,7 @@ def test_accel_nb_2():
     @accel.try_jit()
     def fn():
         return np.ones(100) * 5
-    assert isinstance(fn, nb.targets.registry.CPUOverloaded)
+    assert isinstance(fn, jitd_class)
 
 
 @pytest.mark.skipif("not has_numba")
@@ -48,15 +58,16 @@ def test_accel_nb_3():
     def fn():
         return np.ones(100) * 5
     fn()
-    assert isinstance(fn, nb.targets.registry.CPUOverloaded)
-    assert len(fn.nopython_signatures) > 0
+    assert isinstance(fn, jitd_class)
+    if jit_enabled:
+        assert len(fn.nopython_signatures) > 0
 
 
 @pytest.mark.skipif("not has_numba")
 def test_accel_nb_4(fn):
     """ JIT with function """
     accel.has_numba = True
-    assert isinstance(accel.try_jit(fn), nb.targets.registry.CPUOverloaded)
+    assert isinstance(accel.try_jit(fn), jitd_class)
 
 
 @pytest.mark.skipif("not has_numba")
@@ -65,8 +76,9 @@ def test_accel_nb_5(fn):
     accel.has_numba = True
     fn = accel.try_jit(fn, nopython=True)
     fn()
-    assert isinstance(fn, nb.targets.registry.CPUOverloaded)
-    assert len(fn.nopython_signatures) > 0
+    assert isinstance(fn, jitd_class)
+    if jit_enabled:
+        assert len(fn.nopython_signatures) > 0
 
 
 def test_accel_no_nb(fn):
