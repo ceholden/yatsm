@@ -6,3 +6,4 @@ sphinxcontrib-napoleon>=0.2.8
 sphinxcontrib-programoutput>=0.8
 sphinxcontrib-bibtex>=0.3.1
 coverage>=3.7.1
+git+git://github.com/spacetelescope/asv
