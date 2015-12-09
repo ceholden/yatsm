@@ -39,4 +39,4 @@ def masked_ts(request):
     of 0 to 10,000.
     """
     f = os.path.join(here, 'data', 'example_timeseries_masked.npz')
-    return np.load(f)['arr_0'].item()
+    return np.load(f)
