@@ -21,7 +21,7 @@ def unmasked_ts(request):
     of 0 to 10,000.
     """
     f = os.path.join(here, 'data', 'example_timeseries.npz')
-    return np.load(f)['arr_0'].item()
+    return np.load(f)
 
 
 @pytest.fixture(scope='session')

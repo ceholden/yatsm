@@ -14,14 +14,15 @@ else:
     est = 'estimator'
 
 
-class CCDCesqueSuite(object):
+class CCDCesquePixel263(object):
+    """ Benchmark CCDC-esque algorithm on a single pixel with 263 observations
+    """
+    example_data = os.path.join(
+        os.path.dirname(__file__),
+        '../../../tests/algorithms/data/example_timeseries_masked.npz')
 
     def setup_cache(self):
-        example_data = os.path.join(
-            os.path.dirname(__file__),
-            '../../../tests/algorithms/data/example_timeseries_masked.npz')
-
-        dat = np.load(example_data)['arr_0'].item()
+        dat = np.load(self.example_data)
         X = dat['X']
         Y = dat['Y']
         dates = dat['dates']
