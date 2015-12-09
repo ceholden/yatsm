@@ -53,7 +53,7 @@
         "click": ["4.0"],
         "pyyaml": ["3.11"],
         "matplotlib": ["1.4.3"],
-        "numba": ["0.20"],
+        "numba": ["0.22"],
         // asv needs to support adding conda channels before rpy2 can be used
         // "rpy2": ["2.5.6"]
     },
