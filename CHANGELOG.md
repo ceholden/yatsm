@@ -23,6 +23,7 @@ For information on the style of this change log, see [keepachangelog.com](http:/
 
 ### Fixed
 - `CCDCesque`: Fix bug in calculation of `end` attribute for last timeseries record [#72](https://github.com/ceholden/yatsm/issues/72)
+- `CCDCesque`: Fix bug in parsing of `test_indices` if user doesn't supply any [#73](https://github.com/ceholden/yatsm/issues/73)
 - "Packaged" estimator pickles are built on installation of YATSM so they will work with user versions of libraries ([commit](https://github.com/ceholden/yatsm/commit/d9b4b80c1c70137525abfde7fc7933e34bcf6820))
 - Fix `DeprecationWarnings` with `scikit-learn>=0.17.0` ([commit](https://github.com/ceholden/yatsm/commit/29ddd4c0da29904b49fca7e452ee23ca1f938261))
 
