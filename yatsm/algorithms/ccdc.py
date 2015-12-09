@@ -187,7 +187,7 @@ class CCDCesque(YATSM):
         self.n_features = X.shape[1]
         self.n_series = Y.shape[0]
 
-        if self.test_indices is None:
+        if not np.any(np.asarray(self.test_indices)):
             self.test_indices = np.arange(self.n_series)
 
         # Set or reset state variables
