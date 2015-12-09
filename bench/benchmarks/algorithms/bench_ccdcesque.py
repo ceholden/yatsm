@@ -1,17 +1,28 @@
+import inspect
 import os
 
 import numpy as np
 import sklearn.linear_model
 
-from yatsm import __version__ as yatsm_version
 from yatsm.algorithms import CCDCesque
 
 n = 50
+
+
 # Hack for goof up in API previous to v0.6.0
-if yatsm_version.split('.')[1] == '5':
-    est = 'lm'
-else:
-    est = 'estimator'
+def version_kwargs(d):
+    """ Fix API calls for kwargs dict ``d`` that should have key ``estimator``
+    """
+    ccdc_args = inspect.getargspec(CCDCesque.__init__).args
+    if 'estimator' in ccdc_args:
+        return d
+    elif 'lm' in ccdc_args:
+        new_key, old_key = 'lm', 'estimator'
+        d[new_key] = d.pop(old_key)
+        return d
+    else:
+        raise KeyError('Neither "lm" nor "estimator" are keys in '
+                       'CCDCesque.__init__')
 
 
 class CCDCesquePixel263(object):
@@ -29,7 +40,7 @@ class CCDCesquePixel263(object):
 
         kwargs = {
             'test_indices': np.array([2, 3, 4, 5]),
-            est: sklearn.linear_model.Lasso(alpha=[20]),
+            'estimator': sklearn.linear_model.Lasso(alpha=[20]),
             'consecutive': 5,
             'threshold': 4,
             'min_obs': 24,
@@ -49,14 +60,15 @@ class CCDCesquePixel263(object):
     def time_ccdcesque1(self, setup):
         """ Bench with 'defaults' defined in setup with most tests turned off
         """
+        kwargs = version_kwargs(setup['kwargs'])
         for i in range(n):
-            model = CCDCesque(**setup['kwargs'])
+            model = CCDCesque(**kwargs)
             model.fit(setup['X'], setup['Y'], setup['dates'])
 
     def time_ccdcesque2(self, setup):
         """ Bench with remove_noise turned on
         """
-        kwargs = setup['kwargs']
+        kwargs = version_kwargs(setup['kwargs'])
         kwargs.update({'remove_noise': True})
         for i in range(n):
             model = CCDCesque(**kwargs)
@@ -65,7 +77,7 @@ class CCDCesquePixel263(object):
     def time_ccdcesque3(self, setup):
         """ Bench with remove_noise, dynamic_rmse turned on
         """
-        kwargs = setup['kwargs']
+        kwargs = version_kwargs(setup['kwargs'])
         kwargs.update({'remove_noise': True,
                        'dynamic_rmse': True})
         for i in range(n):
@@ -75,7 +87,7 @@ class CCDCesquePixel263(object):
     def time_ccdcesque4(self, setup):
         """ Bench with remove_noise, dynamic_rmse, slope_test turned on
         """
-        kwargs = setup['kwargs']
+        kwargs = version_kwargs(setup['kwargs'])
         kwargs.update({'remove_noise': True,
                        'dynamic_rmse': True,
                        'slope_test': True})
@@ -91,6 +103,8 @@ class CCDCesqueLine(object):
         os.path.dirname(__file__),
         '../../../tests/data/p013r030_r50_n423_b8.npz')
 
+    timeout = 360
+
     def setup_cache(self):
         dat = np.load(self.example_data)
         X = dat['X']
@@ -99,7 +113,7 @@ class CCDCesqueLine(object):
 
         kwargs = {
             'test_indices': np.array([2, 3, 4, 5]),
-            est: sklearn.linear_model.Lasso(alpha=[20]),
+            'estimator': sklearn.linear_model.Lasso(alpha=[20]),
             'consecutive': 5,
             'threshold': 4,
             'min_obs': 24,
@@ -119,7 +133,8 @@ class CCDCesqueLine(object):
     def time_ccdcesque1(self, setup):
         """ Bench with 'defaults' defined in setup with most tests turned off
         """
-        model = CCDCesque(**setup['kwargs'])
+        kwargs = version_kwargs(setup['kwargs'])
+        model = CCDCesque(**kwargs)
         for col in range(setup['Y'].shape[-1]):
             _Y, _X, _dates = setup['Y'][..., col], setup['X'], setup['dates']
             mask = np.in1d(_Y[-1, :], [0, 1])
@@ -128,7 +143,9 @@ class CCDCesqueLine(object):
     def time_ccdcesque2(self, setup):
         """ Bench with remove_noise turned on
         """
-        model = CCDCesque(**setup['kwargs'])
+        kwargs = version_kwargs(setup['kwargs'])
+        kwargs.update({'remove_noise': True})
+        model = CCDCesque(**kwargs)
         for col in range(setup['Y'].shape[-1]):
             _Y, _X, _dates = setup['Y'][..., col], setup['X'], setup['dates']
             mask = np.in1d(_Y[-1, :], [0, 1])
@@ -137,7 +154,10 @@ class CCDCesqueLine(object):
     def time_ccdcesque3(self, setup):
         """ Bench with remove_noise, dynamic_rmse turned on
         """
-        model = CCDCesque(**setup['kwargs'])
+        kwargs = version_kwargs(setup['kwargs'])
+        kwargs.update({'remove_noise': True,
+                       'dynamic_rmse': True})
+        model = CCDCesque(**kwargs)
         for col in range(setup['Y'].shape[-1]):
             _Y, _X, _dates = setup['Y'][..., col], setup['X'], setup['dates']
             mask = np.in1d(_Y[-1, :], [0, 1])
@@ -146,7 +166,11 @@ class CCDCesqueLine(object):
     def time_ccdcesque4(self, setup):
         """ Bench with remove_noise, dynamic_rmse, slope_test turned on
         """
-        model = CCDCesque(**setup['kwargs'])
+        kwargs = version_kwargs(setup['kwargs'])
+        kwargs.update({'remove_noise': True,
+                       'dynamic_rmse': True,
+                       'slope_test': True})
+        model = CCDCesque(**kwargs)
         for col in range(setup['Y'].shape[-1]):
             _Y, _X, _dates = setup['Y'][..., col], setup['X'], setup['dates']
             mask = np.in1d(_Y[-1, :], [0, 1])
