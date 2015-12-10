@@ -3,18 +3,30 @@ import os
 import shutil
 import sys
 
-from distutils.command.clean import clean as Clean
+from distutils.command.clean import clean as _clean
+from setuptools.command.install import install as _install
+from setuptools.command.develop import develop as _develop
 from setuptools import find_packages, setup
 from setuptools.extension import Extension
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
+
+def _build_pickles():
+    # Build pickles
+    here = os.path.dirname(__file__)
+    sys.path.append(os.path.join(here, 'yatsm', 'regression', 'pickles'))
+    from yatsm.regression.pickles import serialize as serialize_pickles  # noqa
+    serialize_pickles.make_pickles()
+
+
 # Extra cleaning with MyClean
-class MyClean(Clean):
+class my_clean(_clean):
     description = 'Remove files generated during build process'
+
     def run(self):
-        Clean.run(self)
+        _clean.run(self)
         if os.path.exists('build'):
             shutil.rmtree('build')
         for dirpath, dirnames, filenames in os.walk('yatsm'):
@@ -26,13 +38,30 @@ class MyClean(Clean):
                 if (any(filename.endswith(suffix) for suffix in
                         ('.pkl', '.json')) and
                         os.path.basename(dirpath) == 'pickles'):
-                   os.unlink(os.path.join(dirpath, filename))
+                    os.unlink(os.path.join(dirpath, filename))
             for dirname in dirnames:
                 if dirname == '__pycache__':
                     shutil.rmtree(os.path.join(dirpath, dirname))
 
-cmdclass = {'clean': MyClean}
 
+# Create pickles when building
+class my_install(_install):
+    def run(self):
+        self.execute(_build_pickles, [], msg='Building estimator pickles')
+        _install.run(self)
+
+
+class my_develop(_develop):
+    def run(self):
+        self.execute(_build_pickles, [], msg='Building estimator pickles')
+        _develop.run(self)
+
+
+cmdclass = {
+    'clean': my_clean,  # python setup.py clean
+    'install': my_install,  # call when pip install
+    'develop': my_develop  # called when pip install -e
+}
 
 # Get version
 with open('yatsm/version.py') as f:
@@ -46,12 +75,6 @@ with open('yatsm/version.py') as f:
 # Get README
 with open('README.md') as f:
     readme = f.read()
-
-# Build pickles
-here = os.path.dirname(__file__)
-sys.path.append(os.path.join(here, 'yatsm', 'regression', 'pickles'))
-from yatsm.regression.pickles import serialize as serialize_pickles  # flake8: noqa
-serialize_pickles.make_pickles()
 
 # Installation requirements
 install_requires = [
@@ -89,8 +112,7 @@ ext_opts = dict(
     include_dirs=include_dirs,
     extra_compile_args=extra_compile_args
 )
-
-ext_modules = cythonize([
+cy_ext_modules = cythonize([
     Extension('yatsm._cyprep', ['yatsm/_cyprep.pyx'], **ext_opts)
 ])
 
@@ -138,9 +160,8 @@ setup_dict = dict(
     description=desc,
     zip_safe=False,
     long_description=readme,
-    ext_modules=ext_modules,
+    ext_modules=cy_ext_modules,
     install_requires=install_requires,
     cmdclass=cmdclass
 )
-
 setup(**setup_dict)
