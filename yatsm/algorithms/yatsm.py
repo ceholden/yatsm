@@ -4,6 +4,8 @@ import numpy as np
 import sklearn
 import sklearn.linear_model
 
+from ..regression.diagnostics import rmse
+
 
 class YATSM(object):
     """ Yet Another TimeSeries Model baseclass
@@ -95,6 +97,36 @@ class YATSM(object):
 
         """
         raise NotImplementedError('Subclasses should implement fit method')
+
+    def fit_models(self, X, Y, bands=None):
+        """ Fit timeseries models for `bands` within `Y` for a given `X`
+
+        Updates or initializes fit for ``self.models``
+
+        Args:
+            X (np.ndarray): design matrix (number of observations x number of
+                features)
+            Y (np.ndarray): independent variable matrix (number of series x
+                number of observations) observation in the X design matrix
+            bands (iterable): Subset of bands of `Y` to fit. If None are
+                provided, fit all bands in Y
+
+        """
+        if bands is None:
+            bands = np.arange(self.n_series)
+
+        for b in bands:
+            y = Y.take(b, axis=0)
+
+            model = self.models[b]
+            model.fit(X, y)
+
+            # Add in RMSE calculation
+            model.rmse = rmse(y, model.predict(X))
+
+            # Add intercept to intercept term of design matrix
+            model.coef = model.coef_.copy()
+            model.coef[0] += model.intercept_
 
     def predict(self, X, series=None, dates=1):
         """ Return a 2D NumPy array of y-hat predictions for a given X
