@@ -4,7 +4,6 @@ Includes comission and omission tests and robust linear model result
 calculations
 """
 import logging
-import math
 
 import numpy as np
 import numpy.lib.recfunctions as nprf
@@ -19,7 +18,7 @@ logger = logging.getLogger('yatsm')
 
 
 # POST-PROCESSING
-def commission_test(model, alpha=0.001):
+def commission_test(yatsm, alpha=0.10):
     """ Merge adjacent records based on Chow Tests for nested models
 
     Use Chow Test to find false positive, spurious, or unnecessary breaks
@@ -34,74 +33,73 @@ def commission_test(model, alpha=0.001):
 
     where:
 
-        - :math:`RSS_u` is the RSS of the combined, or, restricted model
+        - :math:`RSS_r` is the RSS of the combined, or, restricted model
         - :math:`RSS_1` is the RSS of the first model
         - :math:`RSS_2` is the RSS of the second model
         - :math:`k` is the number of model parameters
         - :math:`n` is the number of total observations
 
     Because we look for change in multiple bands, the RSS used to compare
-    the unrestricted versus restricted models is the L2 norm of RSS
-    values from `model.test_indices`.
+    the unrestricted versus restricted models is the mean RSS
+    values from all ``model.test_indices``.
 
     Args:
-        model (YATSM model): fitted YATSM model to check for commission errors
-        alpha (float): significance level for F-statistic (default: 0.01)
+        yatsm (YATSM model): fitted YATSM model to check for commission errors
+        alpha (float): significance level for F-statistic (default: 0.10)
 
     Returns:
-        np.ndarray: updated copy of `model.record` with spurious models
+        np.ndarray: updated copy of ``yatsm.record`` with spurious models
             combined into unified model
 
     """
-    if model.record.size == 1:
-        return model.record
+    if yatsm.record.size == 1:
+        return yatsm.record
 
-    k = model.record[0]['coef'].shape[0]
+    k = yatsm.record[0]['coef'].shape[0]
+
+    # Allocate memory outside of loop
+    m_1_rss = np.zeros(yatsm.test_indices.size)
+    m_2_rss = np.zeros(yatsm.test_indices.size)
+    m_r_rss = np.zeros(yatsm.test_indices.size)
 
     models = []
     merged = False
-
-    for i in range(len(model.record) - 1):
+    for i in range(len(yatsm.record) - 1):
         if merged:
             m_1 = models[-1]
         else:
-            m_1 = model.record[i]
-        m_2 = model.record[i + 1]
+            m_1 = yatsm.record[i]
+        m_2 = yatsm.record[i + 1]
 
-        m_1_start = date2index(model.dates, m_1['start'])
-        m_1_end = date2index(model.dates, m_1['end'])
-        m_2_start = date2index(model.dates, m_2['start'])
-        m_2_end = date2index(model.dates, m_2['end'])
-
+        # Unrestricted model starts/ends
+        m_1_start = date2index(yatsm.dates, m_1['start'])
+        m_1_end = date2index(yatsm.dates, m_1['end'])
+        m_2_start = date2index(yatsm.dates, m_2['start'])
+        m_2_end = date2index(yatsm.dates, m_2['end'])
+        # Restricted start/end
         m_r_start = m_1_start
         m_r_end = m_2_end
 
         n = m_r_end - m_r_start
-
         F_crit = scipy.stats.f.ppf(1 - alpha, k, n - 2 * k)
 
-        m_1_rss = np.zeros(model.test_indices.size)
-        m_2_rss = np.zeros(model.test_indices.size)
-        m_r_rss = np.zeros(model.test_indices.size)
+        for i_b, b in enumerate(yatsm.test_indices):
+            m_1_rss[i_b] = scipy.linalg.lstsq(yatsm.X[m_1_start:m_1_end, :],
+                                              yatsm.Y[b, m_1_start:m_1_end])[1]
+            m_2_rss[i_b] = scipy.linalg.lstsq(yatsm.X[m_2_start:m_2_end, :],
+                                              yatsm.Y[b, m_2_start:m_2_end])[1]
+            m_r_rss[i_b] = scipy.linalg.lstsq(yatsm.X[m_r_start:m_r_end, :],
+                                              yatsm.Y[b, m_r_start:m_r_end])[1]
 
-        for i_b, b in enumerate(model.test_indices):
-            m_1_rss[i_b] = scipy.linalg.lstsq(
-                model.X[m_1_start:m_1_end, :],
-                model.Y[b, m_1_start:m_1_end])[1]
-            m_2_rss[i_b] = scipy.linalg.lstsq(
-                model.X[m_2_start:m_2_end, :],
-                model.Y[b, m_2_start:m_2_end])[1]
-            m_r_rss[i_b] = scipy.linalg.lstsq(
-                model.X[m_r_start:m_r_end, :],
-                model.Y[b, m_r_start:m_r_end])[1]
-
-        m_1_rss = np.linalg.norm(m_1_rss)
-        m_2_rss = np.linalg.norm(m_2_rss)
-        m_r_rss = np.linalg.norm(m_r_rss)
-
-        F = ((m_r_rss - (m_1_rss + m_2_rss)) / k) / \
+        # Collapse RSS across all test indices
+        m_1_rss = m_1_rss.mean()
+        m_2_rss = m_2_rss.mean()
+        m_r_rss = m_r_rss.mean()
+        # F statistic
+        F = (
+            ((m_r_rss - (m_1_rss + m_2_rss)) / k) /
             ((m_1_rss + m_2_rss) / (n - 2 * k))
-
+        )
         if F > F_crit:
             # Reject H0 and retain change
             # Only add in previous model if first model
@@ -111,7 +109,7 @@ def commission_test(model, alpha=0.001):
             merged = False
         else:
             # Fail to reject H0 -- ignore change and merge
-            m_new = np.copy(model.record_template)[0]
+            m_new = np.copy(yatsm.record_template)[0]
 
             # Remove last previously added model from list to merge
             if i != 0:
@@ -121,15 +119,16 @@ def commission_test(model, alpha=0.001):
             m_new['end'] = m_2['end']
             m_new['break'] = m_2['break']
 
-            _models = model.fit_models(model.X[m_r_start:m_r_end, :],
-                                       model.Y[:, m_r_start:m_r_end])
-
-            for i_m, _m in enumerate(_models):
+            # Re-fit models and copy over attributes
+            yatsm.fit_models(yatsm.X[m_r_start:m_r_end, :],
+                             yatsm.Y[:, m_r_start:m_r_end])
+            for i_m, _m in enumerate(yatsm.models):
                 m_new['coef'][:, i_m] = _m.coef
                 m_new['rmse'][i_m] = _m.rmse
 
-            # Preserve magnitude from 2nd model that was merged
-            m_new['magnitude'] = m_2['magnitude']
+            if 'magnitude' in yatsm.record.dtype.names:
+                # Preserve magnitude from 2nd model that was merged
+                m_new['magnitude'] = m_2['magnitude']
 
             models.append(m_new)
 
