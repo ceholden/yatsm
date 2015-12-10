@@ -1,12 +1,26 @@
 """ Decorator ``try_jit`` accelerates computation via Numba, when available
 """
 from functools import wraps
+import logging
+
+logger = logging.getLogger('yatsm')
 
 has_numba = True
 try:
     import numba as nb
 except ImportError:
     has_numba = False
+else:
+    # Check for an adequate version number
+    try:
+        nb_ver = nb.__version__.split('.')
+        if int(nb_ver[0]) == 0 and int(nb_ver[1]) < 0.22:
+            has_numba = False
+            logger.warning('You have numba installed, but the version is too '
+                           'old to be used (%s)' % nb.__version__)
+    except:
+        logger.warning('Could not parse numba version. Disabling numba.jit')
+        has_numba = False
 
 
 def _doublewrap(f):

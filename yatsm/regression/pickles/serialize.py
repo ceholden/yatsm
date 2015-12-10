@@ -30,7 +30,7 @@ try:
             lambdas=numpy.logspace(1e-4, 35, 50)),
     }
 except:
-    logger.error('Could not produce pickles from package "glment". '
+    logger.error('Could not produce pickles from package "glmnet". '
                  'Check if it is installed')
     print(traceback.format_exc())
     _glmnet_pickles = {}
