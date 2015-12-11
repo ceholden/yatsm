@@ -1,0 +1,51 @@
+{
+    "commit_hash": "906d4ec48e3158ea69a1bfec8cdaef49d6a8e424", 
+    "date": 1449216156000, 
+    "params": {
+        "Cython": "0.20", 
+        "arch": "x86_64", 
+        "click": "4.0", 
+        "cpu": "Intel(R) Core(TM) i5 CPU         760  @ 2.80GHz", 
+        "gdal": "1.11", 
+        "machine": "etm", 
+        "matplotlib": "1.4.3", 
+        "numba": "0.22", 
+        "numpy": "1.9", 
+        "os": "Linux 4.2.5-1-ARCH", 
+        "pandas": "0.16.0", 
+        "patsy": "0.3.0", 
+        "python": "2.7", 
+        "pyyaml": "3.11", 
+        "ram": "12267468", 
+        "scikit-learn": "0.15", 
+        "scipy": "0.14.0", 
+        "statsmodels": "0.5.0"
+    }, 
+    "profiles": {}, 
+    "python": "2.7", 
+    "requirements": {
+        "Cython": "0.20", 
+        "click": "4.0", 
+        "gdal": "1.11", 
+        "matplotlib": "1.4.3", 
+        "numba": "0.22", 
+        "numpy": "1.9", 
+        "pandas": "0.16.0", 
+        "patsy": "0.3.0", 
+        "pyyaml": "3.11", 
+        "scikit-learn": "0.15", 
+        "scipy": "0.14.0", 
+        "statsmodels": "0.5.0"
+    }, 
+    "results": {
+        "algorithms.ccdc.CCDCesqueLine.time_ccdcesque1": 85.82902394199999, 
+        "algorithms.ccdc.CCDCesqueLine.time_ccdcesque2": 88.492705903, 
+        "algorithms.ccdc.CCDCesqueLine.time_ccdcesque3": 117.059562796, 
+        "algorithms.ccdc.CCDCesqueLine.time_ccdcesque4": 118.203970149, 
+        "algorithms.ccdc.CCDCesquePixel263.time_ccdcesque1": 16.861046595, 
+        "algorithms.ccdc.CCDCesquePixel263.time_ccdcesque2": 16.910793692, 
+        "algorithms.ccdc.CCDCesquePixel263.time_ccdcesque3": 19.226739839, 
+        "algorithms.ccdc.CCDCesquePixel263.time_ccdcesque4": 19.18320452
+    }, 
+    "version": 1
+}
