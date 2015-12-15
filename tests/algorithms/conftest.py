@@ -95,6 +95,20 @@ def setup_dummy_YATSM(X, Y, dates, i_breaks):
     return yatsm
 
 
+def _sim_no_change_data():
+    """ Return a simulated timeseries with no change
+    """
+    np.random.seed(123456789)
+    dates = np.arange(dt.strptime('2000-01-01', '%Y-%m-%d').toordinal(),
+                      dt.strptime('2005-01-01', '%Y-%m-%d').toordinal(),
+                      16)
+    n = dates.size
+    X = np.column_stack((np.ones(n), dates))  # n x p
+    _y = np.linspace(0, 10, n) + np.random.standard_normal(n)
+    Y = np.array([_y] * 2)  # nseries x n
+    return X, Y, dates
+
+
 @pytest.fixture(scope='module')
 def sim_nochange(request):
     """ Return a dummy YATSM model container with a no-change dataset
@@ -102,36 +116,34 @@ def sim_nochange(request):
     "No-change" dataset is simply a timeseries drawn from samples of one
     standard normal.
     """
-    np.random.seed(123456789)
-    dates = np.arange(dt.strptime('2000-01-01', '%Y-%m-%d').toordinal(),
-                      dt.strptime('2005-01-01', '%Y-%m-%d').toordinal(),
-                      16)
-    n = dates.size
-    X = np.column_stack((np.ones(n), dates))  # n x p
-    _y = np.linspace(0, 10, n) + np.random.standard_normal(n)
-    Y = np.array([_y] * 2)  # nseries x n
-
+    X, Y, dates = _sim_no_change_data()
     return setup_dummy_YATSM(X, Y, dates, [0])
 
 
 @pytest.fixture(scope='module')
-def sim_no_real_change(request):
+def sim_no_real_change_1(request):
     """ Return a dummy YATSM model container with a spurious change
 
     "Spurious" dataset is simply a timeseries drawn from samples of one
     standard normal, but with a record indicating that there was a change.
     """
-    np.random.seed(123456789)
-    dates = np.arange(dt.strptime('2000-01-01', '%Y-%m-%d').toordinal(),
-                      dt.strptime('2005-01-01', '%Y-%m-%d').toordinal(),
-                      16)
+    X, Y, dates = _sim_no_change_data()
     n = dates.size
-    X = np.column_stack((np.ones(n), dates))  # n x p
-    _y = np.linspace(0, 10, n) + np.random.standard_normal(n)
-    Y = np.array([_y] * 2)  # nseries x n
-
     # Put a break somewhere in the middle
     return setup_dummy_YATSM(X, Y, dates, [n // 2, 0])
+
+
+@pytest.fixture(scope='module')
+def sim_no_real_change_2(request):
+    """ Return a dummy YATSM model container with two spurious changes
+
+    "Spurious" dataset is simply a timeseries drawn from samples of one
+    standard normal, but with a record indicating that there was a change.
+    """
+    X, Y, dates = _sim_no_change_data()
+    n = dates.size
+    # Put two breaks somewhere in the middle
+    return setup_dummy_YATSM(X, Y, dates, [n // 4, n // 2, 0])
 
 
 @pytest.fixture(scope='module')

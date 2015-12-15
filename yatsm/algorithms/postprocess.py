@@ -91,14 +91,10 @@ def commission_test(yatsm, alpha=0.10):
             m_r_rss[i_b] = scipy.linalg.lstsq(yatsm.X[m_r_start:m_r_end, :],
                                               yatsm.Y[b, m_r_start:m_r_end])[1]
 
-        # Collapse RSS across all test indices
-        m_1_rss = m_1_rss.mean()
-        m_2_rss = m_2_rss.mean()
-        m_r_rss = m_r_rss.mean()
-        # F statistic
+        # Collapse RSS across all test indices for F statistic
         F = (
-            ((m_r_rss - (m_1_rss + m_2_rss)) / k) /
-            ((m_1_rss + m_2_rss) / (n - 2 * k))
+            ((m_r_rss.mean() - (m_1_rss.mean() + m_2_rss.mean())) / k) /
+            ((m_1_rss.mean() + m_2_rss.mean()) / (n - 2 * k))
         )
         if F > F_crit:
             # Reject H0 and retain change

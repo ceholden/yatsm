@@ -13,10 +13,18 @@ def test_commission_nochange(sim_nochange):
     np.testing.assert_array_equal(record, sim_nochange.record)
 
 
-def test_commission_no_real_change(sim_no_real_change):
+def test_commission_no_real_change_1(sim_no_real_change_1):
     """ Test commission test's ability to resolve spurious change
     """
-    record = commission_test(sim_no_real_change, 0.01)
+    record = commission_test(sim_no_real_change_1, 0.01)
+    assert len(record) == 1
+    assert record[0]['break'] == 0
+
+
+def test_commission_no_real_change_2(sim_no_real_change_2):
+    """ Test commission test's ability to resolve two spurious changes
+    """
+    record = commission_test(sim_no_real_change_2, 0.01)
     assert len(record) == 1
     assert record[0]['break'] == 0
 
