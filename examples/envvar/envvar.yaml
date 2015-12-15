@@ -4,7 +4,7 @@
 # run
 
 # Version of config
-version: "0.5.0"
+version: "0.6.0"
 
 dataset:
     # Text file containing dates and images
@@ -44,6 +44,7 @@ YATSM:
     refit:
         prefix: [robust]
         prediction: [RLM]
+        stay_regularized: [True]
 
 # Parameters for CCDCesque algorithm -- referenced by "algorithm" key in YATSM
 CCDCesque:
@@ -62,7 +63,7 @@ CCDCesque:
 
 # Regression estimators
 LassoCV:
-    pickle: "$PICKLES/glmnet_LassoCV_n100.pkl"
+    pickle: "$PICKLES/sklearn_LassoCV_n50.pkl"
 
 Lasso20:
     pickle: "$PICKLES/sklearn_Lasso20.pkl"

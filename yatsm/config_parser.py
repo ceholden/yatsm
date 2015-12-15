@@ -121,14 +121,30 @@ def _parse_YATSM_config(cfg):
 
     # Unpickle refit objects
     if cfg['YATSM'].get('refit', {}).get('prediction', None):
+        # Restore pickles
         pickles = []
         for pred_method in cfg['YATSM']['refit']['prediction']:
             pickles.append(_unpickle_predictor(_find_pickle(pred_method, cfg)))
         cfg['YATSM']['refit']['prediction_object'] = pickles
     # Fill in as empty refit
     else:
-        refit = dict(prefix=[], prediction=[], prediction_object=[])
+        refit = dict(prefix=[], prediction=[], prediction_object=[],
+                     stay_regularized=[])
         cfg['YATSM']['refit'] = refit
+
+    # Check number of refits
+    n_refit = len(cfg['YATSM']['refit']['prediction_object'])
+    n_prefix = len(cfg['YATSM']['refit']['prefix'])
+    if n_refit != n_prefix:
+        raise KeyError('Must supply a prefix for all refix predictions '
+                       '(%i vs %i)' % (n_refit, n_prefix))
+
+    # Fill in "stay_regularized" -- default True
+    reg = cfg['YATSM']['refit'].get('stay_regularized', None)
+    if reg is None:
+        cfg['YATSM']['refit']['stay_regularized'] = [True] * n_refit
+    elif isinstance(reg, bool):
+        cfg['YATSM']['refit']['stay_regularized'] = [reg] * n_refit
 
     return cfg
 

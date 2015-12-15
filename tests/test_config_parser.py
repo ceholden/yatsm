@@ -57,6 +57,29 @@ def test_parse_YATSM_config_4(YATSM_cfg):
         config_parser._parse_YATSM_config(YATSM_cfg)
 
 
+def test_parse_YATSM_config_5(YATSM_cfg):
+    """ Test parsing of config with misspecified "refit" section
+    """
+    YATSM_cfg['YATSM']['refit']['prefix'] = ['just_one_prefix']
+    with pytest.raises(KeyError):
+        config_parser._parse_YATSM_config(YATSM_cfg)
+
+
+def test_parse_YATSM_config_6(YATSM_cfg):
+    """ Test parsing of config with "stay_regularized" section
+    """
+    YATSM_cfg['YATSM']['refit']['stay_regularized'] = True
+    config_parser._parse_YATSM_config(YATSM_cfg)
+
+
+def test_parse_YATSM_config_7(YATSM_cfg):
+    """ Test parsing of config with "stay_regularized" section
+    """
+    n = len(YATSM_cfg['YATSM']['refit']['prediction'])
+    YATSM_cfg['YATSM']['refit']['stay_regularized'] = [True] * n
+    config_parser._parse_YATSM_config(YATSM_cfg)
+
+
 # ENVIRONMENT VARIABLE PARSING
 def test_get_envvars():
     truth = {

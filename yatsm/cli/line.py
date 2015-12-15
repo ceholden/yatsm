@@ -172,11 +172,12 @@ def line(ctx, config, job_number, total_jobs,
                 yatsm.record = postprocess.commission_test(
                     yatsm, cfg['YATSM']['commission_alpha'])
 
-            for prefix, estimator in zip(
+            for prefix, estimator, stay_reg in zip(
                     cfg['YATSM']['refit']['prefix'],
-                    cfg['YATSM']['refit']['prediction_object']):
+                    cfg['YATSM']['refit']['prediction_object'],
+                    cfg['YATSM']['refit']['stay_regularized']):
                 yatsm.record = postprocess.refit_record(
-                    yatsm, prefix, estimator, keep_regularized=True)
+                    yatsm, prefix, estimator, keep_regularized=stay_reg)
 
             if cfg['phenology']['enable']:
                 pcfg = cfg['phenology']
