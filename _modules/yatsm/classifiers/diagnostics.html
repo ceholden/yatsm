@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.classifiers.diagnostics &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.classifiers.diagnostics &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
         <link rel="up" title="yatsm.classifiers" href="../classifiers.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -175,9 +175,9 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;scores: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;score mean/std: {0}/{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()))</span>
 
-    <span class="k">return</span> <span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span></div>
 
-</div>
+
 <div class="viewcode-block" id="SpatialKFold"><a class="viewcode-back" href="../../../yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold">[docs]</a><span class="k">class</span> <span class="nc">SpatialKFold</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Spatial cross validation iterator</span>
 
@@ -263,9 +263,9 @@
         <span class="n">lab_row</span><span class="p">,</span> <span class="n">lab_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">labeled</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labeled</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="n">lab_row</span><span class="p">),</span>
-                              <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">lab_col</span><span class="p">))</span>
+                              <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> <span class="n">lab_col</span><span class="p">))</span></div>
 
-</div>
+
 <div class="viewcode-block" id="SpatialKFold_ROI"><a class="viewcode-back" href="../../../yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold_ROI">[docs]</a><span class="k">class</span> <span class="nc">SpatialKFold_ROI</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Spatial cross validation iterator on ROI images</span>
 
@@ -371,7 +371,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -393,7 +393,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

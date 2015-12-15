@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.classifiers.sklearn_helper module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.classifiers.sklearn_helper module &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -137,34 +137,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.classifiers.sklearn_helper">
-<span id="yatsm-classifiers-sklearn-helper-module"></span><h1>yatsm.classifiers.sklearn_helper module<a class="headerlink" href="#module-yatsm.classifiers.sklearn_helper" title="Permalink to this headline">¶</a></h1>
-<p>Helper classes for initializing a Scikit-Learn classifiers from an INI file</p>
-<dl class="class">
-<dt id="yatsm.classifiers.sklearn_helper.RandomForestHelper">
-<em class="property">class </em><code class="descclassname">yatsm.classifiers.sklearn_helper.</code><code class="descname">RandomForestHelper</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.classifiers.sklearn_helper.RandomForestHelper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sklearn.ensemble.forest.RandomForestClassifier</span></code></p>
-<p>A random forest classifier wrapper</p>
-<p>This helper class wraps the RandomForestClassifier from <cite>scitkit-learn</cite>
-so that it can initialize from an INI configuration file.</p>
-<p>For documentation on RandomForestClassifier, see:</p>
-<p><a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier">sklearn.ensemble.RandomForestClassifier</a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>configparser.ConfigParser</em>) &#8211; Configuration parser to retrieve
-parameters from</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults">
-<code class="descname">defaults</code><em class="property"> = {'n_estimators': 500, 'min_samples_split': 2, 'oob_score': True, 'n_jobs': 1, 'criterion': 'gini', 'max_features': 'auto', 'max_leaf_nodes': None, 'bootstrap': True, 'max_depth': None, 'min_samples_leaf': 1}</em><a class="headerlink" href="#yatsm.classifiers.sklearn_helper.RandomForestHelper.defaults" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="yatsm-classifiers-sklearn-helper-module">
+<h1>yatsm.classifiers.sklearn_helper module<a class="headerlink" href="#yatsm-classifiers-sklearn-helper-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -178,7 +152,7 @@ parameters from</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -200,7 +174,7 @@ parameters from</td>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

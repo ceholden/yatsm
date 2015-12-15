@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.packaged &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.regression.packaged &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
-        <link rel="up" title="yatsm.regression" href="../regression.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
 
   
   <script src="../../../_static/js/modernizr.min.js"></script>
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -126,8 +126,6 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-          <li><a href="../regression.html">yatsm.regression</a> &raquo;</li>
-      
     <li>yatsm.regression.packaged</li>
       <li class="wy-breadcrumbs-aside">
         
@@ -145,25 +143,33 @@
   <h1>Source code for yatsm.regression.packaged</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot; Module for finding regression algorithms packaged with YATSM</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
 
-<span class="n">packaged_regressions</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;OLS&#39;</span><span class="p">,</span> <span class="s">&#39;sklearn_Lasso20&#39;</span><span class="p">,</span> <span class="s">&#39;glmnet_Lasso20&#39;</span><span class="p">,</span>
-                        <span class="s">&#39;glmnet_LassoCV_n50&#39;</span><span class="p">,</span> <span class="s">&#39;glmnet_LassoCV_n100&#39;</span><span class="p">,</span>
-                        <span class="s">&#39;rlm_maxiter10&#39;</span><span class="p">]</span>
+<span class="c"># packaged_regressions = [&#39;OLS&#39;, &#39;sklearn_Lasso20&#39;, &#39;glmnet_Lasso20&#39;,</span>
+<span class="c">#                         &#39;glmnet_LassoCV_n50&#39;, &#39;glmnet_LassoCV_n100&#39;,</span>
+<span class="c">#                         &#39;rlm_maxiter10&#39;]</span>
+<span class="n">packaged_regressions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">_packaged</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span>
+    <span class="n">__package__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;pickles&#39;</span><span class="p">,</span> <span class="s">&#39;pickles.json&#39;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">__package__</span><span class="p">,</span>
+                                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;pickles&#39;</span><span class="p">,</span> <span class="s">&#39;pickles.json&#39;</span><span class="p">)):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_packaged</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">packaged_regressions</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="find_packaged_regressor"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.packaged.html#yatsm.regression.packaged.find_packaged_regressor">[docs]</a><span class="k">def</span> <span class="nf">find_packaged_regressor</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="find_packaged_regressor"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.packaged.html#yatsm.regression.find_packaged_regressor">[docs]</a><span class="k">def</span> <span class="nf">find_packaged_regressor</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Find location of a regression method packaged with YATSM</span>
 
 <span class="sd">    See ``yatsm.regression.packaged.packaged_regressions`` for a list of</span>
 <span class="sd">    available pre-packaged regressors</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        name (str): name of packaged regression object. Check</span>
+<span class="sd">        name (str): name of packaged regression object</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: path to packaged regression method</span>
@@ -201,7 +207,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -223,7 +229,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

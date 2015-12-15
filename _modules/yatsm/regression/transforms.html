@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.transforms &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.regression.transforms &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
-        <link rel="up" title="yatsm.regression" href="../regression.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
 
   
   <script src="../../../_static/js/modernizr.min.js"></script>
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -126,8 +126,6 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-          <li><a href="../regression.html">yatsm.regression</a> &raquo;</li>
-      
     <li>yatsm.regression.transforms</li>
       <li class="wy-breadcrumbs-aside">
         
@@ -153,7 +151,7 @@
 <span class="kn">from</span> <span class="nn">patsy</span> <span class="kn">import</span> <span class="n">stateful_transform</span>
 
 
-<div class="viewcode-block" id="Harmonic"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic">[docs]</a><span class="k">class</span> <span class="nc">Harmonic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Harmonic"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic">[docs]</a><span class="k">class</span> <span class="nc">Harmonic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Transform `x` into seasonal harmonics with a given frequency</span>
 
 <span class="sd">    Args:</span>
@@ -164,13 +162,13 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">365.25</span>
 
-<div class="viewcode-block" id="Harmonic.memorize_chunk"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.memorize_chunk">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
-        <span class="k">pass</span>
-</div>
-<div class="viewcode-block" id="Harmonic.memorize_finish"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.memorize_finish">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>
-</div>
-<div class="viewcode-block" id="Harmonic.transform"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+<div class="viewcode-block" id="Harmonic.memorize_chunk"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic.memorize_chunk">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Harmonic.memorize_finish"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic.memorize_finish">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Harmonic.transform"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
@@ -178,9 +176,9 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
             <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">freq</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
             <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">freq</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
-        <span class="p">])</span><span class="o">.</span><span class="n">T</span>
+        <span class="p">])</span><span class="o">.</span><span class="n">T</span></div></div>
 
-</div></div>
+
 <span class="n">harm</span> <span class="o">=</span> <span class="n">stateful_transform</span><span class="p">(</span><span class="n">Harmonic</span><span class="p">)</span>
 </pre></div>
 
@@ -194,7 +192,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -216,7 +214,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

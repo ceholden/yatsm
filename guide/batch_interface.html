@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Interface &mdash; YATSM 0.5.3 documentation</title>
+  <title>Batch Interface &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/>
         <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
         <link rel="prev" title="Model Configuration" href="configuration.html"/> 
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -155,11 +155,10 @@ generated as described by <a class="reference internal" href="configuration.html
 Usage: yatsm line [OPTIONS] &lt;config&gt; &lt;job_number&gt; &lt;total_jobs&gt;
 
 Options:
-  --check_cache    Check that cache file contains matching data
-  --resume         Do not overwrite preexisting results
-  --do-not-run     Do not run YATSM (useful for just caching data)
-  --verbose-yatsm  Show verbose debugging messages in YATSM algorithm
-  -h, --help       Show this message and exit.
+  --check_cache  Check that cache file contains matching data
+  --resume       Do not overwrite preexisting results
+  --do-not-run   Do not run YATSM (useful for just caching data)
+  -h, --help     Show this message and exit.
 </pre></div>
 </div>
 <p>Let&#8217;s say our image stack contains 1,000 rows. If we use 50 total CPUs
@@ -236,7 +235,7 @@ $ for job in $(seq 1 $njob); do
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -258,7 +257,7 @@ $ for job in $(seq 1 $njob); do
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

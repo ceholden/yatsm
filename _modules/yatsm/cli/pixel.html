@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.pixel &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.cli.pixel &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -147,12 +147,6 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">embed</span> <span class="k">as</span> <span class="n">IPython_embed</span>
-    <span class="n">has_embed</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">has_embed</span> <span class="o">=</span> <span class="bp">False</span>
-
 <span class="kn">import</span> <span class="nn">click</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
@@ -162,7 +156,7 @@
 <span class="kn">import</span> <span class="nn">yaml</span>
 
 <span class="kn">from</span> <span class="nn">yatsm.algorithms</span> <span class="kn">import</span> <span class="n">postprocess</span>  <span class="c"># TODO: implement postprocessors</span>
-<span class="kn">from</span> <span class="nn">yatsm.cli</span> <span class="kn">import</span> <span class="n">options</span>
+<span class="kn">from</span> <span class="nn">yatsm.cli</span> <span class="kn">import</span> <span class="n">options</span><span class="p">,</span> <span class="n">console</span>
 <span class="kn">from</span> <span class="nn">yatsm.config_parser</span> <span class="kn">import</span> <span class="n">convert_config</span><span class="p">,</span> <span class="n">parse_config_file</span>
 <span class="kn">from</span> <span class="nn">yatsm</span> <span class="kn">import</span> <span class="n">_cyprep</span> <span class="k">as</span> <span class="n">cyprep</span>
 <span class="kn">from</span> <span class="nn">yatsm.utils</span> <span class="kn">import</span> <span class="n">csvfile_to_dataframe</span><span class="p">,</span> <span class="n">get_image_IDs</span>
@@ -196,7 +190,7 @@
 <span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--cmap&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;cmap&gt;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;perceptual_rainbow_16&#39;</span><span class="p">,</span>
               <span class="n">show_default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;DOY plot colormap&#39;</span><span class="p">)</span>
 <span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--embed&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-              <span class="n">help</span><span class="o">=</span><span class="s">&#39;Drop to embedded IPython shell at various points&#39;</span><span class="p">)</span>
+              <span class="n">help</span><span class="o">=</span><span class="s">&#39;Drop to (I)Python interpreter at various points&#39;</span><span class="p">)</span>
 <span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--seed&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Set NumPy RNG seed value&#39;</span><span class="p">)</span>
 <span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--algo_kw&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">callback_dict</span><span class="p">,</span>
               <span class="n">help</span><span class="o">=</span><span class="s">&#39;Algorithm parameter overrides&#39;</span><span class="p">)</span>
@@ -244,16 +238,17 @@
     <span class="n">df</span><span class="p">[</span><span class="s">&#39;image_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_image_IDs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">])</span>
 
     <span class="c"># Setup X/Y</span>
-    <span class="n">kws</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">]}</span>
-    <span class="n">kws</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;design_matrix&#39;</span><span class="p">],</span> <span class="n">kws</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">]</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;design_matrix&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
     <span class="n">design_info</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">design_info</span>
 
     <span class="n">Y</span> <span class="o">=</span> <span class="n">read_pixel_timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">],</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
-
-    <span class="n">fit_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;n_bands&#39;</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;mask_band&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">fit_indices</span> <span class="o">=</span> <span class="n">fit_indices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;n_bands&#39;</span><span class="p">]:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Number of bands in image </span><span class="si">%s</span><span class="s"> (</span><span class="si">%i</span><span class="s">) do not match number &#39;</span>
+                     <span class="s">&#39;in configuration file (</span><span class="si">%i</span><span class="s">)&#39;</span> <span class="o">%</span>
+                     <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                      <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;n_bands&#39;</span><span class="p">]))</span>
+        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span>
 
     <span class="c"># Mask out of range data</span>
     <span class="n">idx_mask</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;mask_band&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
@@ -282,19 +277,17 @@
                 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Timeseries: px={px} py={py}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">px</span><span class="o">=</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="n">py</span><span class="p">))</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Band {b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">band</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-
-            <span class="k">if</span> <span class="n">embed</span> <span class="ow">and</span> <span class="n">has_embed</span><span class="p">:</span>
-                <span class="n">IPython_embed</span><span class="p">()</span>
-
             <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
     <span class="c"># Eliminate config parameters not algorithm and fit model</span>
-    <span class="n">yatsm</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm_cls&#39;</span><span class="p">](</span><span class="n">lm</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">],</span>
-                                          <span class="o">**</span><span class="n">cfg</span><span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm&#39;</span><span class="p">]])</span>
+    <span class="n">algo_cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm&#39;</span><span class="p">]]</span>
+    <span class="n">yatsm</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm_cls&#39;</span><span class="p">](</span>
+        <span class="n">estimator</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">],</span>
+        <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;init&#39;</span><span class="p">,</span> <span class="p">{}))</span>
     <span class="n">yatsm</span><span class="o">.</span><span class="n">px</span> <span class="o">=</span> <span class="n">px</span>
     <span class="n">yatsm</span><span class="o">.</span><span class="n">py</span> <span class="o">=</span> <span class="n">py</span>
-    <span class="n">yatsm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">][</span><span class="n">valid</span><span class="p">]))</span>
+    <span class="n">yatsm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">][</span><span class="n">valid</span><span class="p">]),</span> <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;fit&#39;</span><span class="p">,</span> <span class="p">{}))</span>
 
     <span class="c"># Plot after predictions</span>
     <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span> <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s">&#39;xkcd&#39;</span> <span class="k">else</span> <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">style</span><span class="p">):</span>
@@ -311,22 +304,42 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Timeseries: px={px} py={py}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">px</span><span class="o">=</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="n">py</span><span class="p">))</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Band {b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">band</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
 
-            <span class="n">plot_results</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">],</span> <span class="n">yatsm</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="n">_plot</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">embed</span> <span class="ow">and</span> <span class="n">has_embed</span><span class="p">:</span>
-                <span class="n">IPython_embed</span><span class="p">()</span>
+            <span class="n">plot_results</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">yatsm</span><span class="p">,</span> <span class="n">design_info</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="n">_plot</span><span class="p">)</span>
 
             <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
+    <span class="k">if</span> <span class="n">embed</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">open_interpreter</span><span class="p">(</span>
+            <span class="n">yatsm</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Additional functions:</span><span class="se">\n</span><span class="s">&quot;</span>
+                     <span class="s">&quot;plot_TS, plot_DOY, plot_VAL, plot_results&quot;</span><span class="p">),</span>
+            <span class="n">funcs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s">&#39;plot_TS&#39;</span><span class="p">:</span> <span class="n">plot_TS</span><span class="p">,</span> <span class="s">&#39;plot_DOY&#39;</span><span class="p">:</span> <span class="n">plot_DOY</span><span class="p">,</span>
+                <span class="s">&#39;plot_VAL&#39;</span><span class="p">:</span> <span class="n">plot_VAL</span><span class="p">,</span> <span class="s">&#39;plot_results&#39;</span><span class="p">:</span> <span class="n">plot_results</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="plot_TS"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_TS">[docs]</a><span class="k">def</span> <span class="nf">plot_TS</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a standard timeseries plot</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dates (iterable): sequence of datetime</span>
+<span class="sd">        y (np.ndarray): variable to plot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Plot data</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Date&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Date&#39;</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="plot_DOY"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_DOY">[docs]</a><span class="k">def</span> <span class="nf">plot_DOY</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mpl_cmap</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a DOY plot</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dates (iterable): sequence of datetime</span>
+<span class="sd">        y (np.ndarray): variable to plot</span>
+<span class="sd">        mpl_cmap (colormap): matplotlib colormap</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
     <span class="n">year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">year</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
 
@@ -342,10 +355,18 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_formatter</span><span class="p">(</span><span class="n">months_fmrt</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">366</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Day of Year&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Day of Year&#39;</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="plot_VAL"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_VAL">[docs]</a><span class="k">def</span> <span class="nf">plot_VAL</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mpl_cmap</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a &quot;Valerie Pasquarella&quot; plot (repeated DOY plot)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dates (iterable): sequence of datetime</span>
+<span class="sd">        y (np.ndarray): variable to plot</span>
+<span class="sd">        mpl_cmap (colormap): matplotlib colormap</span>
+<span class="sd">        reps (int, optional): number of additional repetitions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
     <span class="n">year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">year</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
 
@@ -359,21 +380,45 @@
     <span class="n">sp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">_doy</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">_year</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl_cmap</span><span class="p">,</span>
                      <span class="n">marker</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Day of Year&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;Day of Year&#39;</span><span class="p">)</span></div>
 
-</div>
-<div class="viewcode-block" id="plot_results"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_results">[docs]</a><span class="k">def</span> <span class="nf">plot_results</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">,</span> <span class="n">yatsm_model</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;TS&#39;</span><span class="p">):</span>
-    <span class="n">step</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;reverse&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1</span>
-    <span class="n">design</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;[\+\-][\ ]+C\(.*\)&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">yatsm_config</span><span class="p">[</span><span class="s">&#39;design_matrix&#39;</span><span class="p">])</span>
 
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yatsm_model</span><span class="o">.</span><span class="n">record</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_results"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_results">[docs]</a><span class="k">def</span> <span class="nf">plot_results</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">design_info</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="s">&#39;TS&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a DOY plot</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        band (int): plot results for this band</span>
+<span class="sd">        cfg (dict): YATSM configuration dictionary</span>
+<span class="sd">        model (YATSM model): fitted YATSM timeseries model</span>
+<span class="sd">        design_info (patsy.DesignInfo): patsy design information</span>
+<span class="sd">        plot_type (str): type of plot to add results to (TS, DOY, or VAL)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Handle reverse</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;reverse&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="c"># Remove categorical info from predictions</span>
+    <span class="n">design</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;[\+\-][\ ]+C\(.*\)&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span>
+                    <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;design_matrix&#39;</span><span class="p">])</span>
+
+    <span class="n">i_coef</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">design_info</span><span class="o">.</span><span class="n">column_name_indexes</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">&#39;C\(.*\)&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+            <span class="n">i_coef</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">i_coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">i_coef</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="s">&#39;Model {i}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s">&#39;TS&#39;</span><span class="p">:</span>
+            <span class="c"># Prediction</span>
             <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span> <span class="n">step</span><span class="p">)</span>
             <span class="n">mX</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="n">mx</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
 
-            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">band</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
+            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">][</span><span class="n">i_coef</span><span class="p">,</span> <span class="n">band</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
             <span class="n">mx_date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_x</span><span class="p">))</span> <span class="k">for</span> <span class="n">_x</span> <span class="ow">in</span> <span class="n">mx</span><span class="p">])</span>
+            <span class="c"># Break</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]:</span>
+                <span class="n">bx</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">])</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s">&#39;DOY&#39;</span><span class="p">:</span>
             <span class="n">yr_end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
@@ -384,16 +429,17 @@
                            <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">yr_mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">mX</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="n">mx</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
 
-            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">band</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
+            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">][</span><span class="n">i_coef</span><span class="p">,</span> <span class="n">band</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
             <span class="n">mx_date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span>
                                 <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">mx</span><span class="p">])</span>
 
             <span class="n">label</span> <span class="o">=</span> <span class="s">&#39;Model {i} - {yr}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">yr</span><span class="o">=</span><span class="n">yr_mid</span><span class="p">)</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mx_date</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">leg</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">leg</span><span class="o">.</span><span class="n">draggable</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="plot_lasso_debug"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_lasso_debug">[docs]</a><span class="k">def</span> <span class="nf">plot_lasso_debug</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; See example:</span>
 <span class="sd">    http://scikit-learn.org/stable/auto_examples/linear_model/plot_lasso_model_selection.html</span>
@@ -406,10 +452,10 @@
                 <span class="n">label</span><span class="o">=</span><span class="s">&#39;alpha: CV estimate&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;-log(alpha)&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;Mean square error&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Mean square error on each fold: coordinate descent&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Mean square error on each fold: coordinate descent&#39;</span><span class="p">)</span></div>
 
 
-<span class="c"># UTILITY FUNCTIONS</span></div>
+<span class="c"># UTILITY FUNCTIONS</span>
 <div class="viewcode-block" id="type_convert"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.type_convert">[docs]</a><span class="k">def</span> <span class="nf">type_convert</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">example</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert value (str) to dtype of `example`</span>
 
@@ -445,7 +491,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -467,7 +513,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

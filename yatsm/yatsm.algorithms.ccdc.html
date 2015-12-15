@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.ccdc module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.algorithms.ccdc module &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -141,7 +141,7 @@
 <span id="yatsm-algorithms-ccdc-module"></span><h1>yatsm.algorithms.ccdc module<a class="headerlink" href="#module-yatsm.algorithms.ccdc" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="yatsm.algorithms.ccdc.CCDCesque">
-<em class="property">class </em><code class="descclassname">yatsm.algorithms.ccdc.</code><code class="descname">CCDCesque</code><span class="sig-paren">(</span><em>test_indices=None</em>, <em>lm=Lasso(alpha=20</em>, <em>copy_X=True</em>, <em>fit_intercept=True</em>, <em>max_iter=1000</em>, <em>normalize=False</em>, <em>positive=False</em>, <em>precompute=False</em>, <em>random_state=None</em>, <em>selection='cyclic'</em>, <em>tol=0.0001</em>, <em>warm_start=False)</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>retrain_time=365.25</em>, <em>screening='RLM'</em>, <em>screening_crit=400.0</em>, <em>remove_noise=True</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>dynamic_rmse=False</em>, <em>slope_test=False</em>, <em>idx_slope=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.algorithms.ccdc.</code><code class="descname">CCDCesque</code><span class="sig-paren">(</span><em>test_indices=None</em>, <em>estimator=Lasso(alpha=20</em>, <em>copy_X=True</em>, <em>fit_intercept=True</em>, <em>max_iter=1000</em>, <em>normalize=False</em>, <em>positive=False</em>, <em>precompute=False</em>, <em>random_state=None</em>, <em>selection='cyclic'</em>, <em>tol=0.0001</em>, <em>warm_start=False)</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>retrain_time=365.25</em>, <em>screening='RLM'</em>, <em>screening_crit=400.0</em>, <em>remove_noise=True</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>dynamic_rmse=False</em>, <em>slope_test=False</em>, <em>idx_slope=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM" title="yatsm.algorithms.yatsm.YATSM"><code class="xref py py-class docutils literal"><span class="pre">yatsm.algorithms.yatsm.YATSM</span></code></a></p>
 <p>Initialize a CCDC-like model for data X (spectra) and Y (dates)</p>
 <p>An unofficial and unvalidated port of the Continuous Change Detection and
@@ -154,8 +154,8 @@ Classification (CCDC) algorithm by Zhu and Woodcock, 2014.</p>
 <li><strong>test_indices</strong> (<em>np.ndarray, optional</em>) &#8211; Test for changes with these
 indices of Y. If not provided, all series in <cite>Y</cite> will be used as
 test indices</li>
-<li><strong>lm</strong> (<em>sklearn compatible predictor</em>) &#8211; prediction model from scikit-learn
-used to fit and predict timeseries</li>
+<li><strong>estimator</strong> (<em>sklearn compatible predictor</em>) &#8211; prediction model from
+scikit-learn used to fit and predict timeseries</li>
 <li><strong>consecutive</strong> (<em>int, optional</em>) &#8211; Consecutive observations to trigger change</li>
 <li><strong>threshold</strong> (<em>float</em>) &#8211; Test statistic threshold for change</li>
 <li><strong>min_obs</strong> (<em>int</em>) &#8211; Minimum observations in model</li>
@@ -319,7 +319,7 @@ estimated regression and should be excluded from the training period.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -341,7 +341,7 @@ estimated regression and should be excluded from the training period.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

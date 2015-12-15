@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.numba_accel &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.regression.diagnostics &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
-        <link rel="up" title="yatsm.regression" href="../regression.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
 
   
   <script src="../../../_static/js/modernizr.min.js"></script>
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -126,13 +126,11 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-          <li><a href="../regression.html">yatsm.regression</a> &raquo;</li>
-      
-    <li>yatsm.regression.numba_accel</li>
+    <li>yatsm.regression.diagnostics</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/numba_accel" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/diagnostics" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -142,15 +140,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for yatsm.regression.numba_accel</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot; Regression related functions optimized using Numba, if available</span>
+  <h1>Source code for yatsm.regression.diagnostics</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Regression diagnostics calculations</span>
 
-<span class="sd">If Numba is not avaiable, functions are still usable as not JIT&#39;d functions</span>
+<span class="sd">Includes:</span>
+<span class="sd">    - rmse: calculate root mean squared error</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..accel</span> <span class="kn">import</span> <span class="n">try_jit</span>
 
 
-<span class="c"># @nb.jit()</span>
-<div class="viewcode-block" id="rmse"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.numba_accel.html#yatsm.regression.numba_accel.rmse">[docs]</a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yhat</span><span class="p">):</span>
+<span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="viewcode-block" id="rmse"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.diagnostics.html#yatsm.regression.diagnostics.rmse">[docs]</a><span class="k">def</span> <span class="nf">rmse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">yhat</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Calculate and return Root Mean Squared Error (RMSE)</span>
 
 <span class="sd">    Args:</span>
@@ -160,16 +162,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        float: Root Mean Squared Error</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">yhat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">**</span> <span class="mf">0.5</span>
-
-</div>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">numba</span> <span class="kn">as</span> <span class="nn">nb</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="k">pass</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="c"># JIT functions if we can</span>
-    <span class="n">rmse</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">rmse</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">yhat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">**</span> <span class="mf">0.5</span></div>
 </pre></div>
 
            </div>
@@ -182,7 +175,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -204,7 +197,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

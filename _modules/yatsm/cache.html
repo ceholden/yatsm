@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cache &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.cache &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -171,9 +171,9 @@
 
     <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;yatsm_r</span><span class="si">%i</span><span class="s">_n</span><span class="si">%i</span><span class="s">_b</span><span class="si">%i</span><span class="s">.npy.npz&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">n_images</span><span class="p">,</span> <span class="n">nbands</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="get_line_cache_pattern"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.get_line_cache_pattern">[docs]</a><span class="k">def</span> <span class="nf">get_line_cache_pattern</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">nbands</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Returns a pattern for a cache file from a certain row</span>
 
@@ -194,9 +194,9 @@
     <span class="n">pattern</span> <span class="o">=</span> <span class="s">&#39;yatsm_r{l}_n{w}_b{b}.npy.npz&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">l</span><span class="o">=</span><span class="n">row</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">wildcard</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">nbands</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">pattern</span>
+    <span class="k">return</span> <span class="n">pattern</span></div>
 
-</div>
+
 <div class="viewcode-block" id="test_cache"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.test_cache">[docs]</a><span class="k">def</span> <span class="nf">test_cache</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Test cache directory for ability to read from or write to</span>
 
@@ -237,9 +237,9 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Attempt writing to cache directory?: {b}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">b</span><span class="o">=</span><span class="n">write_cache</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">read_cache</span><span class="p">,</span> <span class="n">write_cache</span>
+    <span class="k">return</span> <span class="n">read_cache</span><span class="p">,</span> <span class="n">write_cache</span></div>
 
-</div>
+
 <div class="viewcode-block" id="read_cache_file"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.read_cache_file">[docs]</a><span class="k">def</span> <span class="nf">read_cache_file</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="n">image_IDs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Returns image data from a cache file</span>
 
@@ -270,9 +270,9 @@
                            <span class="s">&#39;specified&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">cache_filename</span><span class="p">))</span>
             <span class="k">return</span> <span class="bp">None</span>
 
-    <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="s">&#39;Y&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="s">&#39;Y&#39;</span><span class="p">]</span></div>
 
-</div>
+
 <div class="viewcode-block" id="write_cache_file"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.write_cache_file">[docs]</a><span class="k">def</span> <span class="nf">write_cache_file</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Writes data to a cache file using np.savez_compressed</span>
 
@@ -285,10 +285,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">np</span><span class="o">.</span><span class="n">savez_compressed</span><span class="p">(</span><span class="n">cache_filename</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
         <span class="s">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="n">_image_ID_str</span><span class="p">:</span> <span class="n">image_IDs</span>
-    <span class="p">})</span>
+    <span class="p">})</span></div>
 
 
-<span class="c"># Cache file updating</span></div>
+<span class="c"># Cache file updating</span>
 <div class="viewcode-block" id="update_cache_file"><a class="viewcode-back" href="../../yatsm/yatsm.cache.html#yatsm.cache.update_cache_file">[docs]</a><span class="k">def</span> <span class="nf">update_cache_file</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">image_IDs</span><span class="p">,</span>
                       <span class="n">old_cache_filename</span><span class="p">,</span> <span class="n">new_cache_filename</span><span class="p">,</span>
                       <span class="n">line</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">reader_kwargs</span><span class="o">=</span><span class="p">{}):</span>
@@ -389,7 +389,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -411,7 +411,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

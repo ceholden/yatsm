@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.yatsm module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.algorithms.yatsm module &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -142,7 +142,7 @@
 <p>Yet Another TimeSeries Model baseclass</p>
 <dl class="class">
 <dt id="yatsm.algorithms.yatsm.YATSM">
-<em class="property">class </em><code class="descclassname">yatsm.algorithms.yatsm.</code><code class="descname">YATSM</code><span class="sig-paren">(</span><em>test_indices=None</em>, <em>lm=Lasso(alpha=20</em>, <em>copy_X=True</em>, <em>fit_intercept=True</em>, <em>max_iter=1000</em>, <em>normalize=False</em>, <em>positive=False</em>, <em>precompute=False</em>, <em>random_state=None</em>, <em>selection='cyclic'</em>, <em>tol=0.0001</em>, <em>warm_start=False)</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.algorithms.yatsm.</code><code class="descname">YATSM</code><span class="sig-paren">(</span><em>test_indices=None</em>, <em>estimator=Lasso(alpha=20</em>, <em>copy_X=True</em>, <em>fit_intercept=True</em>, <em>max_iter=1000</em>, <em>normalize=False</em>, <em>positive=False</em>, <em>precompute=False</em>, <em>random_state=None</em>, <em>selection='cyclic'</em>, <em>tol=0.0001</em>, <em>warm_start=False)</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Yet Another TimeSeries Model baseclass</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -151,10 +151,11 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>test_indices</strong> (<em>np.ndarray, optional</em>) &#8211; Test for changes with these
-indices of Y. If not provided, all <cite>fit_indices</cite> will be used as
+indices of Y. If not provided, all series in Y will be used as
 test indices</li>
-<li><strong>lm</strong> (<em>sklearn.linear_model predictor</em>) &#8211; regression model from scikit-learn
-used to fit and predict timeseries (default: <cite>Lasso(alpha=20)</cite>)</li>
+<li><strong>estimator</strong> (<em>sklearn compatible estimator</em>) &#8211; estimation model from
+scikit-learn used to fit and predict timeseries
+(default: <code class="docutils literal"><span class="pre">Lasso(alpha=20)</span></code>)</li>
 </ul>
 </td>
 </tr>
@@ -163,7 +164,7 @@ used to fit and predict timeseries (default: <cite>Lasso(alpha=20)</cite>)</li>
 <dl class="attribute">
 <dt id="yatsm.algorithms.yatsm.YATSM.models">
 <code class="descname">models</code><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.models" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em></p>
+<dd><p><em>np.ndarray</em></p>
 <p>prediction model objects</p>
 </dd></dl>
 
@@ -216,7 +217,7 @@ coefficients matrix for predictions</li>
 
 <dl class="method">
 <dt id="yatsm.algorithms.yatsm.YATSM.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>dates</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit timeseries model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -246,11 +247,12 @@ model attribute information</p>
 <dt id="yatsm.algorithms.yatsm.YATSM.fit_models">
 <code class="descname">fit_models</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>bands=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.fit_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit timeseries models for <cite>bands</cite> within <cite>Y</cite> for a given <cite>X</cite></p>
+<p>Updates or initializes fit for <code class="docutils literal"><span class="pre">self.models</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>X</strong> (<em>np.ndarray</em>) &#8211; design matrix (number of observations x number of
 features)</li>
 <li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x
@@ -258,12 +260,6 @@ number of observations) observation in the X design matrix</li>
 <li><strong>bands</strong> (<em>iterable</em>) &#8211; Subset of bands of <cite>Y</cite> to fit. If None are
 provided, fit all bands in Y</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">fitted model objects</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
@@ -291,8 +287,8 @@ provided, fit all bands in Y</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>X</strong> (<em>np.ndarray</em>) &#8211; design matrix (number of observations x number of
 features)</li>
-<li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x number
-of observations)</li>
+<li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x
+number of observations)</li>
 </ul>
 </td>
 </tr>
@@ -315,18 +311,18 @@ timeseries segment that intersects each date.</p>
 <li><strong>X</strong> (<em>np.ndarray</em>) &#8211; Design matrix (number of observations x number of
 features)</li>
 <li><strong>series</strong> (<em>iterable, optional</em>) &#8211; Return prediction for subset of series
-within timeseries model. If None is provided, returns predictions
-from all series</li>
+within timeseries model. If None is provided, returns
+predictions from all series</li>
 <li><strong>dates</strong> (<em>int or np.ndarray, optional</em>) &#8211; Index of <cite>X</cite>&#8216;s features or a
-np.ndarray of length X.shape[0] specifying the ordinal dates for
-each</li>
+np.ndarray of length X.shape[0] specifying the ordinal dates
+for each</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>Y</strong> &#8211;
-Prediction for given X (number of series x number of</p>
+Prediction for given X (number of series x number</p>
 <blockquote>
-<div><p>observations)</p>
+<div><p>of observations)</p>
 </div></blockquote>
 </p>
 </td>
@@ -378,8 +374,8 @@ record</td>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>X</strong> (<em>np.ndarray</em>) &#8211; design matrix (number of observations x number of
 features)</li>
-<li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x number
-of observations)</li>
+<li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x
+number of observations)</li>
 </ul>
 </td>
 </tr>
@@ -408,7 +404,7 @@ of observations)</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -430,7 +426,7 @@ of observations)</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.phenology module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.phenology package &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -123,7 +123,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>yatsm.phenology module</li>
+    <li>yatsm.phenology package</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -137,209 +137,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.phenology">
-<span id="yatsm-phenology-module"></span><h1>yatsm.phenology module<a class="headerlink" href="#module-yatsm.phenology" title="Permalink to this headline">¶</a></h1>
-<p>Implementation of Eli Melaas&#8217; Landsat phenology algorithm</p>
-<dl class="docutils">
-<dt>See:</dt>
-<dd>Melaas, EK, MA Friedl, and Z Zhu. 2013. Detecting interannual variation in
-deciduous broadleaf forest phenology using Landsat TM/ETM+ data. Remote
-Sensing of Environment 132: 176-185.</dd>
-</dl>
-<dl class="function">
-<dt id="yatsm.phenology.CRAN_spline">
-<code class="descclassname">yatsm.phenology.</code><code class="descname">CRAN_spline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>spar=0.55</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology.html#CRAN_spline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.CRAN_spline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a prediction function for a smoothing spline from R</p>
-<p>Use <cite>rpy2</cite> package to fit a smoothing spline using &#8220;smooth.spline&#8221;.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>np.ndarray</em>) &#8211; independent variable</li>
-<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; dependent variable</li>
-<li><strong>spar</strong> (<em>float</em>) &#8211; smoothing parameter</li>
+  <div class="section" id="yatsm-phenology-package">
+<h1>yatsm.phenology package<a class="headerlink" href="#yatsm-phenology-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.phenology.longtermmean.html">yatsm.phenology.longtermmean module</a></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">prediction function of smoothing spline that provides
-smoothed estimates of the dependent variable given an input
-independent variable array</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">callable</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Example</p>
-<p>Fit a smoothing spline for y ~ x and predict for days in year:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">pred_spl</span> <span class="o">=</span> <span class="n">CRAN_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">y_smooth</span> <span class="o">=</span> <span class="n">pred_spl</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">366</span><span class="p">))</span>
-</pre></div>
 </div>
-</dd></dl>
-
-<dl class="class">
-<dt id="yatsm.phenology.LongTermMeanPhenology">
-<em class="property">class </em><code class="descclassname">yatsm.phenology.</code><code class="descname">LongTermMeanPhenology</code><span class="sig-paren">(</span><em>model</em>, <em>red_index=2</em>, <em>nir_index=3</em>, <em>blue_index=0</em>, <em>scale=0.0001</em>, <em>evi_index=None</em>, <em>evi_scale=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology.html#LongTermMeanPhenology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.LongTermMeanPhenology" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Calculate long term mean phenology metrics for each YATSM record</p>
-<p>Long term mean phenology metrics describe the general spring greenup and
-autumn senescence timing using an algorithm by Melaas <em>et al.</em>, 2013 based
-on fitting smoothing splines to timeseries of EVI.</p>
-<dl class="attribute">
-<dt id="yatsm.phenology.LongTermMeanPhenology.self.pheno">
-<code class="descclassname">self.</code><code class="descname">pheno</code><a class="headerlink" href="#yatsm.phenology.LongTermMeanPhenology.self.pheno" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>np.ndarray</em></p>
-<p>NumPy structured array containing phenology
-metrics. These metrics include:</p>
-<ul class="simple">
-<li>spring_doy: the long term mean day of year of the start of spring</li>
-<li>autumn_doy: the long term mean day of year of the start of autumn</li>
-<li>pheno_cor: the correlation coefficient of the observed EVI and
-the smoothed prediction</li>
-<li>peak_evi: the highest smoothed EVI value within the year (maximum
-amplitude of EVI)</li>
-<li>peak_doy: the day of year corresponding to the peak EVI value</li>
-<li>spline_evi: the smoothing spline prediction of EVI for days of
-year between 1 and 365</li>
-<li>pheno_nobs: the number of observations used to fit the smoothing
-spline</li>
-</ul>
-</dd></dl>
-
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>model</strong> (<a class="reference internal" href="yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM" title="yatsm.algorithms.yatsm.YATSM"><em>yatsm.YATSM</em></a>) &#8211; instance of <cite>yatsm.YATSM</cite> that has been run for
-change detection</li>
-<li><strong>red_index</strong> (<em>int, optional</em>) &#8211; index of model.Y containing red band
-(default: 2)</li>
-<li><strong>nir_index</strong> (<em>int, optional</em>) &#8211; index of model.Y containing NIR band
-(default: 3)</li>
-<li><strong>blue_index</strong> (<em>int, optional</em>) &#8211; index of model.Y containing blue band
-(default: 0)</li>
-<li><strong>scale</strong> (<em>float or np.ndarray, optional</em>) &#8211; scale factor for reflectance
-bands in model.Y to transform data into [0, 1] (default: 0.0001)</li>
-<li><strong>evi_index</strong> (<em>int, optional</em>) &#8211; if EVI is already used within timeseries
-model, provide index of model.Y containing EVI to override
-computation from red/nir/blue bands (default: None)</li>
-<li><strong>evi_scale</strong> (<em>float, optional</em>) &#8211; if EVI is already used within timeseries
-model, provide scale factor to transform EVI into [0, 1] range
-(default: None)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="yatsm.phenology.LongTermMeanPhenology.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>year_interval=3</em>, <em>q_min=10</em>, <em>q_max=90</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology.html#LongTermMeanPhenology.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.LongTermMeanPhenology.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit phenology metrics for each time segment within a YATSM model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>year_interval</strong> (<em>int, optional</em>) &#8211; number of years to group together when
-normalizing EVI to upper and lower percentiles of EVI within the
-group (default: 3)</li>
-<li><strong>q_min</strong> (<em>float, optional</em>) &#8211; lower percentile for scaling EVI
-(default: 10)</li>
-<li><strong>q_max</strong> (<em>float, optional</em>) &#8211; upper percentile for scaling EVI
-(default: 90)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">updated copy of YATSM model instance with phenology
-added into yatsm.record structured array</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.phenology.group_years">
-<code class="descclassname">yatsm.phenology.</code><code class="descname">group_years</code><span class="sig-paren">(</span><em>years</em>, <em>interval=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology.html#group_years"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.group_years" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return integers representing sequential groupings of years</p>
-<p>Note: years specified must be sorted</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>years</strong> (<em>np.ndarray</em>) &#8211; the year corresponding to each EVI value</li>
-<li><strong>interval</strong> (<em>int, optional</em>) &#8211; number of years to group together (default: 3)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">integers representing sequential year groupings</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.phenology.ordinal2yeardoy">
-<code class="descclassname">yatsm.phenology.</code><code class="descname">ordinal2yeardoy</code><span class="sig-paren">(</span><em>ordinal</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology.html#ordinal2yeardoy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.ordinal2yeardoy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert ordinal dates to two arrays of year and doy</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ordinal</strong> (<em>np.ndarray</em>) &#8211; ordinal dates</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">nobs x 2 np.ndarray containing the year and DOY for each
-ordinal date</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.phenology.scale_EVI">
-<code class="descclassname">yatsm.phenology.</code><code class="descname">scale_EVI</code><span class="sig-paren">(</span><em>evi</em>, <em>periods</em>, <em>qmin=10</em>, <em>qmax=90</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology.html#scale_EVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.scale_EVI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns EVI scaled to upper and lower quantiles</p>
-<p>Quantiles are calculated based on EVI within some year-to-year interval.
-As part of finding the quantiles, EVI values not within the (0, 1) range
-will be removed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>evi</strong> (<em>np.ndarray</em>) &#8211; EVI values</li>
-<li><strong>periods</strong> (<em>np.ndarray</em>) &#8211; intervals of years to group and scale together</li>
-<li><strong>qmin</strong> (<em>float, optional</em>) &#8211; lower quantile for scaling (default: 10)</li>
-<li><strong>qmax</strong> (<em>float, optional</em>) &#8211; upper quantile for scaling (default: 90)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scaled EVI array</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+</div>
+<div class="section" id="module-yatsm.phenology">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.phenology" title="Permalink to this headline">¶</a></h2>
+<p>Module for phenology related algorithms</p>
+</div>
 </div>
 
 
@@ -353,7 +164,7 @@ will be removed.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -375,7 +186,7 @@ will be removed.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.postprocess &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.algorithms.postprocess &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -147,7 +147,6 @@
 <span class="sd">calculations</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">math</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.lib.recfunctions</span> <span class="kn">as</span> <span class="nn">nprf</span>
@@ -162,7 +161,7 @@
 
 
 <span class="c"># POST-PROCESSING</span>
-<div class="viewcode-block" id="commission_test"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.commission_test">[docs]</a><span class="k">def</span> <span class="nf">commission_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+<div class="viewcode-block" id="commission_test"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.commission_test">[docs]</a><span class="k">def</span> <span class="nf">commission_test</span><span class="p">(</span><span class="n">yatsm</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.10</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Merge adjacent records based on Chow Tests for nested models</span>
 
 <span class="sd">    Use Chow Test to find false positive, spurious, or unnecessary breaks</span>
@@ -177,74 +176,73 @@
 
 <span class="sd">    where:</span>
 
-<span class="sd">        - :math:`RSS_u` is the RSS of the combined, or, restricted model</span>
+<span class="sd">        - :math:`RSS_r` is the RSS of the combined, or, restricted model</span>
 <span class="sd">        - :math:`RSS_1` is the RSS of the first model</span>
 <span class="sd">        - :math:`RSS_2` is the RSS of the second model</span>
 <span class="sd">        - :math:`k` is the number of model parameters</span>
 <span class="sd">        - :math:`n` is the number of total observations</span>
 
 <span class="sd">    Because we look for change in multiple bands, the RSS used to compare</span>
-<span class="sd">    the unrestricted versus restricted models is the L2 norm of RSS</span>
-<span class="sd">    values from `model.test_indices`.</span>
+<span class="sd">    the unrestricted versus restricted models is the mean RSS</span>
+<span class="sd">    values from all ``model.test_indices``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (YATSM model): fitted YATSM model to check for commission errors</span>
-<span class="sd">        alpha (float): significance level for F-statistic (default: 0.01)</span>
+<span class="sd">        yatsm (YATSM model): fitted YATSM model to check for commission errors</span>
+<span class="sd">        alpha (float): significance level for F-statistic (default: 0.10)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        np.ndarray: updated copy of `model.record` with spurious models</span>
+<span class="sd">        np.ndarray: updated copy of ``yatsm.record`` with spurious models</span>
 <span class="sd">            combined into unified model</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span>
+    <span class="k">if</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span>
 
-    <span class="n">k</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c"># Allocate memory outside of loop</span>
+    <span class="n">m_1_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">m_2_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">m_r_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
     <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">merged</span> <span class="o">=</span> <span class="bp">False</span>
-
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">merged</span><span class="p">:</span>
             <span class="n">m_1</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">m_1</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">m_2</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_1</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">m_2</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">m_1_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
-        <span class="n">m_1_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
-        <span class="n">m_2_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
-        <span class="n">m_2_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
-
+        <span class="c"># Unrestricted model starts/ends</span>
+        <span class="n">m_1_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
+        <span class="n">m_1_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_1</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
+        <span class="n">m_2_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">])</span>
+        <span class="n">m_2_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">])</span>
+        <span class="c"># Restricted start/end</span>
         <span class="n">m_r_start</span> <span class="o">=</span> <span class="n">m_1_start</span>
         <span class="n">m_r_end</span> <span class="o">=</span> <span class="n">m_2_end</span>
 
         <span class="n">n</span> <span class="o">=</span> <span class="n">m_r_end</span> <span class="o">-</span> <span class="n">m_r_start</span>
-
         <span class="n">F_crit</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
 
-        <span class="n">m_1_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-        <span class="n">m_2_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-        <span class="n">m_r_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="p">):</span>
+            <span class="n">m_1_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">,</span> <span class="p">:],</span>
+                                              <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_2_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">,</span> <span class="p">:],</span>
+                                              <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_r_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
+                                              <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">test_indices</span><span class="p">):</span>
-            <span class="n">m_1_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">,</span> <span class="p">:],</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">m_2_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">,</span> <span class="p">:],</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">m_r_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="n">m_1_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">m_1_rss</span><span class="p">)</span>
-        <span class="n">m_2_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">m_2_rss</span><span class="p">)</span>
-        <span class="n">m_r_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">m_r_rss</span><span class="p">)</span>
-
-        <span class="n">F</span> <span class="o">=</span> <span class="p">((</span><span class="n">m_r_rss</span> <span class="o">-</span> <span class="p">(</span><span class="n">m_1_rss</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="p">))</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> \
+        <span class="c"># Collapse RSS across all test indices</span>
+        <span class="n">m_1_rss</span> <span class="o">=</span> <span class="n">m_1_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">m_2_rss</span> <span class="o">=</span> <span class="n">m_2_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">m_r_rss</span> <span class="o">=</span> <span class="n">m_r_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="c"># F statistic</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">((</span><span class="n">m_r_rss</span> <span class="o">-</span> <span class="p">(</span><span class="n">m_1_rss</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="p">))</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span>
             <span class="p">((</span><span class="n">m_1_rss</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
-
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">F</span> <span class="o">&gt;</span> <span class="n">F_crit</span><span class="p">:</span>
             <span class="c"># Reject H0 and retain change</span>
             <span class="c"># Only add in previous model if first model</span>
@@ -254,7 +252,7 @@
             <span class="n">merged</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># Fail to reject H0 -- ignore change and merge</span>
-            <span class="n">m_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">record_template</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">m_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">record_template</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="c"># Remove last previously added model from list to merge</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -264,23 +262,24 @@
             <span class="n">m_new</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">]</span>
             <span class="n">m_new</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span>
 
-            <span class="n">_models</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_models</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
-                                       <span class="n">model</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])</span>
-
-            <span class="k">for</span> <span class="n">i_m</span><span class="p">,</span> <span class="n">_m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_models</span><span class="p">):</span>
+            <span class="c"># Re-fit models and copy over attributes</span>
+            <span class="n">yatsm</span><span class="o">.</span><span class="n">fit_models</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
+                             <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i_m</span><span class="p">,</span> <span class="n">_m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">models</span><span class="p">):</span>
                 <span class="n">m_new</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">i_m</span><span class="p">]</span> <span class="o">=</span> <span class="n">_m</span><span class="o">.</span><span class="n">coef</span>
                 <span class="n">m_new</span><span class="p">[</span><span class="s">&#39;rmse&#39;</span><span class="p">][</span><span class="n">i_m</span><span class="p">]</span> <span class="o">=</span> <span class="n">_m</span><span class="o">.</span><span class="n">rmse</span>
 
-            <span class="c"># Preserve magnitude from 2nd model that was merged</span>
-            <span class="n">m_new</span><span class="p">[</span><span class="s">&#39;magnitude&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;magnitude&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s">&#39;magnitude&#39;</span> <span class="ow">in</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="c"># Preserve magnitude from 2nd model that was merged</span>
+                <span class="n">m_new</span><span class="p">[</span><span class="s">&#39;magnitude&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_2</span><span class="p">[</span><span class="s">&#39;magnitude&#39;</span><span class="p">]</span>
 
             <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_new</span><span class="p">)</span>
 
             <span class="n">merged</span> <span class="o">=</span> <span class="bp">True</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">models</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="omission_test"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.omission_test">[docs]</a><span class="k">def</span> <span class="nf">omission_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">behavior</span><span class="o">=</span><span class="s">&#39;ANY&#39;</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Add omitted breakpoint into records based on residual stationarity</span>
 
@@ -347,9 +346,9 @@
     <span class="k">if</span> <span class="n">behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;any&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">omission</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">omission</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">omission</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="refit_record"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.refit_record">[docs]</a><span class="k">def</span> <span class="nf">refit_record</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">predictor</span><span class="p">,</span> <span class="n">keep_regularized</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Refit YATSM model segments with a new predictor and update record</span>
 
@@ -429,7 +428,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -451,7 +450,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

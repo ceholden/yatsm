@@ -1,12 +1,20 @@
 yatsm.regression package
 ========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    yatsm.regression.pickles
+
 Submodules
 ----------
 
 .. toctree::
 
-   yatsm.regression.numba_accel
+   yatsm.regression.design
+   yatsm.regression.diagnostics
    yatsm.regression.packaged
    yatsm.regression.recresid
    yatsm.regression.robust_fit

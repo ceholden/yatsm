@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.options &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.cli.options &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -149,17 +149,26 @@
 
 
 <span class="c"># CLI VALIDATORS</span>
-<div class="viewcode-block" id="valid_band"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.valid_band">[docs]</a><span class="k">def</span> <span class="nf">valid_band</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Check image band validity (band &gt;= 1)&quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">band</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">band</span> <span class="o">&gt;=</span> <span class="mi">1</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s">&#39;Band must be integer above 1&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">band</span>
+<div class="viewcode-block" id="valid_int_gt_zero"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.valid_int_gt_zero">[docs]</a><span class="k">def</span> <span class="nf">valid_int_gt_zero</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Validator for integers &gt; 0 (value &gt;= 1)&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_validator</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> must be integer above zero: </span><span class="si">%s</span><span class="s">&#39;</span>
+                                     <span class="o">%</span> <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">metavar</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> must be an integer above zero&#39;</span>
+                                     <span class="o">%</span> <span class="n">param</span><span class="o">.</span><span class="n">metavar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">multiple</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_validator</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_validator</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
-<span class="c"># CLI ARGUMENTS</span></div>
+<span class="c"># CLI ARGUMENTS</span>
 <span class="n">arg_config_file</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span>
     <span class="s">&#39;config&#39;</span><span class="p">,</span>
     <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -197,9 +206,9 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="n">metavar</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_arg_date</span>
+    <span class="k">return</span> <span class="n">_arg_date</span></div>
 
-</div>
+
 <div class="viewcode-block" id="arg_job_number"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.arg_job_number">[docs]</a><span class="k">def</span> <span class="nf">arg_job_number</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -215,17 +224,17 @@
             <span class="k">return</span> <span class="n">value</span> <span class="o">-</span> <span class="mi">1</span>
 
     <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s">&#39;job_number&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
-                          <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;job_number&gt;&#39;</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+                          <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;job_number&gt;&#39;</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
 
 
-<span class="c"># CLI OPTIONS</span></div>
+<span class="c"># CLI OPTIONS</span>
 <span class="n">opt_date_format</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s">&#39;--date&#39;</span><span class="p">,</span> <span class="s">&#39;date_frmt&#39;</span><span class="p">,</span>
     <span class="n">default</span><span class="o">=</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">,</span>
     <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;format&gt;&#39;</span><span class="p">,</span>
     <span class="n">show_default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
     <span class="n">is_eager</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s">&#39;Date format&#39;</span><span class="p">)</span>
+    <span class="n">help</span><span class="o">=</span><span class="s">&#39;Input date format&#39;</span><span class="p">)</span>
 
 
 <span class="n">opt_format</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
@@ -271,9 +280,9 @@
                         <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;image&gt;&#39;</span><span class="p">,</span>
                         <span class="n">show_default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Example timeseries image&#39;</span><span class="p">,</span>
-                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="opt_resultdir"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.opt_resultdir">[docs]</a><span class="k">def</span> <span class="nf">opt_resultdir</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="c"># Check if path qualifies alone</span>
@@ -294,10 +303,10 @@
                         <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;directory&gt;&#39;</span><span class="p">,</span>
                         <span class="n">show_default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Directory of results&#39;</span><span class="p">,</span>
-                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
 
 
-<span class="c"># CALLBACKS</span></div>
+<span class="c"># CALLBACKS</span>
 <div class="viewcode-block" id="callback_dict"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.callback_dict">[docs]</a><span class="k">def</span> <span class="nf">callback_dict</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Call back for dict style arguments (e.g., KEY=VALUE)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -326,7 +335,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -348,7 +357,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

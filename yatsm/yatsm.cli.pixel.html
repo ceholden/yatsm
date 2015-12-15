@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.pixel module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.cli.pixel module &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -143,17 +143,59 @@
 <dl class="function">
 <dt id="yatsm.cli.pixel.plot_DOY">
 <code class="descclassname">yatsm.cli.pixel.</code><code class="descname">plot_DOY</code><span class="sig-paren">(</span><em>dates</em>, <em>y</em>, <em>mpl_cmap</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/pixel.html#plot_DOY"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.pixel.plot_DOY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a DOY plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dates</strong> (<em>iterable</em>) &#8211; sequence of datetime</li>
+<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; variable to plot</li>
+<li><strong>mpl_cmap</strong> (<em>colormap</em>) &#8211; matplotlib colormap</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="yatsm.cli.pixel.plot_TS">
 <code class="descclassname">yatsm.cli.pixel.</code><code class="descname">plot_TS</code><span class="sig-paren">(</span><em>dates</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/pixel.html#plot_TS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.pixel.plot_TS" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a standard timeseries plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dates</strong> (<em>iterable</em>) &#8211; sequence of datetime</li>
+<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; variable to plot</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="yatsm.cli.pixel.plot_VAL">
 <code class="descclassname">yatsm.cli.pixel.</code><code class="descname">plot_VAL</code><span class="sig-paren">(</span><em>dates</em>, <em>y</em>, <em>mpl_cmap</em>, <em>reps=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/pixel.html#plot_VAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.pixel.plot_VAL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a &#8220;Valerie Pasquarella&#8221; plot (repeated DOY plot)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dates</strong> (<em>iterable</em>) &#8211; sequence of datetime</li>
+<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; variable to plot</li>
+<li><strong>mpl_cmap</strong> (<em>colormap</em>) &#8211; matplotlib colormap</li>
+<li><strong>reps</strong> (<em>int, optional</em>) &#8211; number of additional repetitions</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="yatsm.cli.pixel.plot_lasso_debug">
@@ -164,8 +206,24 @@
 
 <dl class="function">
 <dt id="yatsm.cli.pixel.plot_results">
-<code class="descclassname">yatsm.cli.pixel.</code><code class="descname">plot_results</code><span class="sig-paren">(</span><em>band</em>, <em>yatsm_config</em>, <em>yatsm_model</em>, <em>plot_type='TS'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/pixel.html#plot_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.pixel.plot_results" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">yatsm.cli.pixel.</code><code class="descname">plot_results</code><span class="sig-paren">(</span><em>band</em>, <em>cfg</em>, <em>model</em>, <em>design_info</em>, <em>plot_type='TS'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/pixel.html#plot_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.pixel.plot_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a DOY plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>band</strong> (<em>int</em>) &#8211; plot results for this band</li>
+<li><strong>cfg</strong> (<em>dict</em>) &#8211; YATSM configuration dictionary</li>
+<li><strong>model</strong> (<em>YATSM model</em>) &#8211; fitted YATSM timeseries model</li>
+<li><strong>design_info</strong> (<em>patsy.DesignInfo</em>) &#8211; patsy design information</li>
+<li><strong>plot_type</strong> (<em>str</em>) &#8211; type of plot to add results to (TS, DOY, or VAL)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="yatsm.cli.pixel.type_convert">
@@ -199,7 +257,7 @@ converted to type of <cite>example</cite> variable</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -221,7 +279,7 @@ converted to type of <cite>example</cite> variable</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

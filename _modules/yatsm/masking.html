@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.masking &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.masking &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -146,11 +146,13 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
 
-<span class="kn">from</span> <span class="nn">regression</span> <span class="kn">import</span> <span class="n">robust_fit</span> <span class="k">as</span> <span class="n">rlm</span>
+<span class="kn">from</span> <span class="nn">.accel</span> <span class="kn">import</span> <span class="n">try_jit</span>
+<span class="kn">from</span> <span class="nn">.regression</span> <span class="kn">import</span> <span class="n">robust_fit</span> <span class="k">as</span> <span class="n">rlm</span>
 
 <span class="n">ndays</span> <span class="o">=</span> <span class="mf">365.25</span>
 
 
+<span class="nd">@try_jit</span><span class="p">()</span>  <span class="c"># np.array prevents nopython</span>
 <div class="viewcode-block" id="multitemp_mask"><a class="viewcode-back" href="../../yatsm/yatsm.masking.html#yatsm.masking.multitemp_mask">[docs]</a><span class="k">def</span> <span class="nf">multitemp_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">n_year</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
                    <span class="n">green</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">swir1</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                    <span class="n">maxiter</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
@@ -173,17 +175,17 @@
 <span class="sd">      mask (ndarray): mask where False indicates values to be masked</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">green</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">green</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">swir1</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">swir1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">green</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">swir1</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">swir1</span><span class="p">,</span> <span class="p">:]</span>
 
     <span class="n">n_year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_year</span><span class="p">)</span>
     <span class="n">w</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">ndays</span>
 
-    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
-                         <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
-                         <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
-                         <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">n_year</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
-                         <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">n_year</span> <span class="o">*</span> <span class="n">x</span><span class="p">)))</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">n_year</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">n_year</span> <span class="o">*</span> <span class="n">x</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
 
     <span class="n">green_RLM</span> <span class="o">=</span> <span class="n">rlm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">rlm</span><span class="o">.</span><span class="n">bisquare</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">green</span><span class="p">)</span>
     <span class="n">swir1_RLM</span> <span class="o">=</span> <span class="n">rlm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">rlm</span><span class="o">.</span><span class="n">bisquare</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">swir1</span><span class="p">)</span>
@@ -191,9 +193,9 @@
     <span class="n">mask</span> <span class="o">=</span> <span class="p">((</span><span class="n">green</span> <span class="o">-</span> <span class="n">green_RLM</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">crit</span><span class="p">)</span> <span class="o">*</span>
             <span class="p">(</span><span class="n">swir1</span> <span class="o">-</span> <span class="n">swir1_RLM</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">crit</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">mask</span>
+    <span class="k">return</span> <span class="n">mask</span></div>
 
-</div>
+
 <div class="viewcode-block" id="smooth_mask"><a class="viewcode-back" href="../../yatsm/yatsm.masking.html#yatsm.masking.smooth_mask">[docs]</a><span class="k">def</span> <span class="nf">smooth_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">green</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">swir1</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                 <span class="n">maxiter</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Multi-temporal masking using LOWESS</span>
@@ -248,22 +250,7 @@
     <span class="n">mask</span> <span class="o">=</span> <span class="p">(((</span><span class="n">Y</span><span class="p">[</span><span class="n">green</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">green_lowess</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">crit</span><span class="p">)</span> <span class="o">*</span>
             <span class="p">((</span><span class="n">Y</span><span class="p">[</span><span class="n">swir1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">swir1_lowess</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">crit</span><span class="p">))</span>
 
-<span class="c">#    train_plot_debug(x, Y, mask, swir1_lowess)</span>
-<span class="c">#    train_plot_debug(x, Y, mask, green_lowess, band=1)</span>
-    <span class="k">return</span> <span class="n">mask</span>
-
-</div>
-<div class="viewcode-block" id="train_plot_debug"><a class="viewcode-back" href="../../yatsm/yatsm.masking.html#yatsm.masking.train_plot_debug">[docs]</a><span class="k">def</span> <span class="nf">train_plot_debug</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">fit</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Training / historical period multitemporal cloud masking debug &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-
-    <span class="n">clear</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">cloud</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">clear</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="n">clear</span><span class="p">],</span> <span class="s">&#39;ko&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">cloud</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="n">cloud</span><span class="p">],</span> <span class="s">&#39;rx&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fit</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s">&#39;b-&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">mask</span></div>
 </pre></div>
 
            </div>
@@ -276,7 +263,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -298,7 +285,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

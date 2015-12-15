@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.postprocess module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.algorithms.postprocess module &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -144,7 +144,7 @@
 calculations</p>
 <dl class="function">
 <dt id="yatsm.algorithms.postprocess.commission_test">
-<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">commission_test</code><span class="sig-paren">(</span><em>model</em>, <em>alpha=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#commission_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.commission_test" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">commission_test</code><span class="sig-paren">(</span><em>yatsm</em>, <em>alpha=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#commission_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.commission_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merge adjacent records based on Chow Tests for nested models</p>
 <p>Use Chow Test to find false positive, spurious, or unnecessary breaks
 in the timeseries by comparing the effectiveness of two separate
@@ -156,7 +156,7 @@ period.</p>
 <p>where:</p>
 <blockquote>
 <div><ul class="simple">
-<li><span class="math">\(RSS_u\)</span> is the RSS of the combined, or, restricted model</li>
+<li><span class="math">\(RSS_r\)</span> is the RSS of the combined, or, restricted model</li>
 <li><span class="math">\(RSS_1\)</span> is the RSS of the first model</li>
 <li><span class="math">\(RSS_2\)</span> is the RSS of the second model</li>
 <li><span class="math">\(k\)</span> is the number of model parameters</li>
@@ -164,19 +164,19 @@ period.</p>
 </ul>
 </div></blockquote>
 <p>Because we look for change in multiple bands, the RSS used to compare
-the unrestricted versus restricted models is the L2 norm of RSS
-values from <cite>model.test_indices</cite>.</p>
+the unrestricted versus restricted models is the mean RSS
+values from all <code class="docutils literal"><span class="pre">model.test_indices</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<em>YATSM model</em>) &#8211; fitted YATSM model to check for commission errors</li>
-<li><strong>alpha</strong> (<em>float</em>) &#8211; significance level for F-statistic (default: 0.01)</li>
+<li><strong>yatsm</strong> (<em>YATSM model</em>) &#8211; fitted YATSM model to check for commission errors</li>
+<li><strong>alpha</strong> (<em>float</em>) &#8211; significance level for F-statistic (default: 0.10)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">updated copy of <cite>model.record</cite> with spurious models
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">updated copy of <code class="docutils literal"><span class="pre">yatsm.record</span></code> with spurious models
 combined into unified model</p>
 </td>
 </tr>
@@ -267,7 +267,7 @@ coefficients and RMSE</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -289,7 +289,7 @@ coefficients and RMSE</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

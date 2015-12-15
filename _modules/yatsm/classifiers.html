@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.classifiers &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.classifiers &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -167,7 +167,7 @@
 <span class="sd">        config_file (str): location of configuration file for algorithm</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        sklearn classifier</span>
+<span class="sd">        tuple: scikit-learn estimator (object) and configuration file (dict)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Determine which algorithm is used</span>
@@ -192,13 +192,13 @@
 
     <span class="c"># Try to load algorithm using hyperparameters from config</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">sklearn_algo</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">[</span><span class="n">algo_name</span><span class="p">])</span>
+        <span class="n">sklearn_algo</span> <span class="o">=</span> <span class="n">algo</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">[</span><span class="n">algo_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;init&#39;</span><span class="p">,</span> <span class="p">{}))</span>
     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Cannot initialize </span><span class="si">%s</span><span class="s"> classifier. Config file </span><span class="si">%s</span><span class="s"> &#39;</span>
                      <span class="s">&#39;contains unknown options&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">algo_name</span><span class="p">,</span> <span class="n">config_file</span><span class="p">))</span>
         <span class="k">raise</span>
 
-    <span class="k">return</span> <span class="n">sklearn_algo</span></div>
+    <span class="k">return</span> <span class="n">sklearn_algo</span><span class="p">,</span> <span class="n">config</span></div>
 </pre></div>
 
            </div>
@@ -211,7 +211,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -233,7 +233,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

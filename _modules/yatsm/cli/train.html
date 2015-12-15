@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.train &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.cli.train &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -208,7 +208,7 @@
 
     <span class="c"># Parse config &amp; algorithm config</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">parse_config_file</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">algo</span> <span class="o">=</span> <span class="n">classifiers</span><span class="o">.</span><span class="n">cfg_to_algorithm</span><span class="p">(</span><span class="n">classifier_config</span><span class="p">)</span>
+    <span class="n">algo</span><span class="p">,</span> <span class="n">algo_cfg</span> <span class="o">=</span> <span class="n">classifiers</span><span class="o">.</span><span class="n">cfg_to_algorithm</span><span class="p">(</span><span class="n">classifier_config</span><span class="p">)</span>
 
     <span class="n">training_image</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">][</span><span class="s">&#39;training_image&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">training_image</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">training_image</span><span class="p">):</span>
@@ -265,7 +265,7 @@
 
     <span class="c"># Do modeling</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Training classifier&#39;</span><span class="p">)</span>
-    <span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;fit&#39;</span><span class="p">,</span> <span class="p">{}))</span>
 
     <span class="c"># Serialize algorithm to file</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Pickling classifier with sklearn.externals.joblib&#39;</span><span class="p">)</span>
@@ -291,9 +291,9 @@
     <span class="k">if</span> <span class="n">cache_file</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cache_file</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span> <span class="o">&lt;</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">training_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">False</span></div>
 
-</div>
+
 <div class="viewcode-block" id="find_result_attributes"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.find_result_attributes">[docs]</a><span class="k">def</span> <span class="nf">find_result_attributes</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return result attributes relevant for training a classifier</span>
 
@@ -321,9 +321,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">attrs</span>
     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Could not find following attributes in results: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
-                         <span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                         <span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
 
-</div>
+
 <div class="viewcode-block" id="get_training_inputs"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.get_training_inputs">[docs]</a><span class="k">def</span> <span class="nf">get_training_inputs</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">exit_on_missing</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Returns X features and y labels specified in config file</span>
 
@@ -418,9 +418,9 @@
     <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">out_row</span><span class="p">,</span> <span class="n">out_col</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_y</span><span class="p">),</span> <span class="n">out_row</span><span class="p">,</span> <span class="n">out_col</span><span class="p">,</span> <span class="n">labels</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_y</span><span class="p">),</span> <span class="n">out_row</span><span class="p">,</span> <span class="n">out_col</span><span class="p">,</span> <span class="n">labels</span></div>
 
-</div>
+
 <div class="viewcode-block" id="algo_diagnostics"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.train.html#yatsm.cli.train.algo_diagnostics">[docs]</a><span class="k">def</span> <span class="nf">algo_diagnostics</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
                      <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">make_plots</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Display algorithm diagnostics for a given X and y</span>
@@ -485,7 +485,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -507,7 +507,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

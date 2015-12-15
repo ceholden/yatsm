@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.changemap &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.mapping.changes &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -126,11 +126,11 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-    <li>yatsm.cli.changemap</li>
+    <li>yatsm.mapping.changes</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/changemap" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/mapping/changes" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -140,106 +140,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for yatsm.cli.changemap</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot; Command line interface for creating changemaps of YATSM algorithm output</span>
+  <h1>Source code for yatsm.mapping.changes</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; Functions relevant for mapping abrupt changes</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
 
-
-<span class="kn">import</span> <span class="nn">click</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
 
-<span class="kn">from</span> <span class="nn">yatsm.cli</span> <span class="kn">import</span> <span class="n">options</span>
-<span class="kn">from</span> <span class="nn">yatsm.utils</span> <span class="kn">import</span> <span class="n">find_results</span><span class="p">,</span> <span class="n">iter_records</span><span class="p">,</span> <span class="n">write_output</span>
-
-<span class="n">gdal</span><span class="o">.</span><span class="n">AllRegister</span><span class="p">()</span>
-<span class="n">gdal</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_results</span><span class="p">,</span> <span class="n">iter_records</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
 
-<span class="c"># Filters for results</span>
-<span class="n">_result_record</span> <span class="o">=</span> <span class="s">&#39;yatsm_*&#39;</span>
 
-<span class="n">WARN_ON_EMPTY</span> <span class="o">=</span> <span class="bp">False</span>
-
-
-<span class="nd">@click.command</span><span class="p">(</span>
-    <span class="n">short_help</span><span class="o">=</span><span class="s">&#39;Map change found by YATSM algorithm over time period&#39;</span><span class="p">)</span>
-<span class="nd">@click.argument</span><span class="p">(</span><span class="s">&#39;map_type&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;map_type&gt;&#39;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;last&#39;</span><span class="p">,</span> <span class="s">&#39;num&#39;</span><span class="p">]))</span>
-<span class="nd">@options.arg_date</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s">&#39;start_date&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;start_date&gt;&#39;</span><span class="p">)</span>
-<span class="nd">@options.arg_date</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s">&#39;end_date&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;end_date&gt;&#39;</span><span class="p">)</span>
-<span class="nd">@options.arg_output</span>
-<span class="nd">@options.opt_rootdir</span>
-<span class="nd">@options.opt_resultdir</span>
-<span class="nd">@options.opt_exampleimg</span>
-<span class="nd">@options.opt_date_format</span>
-<span class="nd">@options.opt_nodata</span>
-<span class="nd">@options.opt_format</span>
-<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--out_date&#39;</span><span class="p">,</span> <span class="s">&#39;out_date_frmt&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;&lt;format&gt;&#39;</span><span class="p">,</span>
-              <span class="n">default</span><span class="o">=</span><span class="s">&#39;%Y%j&#39;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Output date format&#39;</span><span class="p">)</span>
-<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--warn-on-empty&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-              <span class="n">help</span><span class="o">=</span><span class="s">&#39;Warn user when reading in empty results files&#39;</span><span class="p">)</span>
-<span class="nd">@click.option</span><span class="p">(</span><span class="s">&#39;--magnitude&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-              <span class="n">help</span><span class="o">=</span><span class="s">&#39;Add magnitude of change as extra image &#39;</span>
-                   <span class="s">&#39;(pattern is [name]_mag[ext])&#39;</span><span class="p">)</span>
-<span class="nd">@click.pass_context</span>
-<span class="k">def</span> <span class="nf">changemap</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">map_type</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span>
-              <span class="n">root</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">date_frmt</span><span class="p">,</span> <span class="n">ndv</span><span class="p">,</span> <span class="n">gdal_frmt</span><span class="p">,</span> <span class="n">out_date_frmt</span><span class="p">,</span>
-              <span class="n">warn_on_empty</span><span class="p">,</span> <span class="n">magnitude</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Examples: TODO</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">gdal_frmt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">gdal_frmt</span><span class="p">)</span>  <span class="c"># GDAL GetDriverByName doesn&#39;t work on Unicode</span>
-
-    <span class="n">frmt</span> <span class="o">=</span> <span class="s">&#39;%Y%j&#39;</span>
-    <span class="n">start_txt</span><span class="p">,</span> <span class="n">end_txt</span> <span class="o">=</span> <span class="n">start_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">frmt</span><span class="p">),</span> <span class="n">end_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">frmt</span><span class="p">)</span>
-    <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span> <span class="o">=</span> <span class="n">start_date</span><span class="o">.</span><span class="n">toordinal</span><span class="p">(),</span> <span class="n">end_date</span><span class="o">.</span><span class="n">toordinal</span><span class="p">()</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">image_ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GA_ReadOnly</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not open example image for reading&#39;</span><span class="p">)</span>
-        <span class="k">raise</span>
-
-    <span class="k">if</span> <span class="n">map_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;last&#39;</span><span class="p">):</span>
-        <span class="n">changemap</span><span class="p">,</span> <span class="n">magnitudemap</span><span class="p">,</span> <span class="n">magnitude_indices</span> <span class="o">=</span> <span class="n">get_datechangemap</span><span class="p">(</span>
-            <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
-            <span class="n">first</span><span class="o">=</span><span class="n">map_type</span> <span class="o">==</span> <span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="n">out_format</span><span class="o">=</span><span class="n">out_date_frmt</span><span class="p">,</span>
-            <span class="n">magnitude</span><span class="o">=</span><span class="n">magnitude</span><span class="p">,</span>
-            <span class="n">ndv</span><span class="o">=</span><span class="n">ndv</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">_result_record</span>
-        <span class="p">)</span>
-
-        <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ChangeDate_s{s}-e{e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">start_txt</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">end_txt</span><span class="p">)]</span>
-        <span class="n">write_output</span><span class="p">(</span><span class="n">changemap</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span> <span class="n">gdal_frmt</span><span class="p">,</span> <span class="n">ndv</span><span class="p">,</span>
-                     <span class="n">band_names</span><span class="o">=</span><span class="n">band_names</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">magnitudemap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">band_names</span> <span class="o">=</span> <span class="p">([</span><span class="s">&#39;Magnitude Index {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span>
-                           <span class="n">i</span> <span class="ow">in</span> <span class="n">magnitude_indices</span><span class="p">])</span>
-            <span class="n">name</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;_mag&#39;</span> <span class="o">+</span> <span class="n">ext</span>
-            <span class="n">write_output</span><span class="p">(</span><span class="n">magnitudemap</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span> <span class="n">gdal_frmt</span><span class="p">,</span> <span class="n">ndv</span><span class="p">,</span>
-                         <span class="n">band_names</span><span class="o">=</span><span class="n">band_names</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="n">map_type</span> <span class="o">==</span> <span class="s">&#39;num&#39;</span><span class="p">:</span>
-        <span class="n">changemap</span> <span class="o">=</span> <span class="n">get_numchangemap</span><span class="p">(</span>
-            <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
-            <span class="n">ndv</span><span class="o">=</span><span class="n">ndv</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">_result_record</span>
-        <span class="p">)</span>
-
-        <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;NumChanges_s{s}-e{e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">start_txt</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">end_txt</span><span class="p">)]</span>
-        <span class="n">write_output</span><span class="p">(</span><span class="n">changemap</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span> <span class="n">gdal_frmt</span><span class="p">,</span> <span class="n">ndv</span><span class="p">,</span>
-                     <span class="n">band_names</span><span class="o">=</span><span class="n">band_names</span><span class="p">)</span>
-
-    <span class="n">image_ds</span> <span class="o">=</span> <span class="bp">None</span>
-
-
-<span class="c"># UTILITIES</span>
-<div class="viewcode-block" id="get_magnitude_indices"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.changemap.html#yatsm.cli.changemap.get_magnitude_indices">[docs]</a><span class="k">def</span> <span class="nf">get_magnitude_indices</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+<div class="viewcode-block" id="get_magnitude_indices"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.changes.html#yatsm.mapping.get_magnitude_indices">[docs]</a><span class="k">def</span> <span class="nf">get_magnitude_indices</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Finds indices of result containing magnitude of change information</span>
 
 <span class="sd">    Args:</span>
@@ -249,13 +163,17 @@
 <span class="sd">      np.ndarray: indices containing magnitude change information from the</span>
 <span class="sd">        tested indices</span>
 
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: Raise KeyError when a required result output is missing</span>
+<span class="sd">            from the saved record structure</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">rec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Error reading {f}. May be corrupted&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">f</span><span class="o">=</span><span class="n">result</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Error reading </span><span class="si">%s</span><span class="s">. May be corrupted: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                           <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">))</span>
             <span class="k">continue</span>
 
         <span class="c"># First search for record of `test_indices`</span>
@@ -271,11 +189,10 @@
 
         <span class="k">if</span> <span class="s">&#39;magnitude&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rec_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Cannot map magnitude of change&#39;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Magnitude information not present in file {f} -- &#39;</span>
-                <span class="s">&#39;has it been calculated?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">result</span><span class="p">))</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Version of result file: {v}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">v</span><span class="o">=</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;version&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;version&#39;</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">files</span> <span class="k">else</span> <span class="s">&#39;Unknown&#39;</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Magnitude information not present in file </span><span class="si">%s</span><span class="s"> -- &#39;</span>
+                           <span class="s">&#39;has it been calculated?&#39;</span> <span class="o">%</span> <span class="n">result</span><span class="p">)</span>
 
         <span class="n">changed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rec_array</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">changed</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -283,32 +200,35 @@
 
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Using non-zero elements of &quot;magnitude&quot; field in &#39;</span>
                      <span class="s">&#39;changed records for magnitude indices&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">rec_array</span><span class="p">[</span><span class="n">changed</span><span class="p">][</span><span class="s">&#39;magnitude&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">rec_array</span><span class="p">[</span><span class="n">changed</span><span class="p">][</span><span class="s">&#39;magnitude&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<span class="c"># MAPPING FUNCTIONS</span></div>
-<div class="viewcode-block" id="get_datechangemap"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.changemap.html#yatsm.cli.changemap.get_datechangemap">[docs]</a><span class="k">def</span> <span class="nf">get_datechangemap</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
-                      <span class="n">first</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                      <span class="n">out_format</span><span class="o">=</span><span class="s">&#39;%Y%j&#39;</span><span class="p">,</span>
-                      <span class="n">magnitude</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                      <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">_result_record</span><span class="p">):</span>
+<span class="c"># MAPPING FUNCTIONS</span>
+<div class="viewcode-block" id="get_change_date"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.changes.html#yatsm.mapping.get_change_date">[docs]</a><span class="k">def</span> <span class="nf">get_change_date</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
+                    <span class="n">first</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">out_format</span><span class="o">=</span><span class="s">&#39;%Y%j&#39;</span><span class="p">,</span>
+                    <span class="n">magnitude</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                    <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;yatsm_r*&#39;</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Output raster with changemap</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      start (int): Ordinal date for start of map records</span>
-<span class="sd">      end (int): Ordinal date for end of map records</span>
-<span class="sd">      result_location (str): Location of results</span>
-<span class="sd">      image_ds (gdal.Dataset): Example dataset</span>
-<span class="sd">      first (bool): Use first change instead of last</span>
-<span class="sd">      out_format (str, optional): Output date format</span>
-<span class="sd">      magnitude (bool, optional): output magnitude of each change?</span>
-<span class="sd">      ndv (int, optional): NoDataValue</span>
-<span class="sd">      pattern (str, optional): filename pattern of saved record results</span>
+<span class="sd">        start (int): Ordinal date for start of map records</span>
+<span class="sd">        end (int): Ordinal date for end of map records</span>
+<span class="sd">        result_location (str): Location of results</span>
+<span class="sd">        image_ds (gdal.Dataset): Example dataset</span>
+<span class="sd">        first (bool): Use first change instead of last</span>
+<span class="sd">        out_format (str, optional): Output date format</span>
+<span class="sd">        magnitude (bool, optional): output magnitude of each change?</span>
+<span class="sd">        ndv (int, optional): NoDataValue</span>
+<span class="sd">        pattern (str, optional): filename pattern of saved record results</span>
+<span class="sd">        warn_on_empty (bool, optional): Log warning if result contained no</span>
+<span class="sd">            result records (default: False)</span>
+
 
 <span class="sd">    Returns:</span>
-<span class="sd">      tuple: A 2D np.ndarray array containing the changes between the</span>
-<span class="sd">        start and end date. Also includes, if specified, a 3D np.ndarray of</span>
-<span class="sd">        the magnitude of each change plus the indices of these magnitudes</span>
+<span class="sd">        tuple: A 2D np.ndarray array containing the changes between the</span>
+<span class="sd">            start and end date. Also includes, if specified, a 3D np.ndarray of</span>
+<span class="sd">            the magnitude of each change plus the indices of these magnitudes</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Find results</span>
@@ -325,7 +245,7 @@
                                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Processing results&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="n">warn_on_empty</span><span class="p">):</span>
 
         <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span>
                          <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
@@ -349,24 +269,26 @@
     <span class="k">if</span> <span class="n">magnitude</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">datemap</span><span class="p">,</span> <span class="n">magnitudemap</span><span class="p">,</span> <span class="n">magnitude_indices</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">datemap</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">datemap</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span></div>
 
-</div>
-<div class="viewcode-block" id="get_numchangemap"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.changemap.html#yatsm.cli.changemap.get_numchangemap">[docs]</a><span class="k">def</span> <span class="nf">get_numchangemap</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
-                     <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">_result_record</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_change_num"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.changes.html#yatsm.mapping.get_change_num">[docs]</a><span class="k">def</span> <span class="nf">get_change_num</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
+                   <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;yatsm_r*&#39;</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Output raster with changemap</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      start (int): Ordinal date for start of map records</span>
-<span class="sd">      end (int): Ordinal date for end of map records</span>
-<span class="sd">      result_location (str): Location of results</span>
-<span class="sd">      image_ds (gdal.Dataset): Example dataset</span>
-<span class="sd">      ndv (int, optional): NoDataValue</span>
-<span class="sd">      pattern (str, optional): filename pattern of saved record results</span>
+<span class="sd">        start (int): Ordinal date for start of map records</span>
+<span class="sd">        end (int): Ordinal date for end of map records</span>
+<span class="sd">        result_location (str): Location of results</span>
+<span class="sd">        image_ds (gdal.Dataset): Example dataset</span>
+<span class="sd">        ndv (int, optional): NoDataValue</span>
+<span class="sd">        pattern (str, optional): filename pattern of saved record results</span>
+<span class="sd">        warn_on_empty (bool, optional): Log warning if result contained no</span>
+<span class="sd">            result records (default: False)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      np.ndarray: 2D numpy array containing the number of changes</span>
-<span class="sd">        between the start and end date; list containing band names</span>
+<span class="sd">        np.ndarray: 2D numpy array containing the number of changes</span>
+<span class="sd">            between the start and end date; list containing band names</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Find results</span>
@@ -377,7 +299,7 @@
                      <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Processing results&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="n">warn_on_empty</span><span class="p">):</span>
         <span class="c"># X location of each changed model</span>
         <span class="n">px_changed</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;break&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">)]</span>
         <span class="c"># Count occurrences of changed pixel locations</span>
@@ -403,7 +325,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -425,7 +347,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

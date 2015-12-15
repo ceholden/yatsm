@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.robust_fit module &mdash; YATSM 0.5.3 documentation</title>
+  <title>yatsm.regression.robust_fit module &mdash; YATSM 0.6.0dev documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="YATSM 0.5.3 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.3
+                0.6.0dev
               </div>
             
           
@@ -148,9 +148,11 @@ but costly, creature comforts.</p>
 <a class="reference external" href="http://cran.r-project.org/web/packages/robustreg/index.html">http://cran.r-project.org/web/packages/robustreg/index.html</a>
 <a class="reference external" href="http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf">http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf</a></dd>
 </dl>
+<p>Run this file to test performance gains. Implementation is ~3x faster than
+statesmodels and can reach ~4x faster if Numba is available to accelerate.</p>
 <dl class="class">
 <dt id="yatsm.regression.robust_fit.RLM">
-<em class="property">class </em><code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">RLM</code><span class="sig-paren">(</span><em>M=&lt;function bisquare&gt;</em>, <em>tune=4.685</em>, <em>scale_est=&lt;function mad&gt;</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em>, <em>maxiter=50</em>, <em>tol=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">RLM</code><span class="sig-paren">(</span><em>M=CPUOverloaded(&lt;function bisquare at 0x7f360089b8c0&gt;)</em>, <em>tune=4.685</em>, <em>scale_est=CPUOverloaded(&lt;function mad at 0x7f360089b938&gt;)</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em>, <em>maxiter=50</em>, <em>tol=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Robust Linear Model using Iterative Reweighted Least Squares (RIRLS)</p>
 <p>Perform robust fitting regression via iteratively reweighted least squares
@@ -281,9 +283,9 @@ estimator that are also estimators</td>
 
 </dd></dl>
 
-<dl class="function">
+<dl class="attribute">
 <dt id="yatsm.regression.robust_fit.bisquare">
-<code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">bisquare</code><span class="sig-paren">(</span><em>resid</em>, <em>c=4.685</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#bisquare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.bisquare" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">bisquare</code><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#bisquare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.bisquare" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns weighting for each residual using bisquare weight function</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -310,9 +312,9 @@ weights for residuals</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="attribute">
 <dt id="yatsm.regression.robust_fit.mad">
-<code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">mad</code><span class="sig-paren">(</span><em>resid</em>, <em>c=0.6745</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#mad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.mad" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">mad</code><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#mad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.mad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns Median-Absolute-Deviation (MAD) for residuals</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -352,7 +354,7 @@ weights for residuals</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Fri 23 Oct 2015 09:47:26 PM EDT.
+      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
 
     </p>
   </div>
@@ -374,7 +376,7 @@ weights for residuals</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.5.3',
+            VERSION:'0.6.0dev',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
