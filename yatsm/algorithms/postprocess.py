@@ -84,12 +84,12 @@ def commission_test(yatsm, alpha=0.10):
         F_crit = scipy.stats.f.ppf(1 - alpha, k, n - 2 * k)
 
         for i_b, b in enumerate(yatsm.test_indices):
-            m_1_rss[i_b] = scipy.linalg.lstsq(yatsm.X[m_1_start:m_1_end, :],
-                                              yatsm.Y[b, m_1_start:m_1_end])[1]
-            m_2_rss[i_b] = scipy.linalg.lstsq(yatsm.X[m_2_start:m_2_end, :],
-                                              yatsm.Y[b, m_2_start:m_2_end])[1]
-            m_r_rss[i_b] = scipy.linalg.lstsq(yatsm.X[m_r_start:m_r_end, :],
-                                              yatsm.Y[b, m_r_start:m_r_end])[1]
+            m_1_rss[i_b] = np.linalg.lstsq(yatsm.X[m_1_start:m_1_end, :],
+                                           yatsm.Y[b, m_1_start:m_1_end])[1]
+            m_2_rss[i_b] = np.linalg.lstsq(yatsm.X[m_2_start:m_2_end, :],
+                                           yatsm.Y[b, m_2_start:m_2_end])[1]
+            m_r_rss[i_b] = np.linalg.lstsq(yatsm.X[m_r_start:m_r_end, :],
+                                           yatsm.Y[b, m_r_start:m_r_end])[1]
 
         # Collapse RSS across all test indices for F statistic
         F = (
