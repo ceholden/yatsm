@@ -2,9 +2,10 @@
 """
 import numpy as np
 
-from yatsm.algorithms.postprocess import commission_test
+from yatsm.algorithms.postprocess import commission_test, refit_record
 
 
+# COMMISSION TEST
 def test_commission_nochange(sim_nochange):
     """ In no change situation, we should get back exactly what we gave in
     """
@@ -37,3 +38,22 @@ def test_commission_real_change(sim_real_change):
     """
     record = commission_test(sim_real_change, 0.10)
     assert len(record) == len(sim_real_change.record)
+
+
+# REFIT
+def test_refit_nochange_rlm(sim_nochange):
+    """ Test record refitting of one record using robust linear models
+    """
+    from yatsm.regression import RLM
+    estimator = RLM(maxiter=10)
+
+    refit = refit_record(sim_nochange, 'rlm', estimator,
+                         keep_regularized=True)
+    assert 'rlm_coef' in refit.dtype.names
+    assert 'rlm_rmse' in refit.dtype.names
+
+    coef = np.array([[-3.84164779e+03, -3.84164779e+03],
+                     [5.26200993e-03, 5.26200993e-03]])
+    rmse = np.array([0.96866816, 0.96866816])
+    np.testing.assert_allclose(refit[0]['rlm_coef'], coef)
+    np.testing.assert_allclose(refit[0]['rlm_rmse'], rmse)

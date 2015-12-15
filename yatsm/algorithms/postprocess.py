@@ -8,9 +8,9 @@ import logging
 import numpy as np
 import numpy.lib.recfunctions as nprf
 import scipy.stats
-import sklearn
 import statsmodels.api as sm
 
+from ..regression.diagnostics import rmse
 from ..regression import robust_fit as rlm
 from ..utils import date2index
 
@@ -202,8 +202,8 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
         return np.all(omission, 1)
 
 
-def refit_record(model, prefix, predictor, keep_regularized=False):
-    """ Refit YATSM model segments with a new predictor and update record
+def refit_record(model, prefix, estimator, keep_regularized=False):
+    """ Refit YATSM model segments with a new estimator and update record
 
     YATSM class model must be ran and contain at least one record before this
     function is called.
@@ -212,7 +212,7 @@ def refit_record(model, prefix, predictor, keep_regularized=False):
         model (YATSM model): YATSM model to refit
         prefix (str): prefix for refitted coefficient and RMSE (don't include
             underscore as it will be added)
-        predictor (object): instance of a scikit-learn compatible prediction
+        estimator (object): instance of a scikit-learn compatible estimator
             object
         keep_regularized (bool, optional): do not use features with coefficient
             estimates that are fit to 0 (i.e., if using L1 regularization)
@@ -256,14 +256,15 @@ def refit_record(model, prefix, predictor, keep_regularized=False):
                 nonzero = np.arange(n_series)
 
             # Fit
-            lm = sklearn.clone(predictor)
-            lm = lm.fit(X[:, nonzero], y)
+            estimator.fit(X[:, nonzero], y)
             # Store updated coefficients
-            refit[i_rec][refit_coef][nonzero, i_y] = lm.coef_
+            refit[i_rec][refit_coef][nonzero, i_y] = estimator.coef_
+            refit[i_rec][refit_coef][0, i_y] += getattr(
+                estimator, 'intercept_', 0.0)
 
             # Update RMSE
-            refit[i_rec][refit_rmse][i_y] = \
-                ((y - lm.predict(X[:, nonzero])) ** 2).mean() ** 0.5
+            refit[i_rec][refit_rmse][i_y] = rmse(
+                y, estimator.predict(X[:, nonzero]))
 
     # Merge
     refit = nprf.merge_arrays((model.record, refit), flatten=True)
