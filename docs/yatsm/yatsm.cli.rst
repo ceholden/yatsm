@@ -9,6 +9,7 @@ Submodules
    yatsm.cli.cache
    yatsm.cli.changemap
    yatsm.cli.classify
+   yatsm.cli.console
    yatsm.cli.line
    yatsm.cli.main
    yatsm.cli.map
