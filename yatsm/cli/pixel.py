@@ -85,20 +85,29 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
                       (cfg_key, kw, cfg[cfg_key][kw], value))
                 cfg[cfg_key][kw] = value
                 revalidate = True
-
     if revalidate:
         cfg = convert_config(cfg)
 
-    # Locate and fetch attributes from data
+    # Dataset information
     df = csvfile_to_dataframe(cfg['dataset']['input_file'],
                               date_format=cfg['dataset']['date_format'])
     df['image_ID'] = get_image_IDs(df['filename'])
-
-    # Setup X/Y
     df['x'] = df['date']
-    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], data=df)
-    design_info = X.design_info
+    dates = df['date'].values
 
+    # Initialize timeseries model
+    model = cfg['YATSM']['algorithm_cls']
+    algo_cfg = cfg[cfg['YATSM']['algorithm']]
+    yatsm = model(estimator=cfg['YATSM']['prediction_object'],
+                  **algo_cfg.get('init', {}))
+    yatsm.px = px
+    yatsm.py = py
+
+    # Setup algorithm and create design matrix (if needed)
+    X = yatsm.setup(df, **cfg)
+    design_info = getattr(X, 'design_info', None)
+
+    # Read pixel data
     Y = read_pixel_timeseries(df['filename'], px, py)
     if Y.shape[0] != cfg['dataset']['n_bands']:
         logger.error('Number of bands in image %s (%i) do not match number '
@@ -107,18 +116,8 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
                       cfg['dataset']['n_bands']))
         raise click.Abort()
 
-    # Mask out of range data
-    idx_mask = cfg['dataset']['mask_band'] - 1
-    valid = cyprep.get_valid_mask(Y,
-                                  cfg['dataset']['min_values'],
-                                  cfg['dataset']['max_values']).astype(np.bool)
-    valid *= np.in1d(Y[idx_mask, :], cfg['dataset']['mask_values'],
-                     invert=True).astype(np.bool)
-
-    # Apply mask
-    Y = np.delete(Y, idx_mask, axis=0)[:, valid]
-    X = X[valid, :]
-    dates = np.array([dt.datetime.fromordinal(d) for d in df['date'][valid]])
+    # Preprocess pixel data
+    X, Y, dates = yatsm.preprocess(X, Y, dates, **cfg)
 
     # Plot before fitting
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
@@ -137,14 +136,8 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             plt.tight_layout()
             plt.show()
 
-    # Eliminate config parameters not algorithm and fit model
-    algo_cfg = cfg[cfg['YATSM']['algorithm']]
-    yatsm = cfg['YATSM']['algorithm_cls'](
-        estimator=cfg['YATSM']['prediction_object'],
-        **algo_cfg.get('init', {}))
-    yatsm.px = px
-    yatsm.py = py
-    yatsm.fit(X, Y, np.asarray(df['date'][valid]), **algo_cfg.get('fit', {}))
+    # Fit model
+    yatsm.fit(X, Y, dates, **algo_cfg.get('fit', {}))
 
     # Plot after predictions
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):

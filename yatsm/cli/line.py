@@ -5,17 +5,14 @@ import time
 
 import click
 import numpy as np
-import patsy
 
 from yatsm.cache import test_cache
 from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
-import yatsm._cyprep as cyprep
 from yatsm.errors import TSLengthException
 from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
                          csvfile_to_dataframe)
 from yatsm.reader import get_image_attribute, read_line
-from yatsm.regression.transforms import harm
 from yatsm.algorithms import postprocess
 try:
     import yatsm.phenology.longtermmean as pheno
@@ -49,6 +46,9 @@ def line(ctx, config, job_number, total_jobs,
         click.secho('Error: %s' % pheno_exception, fg='red')
         raise click.Abort()
 
+    logger.info('Job {i} of {n} - using config file {f}'.format(
+        i=job_number, n=total_jobs, f=config))
+
     # Make sure output directory exists and is writable
     output_dir = cfg['dataset']['output']
     try:
@@ -70,12 +70,12 @@ def line(ctx, config, job_number, total_jobs,
     # Test existence of cache directory
     read_cache, write_cache = test_cache(cfg['dataset'])
 
-    logger.info('Job {i} of {n} - using config file {f}'.format(i=job_number,
-                                                                n=total_jobs,
-                                                                f=config))
+    # Dataset information
     df = csvfile_to_dataframe(cfg['dataset']['input_file'],
                               cfg['dataset']['date_format'])
     df['image_ID'] = get_image_IDs(df['filename'])
+    df['x'] = df['date']
+    dates = df['date'].values
 
     # Get attributes of one of the images
     nrow, ncol, nband, dtype = get_image_attribute(df['filename'][0])
@@ -89,11 +89,20 @@ def line(ctx, config, job_number, total_jobs,
     job_lines = distribute_jobs(job_number, total_jobs, nrow)
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
-    # Calculate X feature input
-    df['x'] = df['date']
-    X = patsy.dmatrix(cfg['YATSM']['design_matrix'], data=df)
-    cfg['YATSM']['design'] = X.design_info.column_name_indexes
+    # Initialize timeseries model
+    model = cfg['YATSM']['algorithm_cls']
+    algo_cfg = cfg[cfg['YATSM']['algorithm']]
+    yatsm = model(estimator=cfg['YATSM']['prediction_object'],
+                  **algo_cfg.get('init', {}))
 
+    # Setup algorithm and create design matrix (if needed)
+    X = yatsm.setup(df, **cfg)
+    if hasattr(X, 'design_info'):
+        cfg['YATSM']['design'] = X.design_info.column_name_indexes
+    else:
+        cfg['YATSM']['design'] = {}
+
+    # Flip for reverse
     if cfg['YATSM']['reverse']:
         X = np.flipud(X)
 
@@ -104,12 +113,6 @@ def line(ctx, config, job_number, total_jobs,
     }
     if cfg['phenology']['enable']:
         md.update({'phenology': cfg['phenology']})
-
-    # Initialize timeseries model
-    cls = cfg['YATSM']['algorithm_cls']
-    algo_cfg = cfg[cfg['YATSM']['algorithm']]
-    yatsm = cls(estimator=cfg['YATSM']['prediction_object'],
-                **algo_cfg.get('init', {}))
 
     # Begin process
     start_time_all = time.time()
@@ -140,20 +143,8 @@ def line(ctx, config, job_number, total_jobs,
         output = []
         for col in np.arange(Y.shape[-1]):
             _Y = Y.take(col, axis=2)
-            # Mask
-            idx_mask = cfg['dataset']['mask_band'] - 1
-            valid = cyprep.get_valid_mask(
-                _Y,
-                cfg['dataset']['min_values'],
-                cfg['dataset']['max_values']).astype(bool)
-
-            valid *= np.in1d(_Y.take(idx_mask, axis=0),
-                             cfg['dataset']['mask_values'],
-                             invert=True).astype(np.bool)
-
-            _Y = np.delete(_Y, idx_mask, axis=0)[:, valid]
-            _X = X[valid, :]
-            _dates = df['date'].values[valid]
+            # Preprocess
+            _X, _Y, _dates = yatsm.preprocess(X, _Y, dates, **cfg)
 
             # Run model
             yatsm.px = col
