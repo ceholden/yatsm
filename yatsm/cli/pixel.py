@@ -164,6 +164,9 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             yatsm,
             message=("Additional functions:\n"
                      "plot_TS, plot_DOY, plot_VAL, plot_results"),
+            variables={
+                'config': cfg,
+            },
             funcs={
                 'plot_TS': plot_TS, 'plot_DOY': plot_DOY,
                 'plot_VAL': plot_VAL, 'plot_results': plot_results

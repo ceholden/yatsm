@@ -28,7 +28,7 @@ dependencies:
     - rpy2>=2.5.6
     - pip:
         # GLMNET (OPTIONAL)
-        - git+git://github.com/ceholden/glmnet-python.git#egg=glmnet
+        - git+git://github.com/ceholden/glmnet-python.git@v2.0.1
         # Required but missing from conda
         - palettable>=2.0.0
         - click_plugins>=1.0

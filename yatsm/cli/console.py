@@ -18,17 +18,21 @@ from yatsm import __version__
 _funcs = locals()
 
 
-def open_interpreter(model, message=None, funcs=None):
+def open_interpreter(model, message=None, variables=None, funcs=None):
     """ Opens an (I)Python interpreter
 
     Args:
         model (YATSM model): Pass YATSM model to work with
         message (str, optional): Additional message to pass to user in banner
+        variables (dict of objects, optional): Variables available in (I)Python
+            session
         funcs (dict of callable, optional): Functions available in (I)Python
             session
 
     """
     local = dict(_funcs, model=model, np=np, plt=plt)
+    if variables:
+        local.update(variables)
     if funcs:
         local.update(funcs)
 
