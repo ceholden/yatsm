@@ -113,7 +113,9 @@ def test_update_cache_file_delete_obs(cachefile, example_cache):
 def test_update_cache_file_add_obs(cachefile, example_cache,
                                    example_timeseries):
     """ Grab a subset of test data and see if we get more data back """
-    path, stack_images, stack_image_IDs = example_timeseries
+    stack_images = example_timeseries['images']
+    stack_image_IDs = example_timeseries['image_IDs']
+
     # Presort and subset for comparison
     sort_idx = np.argsort(example_cache['image_IDs'])
     test_Y = example_cache['Y'][:, sort_idx, :]

@@ -1,27 +1,31 @@
+from datetime import datetime as dt
 import fnmatch
 from functools import partial
 import os
 import shutil
 import tarfile
 from tempfile import mkdtemp
-
 try:
     from os import walk
 except ImportError:
     from scandir import walk
 
 import numpy as np
+import pandas as pd
+import yaml
+
 import pytest
 
 here = os.path.dirname(__file__)
 example_cachedir = os.path.join(here, 'data', 'cache')
 example_cachefile = os.path.join(example_cachedir, 'yatsm_r0_n447_b8.npy.npz')
+yaml_config = os.path.join(here, 'data', 'p035r032_config.yaml')
 
 
 # EXAMPLE DATASETS
 @pytest.fixture(scope='session')
 def example_timeseries(request):
-    """ Extract example timeseries returning paths & image IDs
+    """ Extract example timeseries returning a dictionary of dataset attributes
     """
     path = mkdtemp('_yatsm')
     tgz = os.path.join(here, 'data', 'p035r032_subset.tar.gz')
@@ -29,14 +33,43 @@ def example_timeseries(request):
         tgz.extractall(path)
     request.addfinalizer(partial(shutil.rmtree, path))
 
+    # Find data
     subset_path = os.path.join(path, 'subset')
     stack_images, stack_image_IDs = [], []
     for root, dnames, fnames in walk(subset_path):
         for fname in fnmatch.filter(fnames, 'L*stack'):
             stack_images.append(os.path.join(root, fname))
             stack_image_IDs.append(os.path.basename(root))
+    stack_images = np.asarray(stack_images)
+    stack_image_IDs = np.asarray(stack_image_IDs)
 
-    return subset_path, np.asarray(stack_images), np.asarray(stack_image_IDs)
+    # Formulate "images.csv" input_file
+    input_file = os.path.join(path, 'images.csv')
+    dates = np.array([_d[9:16]for _d in stack_image_IDs])  # YYYYDOY
+    sensors = np.array([_id[0:3] for _id in stack_image_IDs])  # Landsat IDs
+    df = pd.DataFrame({
+        'date': dates,
+        'sensor': sensors,
+        'filename': stack_images
+    })
+    df.to_csv(input_file, index=False)
+
+    # Copy configuration file
+    dest_config = os.path.join(path, os.path.basename(yaml_config))
+    config = yaml.load(open(yaml_config))
+    config['dataset']['input_file'] = input_file
+    config['dataset']['output'] = os.path.join(path, 'YATSM')
+    config['dataset']['cache_line_dir'] = os.path.join(path, 'cache')
+    yaml.dump(config, open(dest_config, 'w'))
+
+    return {
+        'path': subset_path,
+        'images': stack_images,
+        'image_IDs': stack_image_IDs,
+        'input_file': input_file,
+        'images.csv': df,
+        'config': dest_config
+    }
 
 
 @pytest.fixture(scope='session')
