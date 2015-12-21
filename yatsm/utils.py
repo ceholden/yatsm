@@ -21,18 +21,18 @@ def distribute_jobs(job_number, total_jobs, n, interlaced=True):
     """ Assign `job_number` out of `total_jobs` a subset of `n` tasks
 
     Args:
-      job_number (int): 0-indexed processor to distribute jobs to
-      total_jobs (int): total number of processors running jobs
-      n (int): number of tasks (e.g., lines in image, regions in segment)
-      interlaced (bool, optional): interlace job assignment (default: True)
+        job_number (int): 0-indexed processor to distribute jobs to
+        total_jobs (int): total number of processors running jobs
+        n (int): number of tasks (e.g., lines in image, regions in segment)
+        interlaced (bool, optional): interlace job assignment (default: True)
 
     Returns:
-      np.ndarray: np.ndarray of task IDs to be processed
+        np.ndarray: np.ndarray of task IDs to be processed
 
     Raises:
-      ValueError: raise error if `job_number` and `total_jobs` specified
-        result in no jobs being assinged (happens if `job_number` and
-        `total_jobs` are both 1)
+        ValueError: raise error if `job_number` and `total_jobs` specified
+            result in no jobs being assinged (happens if `job_number` and
+            `total_jobs` are both 1)
 
     """
     if interlaced:

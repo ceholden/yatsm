@@ -10,6 +10,7 @@ from yatsm.cache import test_cache
 from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
 from yatsm.errors import TSLengthException
+from yatsm.io.helpers import mkdir_p
 from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
                          csvfile_to_dataframe)
 from yatsm.reader import get_image_attribute, read_line
@@ -52,20 +53,13 @@ def line(ctx, config, job_number, total_jobs,
     # Make sure output directory exists and is writable
     output_dir = cfg['dataset']['output']
     try:
-        os.makedirs(output_dir)
-    except OSError as e:
-        # File exists
-        if e.errno == 17:
-            pass
-        elif e.errno == 13:
-            click.secho('Cannot create output directory %s' % output_dir,
-                        fg='red')
-            raise click.Abort()
-
+        mkdir_p(output_dir)
+    except OSError as err:
+        raise click.ClickException('Cannot create output directory %s (%s)' %
+                                   (output_dir, str(err)))
     if not os.access(output_dir, os.W_OK):
-        click.secho('Cannot write to output directory %s' % output_dir,
-                    fg='red')
-        raise click.Abort()
+        raise click.ClickException('Cannot write to output directory %s' %
+                                   output_dir)
 
     # Test existence of cache directory
     read_cache, write_cache = test_cache(cfg['dataset'])
