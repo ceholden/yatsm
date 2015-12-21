@@ -130,7 +130,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/algorithms/postprocess" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/algorithms/postprocess.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -151,9 +151,9 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.lib.recfunctions</span> <span class="kn">as</span> <span class="nn">nprf</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
-<span class="kn">import</span> <span class="nn">sklearn</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
 
+<span class="kn">from</span> <span class="nn">..regression.diagnostics</span> <span class="kn">import</span> <span class="n">rmse</span>
 <span class="kn">from</span> <span class="nn">..regression</span> <span class="kn">import</span> <span class="n">robust_fit</span> <span class="k">as</span> <span class="n">rlm</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">date2index</span>
 
@@ -227,21 +227,17 @@
         <span class="n">F_crit</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="p">):</span>
-            <span class="n">m_1_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">,</span> <span class="p">:],</span>
-                                              <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">m_2_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">,</span> <span class="p">:],</span>
-                                              <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">m_r_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
-                                              <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_1_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">,</span> <span class="p">:],</span>
+                                           <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_2_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">,</span> <span class="p">:],</span>
+                                           <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_r_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
+                                           <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c"># Collapse RSS across all test indices</span>
-        <span class="n">m_1_rss</span> <span class="o">=</span> <span class="n">m_1_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="n">m_2_rss</span> <span class="o">=</span> <span class="n">m_2_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="n">m_r_rss</span> <span class="o">=</span> <span class="n">m_r_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-        <span class="c"># F statistic</span>
+        <span class="c"># Collapse RSS across all test indices for F statistic</span>
         <span class="n">F</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">((</span><span class="n">m_r_rss</span> <span class="o">-</span> <span class="p">(</span><span class="n">m_1_rss</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="p">))</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span>
-            <span class="p">((</span><span class="n">m_1_rss</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
+            <span class="p">((</span><span class="n">m_r_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="n">m_1_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span>
+            <span class="p">((</span><span class="n">m_1_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">F</span> <span class="o">&gt;</span> <span class="n">F_crit</span><span class="p">:</span>
             <span class="c"># Reject H0 and retain change</span>
@@ -349,8 +345,8 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">omission</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="refit_record"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.refit_record">[docs]</a><span class="k">def</span> <span class="nf">refit_record</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">predictor</span><span class="p">,</span> <span class="n">keep_regularized</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Refit YATSM model segments with a new predictor and update record</span>
+<div class="viewcode-block" id="refit_record"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.refit_record">[docs]</a><span class="k">def</span> <span class="nf">refit_record</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">keep_regularized</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Refit YATSM model segments with a new estimator and update record</span>
 
 <span class="sd">    YATSM class model must be ran and contain at least one record before this</span>
 <span class="sd">    function is called.</span>
@@ -359,7 +355,7 @@
 <span class="sd">        model (YATSM model): YATSM model to refit</span>
 <span class="sd">        prefix (str): prefix for refitted coefficient and RMSE (don&#39;t include</span>
 <span class="sd">            underscore as it will be added)</span>
-<span class="sd">        predictor (object): instance of a scikit-learn compatible prediction</span>
+<span class="sd">        estimator (object): instance of a scikit-learn compatible estimator</span>
 <span class="sd">            object</span>
 <span class="sd">        keep_regularized (bool, optional): do not use features with coefficient</span>
 <span class="sd">            estimates that are fit to 0 (i.e., if using L1 regularization)</span>
@@ -403,14 +399,15 @@
                 <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_series</span><span class="p">)</span>
 
             <span class="c"># Fit</span>
-            <span class="n">lm</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">predictor</span><span class="p">)</span>
-            <span class="n">lm</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">nonzero</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">nonzero</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span>
             <span class="c"># Store updated coefficients</span>
-            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_coef</span><span class="p">][</span><span class="n">nonzero</span><span class="p">,</span> <span class="n">i_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_coef</span><span class="p">][</span><span class="n">nonzero</span><span class="p">,</span> <span class="n">i_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_coef</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">i_y</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">getattr</span><span class="p">(</span>
+                <span class="n">estimator</span><span class="p">,</span> <span class="s">&#39;intercept_&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 
             <span class="c"># Update RMSE</span>
-            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_rmse</span><span class="p">][</span><span class="n">i_y</span><span class="p">]</span> <span class="o">=</span> \
-                <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">lm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">nonzero</span><span class="p">]))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">**</span> <span class="mf">0.5</span>
+            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_rmse</span><span class="p">][</span><span class="n">i_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span>
+                <span class="n">y</span><span class="p">,</span> <span class="n">estimator</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">nonzero</span><span class="p">]))</span>
 
     <span class="c"># Merge</span>
     <span class="n">refit</span> <span class="o">=</span> <span class="n">nprf</span><span class="o">.</span><span class="n">merge_arrays</span><span class="p">((</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">,</span> <span class="n">refit</span><span class="p">),</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -428,7 +425,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
 
     </p>
   </div>

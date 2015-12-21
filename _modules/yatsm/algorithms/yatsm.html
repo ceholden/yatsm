@@ -130,7 +130,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/algorithms/yatsm" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/algorithms/yatsm.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -144,10 +144,13 @@
 <span class="sd">&quot;&quot;&quot; Yet Another TimeSeries Model baseclass</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">patsy</span>
 <span class="kn">import</span> <span class="nn">sklearn</span>
 <span class="kn">import</span> <span class="nn">sklearn.linear_model</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">_cyprep</span> <span class="k">as</span> <span class="n">cyprep</span>
 <span class="kn">from</span> <span class="nn">..regression.diagnostics</span> <span class="kn">import</span> <span class="n">rmse</span>
+<span class="kn">from</span> <span class="nn">..regression.transforms</span> <span class="kn">import</span> <span class="n">harm</span>  <span class="c"># noqa</span>
 
 
 <div class="viewcode-block" id="YATSM"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM">[docs]</a><span class="k">class</span> <span class="nc">YATSM</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -162,11 +165,28 @@
 <span class="sd">            (default: ``Lasso(alpha=20)``)</span>
 
 <span class="sd">    Attributes:</span>
+<span class="sd">        record_template (np.ndarray): An empty NumPy structured array that is</span>
+<span class="sd">            a template for the model&#39;s ``record``</span>
 <span class="sd">        models (np.ndarray): prediction model objects</span>
 <span class="sd">        record (np.ndarray): NumPy structured array containing timeseries model</span>
 <span class="sd">            attribute information</span>
 <span class="sd">        n_series (int): number of bands in Y</span>
 <span class="sd">        n_features (int): number of coefficients in X design matrix</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        setup(self, df, **config): Configure model and (optionally) return</span>
+<span class="sd">            design matrix (or None if not required for model)</span>
+<span class="sd">        preprocess(self, X, Y, dates, **config): Preprocess a unit area of</span>
+<span class="sd">            data (pixel, segment, etc.) (e.g., mask, scale, transform, etc.)</span>
+<span class="sd">        fit(self, X, Y, dates): Fit timeseries model</span>
+<span class="sd">        fit_models(self, X, Y, bands=None): Fit timeseries</span>
+<span class="sd">            models for ``bands`` within ``Y`` for a given ``X``</span>
+<span class="sd">        predict(self, X, dates, series=None): Return a 2D NumPy</span>
+<span class="sd">            array of y-hat predictions of requested series for a given X</span>
+<span class="sd">        score(self, X, Y, dates): Return timeseries model</span>
+<span class="sd">            performance scores</span>
+<span class="sd">        plot(self, X, Y, dates, **config): Plot the timeseries model</span>
+<span class="sd">            results</span>
 
 <span class="sd">    Record structured arrays must contain the following:</span>
 
@@ -223,6 +243,53 @@
 
         <span class="k">return</span> <span class="n">record_template</span>
 
+<span class="c"># SETUP &amp; PREPROCESSING</span>
+<div class="viewcode-block" id="YATSM.setup"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Setup model for input dataset and (optionally) return design matrix</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): Pandas dataframe containing dataset</span>
+<span class="sd">                attributes (e.g., dates, image ID, path/row, metadata, etc.)</span>
+<span class="sd">            config (dict): YATSM configuration dictionary from user, including</span>
+<span class="sd">                &#39;dataset&#39; and &#39;YATSM&#39; sub-configurations</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            X (np.ndarray, or None): return design matrix if used by algorithm</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;design_matrix&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span></div>
+
+<div class="viewcode-block" id="YATSM.preprocess"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Preprocess a unit area of data (e.g., pixel, segment, etc.)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X (np.ndarray): design matrix (number of observations x number of</span>
+<span class="sd">                features)</span>
+<span class="sd">            Y (np.ndarray): independent variable matrix (number of series x</span>
+<span class="sd">                number of observations)</span>
+<span class="sd">            dates (np.ndarray): ordinal dates for each observation in X/Y</span>
+<span class="sd">            config (dict): YATSM configuration dictionary from user, including</span>
+<span class="sd">                &#39;dataset&#39; and &#39;YATSM&#39; sub-configurations</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Mask range of data</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">cyprep</span><span class="o">.</span><span class="n">get_valid_mask</span><span class="p">(</span>
+            <span class="n">Y</span><span class="p">,</span>
+            <span class="n">config</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">],</span>
+            <span class="n">config</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="c"># Apply mask band</span>
+        <span class="n">idx_mask</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;mask_band&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">valid</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                         <span class="n">config</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;mask_values&#39;</span><span class="p">],</span>
+                         <span class="n">invert</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">idx_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:,</span> <span class="n">valid</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span></div>
+
 <span class="c"># TIMESERIES ENSEMBLE FIT/PREDICT</span>
 <div class="viewcode-block" id="YATSM.fit"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fit timeseries model</span>
@@ -259,7 +326,7 @@
             <span class="n">bands</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_series</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="p">:]</span>
 
             <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
             <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -271,7 +338,7 @@
             <span class="n">model</span><span class="o">.</span><span class="n">coef</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">model</span><span class="o">.</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span></div>
 
-<div class="viewcode-block" id="YATSM.predict"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="YATSM.predict"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a 2D NumPy array of y-hat predictions for a given X</span>
 
 <span class="sd">        Predictions are made from ensemble of timeseries models such that</span>
@@ -281,37 +348,39 @@
 <span class="sd">        Args:</span>
 <span class="sd">            X (np.ndarray): Design matrix (number of observations x number of</span>
 <span class="sd">                features)</span>
+<span class="sd">            dates (int or np.ndarray): A single ordinal date or a np.ndarray of</span>
+<span class="sd">                length X.shape[0] specifying the ordinal dates for each</span>
+<span class="sd">                prediction</span>
 <span class="sd">            series (iterable, optional): Return prediction for subset of series</span>
 <span class="sd">                within timeseries model. If None is provided, returns</span>
 <span class="sd">                predictions from all series</span>
-<span class="sd">            dates (int or np.ndarray, optional): Index of `X`&#39;s features or a</span>
-<span class="sd">                np.ndarray of length X.shape[0] specifying the ordinal dates</span>
-<span class="sd">                for each</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Y (np.ndarray): Prediction for given X (number of series x number</span>
-<span class="sd">                of observations)</span>
+<span class="sd">            np.ndarray: Prediction for given X (number of series x number of</span>
+<span class="sd">                observations)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Have not implemented this function yet&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Subclasses should implement &quot;predict&quot; &#39;</span>
+                                  <span class="s">&#39;method&#39;</span><span class="p">)</span></div>
 
 <span class="c"># DIAGNOSTICS</span>
-<div class="viewcode-block" id="YATSM.score"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns some undecided description of timeseries model performance</span>
+<div class="viewcode-block" id="YATSM.score"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return timeseries model performance scores</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            X (np.ndarray): design matrix (number of observations x number of</span>
 <span class="sd">                features)</span>
 <span class="sd">            Y (np.ndarray): independent variable matrix (number of series x</span>
 <span class="sd">                number of observations)</span>
+<span class="sd">            dates (np.ndarray): ordinal dates for each observation in X/Y</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          float: some sort of performance summary statistic</span>
+<span class="sd">            namedtuple: performance summary statistics</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Have not implemented this function yet&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Subclasses should implement &quot;score&quot; method&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="YATSM.plot"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+<div class="viewcode-block" id="YATSM.plot"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Plot the timeseries model results</span>
 
 <span class="sd">        Args:</span>
@@ -319,9 +388,12 @@
 <span class="sd">                features)</span>
 <span class="sd">            Y (np.ndarray): independent variable matrix (number of series x</span>
 <span class="sd">                number of observations)</span>
+<span class="sd">            dates (np.ndarray): ordinal dates for each observation in X/Y</span>
+<span class="sd">            config (dict): YATSM configuration dictionary from user, including</span>
+<span class="sd">                &#39;dataset&#39; and &#39;YATSM&#39; sub-configurations</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Have not implemented this function yet&#39;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Subclasses should implement &quot;plot&quot; method&#39;</span><span class="p">)</span></div>
 
 <span class="c"># MAKE ITERABLE</span>
 <div class="viewcode-block" id="YATSM.__iter__"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.__iter__">[docs]</a>    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -346,7 +418,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
 
     </p>
   </div>

@@ -34,7 +34,7 @@ Command Line Interface Utilities
 --------------------------------
 
 The Command Line Interface (CLI) for YATSM is built using
-```click`` <http://click.pocoo.org/>`__ and is accessed using the ``yatsm``
+`click <http://click.pocoo.org/>`__ and is accessed using the ``yatsm``
 command. Documentation about the CLI is available below:
 
 .. toctree::

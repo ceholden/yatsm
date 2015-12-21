@@ -127,7 +127,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.cli.console" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.cli.console.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -151,7 +151,7 @@ interpreter with access to a variety of objects in local memory.</p>
 </dl>
 <dl class="function">
 <dt id="yatsm.cli.console.open_interpreter">
-<code class="descclassname">yatsm.cli.console.</code><code class="descname">open_interpreter</code><span class="sig-paren">(</span><em>model</em>, <em>message=None</em>, <em>funcs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/console.html#open_interpreter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.console.open_interpreter" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.cli.console.</code><code class="descname">open_interpreter</code><span class="sig-paren">(</span><em>model</em>, <em>message=None</em>, <em>variables=None</em>, <em>funcs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/console.html#open_interpreter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.console.open_interpreter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opens an (I)Python interpreter</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -160,6 +160,8 @@ interpreter with access to a variety of objects in local memory.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>model</strong> (<em>YATSM model</em>) &#8211; Pass YATSM model to work with</li>
 <li><strong>message</strong> (<em>str, optional</em>) &#8211; Additional message to pass to user in banner</li>
+<li><strong>variables</strong> (<em>dict of objects, optional</em>) &#8211; Variables available in (I)Python
+session</li>
 <li><strong>funcs</strong> (<em>dict of callable, optional</em>) &#8211; Functions available in (I)Python
 session</li>
 </ul>
@@ -182,7 +184,7 @@ session</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
 
     </p>
   </div>

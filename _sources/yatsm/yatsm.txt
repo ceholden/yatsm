@@ -12,7 +12,6 @@ Subpackages
     yatsm.mapping
     yatsm.phenology
     yatsm.regression
-    yatsm.segment
 
 Submodules
 ----------

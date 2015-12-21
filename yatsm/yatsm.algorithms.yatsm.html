@@ -127,7 +127,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.algorithms.yatsm" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.algorithms.yatsm.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -162,6 +162,14 @@ scikit-learn used to fit and predict timeseries
 </tbody>
 </table>
 <dl class="attribute">
+<dt id="yatsm.algorithms.yatsm.YATSM.record_template">
+<code class="descname">record_template</code><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.record_template" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>np.ndarray</em></p>
+<p>An empty NumPy structured array that is
+a template for the model&#8217;s <code class="docutils literal"><span class="pre">record</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="yatsm.algorithms.yatsm.YATSM.models">
 <code class="descname">models</code><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.models" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>np.ndarray</em></p>
@@ -190,6 +198,54 @@ attribute information</p>
 <p>number of coefficients in X design matrix</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="yatsm.algorithms.yatsm.YATSM.setup">
+<code class="descname">setup</code><span class="sig-paren">(</span><em>self</em>, <em>df</em>, <em>**config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure model and (optionally) return
+design matrix (or None if not required for model)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.yatsm.YATSM.preprocess">
+<code class="descname">preprocess</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>Y</em>, <em>dates</em>, <em>**config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess a unit area of
+data (pixel, segment, etc.) (e.g., mask, scale, transform, etc.)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.yatsm.YATSM.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>Y</em>, <em>dates</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit timeseries model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.yatsm.YATSM.fit_models">
+<code class="descname">fit_models</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>Y</em>, <em>bands=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.fit_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit timeseries
+models for <code class="docutils literal"><span class="pre">bands</span></code> within <code class="docutils literal"><span class="pre">Y</span></code> for a given <code class="docutils literal"><span class="pre">X</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.yatsm.YATSM.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>dates</em>, <em>series=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a 2D NumPy
+array of y-hat predictions of requested series for a given X</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.yatsm.YATSM.score">
+<code class="descname">score</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>Y</em>, <em>dates</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return timeseries model
+performance scores</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.yatsm.YATSM.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>Y</em>, <em>dates</em>, <em>**config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the timeseries model
+results</p>
+</dd></dl>
+
 <p>Record structured arrays must contain the following:</p>
 <blockquote>
 <div><ul class="simple">
@@ -216,8 +272,8 @@ coefficients matrix for predictions</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="yatsm.algorithms.yatsm.YATSM.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>dates</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.fit" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>dates</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Fit timeseries model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -244,8 +300,8 @@ model attribute information</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="yatsm.algorithms.yatsm.YATSM.fit_models">
-<code class="descname">fit_models</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>bands=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.fit_models" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">fit_models</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>bands=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.fit_models"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Fit timeseries models for <cite>bands</cite> within <cite>Y</cite> for a given <cite>X</cite></p>
 <p>Updates or initializes fit for <code class="docutils literal"><span class="pre">self.models</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -277,8 +333,8 @@ provided, fit all bands in Y</li>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="yatsm.algorithms.yatsm.YATSM.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.plot" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>dates</em>, <em>**config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.plot"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Plot the timeseries model results</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -289,6 +345,9 @@ provided, fit all bands in Y</li>
 features)</li>
 <li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x
 number of observations)</li>
+<li><strong>dates</strong> (<em>np.ndarray</em>) &#8211; ordinal dates for each observation in X/Y</li>
+<li><strong>config</strong> (<em>dict</em>) &#8211; YATSM configuration dictionary from user, including
+&#8216;dataset&#8217; and &#8216;YATSM&#8217; sub-configurations</li>
 </ul>
 </td>
 </tr>
@@ -297,8 +356,8 @@ number of observations)</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="yatsm.algorithms.yatsm.YATSM.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em>, <em>series=None</em>, <em>dates=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.predict" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em>, <em>dates</em>, <em>series=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.predict"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Return a 2D NumPy array of y-hat predictions for a given X</p>
 <p>Predictions are made from ensemble of timeseries models such that
 predicted values are generated for each date using the model from the
@@ -310,24 +369,43 @@ timeseries segment that intersects each date.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>X</strong> (<em>np.ndarray</em>) &#8211; Design matrix (number of observations x number of
 features)</li>
+<li><strong>dates</strong> (<em>int or np.ndarray</em>) &#8211; A single ordinal date or a np.ndarray of
+length X.shape[0] specifying the ordinal dates for each
+prediction</li>
 <li><strong>series</strong> (<em>iterable, optional</em>) &#8211; Return prediction for subset of series
 within timeseries model. If None is provided, returns
 predictions from all series</li>
-<li><strong>dates</strong> (<em>int or np.ndarray, optional</em>) &#8211; Index of <cite>X</cite>&#8216;s features or a
-np.ndarray of length X.shape[0] specifying the ordinal dates
-for each</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>Y</strong> &#8211;
-Prediction for given X (number of series x number</p>
-<blockquote>
-<div><p>of observations)</p>
-</div></blockquote>
-</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Prediction for given X (number of series x number of
+observations)</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">preprocess</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>dates</em>, <em>**config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.preprocess"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Preprocess a unit area of data (e.g., pixel, segment, etc.)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>X</strong> (<em>np.ndarray</em>) &#8211; design matrix (number of observations x number of
+features)</li>
+<li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x
+number of observations)</li>
+<li><strong>dates</strong> (<em>np.ndarray</em>) &#8211; ordinal dates for each observation in X/Y</li>
+<li><strong>config</strong> (<em>dict</em>) &#8211; YATSM configuration dictionary from user, including
+&#8216;dataset&#8217; and &#8216;YATSM&#8217; sub-configurations</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -345,8 +423,8 @@ Prediction for given X (number of series x number</p>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="yatsm.algorithms.yatsm.YATSM.record_template">
-<code class="descname">record_template</code><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.record_template" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">record_template</code></dt>
 <dd><p>Return a YATSM record template for features in X and series in Y</p>
 <p>Record template will set <cite>px</cite> and <cite>py</cite> if defined as class attributes.
 Otherwise <cite>px</cite> and <cite>py</cite> coordinates will default to 0.</p>
@@ -364,9 +442,9 @@ record</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="yatsm.algorithms.yatsm.YATSM.score">
-<code class="descname">score</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.yatsm.YATSM.score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns some undecided description of timeseries model performance</p>
+<dt>
+<code class="descname">score</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>dates</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.score"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Return timeseries model performance scores</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -376,13 +454,41 @@ record</td>
 features)</li>
 <li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x
 number of observations)</li>
+<li><strong>dates</strong> (<em>np.ndarray</em>) &#8211; ordinal dates for each observation in X/Y</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">some sort of performance summary statistic</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">performance summary statistics</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">namedtuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">setup</code><span class="sig-paren">(</span><em>df</em>, <em>**config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/yatsm.html#YATSM.setup"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Setup model for input dataset and (optionally) return design matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>pandas.DataFrame</em>) &#8211; Pandas dataframe containing dataset
+attributes (e.g., dates, image ID, path/row, metadata, etc.)</li>
+<li><strong>config</strong> (<em>dict</em>) &#8211; YATSM configuration dictionary from user, including
+&#8216;dataset&#8217; and &#8216;YATSM&#8217; sub-configurations</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X</strong> &#8211;
+return design matrix if used by algorithm</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray, or None</p>
 </td>
 </tr>
 </tbody>
@@ -404,7 +510,7 @@ number of observations)</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
 
     </p>
   </div>

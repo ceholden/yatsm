@@ -130,7 +130,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/pixel" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/pixel.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -228,20 +228,29 @@
                       <span class="p">(</span><span class="n">cfg_key</span><span class="p">,</span> <span class="n">kw</span><span class="p">,</span> <span class="n">cfg</span><span class="p">[</span><span class="n">cfg_key</span><span class="p">][</span><span class="n">kw</span><span class="p">],</span> <span class="n">value</span><span class="p">))</span>
                 <span class="n">cfg</span><span class="p">[</span><span class="n">cfg_key</span><span class="p">][</span><span class="n">kw</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
                 <span class="n">revalidate</span> <span class="o">=</span> <span class="bp">True</span>
-
     <span class="k">if</span> <span class="n">revalidate</span><span class="p">:</span>
         <span class="n">cfg</span> <span class="o">=</span> <span class="n">convert_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
-    <span class="c"># Locate and fetch attributes from data</span>
+    <span class="c"># Dataset information</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">csvfile_to_dataframe</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;input_file&#39;</span><span class="p">],</span>
                               <span class="n">date_format</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;date_format&#39;</span><span class="p">])</span>
     <span class="n">df</span><span class="p">[</span><span class="s">&#39;image_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_image_IDs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">])</span>
-
-    <span class="c"># Setup X/Y</span>
     <span class="n">df</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">]</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;design_matrix&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
-    <span class="n">design_info</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">design_info</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
+    <span class="c"># Initialize timeseries model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm_cls&#39;</span><span class="p">]</span>
+    <span class="n">algo_cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm&#39;</span><span class="p">]]</span>
+    <span class="n">yatsm</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">],</span>
+                  <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;init&#39;</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="n">yatsm</span><span class="o">.</span><span class="n">px</span> <span class="o">=</span> <span class="n">px</span>
+    <span class="n">yatsm</span><span class="o">.</span><span class="n">py</span> <span class="o">=</span> <span class="n">py</span>
+
+    <span class="c"># Setup algorithm and create design matrix (if needed)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">design_info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s">&#39;design_info&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="c"># Read pixel data</span>
     <span class="n">Y</span> <span class="o">=</span> <span class="n">read_pixel_timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">],</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;n_bands&#39;</span><span class="p">]:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&#39;Number of bands in image </span><span class="si">%s</span><span class="s"> (</span><span class="si">%i</span><span class="s">) do not match number &#39;</span>
@@ -250,18 +259,8 @@
                       <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;n_bands&#39;</span><span class="p">]))</span>
         <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span>
 
-    <span class="c"># Mask out of range data</span>
-    <span class="n">idx_mask</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;mask_band&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="n">valid</span> <span class="o">=</span> <span class="n">cyprep</span><span class="o">.</span><span class="n">get_valid_mask</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span>
-                                  <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">],</span>
-                                  <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-    <span class="n">valid</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">idx_mask</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;mask_values&#39;</span><span class="p">],</span>
-                     <span class="n">invert</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-
-    <span class="c"># Apply mask</span>
-    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">idx_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:,</span> <span class="n">valid</span><span class="p">]</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span> <span class="p">:]</span>
-    <span class="n">dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">][</span><span class="n">valid</span><span class="p">]])</span>
+    <span class="c"># Preprocess pixel data</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="p">)</span>
 
     <span class="c"># Plot before fitting</span>
     <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span> <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s">&#39;xkcd&#39;</span> <span class="k">else</span> <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">style</span><span class="p">):</span>
@@ -280,14 +279,8 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-    <span class="c"># Eliminate config parameters not algorithm and fit model</span>
-    <span class="n">algo_cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm&#39;</span><span class="p">]]</span>
-    <span class="n">yatsm</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm_cls&#39;</span><span class="p">](</span>
-        <span class="n">estimator</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">],</span>
-        <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;init&#39;</span><span class="p">,</span> <span class="p">{}))</span>
-    <span class="n">yatsm</span><span class="o">.</span><span class="n">px</span> <span class="o">=</span> <span class="n">px</span>
-    <span class="n">yatsm</span><span class="o">.</span><span class="n">py</span> <span class="o">=</span> <span class="n">py</span>
-    <span class="n">yatsm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">][</span><span class="n">valid</span><span class="p">]),</span> <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;fit&#39;</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="c"># Fit model</span>
+    <span class="n">yatsm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;fit&#39;</span><span class="p">,</span> <span class="p">{}))</span>
 
     <span class="c"># Plot after predictions</span>
     <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span> <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s">&#39;xkcd&#39;</span> <span class="k">else</span> <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">style</span><span class="p">):</span>
@@ -314,6 +307,9 @@
             <span class="n">yatsm</span><span class="p">,</span>
             <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Additional functions:</span><span class="se">\n</span><span class="s">&quot;</span>
                      <span class="s">&quot;plot_TS, plot_DOY, plot_VAL, plot_results&quot;</span><span class="p">),</span>
+            <span class="n">variables</span><span class="o">=</span><span class="p">{</span>
+                <span class="s">&#39;config&#39;</span><span class="p">:</span> <span class="n">cfg</span><span class="p">,</span>
+            <span class="p">},</span>
             <span class="n">funcs</span><span class="o">=</span><span class="p">{</span>
                 <span class="s">&#39;plot_TS&#39;</span><span class="p">:</span> <span class="n">plot_TS</span><span class="p">,</span> <span class="s">&#39;plot_DOY&#39;</span><span class="p">:</span> <span class="n">plot_DOY</span><span class="p">,</span>
                 <span class="s">&#39;plot_VAL&#39;</span><span class="p">:</span> <span class="n">plot_VAL</span><span class="p">,</span> <span class="s">&#39;plot_results&#39;</span><span class="p">:</span> <span class="n">plot_results</span>
@@ -491,7 +487,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
 
     </p>
   </div>

@@ -130,7 +130,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/console" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/console.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -161,17 +161,21 @@
 <span class="n">_funcs</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="open_interpreter"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.console.html#yatsm.cli.console.open_interpreter">[docs]</a><span class="k">def</span> <span class="nf">open_interpreter</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">funcs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="open_interpreter"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.console.html#yatsm.cli.console.open_interpreter">[docs]</a><span class="k">def</span> <span class="nf">open_interpreter</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">funcs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Opens an (I)Python interpreter</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (YATSM model): Pass YATSM model to work with</span>
 <span class="sd">        message (str, optional): Additional message to pass to user in banner</span>
+<span class="sd">        variables (dict of objects, optional): Variables available in (I)Python</span>
+<span class="sd">            session</span>
 <span class="sd">        funcs (dict of callable, optional): Functions available in (I)Python</span>
 <span class="sd">            session</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">local</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_funcs</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">np</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="o">=</span><span class="n">plt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">local</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">funcs</span><span class="p">:</span>
         <span class="n">local</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span>
 
@@ -206,7 +210,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
 
     </p>
   </div>

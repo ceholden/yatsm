@@ -130,7 +130,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/config_parser" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/config_parser.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -153,86 +153,6 @@
 <span class="kn">from</span> <span class="nn">.regression.packaged</span> <span class="kn">import</span> <span class="n">find_packaged_regressor</span><span class="p">,</span> <span class="n">packaged_regressions</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="convert_config"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.convert_config">[docs]</a><span class="k">def</span> <span class="nf">convert_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Convert some configuration values to different values</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        cfg (dict): dict: dict of sub-dicts, each sub-dict containing</span>
-<span class="sd">            configuration keys and values pertinent to a process or algorithm</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        dict: configuration dict with some items converted to different objects</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        KeyError: raise KeyError if configuration file is not specified</span>
-<span class="sd">            correctly</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Expand min/max values to all bands</span>
-    <span class="n">n_bands</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;n_bands&#39;</span><span class="p">]</span>
-    <span class="n">mins</span><span class="p">,</span> <span class="n">maxes</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mins</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">mins</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mins</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_bands</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Dataset minimum values must be specified for &#39;</span>
-                             <span class="s">&#39;&quot;n_bands&quot; (got </span><span class="si">%i</span><span class="s"> values, needed </span><span class="si">%i</span><span class="s">)&#39;</span> <span class="o">%</span>
-                             <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mins</span><span class="p">),</span> <span class="n">n_bands</span><span class="p">))</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mins</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">maxes</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">maxes</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">maxes</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_bands</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Dataset maximum values must be specified for &#39;</span>
-                             <span class="s">&#39;&quot;n_bands&quot; (got </span><span class="si">%i</span><span class="s"> values, needed </span><span class="si">%i</span><span class="s">)&#39;</span> <span class="o">%</span>
-                             <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">maxes</span><span class="p">),</span> <span class="n">n_bands</span><span class="p">))</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">maxes</span><span class="p">)</span>
-
-    <span class="c"># Unpickle main predictor</span>
-    <span class="n">pred_method</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">pred_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
-        <span class="c"># Try to use pre-packaged regression method</span>
-        <span class="k">if</span> <span class="n">pred_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">packaged_regressions</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="s">&#39;Prediction method specified (</span><span class="si">%s</span><span class="s">) is not parameterized &#39;</span>
-                <span class="s">&#39;in configuration file nor available from the YATSM package&#39;</span>
-                <span class="o">%</span> <span class="n">pred_method</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">pred_method_path</span> <span class="o">=</span> <span class="n">find_packaged_regressor</span><span class="p">(</span><span class="n">pred_method</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Using pre-packaged prediction method </span><span class="si">%s</span><span class="s"> from </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
-                         <span class="p">(</span><span class="n">pred_method</span><span class="p">,</span> <span class="n">pred_method_path</span><span class="p">))</span>
-            <span class="n">cfg</span><span class="p">[</span><span class="n">pred_method</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;pickle&#39;</span><span class="p">:</span> <span class="n">pred_method_path</span><span class="p">}</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Predicting using &quot;</span><span class="si">%s</span><span class="s">&quot; pickle specified from &#39;</span>
-                     <span class="s">&#39;configuration file (</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span>
-                     <span class="p">(</span><span class="n">pred_method</span><span class="p">,</span> <span class="n">cfg</span><span class="p">[</span><span class="n">pred_method</span><span class="p">][</span><span class="s">&#39;pickle&#39;</span><span class="p">]))</span>
-
-    <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_unpickle_predictor</span><span class="p">(</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="n">pred_method</span><span class="p">][</span><span class="s">&#39;pickle&#39;</span><span class="p">])</span>
-
-    <span class="c"># Unpickle refit objects</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s">&#39;refit&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">]</span> <span class="ow">and</span>
-            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;prediction&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)):</span>
-        <span class="n">pickles</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">predictor</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;prediction&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">predictor</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
-                <span class="n">pickle_file</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">predictor</span><span class="p">][</span><span class="s">&#39;pickle&#39;</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">predictor</span> <span class="ow">in</span> <span class="n">packaged_regressions</span><span class="p">:</span>
-                <span class="n">pickle_file</span> <span class="o">=</span> <span class="n">find_packaged_regressor</span><span class="p">(</span><span class="n">predictor</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Using pre-packaged prediction method </span><span class="si">%s</span><span class="s"> from </span><span class="si">%s</span><span class="s"> &#39;</span>
-                             <span class="s">&#39;for refitting&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">predictor</span><span class="p">,</span> <span class="n">pickle_file</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Refit predictor specified (</span><span class="si">%s</span><span class="s">) is not a &#39;</span>
-                               <span class="s">&#39;pre-packaged predictor and is not specified &#39;</span>
-                               <span class="s">&#39;as section in config file&#39;</span> <span class="o">%</span> <span class="n">predictor</span><span class="p">)</span>
-            <span class="n">pickles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_unpickle_predictor</span><span class="p">(</span><span class="n">pickle_file</span><span class="p">))</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pickles</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">refit</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="p">[],</span> <span class="n">prediction</span><span class="o">=</span><span class="p">[],</span> <span class="n">prediction_object</span><span class="o">=</span><span class="p">[])</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">refit</span>
-
-    <span class="k">return</span> <span class="n">cfg</span></div>
 
 
 <div class="viewcode-block" id="parse_config_file"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.parse_config_file">[docs]</a><span class="k">def</span> <span class="nf">parse_config_file</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
@@ -258,10 +178,8 @@
     <span class="c"># Ensure algorithm &amp; prediction sections are specified</span>
     <span class="k">if</span> <span class="s">&#39;YATSM&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;YATSM must be a section in configuration YAML file&#39;</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="s">&#39;prediction&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;YATSM section does not declare a prediction method&#39;</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="s">&#39;algorithm&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;YATSM section does not declare an algorithm&#39;</span><span class="p">)</span>
     <span class="n">algo</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;algorithm&#39;</span><span class="p">]</span>
@@ -286,6 +204,120 @@
         <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;classification&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;training_image&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
 
     <span class="k">return</span> <span class="n">convert_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_config"><a class="viewcode-back" href="../../yatsm/yatsm.config_parser.html#yatsm.config_parser.convert_config">[docs]</a><span class="k">def</span> <span class="nf">convert_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert some configuration values to different values</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfg (dict): dict of sub-dicts, each sub-dict containing configuration</span>
+<span class="sd">            keys and values pertinent to a process or algorithm</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: configuration dict with some items converted to different objects</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: raise KeyError if configuration file is not specified</span>
+<span class="sd">            correctly</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Parse dataset:</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">_parse_dataset_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="c"># Parse YATSM:</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">_parse_YATSM_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cfg</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_dataset_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse &quot;dataset:&quot; configuration section</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Expand min/max values to all bands</span>
+    <span class="n">n_bands</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;n_bands&#39;</span><span class="p">]</span>
+    <span class="n">mins</span><span class="p">,</span> <span class="n">maxes</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mins</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">mins</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mins</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_bands</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Dataset minimum values must be specified for &#39;</span>
+                             <span class="s">&#39;&quot;n_bands&quot; (got </span><span class="si">%i</span><span class="s"> values, needed </span><span class="si">%i</span><span class="s">)&#39;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mins</span><span class="p">),</span> <span class="n">n_bands</span><span class="p">))</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;min_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mins</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">maxes</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">maxes</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">maxes</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_bands</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Dataset maximum values must be specified for &#39;</span>
+                             <span class="s">&#39;&quot;n_bands&quot; (got </span><span class="si">%i</span><span class="s"> values, needed </span><span class="si">%i</span><span class="s">)&#39;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">maxes</span><span class="p">),</span> <span class="n">n_bands</span><span class="p">))</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;dataset&#39;</span><span class="p">][</span><span class="s">&#39;max_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">maxes</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cfg</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_YATSM_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse &quot;YATSM:&quot; configuration section</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Unpickle main predictor</span>
+    <span class="n">pred_method</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction&#39;</span><span class="p">]</span>
+    <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_unpickle_predictor</span><span class="p">(</span>
+        <span class="n">_find_pickle</span><span class="p">(</span><span class="n">pred_method</span><span class="p">,</span> <span class="n">cfg</span><span class="p">))</span>
+
+    <span class="c"># Unpickle refit objects</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;refit&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;prediction&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="c"># Restore pickles</span>
+        <span class="n">pickles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pred_method</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;prediction&#39;</span><span class="p">]:</span>
+            <span class="n">pickles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_unpickle_predictor</span><span class="p">(</span><span class="n">_find_pickle</span><span class="p">(</span><span class="n">pred_method</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)))</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pickles</span>
+    <span class="c"># Fill in as empty refit</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">refit</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="p">[],</span> <span class="n">prediction</span><span class="o">=</span><span class="p">[],</span> <span class="n">prediction_object</span><span class="o">=</span><span class="p">[],</span>
+                     <span class="n">stay_regularized</span><span class="o">=</span><span class="p">[])</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">refit</span>
+
+    <span class="c"># Check number of refits</span>
+    <span class="n">n_refit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;prediction_object&#39;</span><span class="p">])</span>
+    <span class="n">n_prefix</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;prefix&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">n_refit</span> <span class="o">!=</span> <span class="n">n_prefix</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Must supply a prefix for all refix predictions &#39;</span>
+                       <span class="s">&#39;(</span><span class="si">%i</span><span class="s"> vs </span><span class="si">%i</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n_refit</span><span class="p">,</span> <span class="n">n_prefix</span><span class="p">))</span>
+
+    <span class="c"># Fill in &quot;stay_regularized&quot; -- default True</span>
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;stay_regularized&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">reg</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;stay_regularized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_refit</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;YATSM&#39;</span><span class="p">][</span><span class="s">&#39;refit&#39;</span><span class="p">][</span><span class="s">&#39;stay_regularized&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">reg</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_refit</span>
+
+    <span class="k">return</span> <span class="n">cfg</span>
+
+
+<span class="k">def</span> <span class="nf">_find_pickle</span><span class="p">(</span><span class="n">pickle</span><span class="p">,</span> <span class="n">cfg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return filename for pickle specified</span>
+
+<span class="sd">    Pickle should either be from packaged estimators or specified as a section</span>
+<span class="sd">    in the configuration file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Check if in packaged</span>
+    <span class="k">if</span> <span class="n">pickle</span> <span class="ow">in</span> <span class="n">packaged_regressions</span><span class="p">:</span>
+        <span class="n">pickle_path</span> <span class="o">=</span> <span class="n">find_packaged_regressor</span><span class="p">(</span><span class="n">pickle</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Using pre-packaged prediction method &quot;</span><span class="si">%s</span><span class="s">&quot; from </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                     <span class="p">(</span><span class="n">pickle</span><span class="p">,</span> <span class="n">pickle_path</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pickle_path</span>
+    <span class="c"># Check if in configuration file</span>
+    <span class="k">elif</span> <span class="n">pickle</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s">&#39;pickle&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="p">[</span><span class="n">pickle</span><span class="p">]:</span>
+            <span class="n">pickle_path</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">pickle</span><span class="p">][</span><span class="s">&#39;pickle&#39;</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Using prediction method &quot;</span><span class="si">%s</span><span class="s">&quot; from config file (</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span>
+                         <span class="p">(</span><span class="n">pickle</span><span class="p">,</span> <span class="n">pickle_path</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">pickle_path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Prediction method &quot;</span><span class="si">%s</span><span class="s">&quot; in config file, but no &#39;</span>
+                           <span class="s">&#39;path is given in &quot;pickle&quot; key&#39;</span> <span class="o">%</span> <span class="n">pickle</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Prediction method &quot;</span><span class="si">%s</span><span class="s">&quot; is not a pre-packaged estimator&#39;</span>
+                       <span class="s">&#39; nor is it specified as a section in config file&#39;</span> <span class="o">%</span>
+                       <span class="n">pickle</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_unpickle_predictor</span><span class="p">(</span><span class="n">pickle</span><span class="p">):</span>
@@ -321,7 +353,7 @@
         <span class="sd">&quot;&quot;&quot; Warn if value looks un-expanded &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s">&#39;$&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Config key=value pair might still contain &#39;</span>
-                            <span class="s">&#39;environment variables: &quot;</span><span class="si">%s</span><span class="s">=</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+                           <span class="s">&#39;environment variables: &quot;</span><span class="si">%s</span><span class="s">=</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
 
     <span class="n">_d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">_d</span><span class="p">):</span>
@@ -351,7 +383,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
 
     </p>
   </div>

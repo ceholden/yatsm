@@ -130,7 +130,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/phenology/longtermmean" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/phenology/longtermmean.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -177,11 +177,12 @@
 <span class="sd">    Note: years specified must be sorted</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      years (np.ndarray): the year corresponding to each EVI value</span>
-<span class="sd">      interval (int, optional): number of years to group together (default: 3)</span>
+<span class="sd">        years (np.ndarray): the year corresponding to each EVI value</span>
+<span class="sd">        interval (int, optional): number of years to group together</span>
+<span class="sd">            (default: 3)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      np.ndarray: integers representing sequential year groupings</span>
+<span class="sd">        np.ndarray: integers representing sequential year groupings</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n_groups</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">years</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">years</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">interval</span><span class="p">)</span>
@@ -204,13 +205,13 @@
 <span class="sd">    will be removed.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      evi (np.ndarray): EVI values</span>
-<span class="sd">      periods (np.ndarray): intervals of years to group and scale together</span>
-<span class="sd">      qmin (float, optional): lower quantile for scaling (default: 10)</span>
-<span class="sd">      qmax (float, optional): upper quantile for scaling (default: 90)</span>
+<span class="sd">        evi (np.ndarray): EVI values</span>
+<span class="sd">        periods (np.ndarray): intervals of years to group and scale together</span>
+<span class="sd">        qmin (float, optional): lower quantile for scaling (default: 10)</span>
+<span class="sd">        qmax (float, optional): upper quantile for scaling (default: 90)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      np.ndarray: scaled EVI array</span>
+<span class="sd">        np.ndarray: scaled EVI array</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_evi</span> <span class="o">=</span> <span class="n">evi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -229,20 +230,22 @@
 <span class="sd">    Use `rpy2` package to fit a smoothing spline using &quot;smooth.spline&quot;.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      x (np.ndarray): independent variable</span>
-<span class="sd">      y (np.ndarray): dependent variable</span>
-<span class="sd">      spar (float): smoothing parameter</span>
+<span class="sd">        x (np.ndarray): independent variable</span>
+<span class="sd">        y (np.ndarray): dependent variable</span>
+<span class="sd">        spar (float): smoothing parameter</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      callable: prediction function of smoothing spline that provides</span>
-<span class="sd">        smoothed estimates of the dependent variable given an input</span>
-<span class="sd">        independent variable array</span>
+<span class="sd">        callable: prediction function of smoothing spline that provides</span>
+<span class="sd">            smoothed estimates of the dependent variable given an input</span>
+<span class="sd">            independent variable array</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">      Fit a smoothing spline for y ~ x and predict for days in year::</span>
+<span class="sd">      Fit a smoothing spline for y ~ x and predict for days in year:</span>
 
-<span class="sd">        pred_spl = CRAN_spline(x, y)</span>
-<span class="sd">        y_smooth = pred_spl(np.arange(1, 366))</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            pred_spl = CRAN_spline(x, y)</span>
+<span class="sd">            y_smooth = pred_spl(np.arange(1, 366))</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">spl</span> <span class="o">=</span> <span class="n">Rstats</span><span class="o">.</span><span class="n">smooth_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">spar</span><span class="o">=</span><span class="n">spar</span><span class="p">)</span>
@@ -271,11 +274,11 @@
     <span class="sd">&quot;&quot;&quot; Convert ordinal dates to two arrays of year and doy</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      ordinal (np.ndarray): ordinal dates</span>
+<span class="sd">        ordinal (np.ndarray): ordinal dates</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      np.ndarray: nobs x 2 np.ndarray containing the year and DOY for each</span>
-<span class="sd">        ordinal date</span>
+<span class="sd">        np.ndarray: nobs x 2 np.ndarray containing the year and DOY for each</span>
+<span class="sd">            ordinal date</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_date</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">_d</span><span class="p">)</span> <span class="k">for</span> <span class="n">_d</span> <span class="ow">in</span> <span class="n">ordinal</span><span class="p">]</span>
@@ -297,17 +300,17 @@
 <span class="sd">        self.pheno (np.ndarray): NumPy structured array containing phenology</span>
 <span class="sd">            metrics. These metrics include:</span>
 
-<span class="sd">            - spring_doy: the long term mean day of year of the start of spring</span>
-<span class="sd">            - autumn_doy: the long term mean day of year of the start of autumn</span>
-<span class="sd">            - pheno_cor: the correlation coefficient of the observed EVI and</span>
-<span class="sd">            the smoothed prediction</span>
-<span class="sd">            - peak_evi: the highest smoothed EVI value within the year (maximum</span>
-<span class="sd">            amplitude of EVI)</span>
-<span class="sd">            - peak_doy: the day of year corresponding to the peak EVI value</span>
-<span class="sd">            - spline_evi: the smoothing spline prediction of EVI for days of</span>
-<span class="sd">            year between 1 and 365</span>
-<span class="sd">            - pheno_nobs: the number of observations used to fit the smoothing</span>
-<span class="sd">            spline</span>
+<span class="sd">            * spring_doy: the long term mean day of year of the start of spring</span>
+<span class="sd">            * autumn_doy: the long term mean day of year of the start of autumn</span>
+<span class="sd">            * pheno_cor: the correlation coefficient of the observed EVI and</span>
+<span class="sd">              the smoothed prediction</span>
+<span class="sd">            * peak_evi: the highest smoothed EVI value within the year (maximum</span>
+<span class="sd">              amplitude of EVI)</span>
+<span class="sd">            * peak_doy: the day of year corresponding to the peak EVI value</span>
+<span class="sd">            * spline_evi: the smoothing spline prediction of EVI for days of</span>
+<span class="sd">              year between 1 and 365</span>
+<span class="sd">            * pheno_nobs: the number of observations used to fit the smoothing</span>
+<span class="sd">              spline</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        red_index (int, optional): index of model.Y containing red band</span>
@@ -482,7 +485,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
 
     </p>
   </div>

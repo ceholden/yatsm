@@ -130,7 +130,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/mapping/phenology" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/mapping/phenology.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -153,7 +153,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_phenology"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.phenology.html#yatsm.mapping.get_phenology">[docs]</a><span class="k">def</span> <span class="nf">get_phenology</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
+<div class="viewcode-block" id="get_phenology"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.phenology.html#yatsm.mapping.phenology.get_phenology">[docs]</a><span class="k">def</span> <span class="nf">get_phenology</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
                   <span class="n">after</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                   <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;yatsm_r*&#39;</span><span class="p">,</span>
                   <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -178,9 +178,8 @@
 <span class="sd">            result records (default: False)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple (np.ndarray, list): A tuple (np.ndarray, list) containing the 3D</span>
-<span class="sd">            np.ndarray of the phenology metrics, and the band names for</span>
-<span class="sd">            the output dataset</span>
+<span class="sd">        tuple: A tuple (np.ndarray, list) containing the 3D np.ndarray of the</span>
+<span class="sd">            phenology metrics, and the band names for the output dataset</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Find results</span>
@@ -234,7 +233,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
 
     </p>
   </div>

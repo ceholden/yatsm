@@ -134,7 +134,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/map_static" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/map_static.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -164,33 +164,33 @@
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>For example, consider these mapping situations:</p>
 <ol class="arabic simple">
-<li>Create a map showing the image predicted for January 1st, 2000 for all bands:</li>
+<li>Create a map showing the image predicted for January 1st, 2000 for all bands</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre>yatsm line predict 2000-01-01 predict_2000-01-01.gtif
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>yatsm line predict 2000-01-01 predict_2000-01-01.gtif
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
-<li>Create a map showing the image predicted for January 1st, 2000 for all bands, filling in missing values with the information from the timeseries segment immediately after January 1st, 2000, if possible:</li>
+<li>Create a map showing the image predicted for January 1st, 2000 for all bands, filling in missing values with the information from the timeseries segment immediately after January 1st, 2000, if possible</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre>yatsm map --after predict 2000-01-01 predict_2000-01-01.gtif
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>yatsm map --after predict 2000-01-01 predict_2000-01-01.gtif
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
-<li>Create a map showing all the coefficients for the red band (band 3) for January 1st, 2000:</li>
+<li>Create a map showing all the coefficients for the red band (band 3) for January 1st, 2000</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre>yatsm map --band <span class="m">3</span> coef 2000-01-01 coef_red_2000-01-01.gtif
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>yatsm map --band <span class="m">3</span> coef 2000-01-01 coef_red_2000-01-01.gtif
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
-<li>Create a map of only the time trend, or slope, coefficients for all bands for January 1st, 2000:</li>
+<li>Create a map of only the time trend, or slope, coefficients for all bands for January 1st, 2000</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre>yatsm map --coef slope coef 2000-01-01 coef_slope_2000-01-01.gtif
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>yatsm map --coef slope coef 2000-01-01 coef_slope_2000-01-01.gtif
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
-<li>Create a map of the current land cover, or the land cover that a pixel will turn into, for January 1st, 2000:</li>
+<li>Create a map of the current land cover, or the land cover that a pixel will turn into, for January 1st, 2000</li>
 </ol>
-<div class="highlight-bash"><div class="highlight"><pre>yatsm map --after class 2000-01-01 classmap_2000-01-01.gtif
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>yatsm map --after class 2000-01-01 classmap_2000-01-01.gtif
 </pre></div>
 </div>
 </div>
@@ -225,7 +225,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
 
     </p>
   </div>

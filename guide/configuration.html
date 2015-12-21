@@ -137,7 +137,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/configuration" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/configuration.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -245,7 +245,7 @@ options include:</p>
 <span class="c1"># run</span>
 
 <span class="c1"># Version of config</span>
-<span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="s">&quot;0.5.0&quot;</span>
+<span class="l-Scalar-Plain">version</span><span class="p-Indicator">:</span> <span class="s">&quot;0.6.0&quot;</span>
 
 <span class="l-Scalar-Plain">dataset</span><span class="p-Indicator">:</span>
     <span class="c1"># Text file containing dates and images</span>
@@ -262,7 +262,7 @@ options include:</p>
     <span class="l-Scalar-Plain">mask_band</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8</span>
     <span class="c1"># List of integer values to mask within the mask band</span>
     <span class="l-Scalar-Plain">mask_values</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">2</span><span class="p-Indicator">,</span> <span class="nv">3</span><span class="p-Indicator">,</span> <span class="nv">4</span><span class="p-Indicator">,</span> <span class="nv">255</span><span class="p-Indicator">]</span>
-    <span class="c1"># Valid range of non-mask band data</span>
+    <span class="c1"># Valid range of band data</span>
     <span class="c1"># specify 1 range for all bands, or specify ranges for each band</span>
     <span class="l-Scalar-Plain">min_values</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
     <span class="l-Scalar-Plain">max_values</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10000</span>
@@ -285,6 +285,7 @@ options include:</p>
     <span class="l-Scalar-Plain">refit</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">prefix</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">robust</span><span class="p-Indicator">]</span>
         <span class="l-Scalar-Plain">prediction</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">RLM</span><span class="p-Indicator">]</span>
+        <span class="l-Scalar-Plain">stay_regularized</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">True</span><span class="p-Indicator">]</span>
 
 <span class="c1"># Parameters for CCDCesque algorithm -- referenced by &quot;algorithm&quot; key in YATSM</span>
 <span class="l-Scalar-Plain">CCDCesque</span><span class="p-Indicator">:</span>
@@ -303,7 +304,7 @@ options include:</p>
 
 <span class="c1"># Regression estimators</span>
 <span class="l-Scalar-Plain">LassoCV</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n100.pkl&quot;</span>
+    <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_LassoCV_n50.pkl&quot;</span>
 
 <span class="l-Scalar-Plain">Lasso20</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">pickle</span><span class="p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_Lasso20.pkl&quot;</span>
@@ -386,7 +387,7 @@ options include:</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
 
     </p>
   </div>

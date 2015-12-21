@@ -127,7 +127,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.algorithms.postprocess" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.algorithms.postprocess.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -224,8 +224,8 @@ True indicates omitted break point</p>
 
 <dl class="function">
 <dt id="yatsm.algorithms.postprocess.refit_record">
-<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">refit_record</code><span class="sig-paren">(</span><em>model</em>, <em>prefix</em>, <em>predictor</em>, <em>keep_regularized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#refit_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.refit_record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Refit YATSM model segments with a new predictor and update record</p>
+<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">refit_record</code><span class="sig-paren">(</span><em>model</em>, <em>prefix</em>, <em>estimator</em>, <em>keep_regularized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#refit_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.refit_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refit YATSM model segments with a new estimator and update record</p>
 <p>YATSM class model must be ran and contain at least one record before this
 function is called.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -236,7 +236,7 @@ function is called.</p>
 <li><strong>model</strong> (<em>YATSM model</em>) &#8211; YATSM model to refit</li>
 <li><strong>prefix</strong> (<em>str</em>) &#8211; prefix for refitted coefficient and RMSE (don&#8217;t include
 underscore as it will be added)</li>
-<li><strong>predictor</strong> (<em>object</em>) &#8211; instance of a scikit-learn compatible prediction
+<li><strong>estimator</strong> (<em>object</em>) &#8211; instance of a scikit-learn compatible estimator
 object</li>
 <li><strong>keep_regularized</strong> (<em>bool, optional</em>) &#8211; do not use features with coefficient
 estimates that are fit to 0 (i.e., if using L1 regularization)</li>
@@ -267,7 +267,7 @@ coefficients and RMSE</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Tue 15 Dec 2015 12:25:51 AM EST.
+      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
 
     </p>
   </div>
