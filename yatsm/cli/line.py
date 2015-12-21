@@ -41,11 +41,11 @@ def line(ctx, config, job_number, total_jobs,
     # Parse config
     cfg = parse_config_file(config)
 
-    if ('phenology' in cfg and cfg['phenology'].get('enable')) and not pheno:
-        click.secho('Could not import yatsm.phenology but phenology metrics '
-                    'are requested', fg='red')
-        click.secho('Error: %s' % pheno_exception, fg='red')
-        raise click.Abort()
+    if ('phenology' in cfg and cfg['phenology'].get('enable')):
+        if not pheno:
+            raise click.ClickException('Could not import yatsm.phenology but '
+                                       'phenology metrics are requested (%s)' %
+                                       pheno_exception)
 
     logger.info('Job {i} of {n} - using config file {f}'.format(
         i=job_number, n=total_jobs, f=config))
@@ -74,13 +74,16 @@ def line(ctx, config, job_number, total_jobs,
     # Get attributes of one of the images
     nrow, ncol, nband, dtype = get_image_attribute(df['filename'][0])
     if nband != cfg['dataset']['n_bands']:
-        logger.error('Number of bands in image %s (%i) do not match number '
-                     'in configuration file (%i)' %
-                     (df['filename'][0], nband, cfg['dataset']['n_bands']))
-        raise click.Abort()
+        raise click.ClickException(
+            'Number of bands in image %s (%i) do not match number '
+            'in configuration file (%i)' %
+            (df['filename'][0], nband, cfg['dataset']['n_bands']))
 
     # Calculate the lines this job ID works on
-    job_lines = distribute_jobs(job_number, total_jobs, nrow)
+    try:
+        job_lines = distribute_jobs(job_number, total_jobs, nrow)
+    except ValueError as err:
+        raise click.ClickException(str(err))
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Initialize timeseries model
