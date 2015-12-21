@@ -15,8 +15,6 @@ d = os.path.dirname
 sys.path.insert(0, d(d(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(d(d(os.path.abspath(__file__))), 'scripts'))
 
-import yatsm
-
 # Add scripts directory to PATH for sphinxcontrib.programoutput
 os.environ['PATH'] = '{root}{sep}{dir}{psep}{path}'.format(
     root=d(d(__file__)), sep=os.sep, dir='scripts',
@@ -56,6 +54,7 @@ master_doc = 'index'
 project = u'YATSM'
 copyright = u'2014 - 2015, Chris Holden'
 
+import yatsm  # noqa
 version = yatsm.__version__
 release = yatsm.__version__
 html_last_updated_fmt = '%c'
@@ -73,7 +72,6 @@ pygments_style = 'sphinx'
 # on_rtd is whether we are on readthedocs.org, this line of code grabbed from
 # docs.readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-
 if not on_rtd:  # only import and set the theme if we're building docs locally
     import sphinx_rtd_theme
     html_theme = 'sphinx_rtd_theme'
@@ -84,7 +82,8 @@ html_context = dict(
     github_user="ceholden",
     github_repo="yatsm",
     github_version="master",
-    conf_py_path="/docs/"
+    conf_py_path="/docs/",
+    source_suffix=".rst",
 )
 
 # html_theme_options = { }
