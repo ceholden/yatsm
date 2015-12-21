@@ -28,35 +28,35 @@ Examples
 
 For example, consider these mapping situations:
 
-1. Create a map showing the image predicted for January 1st, 2000 for all bands::
+1. Create a map showing the image predicted for January 1st, 2000 for all bands
 
 .. code-block:: bash
 
-    yatsm line predict 2000-01-01 predict_2000-01-01.gtif
+    $ yatsm line predict 2000-01-01 predict_2000-01-01.gtif
 
-2. Create a map showing the image predicted for January 1st, 2000 for all bands, filling in missing values with the information from the timeseries segment immediately after January 1st, 2000, if possible::
-
-.. code-block:: bash
-
-    yatsm map --after predict 2000-01-01 predict_2000-01-01.gtif
-
-3. Create a map showing all the coefficients for the red band (band 3) for January 1st, 2000::
+2. Create a map showing the image predicted for January 1st, 2000 for all bands, filling in missing values with the information from the timeseries segment immediately after January 1st, 2000, if possible
 
 .. code-block:: bash
 
-    yatsm map --band 3 coef 2000-01-01 coef_red_2000-01-01.gtif
+    $ yatsm map --after predict 2000-01-01 predict_2000-01-01.gtif
 
-4. Create a map of only the time trend, or slope, coefficients for all bands for January 1st, 2000::
-
-.. code-block:: bash
-
-    yatsm map --coef slope coef 2000-01-01 coef_slope_2000-01-01.gtif
-
-5. Create a map of the current land cover, or the land cover that a pixel will turn into, for January 1st, 2000::
+3. Create a map showing all the coefficients for the red band (band 3) for January 1st, 2000
 
 .. code-block:: bash
 
-    yatsm map --after class 2000-01-01 classmap_2000-01-01.gtif
+    $ yatsm map --band 3 coef 2000-01-01 coef_red_2000-01-01.gtif
+
+4. Create a map of only the time trend, or slope, coefficients for all bands for January 1st, 2000
+
+.. code-block:: bash
+
+    $ yatsm map --coef slope coef 2000-01-01 coef_slope_2000-01-01.gtif
+
+5. Create a map of the current land cover, or the land cover that a pixel will turn into, for January 1st, 2000
+
+.. code-block:: bash
+
+    $ yatsm map --after class 2000-01-01 classmap_2000-01-01.gtif
 
 Docs TODO
 =========
