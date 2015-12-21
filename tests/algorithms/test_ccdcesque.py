@@ -13,9 +13,10 @@ import sklearn.linear_model
 from yatsm.algorithms.ccdc import CCDCesque
 
 
-@pytest.fixture(scope='function')
-def model():
-    model = CCDCesque(
+@pytest.fixture(scope='function',
+                params=[{}, {'min_rmse': np.array([100] * 7)}])
+def model(request):
+    init = dict(
         test_indices=np.array([2, 3, 4, 5]),
         estimator=sklearn.linear_model.Lasso(alpha=20),
         consecutive=6,
@@ -30,9 +31,10 @@ def model():
         remove_noise=True,
         dynamic_rmse=True,
         slope_test=True,
-        idx_slope=1
+        idx_slope=1,
     )
-    return model
+    init.update(request.param)
+    return CCDCesque(**init)
 
 
 @pytest.fixture(scope='function')

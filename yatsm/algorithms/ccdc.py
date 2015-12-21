@@ -26,7 +26,7 @@ def _monitor_calc_scores(X, Y, here, scores, predictions, rmse,
         for i_b, b in enumerate(test_indices):
             scores[i_b, i] = (
                 (Y[b, here + i] - predictions[i_b, i]) /
-                max(min_rmse, rmse[i_b])
+                max(min_rmse[b], rmse[i_b])
             )
 
 
@@ -87,7 +87,7 @@ class CCDCesque(YATSM):
         self.consecutive = consecutive
         self.threshold = threshold
         self.min_obs = min_obs or 16
-        self.min_rmse = min_rmse or sys.float_info.min
+        self.min_rmse = min_rmse
         self.retrain_time = retrain_time
 
         # Define screening method according to type
@@ -187,12 +187,19 @@ class CCDCesque(YATSM):
         self.n_features = X.shape[1]
         self.n_series = Y.shape[0]
 
+        # Setup test indices
         if not np.any(np.asarray(self.test_indices)):
             self.test_indices = np.arange(self.n_series)
+        # Setup minimum RMSE
+        if isinstance(self.min_rmse, (list, np.ndarray)):
+            self.min_rmse = np.asarray(self.min_rmse)
+        elif isinstance(self.min_rmse, (int, float)):
+            self.min_rmse = np.array([self.min_rmse] * self.n_series)
+        else:
+            self.min_rmse = np.array([sys.float_info.min] * self.n_series)
 
         # Set or reset state variables
         self.reset()
-
         if len(dates) < self.here + self.consecutive:
             raise TSLengthException('Not enough observations (n = %s)' %
                                     len(dates))
@@ -301,9 +308,6 @@ class CCDCesque(YATSM):
 
         # Test if we can still run after noise removal
         if self.here >= self._X.shape[0]:
-            # logger.debug('Not enough observations to proceed after noise '
-            #              'removal')
-            # return
             raise TSLengthException('Not enough observations to proceed '
                                     'after noise removal')
 
@@ -315,7 +319,7 @@ class CCDCesque(YATSM):
         # Ensure first and last points aren't unusual
         for i, b in enumerate(self.test_indices):
             m = self.models[b]
-            _rmse = max(self.min_rmse, m.rmse)
+            _rmse = max(self.min_rmse[b], m.rmse)
             self.start_resid[i] = (
                 np.abs(self._Y[b, self.start] -
                        m.predict(self._X[self.start, :][None, :])) /
