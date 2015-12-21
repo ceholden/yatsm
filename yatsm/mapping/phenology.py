@@ -35,9 +35,8 @@ def get_phenology(date, result_location, image_ds,
             result records (default: False)
 
     Returns:
-        tuple (np.ndarray, list): A tuple (np.ndarray, list) containing the 3D
-            np.ndarray of the phenology metrics, and the band names for
-            the output dataset
+        tuple: A tuple (np.ndarray, list) containing the 3D np.ndarray of the
+            phenology metrics, and the band names for the output dataset
 
     """
     # Find results

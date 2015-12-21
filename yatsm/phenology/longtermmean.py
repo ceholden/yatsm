@@ -34,11 +34,12 @@ def group_years(years, interval=3):
     Note: years specified must be sorted
 
     Args:
-      years (np.ndarray): the year corresponding to each EVI value
-      interval (int, optional): number of years to group together (default: 3)
+        years (np.ndarray): the year corresponding to each EVI value
+        interval (int, optional): number of years to group together
+            (default: 3)
 
     Returns:
-      np.ndarray: integers representing sequential year groupings
+        np.ndarray: integers representing sequential year groupings
 
     """
     n_groups = math.ceil((years.max() - years.min()) / interval)
@@ -61,13 +62,13 @@ def scale_EVI(evi, periods, qmin=10, qmax=90):
     will be removed.
 
     Args:
-      evi (np.ndarray): EVI values
-      periods (np.ndarray): intervals of years to group and scale together
-      qmin (float, optional): lower quantile for scaling (default: 10)
-      qmax (float, optional): upper quantile for scaling (default: 90)
+        evi (np.ndarray): EVI values
+        periods (np.ndarray): intervals of years to group and scale together
+        qmin (float, optional): lower quantile for scaling (default: 10)
+        qmax (float, optional): upper quantile for scaling (default: 90)
 
     Returns:
-      np.ndarray: scaled EVI array
+        np.ndarray: scaled EVI array
 
     """
     _evi = evi.copy()
@@ -86,20 +87,22 @@ def CRAN_spline(x, y, spar=0.55):
     Use `rpy2` package to fit a smoothing spline using "smooth.spline".
 
     Args:
-      x (np.ndarray): independent variable
-      y (np.ndarray): dependent variable
-      spar (float): smoothing parameter
+        x (np.ndarray): independent variable
+        y (np.ndarray): dependent variable
+        spar (float): smoothing parameter
 
     Returns:
-      callable: prediction function of smoothing spline that provides
-        smoothed estimates of the dependent variable given an input
-        independent variable array
+        callable: prediction function of smoothing spline that provides
+            smoothed estimates of the dependent variable given an input
+            independent variable array
 
     Example:
-      Fit a smoothing spline for y ~ x and predict for days in year::
+      Fit a smoothing spline for y ~ x and predict for days in year:
 
-        pred_spl = CRAN_spline(x, y)
-        y_smooth = pred_spl(np.arange(1, 366))
+        .. code-block:: python
+
+            pred_spl = CRAN_spline(x, y)
+            y_smooth = pred_spl(np.arange(1, 366))
 
     """
     spl = Rstats.smooth_spline(x, y, spar=spar)
@@ -128,11 +131,11 @@ def ordinal2yeardoy(ordinal):
     """ Convert ordinal dates to two arrays of year and doy
 
     Args:
-      ordinal (np.ndarray): ordinal dates
+        ordinal (np.ndarray): ordinal dates
 
     Returns:
-      np.ndarray: nobs x 2 np.ndarray containing the year and DOY for each
-        ordinal date
+        np.ndarray: nobs x 2 np.ndarray containing the year and DOY for each
+            ordinal date
 
     """
     _date = [dt.fromordinal(_d) for _d in ordinal]
@@ -154,17 +157,17 @@ class LongTermMeanPhenology(object):
         self.pheno (np.ndarray): NumPy structured array containing phenology
             metrics. These metrics include:
 
-            - spring_doy: the long term mean day of year of the start of spring
-            - autumn_doy: the long term mean day of year of the start of autumn
-            - pheno_cor: the correlation coefficient of the observed EVI and
-            the smoothed prediction
-            - peak_evi: the highest smoothed EVI value within the year (maximum
-            amplitude of EVI)
-            - peak_doy: the day of year corresponding to the peak EVI value
-            - spline_evi: the smoothing spline prediction of EVI for days of
-            year between 1 and 365
-            - pheno_nobs: the number of observations used to fit the smoothing
-            spline
+            * spring_doy: the long term mean day of year of the start of spring
+            * autumn_doy: the long term mean day of year of the start of autumn
+            * pheno_cor: the correlation coefficient of the observed EVI and
+              the smoothed prediction
+            * peak_evi: the highest smoothed EVI value within the year (maximum
+              amplitude of EVI)
+            * peak_doy: the day of year corresponding to the peak EVI value
+            * spline_evi: the smoothing spline prediction of EVI for days of
+              year between 1 and 365
+            * pheno_nobs: the number of observations used to fit the smoothing
+              spline
 
     Args:
         red_index (int, optional): index of model.Y containing red band

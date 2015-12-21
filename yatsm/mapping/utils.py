@@ -29,10 +29,10 @@ def find_result_attributes(results, bands, coefs, prefix=''):
             (default: '')
 
     Returns:
-        tuple: Tuple containing `list` of indices for output bands and output
-            coefficients, `bool` for outputting RMSE, `list` of coefficient
-            names, `str` design specification, and `OrderedDict` design_info
-            (i_bands, i_coefs, use_rmse, design, design_info)
+        tuple: Tuple containing ``list`` of indices for output bands and output
+            coefficients, ``bool`` for outputting RMSE, ``list`` of coefficient
+            names, ``str`` design specification, and ``OrderedDict``
+            design_info (i_bands, i_coefs, use_rmse, design, design_info)
 
     Raises:
         KeyError: Raise KeyError when a required result output is missing

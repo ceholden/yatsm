@@ -15,7 +15,6 @@ Submodules
    yatsm.cli.map
    yatsm.cli.options
    yatsm.cli.pixel
-   yatsm.cli.segment
    yatsm.cli.train
 
 Module contents

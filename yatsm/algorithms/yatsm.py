@@ -213,8 +213,8 @@ class YATSM(object):
                 predictions from all series
 
         Returns:
-            Y (np.ndarray): Prediction for given X (number of series x number
-                of observations)
+            np.ndarray: Prediction for given X (number of series x number of
+                observations)
 
         """
         raise NotImplementedError('Subclasses should implement "predict" '

@@ -138,7 +138,7 @@ def is_cache_old(cache_file, training_file):
 
     Args:
         cache_file (str): filename of the cache file
-        training_file (str): filename of the training data file_
+        training_file (str): filename of the training data file
 
     Returns:
         bool: True if the cache file is older than the training data file
