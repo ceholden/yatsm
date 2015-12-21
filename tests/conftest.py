@@ -28,16 +28,16 @@ def example_timeseries(request):
     """ Extract example timeseries returning a dictionary of dataset attributes
     """
     path = mkdtemp('_yatsm')
-    tgz = os.path.join(here, 'data', 'p035r032_subset.tar.gz')
+    tgz = os.path.join(here, 'data', 'p035r032_testdata.tar.gz')
     with tarfile.open(tgz) as tgz:
         tgz.extractall(path)
     request.addfinalizer(partial(shutil.rmtree, path))
 
     # Find data
-    subset_path = os.path.join(path, 'subset')
+    subset_path = os.path.join(path, 'p035r032', 'images')
     stack_images, stack_image_IDs = [], []
     for root, dnames, fnames in walk(subset_path):
-        for fname in fnmatch.filter(fnames, 'L*stack'):
+        for fname in fnmatch.filter(fnames, 'L*stack.gtif'):
             stack_images.append(os.path.join(root, fname))
             stack_image_IDs.append(os.path.basename(root))
     stack_images = np.asarray(stack_images)
