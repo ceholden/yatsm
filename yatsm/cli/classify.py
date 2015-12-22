@@ -2,7 +2,6 @@
 """
 from __future__ import division, print_function
 
-from datetime import datetime as dt
 import logging
 import os
 import time
@@ -10,6 +9,7 @@ import time
 import click
 import numpy as np
 import numpy.lib.recfunctions as nprfn
+import six
 from sklearn.externals import joblib
 
 from yatsm.cli import options
@@ -133,7 +133,7 @@ def classify_line(filename, classifier):
 
     # Create dict for re-saving `npz` file (only way to append)
     out = {}
-    for k, v in z.iteritems():
+    for k, v in six.iteritems(z):
         out[k] = v
     out['classes'] = classes
     out['record'] = rec
