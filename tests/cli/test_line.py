@@ -1,4 +1,4 @@
-""" Test yatsm line
+""" Test ``yatsm line``
 """
 from click.testing import CliRunner
 import pytest
