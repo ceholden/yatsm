@@ -1,4 +1,4 @@
-""" Test ``yatsm map``
+""" Test ``yatsm map classify ...``
 """
 from click.testing import CliRunner
 import numpy as np
@@ -25,7 +25,7 @@ classmap_proba = np.array([[0, 8000, 8000, 8000, 8000],
                            [8000, 8000, 8000, 8000, 8000]], dtype=np.uint16)
 
 
-def test_map_pass_1(example_results, tmpdir, read_image):
+def test_map_class_pass_1(example_results, tmpdir, read_image):
     """ Make a map with reasonable inputs
     """
     image = tmpdir.join('classmap.gtif').strpath
@@ -42,7 +42,7 @@ def test_map_pass_1(example_results, tmpdir, read_image):
     np.testing.assert_equal(read_image(image)[0, ...], classmap)
 
 
-def test_map_pass_2(example_results, tmpdir, read_image):
+def test_map_class_pass_2(example_results, tmpdir, read_image):
     """ Make a map with reasonable inputs, --before, --after switches
     """
     image = tmpdir.join('classmap.gtif').strpath
@@ -60,7 +60,7 @@ def test_map_pass_2(example_results, tmpdir, read_image):
     np.testing.assert_equal(read_image(image)[0, ...], classmap)
 
 
-def test_map_pass_3(example_results, tmpdir, read_image):
+def test_map_class_pass_3(example_results, tmpdir, read_image):
     """ Make a map with reasonable inputs, --before, --after, --qa switches
     """
     image = tmpdir.join('classmap.gtif').strpath
@@ -80,7 +80,7 @@ def test_map_pass_3(example_results, tmpdir, read_image):
     np.testing.assert_equal(img[1, ...], classmap_qa)
 
 
-def test_map_pass_4(example_results, tmpdir, read_image):
+def test_map_class_pass_4(example_results, tmpdir, read_image):
     """ Make a map with reasonable inputs, --before, --after, --qa,
     --predict-proba switches
     """
@@ -103,7 +103,7 @@ def test_map_pass_4(example_results, tmpdir, read_image):
 
 
 
-def test_map_pass_5(example_results, tmpdir, read_image):
+def test_map_class_pass_5(example_results, tmpdir, read_image):
     """ Make a map with unreasonable date inputs
     """
     image = tmpdir.join('classmap.gtif').strpath
