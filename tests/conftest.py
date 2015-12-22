@@ -78,6 +78,18 @@ def example_timeseries(request):
     }
 
 
+@pytest.fixture(scope='function')
+def example_results(request):
+    return {
+        'root': os.path.join(here, 'data', 'results'),
+        'results_dir': os.path.join(here, 'data', 'results', 'YATSM'),
+        'results_dir_classified': os.path.join(here, 'data', 'results',
+                                               'YATSM_classified'),
+        'example_img': os.path.join(here, 'data', 'results',
+                                    'example_image.gtif')
+    }
+
+
 @pytest.fixture(scope='session')
 def example_cache(request):
     return np.load(example_cachefile)

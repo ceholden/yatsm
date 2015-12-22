@@ -60,6 +60,7 @@ def map(ctx, map_type, date, output,
 
     \b
     Map QA flags:
+        - 0 => no values
         - 1 => before
         - 2 => after
         - 3 => intersect
