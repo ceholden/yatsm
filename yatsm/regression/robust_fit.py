@@ -184,12 +184,12 @@ class RLM(object):
         return numpy.dot(X, self.coef_) + self.intercept_
 
     def __str__(self):
-        return ("%s:\n"
-                " * Coefficients: %s\n"
-                " * Intercept = %.5f\n") % (self.__class__.__name__,
-                                            numpy.array_str(self.coef_,
-                                                         precision=4),
-                                            self.intercept_)
+        return (("%s:\n"
+                 " * Coefficients: %s\n"
+                 " * Intercept = %.5f\n") %
+                (self.__class__.__name__,
+                 numpy.array_str(self.coef_, precision=4),
+                 self.intercept_))
 
     # SUPPORT CLONING VIA sklearn
     def get_params(self, deep=True):
