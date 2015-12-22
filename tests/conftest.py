@@ -52,6 +52,12 @@ def example_timeseries(request):
         'sensor': sensors,
         'filename': stack_images
     })
+    # Sort by date
+    pd_ver = pd.__version__.split('.')
+    if pd_ver[0] == '0' and int(pd_ver[1]) < 17:
+        df = df.sort(columns='date')
+    else:
+        df = df.sort_values(by='date')
     df.to_csv(input_file, index=False)
 
     # Copy configuration file
