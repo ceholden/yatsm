@@ -6,6 +6,8 @@ import sklearn.linear_model
 
 from yatsm.algorithms import CCDCesque
 
+from ..bench_utils.example_timeseries import PixelTimeseries
+
 n = 50
 
 
@@ -25,19 +27,11 @@ def version_kwargs(d):
                        'CCDCesque.__init__')
 
 
-class CCDCesquePixel263(object):
+class CCDCesquePixel263(PixelTimeseries):
     """ Benchmark CCDC-esque algorithm on a single pixel with 263 observations
     """
-    example_data = os.path.join(
-        os.path.dirname(__file__),
-        '../../../tests/algorithms/data/example_timeseries_masked.npz')
-
     def setup_cache(self):
-        dat = np.load(self.example_data)
-        X = dat['X']
-        Y = dat['Y']
-        dates = dat['dates']
-
+        super(CCDCesquePixel263, self).setup_cache()
         kwargs = {
             'test_indices': np.array([2, 3, 4, 5]),
             'estimator': sklearn.linear_model.Lasso(alpha=[20]),
@@ -55,7 +49,8 @@ class CCDCesquePixel263(object):
             'slope_test': False,
             'idx_slope': 1
         }
-        return {'X': X, 'Y': Y, 'dates': dates, 'kwargs': kwargs}
+        return {'X': self.X, 'Y': self.Y, 'dates': self.dates,
+                'kwargs': kwargs}
 
     def time_ccdcesque1(self, setup):
         """ Bench with 'defaults' defined in setup with most tests turned off
