@@ -91,9 +91,9 @@ def map(ctx, map_type, date, output,
 
     try:
         image_ds = gdal.Open(image, gdal.GA_ReadOnly)
-    except:
-        logger.error('Could not open example image for reading')
-        raise
+    except RuntimeError as err:
+        raise click.ClickException('Could not open example image for reading '
+                                   '(%s)' % str(err))
 
     date = date.toordinal()
 
