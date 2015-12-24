@@ -138,6 +138,29 @@ def test_map_coef_pass_amplitude(example_results, tmpdir, read_image):
     np.testing.assert_allclose(img[0, diag], coef_amp_b5)
 
 
+# OLS REFIT RESULTS
+def test_map_coef_pass_refit_OLS(example_results, tmpdir, read_image):
+    """ Make a map with refit OLS results
+    """
+    image = tmpdir.join('ols_refitmap.gtif').strpath
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ['-v', 'map',
+         '--root', example_results['root'],
+         '--result', example_results['results_dir'],
+         '--image', example_results['example_img'],
+         '--refit_prefix', 'ols',
+         '--band', '5', '--coef', 'intercept',
+         'coef', '2005-06-01', image
+        ]
+    )
+    img = read_image(image)
+    assert result.exit_code == 0
+    assert img.shape == (1, 5, 5)
+
+
+
 # INTENTIONAL FAILURES
 def test_map_coef_fail_1(example_results, tmpdir, read_image):
     """ Error because of non-existent --image (trigger click.BadParameter)
