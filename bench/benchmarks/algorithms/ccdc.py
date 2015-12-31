@@ -15,10 +15,16 @@ n = 50
 def version_kwargs(d):
     """ Fix API calls for kwargs dict ``d`` that should have key ``estimator``
     """
-    ccdc_args = inspect.getargspec(CCDCesque.__init__).args
-    if 'estimator' in ccdc_args:
-        return d
-    elif 'lm' in ccdc_args:
+    argspec = inspect.getargspec(CCDCesque.__init__)
+    if 'estimator' in argspec.args:
+        # Spec updated to estimator={object': ..., 'fit': {}}
+        idx = [i for i, arg in enumerate(argspec.args)
+               if arg == 'estimator'][0] - 1
+        if isinstance(argspec.defaults[idx], dict):
+            return d
+        else:
+            d['estimator'] = {'object': d['estimator'], 'fit': {}}
+    elif 'lm' in argspec.args:
         new_key, old_key = 'lm', 'estimator'
         d[new_key] = d.pop(old_key)
         return d

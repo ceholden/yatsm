@@ -11,7 +11,6 @@ import scipy.stats
 import statsmodels.api as sm
 
 from ..regression.diagnostics import rmse
-from ..regression import robust_fit as rlm
 from ..utils import date2index
 
 logger = logging.getLogger('yatsm')
@@ -202,7 +201,7 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
         return np.all(omission, 1)
 
 
-def refit_record(model, prefix, estimator, keep_regularized=False):
+def refit_record(model, prefix, estimator, fitopt={}, keep_regularized=False):
     """ Refit YATSM model segments with a new estimator and update record
 
     YATSM class model must be ran and contain at least one record before this
@@ -214,6 +213,8 @@ def refit_record(model, prefix, estimator, keep_regularized=False):
             underscore as it will be added)
         estimator (object): instance of a scikit-learn compatible estimator
             object
+        fitopt (dict, optional): dict of options for the ``fit`` method of the
+            ``estimator`` provided (default: {})
         keep_regularized (bool, optional): do not use features with coefficient
             estimates that are fit to 0 (i.e., if using L1 regularization)
 
@@ -256,7 +257,7 @@ def refit_record(model, prefix, estimator, keep_regularized=False):
                 nonzero = np.arange(n_series)
 
             # Fit
-            estimator.fit(X[:, nonzero], y)
+            estimator.fit(X[:, nonzero], y, **fitopt)
             # Store updated coefficients
             refit[i_rec][refit_coef][nonzero, i_y] = estimator.coef_
             refit[i_rec][refit_coef][0, i_y] += getattr(

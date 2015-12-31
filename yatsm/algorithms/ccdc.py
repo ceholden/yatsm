@@ -38,10 +38,12 @@ class CCDCesque(YATSM):
 
     Args:
         test_indices (np.ndarray, optional): Test for changes with these
-            indices of Y. If not provided, all series in `Y` will be used as
-            test indices
-        estimator (sklearn compatible predictor): prediction model from
-            scikit-learn used to fit and predict timeseries
+            indices of ``Y``. If not provided, all series in ``Y`` will be used
+            as test indices
+        estimator (dict): dictionary containing estimation model from
+            ``scikit-learn`` used to fit and predict timeseries and,
+            optionally, a dict of options for the estimation model ``fit``
+            method (default: ``{'object': Lasso(alpha=20), 'fit': {}}``)
         consecutive (int, optional): Consecutive observations to trigger change
         threshold (float): Test statistic threshold for change
         min_obs (int): Minimum observations in model
@@ -55,9 +57,9 @@ class CCDCesque(YATSM):
         remove_noise (bool, optional): Remove observation if change is not
             detected but first observation is above threshold (if it looks like
             noise) (default: True)
-        green_band (int, optional): Index of green band in Y for
+        green_band (int, optional): Index of green band in ``Y`` for
             multitemporal masking (default: 1)
-        swir1_band (int, optional): Index of first SWIR band in Y for
+        swir1_band (int, optional): Index of first SWIR band in ``Y`` for
             multitemporal masking (default: 4)
         dynamic_rmse (bool, optional): Vary RMSE as a function of day of year
             (default: False)
@@ -75,7 +77,8 @@ class CCDCesque(YATSM):
 
     def __init__(self,
                  test_indices=None,
-                 estimator=sklearn.linear_model.Lasso(alpha=20),
+                 estimator={'object': sklearn.linear_model.Lasso(alpha=20),
+                            'fit': {}},
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  retrain_time=365.25, screening='RLM', screening_crit=400.0,
                  remove_noise=True, green_band=1, swir1_band=4,

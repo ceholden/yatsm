@@ -15,7 +15,6 @@ import yaml
 from yatsm.algorithms import postprocess  # TODO: implement postprocessors
 from yatsm.cli import options, console
 from yatsm.config_parser import convert_config, parse_config_file
-from yatsm import _cyprep as cyprep
 from yatsm.utils import csvfile_to_dataframe, get_image_IDs
 from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm  # noqa
@@ -98,7 +97,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     # Initialize timeseries model
     model = cfg['YATSM']['algorithm_cls']
     algo_cfg = cfg[cfg['YATSM']['algorithm']]
-    yatsm = model(estimator=cfg['YATSM']['prediction_object'],
+    yatsm = model(estimator=cfg['YATSM']['estimator'],
                   **algo_cfg.get('init', {}))
     yatsm.px = px
     yatsm.py = py
@@ -172,6 +171,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
                 'plot_VAL': plot_VAL, 'plot_results': plot_results
             }
         )
+
 
 def plot_TS(dates, y):
     """ Create a standard timeseries plot

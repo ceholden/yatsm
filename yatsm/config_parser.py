@@ -116,20 +116,27 @@ def _parse_YATSM_config(cfg):
     """
     # Unpickle main predictor
     pred_method = cfg['YATSM']['prediction']
-    cfg['YATSM']['prediction_object'] = _unpickle_predictor(
+    cfg['YATSM']['estimator'] = {'prediction': pred_method}
+    cfg['YATSM']['estimator']['object'] = _unpickle_predictor(
         _find_pickle(pred_method, cfg))
+    # Grab estimator fit options
+    cfg['YATSM']['estimator']['fit'] = cfg.get(
+        pred_method, {}).get('fit', {})
 
     # Unpickle refit objects
     if cfg['YATSM'].get('refit', {}).get('prediction', None):
         # Restore pickles
         pickles = []
+        fitopts = []
         for pred_method in cfg['YATSM']['refit']['prediction']:
             pickles.append(_unpickle_predictor(_find_pickle(pred_method, cfg)))
+            fitopts.append(cfg.get(pred_method, {}).get('fit', {}))
         cfg['YATSM']['refit']['prediction_object'] = pickles
+        cfg['YATSM']['refit']['fit'] = fitopts
     # Fill in as empty refit
     else:
         refit = dict(prefix=[], prediction=[], prediction_object=[],
-                     stay_regularized=[])
+                     stay_regularized=[], fit=[])
         cfg['YATSM']['refit'] = refit
 
     # Check number of refits

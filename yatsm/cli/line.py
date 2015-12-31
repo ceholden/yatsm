@@ -89,7 +89,7 @@ def line(ctx, config, job_number, total_jobs,
     # Initialize timeseries model
     model = cfg['YATSM']['algorithm_cls']
     algo_cfg = cfg[cfg['YATSM']['algorithm']]
-    yatsm = model(estimator=cfg['YATSM']['prediction_object'],
+    yatsm = model(estimator=cfg['YATSM']['estimator'],
                   **algo_cfg.get('init', {}))
 
     # Setup algorithm and create design matrix (if needed)
@@ -160,12 +160,14 @@ def line(ctx, config, job_number, total_jobs,
                 yatsm.record = postprocess.commission_test(
                     yatsm, cfg['YATSM']['commission_alpha'])
 
-            for prefix, estimator, stay_reg in zip(
+            for prefix, estimator, stay_reg, fitopt in zip(
                     cfg['YATSM']['refit']['prefix'],
                     cfg['YATSM']['refit']['prediction_object'],
-                    cfg['YATSM']['refit']['stay_regularized']):
+                    cfg['YATSM']['refit']['stay_regularized'],
+                    cfg['YATSM']['refit']['fit']):
                 yatsm.record = postprocess.refit_record(
-                    yatsm, prefix, estimator, keep_regularized=stay_reg)
+                    yatsm, prefix, estimator,
+                    fitopt=fitopt, keep_regularized=stay_reg)
 
             if cfg['phenology']['enable']:
                 pcfg = cfg['phenology']

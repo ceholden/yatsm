@@ -65,6 +65,7 @@ CCDCesque:
 # Regression estimators
 LassoCV:
     pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_LassoCV_n50.pkl"
+    fit:  # optional arguments to the ``fit`` method of the predictor
 
 Lasso20:
     pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_Lasso20.pkl"
@@ -77,6 +78,8 @@ GLMNET_LassoCV:
 
 GLMNET_Lasso20:
     pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl"
+    fit:
+        penalties: [1, 0, 1, 1, 1, 1]
 
 RLM:
     pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/rlm_maxiter10.pkl"

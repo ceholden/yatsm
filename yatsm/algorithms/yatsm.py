@@ -14,12 +14,13 @@ class YATSM(object):
     """ Yet Another TimeSeries Model baseclass
 
     Args:
-        test_indices (np.ndarray, optional): Test for changes with these
-            indices of Y. If not provided, all series in Y will be used as
-            test indices
-        estimator (sklearn compatible estimator): estimation model from
-            scikit-learn used to fit and predict timeseries
-            (default: ``Lasso(alpha=20)``)
+        test_indices (np.ndarray): Test for changes with these
+            indices of ``Y``. If not provided, all series in ``Y`` will be used
+            as test indices
+        estimator (dict): dictionary containing estimation model from
+            ``scikit-learn`` used to fit and predict timeseries and,
+            optionally, a dict of options for the estimation model ``fit``
+            method (default: ``{'object': Lasso(alpha=20), 'fit': {}}``)
 
     Attributes:
         record_template (np.ndarray): An empty NumPy structured array that is
@@ -27,8 +28,8 @@ class YATSM(object):
         models (np.ndarray): prediction model objects
         record (np.ndarray): NumPy structured array containing timeseries model
             attribute information
-        n_series (int): number of bands in Y
-        n_features (int): number of coefficients in X design matrix
+        n_series (int): number of bands in ``Y``
+        n_features (int): number of coefficients in ``X`` design matrix
 
     Methods:
         setup(self, df, **config): Configure model and (optionally) return
@@ -47,14 +48,14 @@ class YATSM(object):
 
     Record structured arrays must contain the following:
 
-        * start (int): starting dates of timeseries segments
-        * end (int): ending dates of timeseries segments
-        * break (int): break dates of timeseries segments
-        * coef (n x p double): number of bands x number of features
+        * ``start`` (int): starting dates of timeseries segments
+        * ``end`` (int): ending dates of timeseries segments
+        * ``break`` (int): break dates of timeseries segments
+        * ``coef`` (n x p double): number of bands x number of features
           coefficients matrix for predictions
-        * rmse (n double): Root Mean Squared Error for each band
-        * px (int): pixel X coordinate
-        * py (int): pixel Y coordinate
+        * ``rmse`` (n double): Root Mean Squared Error for each band
+        * ``px`` (int): pixel X coordinate
+        * ``py`` (int): pixel Y coordinate
 
     """
 
@@ -65,10 +66,12 @@ class YATSM(object):
 
     def __init__(self,
                  test_indices=None,
-                 estimator=sklearn.linear_model.Lasso(alpha=20),
+                 estimator={'object': sklearn.linear_model.Lasso(alpha=20),
+                            'fit': {}},
                  **kwargs):
         self.test_indices = np.asarray(test_indices)
-        self.estimator = sklearn.clone(estimator)
+        self.estimator = sklearn.clone(estimator['object'])
+        self.estimator_fit = estimator.get('fit', {})
         self.models = []  # leave empty, fill in during `fit`
 
         self.n_record = 0
@@ -186,7 +189,7 @@ class YATSM(object):
             y = Y[b, :]
 
             model = self.models[b]
-            model.fit(X, y)
+            model.fit(X, y, **self.estimator_fit)
 
             # Add in RMSE calculation
             model.rmse = rmse(y, model.predict(X))

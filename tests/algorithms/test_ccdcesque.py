@@ -18,7 +18,7 @@ from yatsm.algorithms.ccdc import CCDCesque
 def model(request):
     init = dict(
         test_indices=np.array([2, 3, 4, 5]),
-        estimator=sklearn.linear_model.Lasso(alpha=20),
+        estimator={'object': sklearn.linear_model.Lasso(alpha=20), 'fit': {}},
         consecutive=6,
         threshold=3.5,
         min_obs=24,
