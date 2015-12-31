@@ -9,6 +9,7 @@ Subpackages
     yatsm.algorithms
     yatsm.classifiers
     yatsm.cli
+    yatsm.io
     yatsm.mapping
     yatsm.phenology
     yatsm.regression
