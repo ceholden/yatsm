@@ -16,11 +16,14 @@ For information on the style of this change log, see [keepachangelog.com](http:/
 
 ### Added
 - Expose `stay_regularized` for segment refitting steps [#74](https://github.com/ceholden/yatsm/issues/74)
+- Add capability to specify `fit` section for statistical estimators that are passed to the `fit` method of the estimator [#61](https://github.com/ceholden/yatsm/issues/61)
+- `CCDCesque`: allow specification of `min_rmse` per band using an array or just one value for all bands [#75](https://github.com/ceholden/yatsm/issues/75)
 - Add submodule `yatsm.regression.diagnostics` for regression diagostics, including RMSE ([commit](https://github.com/ceholden/yatsm/commit/df582d235a6e6c8e114053015a7b7392bee8f570))
 - Add new module `yatsm.accel` with decorator (`try_jit`) that applies `numba.jit` to functions only if `numba` is available [#70](https://github.com/ceholden/yatsm/issues/70)
 - Apply `yatsm.accel.try_jit` to calculation of `yatsm.regression.diagnostics.rmse`, `yatsm.regression.robust_fit.RLM`, and others [#70](https://github.com/ceholden/yatsm/issues/70)
 - Benchmark algorithm performance across project history using [Airspeed Velocity](https://github.com/spacetelescope/asv/) [#71](https://github.com/ceholden/yatsm/issues/71)
 - Improve `clean` target in package's `setup.py` so it deletes built estimator pickles and `.c`/`.so` built with Cython ([commit](https://github.com/ceholden/yatsm/commit/bb868922a2f6f2f68c9f71153c4307e8727468cb))
+- Increase test coverage from ~20% to ~62%
 
 ### Fixed
 - `CCDCesque`: Fix bug in calculation of `end` attribute for last timeseries record [#72](https://github.com/ceholden/yatsm/issues/72)
