@@ -14,7 +14,7 @@ v0.6.0 <https://github.com/ceholden/yatsm/milestones/v0.6.0>`__
 Changed
 ~~~~~~~
 
--  ``CCDCesque``: Optimize algorithm implementation. Performance estimates show 2x speed gain`#70 <https://github.com/ceholden/yatsm/issues/70>`__
+-  ``CCDCesque``: Optimize algorithm implementation. Performance estimates show 2x speed gain `#70 <https://github.com/ceholden/yatsm/issues/70>`__
 -  CLI: Improve ``yatsm pixel`` ``--embed`` option (`commit <https://github.com/ceholden/yatsm/commit/b1cf47ff3feeeb93b9f671bccc4379a9da1ad808>`__)
 -  CLI: Add ``--verbose-yatsm`` to main ``yatsm`` command so it works with all programs running a YATSM algorithm (`commit <https://github.com/ceholden/yatsm/commit/772badc980c56d2d5c4185a40bf856bc6875be91>`__)
 
@@ -138,12 +138,12 @@ v0.5.0 - 2015-09-14
 
 `Milestone v0.5.0 <https://github.com/ceholden/yatsm/milestones/v0.5.0>`__
 
-Very backwards incompatible release required to redefine project objectives and use better technology (click & YAML) for command line interface.
+Very backwards incompatible release required to redefine project objectives and use better technology (``click`` & ``YAML``) for command line interface.
 
 Changed
 ~~~~~~~
 
--  Command line interface uses [``click``][click.pocoo.org] `#28 <https://github.com/ceholden/yatsm/issues/28>`__
+-  Command line interface uses `click <click.pocoo.org>`__ `#28 <https://github.com/ceholden/yatsm/issues/28>`__
 -  Redefine ``YATSM`` as baseclass and rename CCDC implementation to ``CCDCesque`` `#29 <https://github.com/ceholden/yatsm/issues/28>`__
 -  Specify prediction method using serialized "pickle" instances of ``scikit-learn`` compatible estimators `#26 <https://github.com/ceholden/yatsm/issues/26>`__
 -  Configuration file now uses ``YAML`` format for better organization and more sustainable parsing `#30 <https://github.com/ceholden/yatsm/issues/30>`__
