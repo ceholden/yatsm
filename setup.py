@@ -73,7 +73,7 @@ with open('yatsm/version.py') as f:
             continue
 
 # Get README
-with open('README.md') as f:
+with open('README.rst') as f:
     readme = f.read()
 
 # Installation requirements
