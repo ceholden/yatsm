@@ -87,7 +87,8 @@ install_requires = [
     'click',
     'click_plugins',
     'palettable',
-    'patsy'
+    'patsy',
+    'GDAL'
 ]
 
 # NumPy/Cython build setup
