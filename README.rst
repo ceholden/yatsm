@@ -100,6 +100,14 @@ A complete installation of YATSM, including acceleration dependencies and additi
 
         pip install -r requirements/all.txt
 
+
+Finally, install YATSM:
+
+.. code:: bash
+
+        # Install YATSM
+        pip install .
+
 Conda
 ~~~~~
 
@@ -116,6 +124,14 @@ Since conda_ makes installation so easy, installation through conda_ will instal
         conda env create -n yatsm -f environment.yaml
         # Activate
         source activate yatsm
+
+And as with ``pip``, you need to install ``YATSM``:
+
+.. code:: bash
+        
+        # Install YATSM
+        pip install .
+
 
 .. |Build Status| image:: https://travis-ci.org/ceholden/yatsm.svg
    :target: https://travis-ci.org/ceholden/yatsm
