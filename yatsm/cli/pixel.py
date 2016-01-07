@@ -118,15 +118,18 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     # Preprocess pixel data
     X, Y, dates = yatsm.preprocess(X, Y, dates, **cfg)
 
+    # Convert ordinal to datetime
+    dt_dates = np.array([dt.datetime.fromordinal(d) for d in dates])
+
     # Plot before fitting
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
-                plot_TS(dates, Y[band, :])
+                plot_TS(dt_dates, Y[band, :])
             elif _plot == 'DOY':
-                plot_DOY(dates, Y[band, :], mpl_cmap)
+                plot_DOY(dt_dates, Y[band, :], mpl_cmap)
             elif _plot == 'VAL':
-                plot_VAL(dates, Y[band, :], mpl_cmap)
+                plot_VAL(dt_dates, Y[band, :], mpl_cmap)
 
             if ylim:
                 plt.ylim(ylim)
@@ -142,11 +145,11 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
-                plot_TS(dates, Y[band, :])
+                plot_TS(dt_dates, Y[band, :])
             elif _plot == 'DOY':
-                plot_DOY(dates, Y[band, :], mpl_cmap)
+                plot_DOY(dt_dates, Y[band, :], mpl_cmap)
             elif _plot == 'VAL':
-                plot_VAL(dates, Y[band, :], mpl_cmap)
+                plot_VAL(dt_dates, Y[band, :], mpl_cmap)
 
             if ylim:
                 plt.ylim(ylim)
@@ -237,7 +240,7 @@ def plot_VAL(dates, y, mpl_cmap, reps=2):
 
 
 def plot_results(band, cfg, model, design_info, plot_type='TS'):
-    """ Create a DOY plot
+    """ Plot model results
 
     Args:
         band (int): plot results for this band
@@ -273,7 +276,7 @@ def plot_results(band, cfg, model, design_info, plot_type='TS'):
                 bx = dt.datetime.fromordinal(r['break'])
                 plt.axvline(bx, c='red', lw=2)
 
-        elif plot_type == 'DOY':
+        elif plot_type in ('DOY', 'VAL'):
             yr_end = dt.datetime.fromordinal(r['end']).year
             yr_start = dt.datetime.fromordinal(r['start']).year
             yr_mid = int(yr_end - (yr_end - yr_start) / 2)
