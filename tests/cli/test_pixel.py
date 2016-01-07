@@ -27,3 +27,19 @@ def test_cli_pixel_pass_1(example_timeseries):
          example_timeseries['config'], '1', '1'
          ])
     assert result.exit_code == 0
+
+
+@mpl_skip
+def test_cli_pixel_pass_2(example_timeseries):
+    """ Correctly run for one pixel for 3 plots
+    """
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ['-v', 'pixel',
+         '--band', '5',
+         '--plot', 'TS', '--plot', 'DOY', '--plot', 'VAL',
+         '--style', 'ggplot',
+         example_timeseries['config'], '1', '1'
+         ])
+    assert result.exit_code == 0
