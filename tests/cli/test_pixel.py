@@ -3,12 +3,17 @@
 import os
 
 from click.testing import CliRunner
+import matplotlib as mpl
 import pytest
 
 from yatsm.cli.main import cli
 
+mpl_skip = pytest.mark.skipif(
+    mpl.get_backend() != 'agg' and "DISPLAY" not in os.environ,
+    reason='Requires either matplotlib "agg" backend or that DISPLAY" is set')
 
-@pytest.mark.skipif("DISPLAY" not in os.environ, reason="requires display")
+
+@mpl_skip
 def test_cli_pixel_pass_1(example_timeseries):
     """ Correctly run for one pixel
     """

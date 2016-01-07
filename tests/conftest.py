@@ -10,6 +10,11 @@ try:
 except ImportError:
     from scandir import walk
 
+if os.environ.get('TRAVIS'):
+    # use agg backend on TRAVIS for testing so DISPLAY isn't required
+    import matplotlib as mpl
+    mpl.use('agg')
+
 import numpy as np
 import pandas as pd
 import yaml
