@@ -13,6 +13,5 @@ click>=4.0
 click_plugins>=1.0
 # Plotting
 matplotlib>=1.4.2
-palettable>=2.0.0
 # Config file
 pyyaml>=3.11

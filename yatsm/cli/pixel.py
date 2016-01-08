@@ -6,9 +6,9 @@ import re
 
 import click
 import matplotlib as mpl
+import matplotlib.cm
 import matplotlib.pyplot as plt
 import numpy as np
-import palettable
 import patsy
 import yaml
 
@@ -20,6 +20,11 @@ from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm  # noqa
 
 avail_plots = ['TS', 'DOY', 'VAL']
+
+PLOT_CMAP = 'viridis'
+if PLOT_CMAP not in mpl.cm.cmap_d:
+    PLOT_CMAP = 'cubehelix'
+
 
 plot_styles = []
 if hasattr(mpl, 'style'):
@@ -43,8 +48,8 @@ logger = logging.getLogger('yatsm')
 @click.option('--style', metavar='<style>', default='ggplot',
               show_default=True, type=click.Choice(plot_styles),
               help='Plot style')
-@click.option('--cmap', metavar='<cmap>', default='perceptual_rainbow_16',
-              show_default=True, help='DOY plot colormap')
+@click.option('--cmap', metavar='<cmap>', default=PLOT_CMAP,
+              show_default=True, help='DOY/VAL plot colormap')
 @click.option('--embed', is_flag=True,
               help='Drop to (I)Python interpreter at various points')
 @click.option('--seed', help='Set NumPy RNG seed value')
@@ -59,15 +64,9 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     band -= 1
 
     # Get colormap
-    if hasattr(palettable.colorbrewer, cmap):
-        mpl_cmap = getattr(palettable.colorbrewer, cmap).mpl_colormap
-    elif hasattr(palettable.cubehelix, cmap):
-        mpl_cmap = getattr(palettable.cubehelix, cmap).mpl_colormap
-    elif hasattr(palettable.wesanderson, cmap):
-        mpl_cmap = getattr(palettable.wesanderson, cmap).mpl_colormap
-    else:
-        click.secho('Cannot find specified colormap in `palettable`', fg='red')
-        raise click.Abort()
+    if cmap not in mpl.cm.cmap_d:
+        raise click.ClickException('Cannot find specified colormap ({}) in '
+                                   'matplotlib'.format(cmap))
 
     # Parse config
     cfg = parse_config_file(config)
@@ -127,9 +126,9 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             if _plot == 'TS':
                 plot_TS(dt_dates, Y[band, :])
             elif _plot == 'DOY':
-                plot_DOY(dt_dates, Y[band, :], mpl_cmap)
+                plot_DOY(dt_dates, Y[band, :], cmap)
             elif _plot == 'VAL':
-                plot_VAL(dt_dates, Y[band, :], mpl_cmap)
+                plot_VAL(dt_dates, Y[band, :], cmap)
 
             if ylim:
                 plt.ylim(ylim)
@@ -147,9 +146,9 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
             if _plot == 'TS':
                 plot_TS(dt_dates, Y[band, :])
             elif _plot == 'DOY':
-                plot_DOY(dt_dates, Y[band, :], mpl_cmap)
+                plot_DOY(dt_dates, Y[band, :], cmap)
             elif _plot == 'VAL':
-                plot_VAL(dt_dates, Y[band, :], mpl_cmap)
+                plot_VAL(dt_dates, Y[band, :], cmap)
 
             if ylim:
                 plt.ylim(ylim)

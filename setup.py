@@ -86,7 +86,6 @@ install_requires = [
     'matplotlib',
     'click',
     'click_plugins',
-    'palettable',
     'patsy',
     'GDAL'
 ]
