@@ -21,7 +21,8 @@ from yatsm.regression.transforms import harm  # noqa
 
 avail_plots = ['TS', 'DOY', 'VAL']
 
-PLOT_CMAP = 'viridis'
+_DEFAULT_PLOT_CMAP = 'viridis'
+PLOT_CMAP = _DEFAULT_PLOT_CMAP
 if PLOT_CMAP not in mpl.cm.cmap_d:
     PLOT_CMAP = 'cubehelix'
 
@@ -108,11 +109,12 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     # Read pixel data
     Y = read_pixel_timeseries(df['filename'], px, py)
     if Y.shape[0] != cfg['dataset']['n_bands']:
-        logger.error('Number of bands in image %s (%i) do not match number '
-                     'in configuration file (%i)' %
-                     (df['filename'][0], Y.shape[0],
-                      cfg['dataset']['n_bands']))
-        raise click.Abort()
+        raise click.ClickException(
+            'Number of bands in image {f} ({nf}) do not match number in '
+            'configuration file ({nc})'.format(
+                f=df['filename'][0],
+                nf=Y.shape[0],
+                nc=cfg['dataset']['n_bands']))
 
     # Preprocess pixel data
     X, Y, dates = yatsm.preprocess(X, Y, dates, **cfg)
