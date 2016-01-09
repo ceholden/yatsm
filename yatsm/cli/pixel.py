@@ -73,18 +73,10 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     cfg = parse_config_file(config)
 
     # Apply algorithm overrides
-    revalidate = False
     for kw in algo_kw:
-        for cfg_key in cfg:
-            if kw in cfg[cfg_key]:
-                # Parse as YAML for type conversions used in config parser
-                value = yaml.load(algo_kw[kw])
-
-                print('Overriding cfg[%s][%s]=%s with %s' %
-                      (cfg_key, kw, cfg[cfg_key][kw], value))
-                cfg[cfg_key][kw] = value
-                revalidate = True
-    if revalidate:
+        value = yaml.load(algo_kw[kw])
+        cfg = trawl_replace_keys(cfg, kw, value)
+    if algo_kw:  # revalidate configuration
         cfg = convert_config(cfg)
 
     # Dataset information
@@ -297,42 +289,20 @@ def plot_results(band, cfg, model, design_info, plot_type='TS'):
     leg.draggable(state=True)
 
 
-def plot_lasso_debug(model):
-    """ See example:
-    http://scikit-learn.org/stable/auto_examples/linear_model/plot_lasso_model_selection.html
-    """
-    m_log_alphas = -np.log10(model.alphas_)
-    plt.plot(m_log_alphas, model.mse_path_, ':')
-    plt.plot(m_log_alphas, model.mse_path_.mean(axis=-1), 'k',
-             label='Average across the folds', linewidth=2)
-    plt.axvline(-np.log10(model.alpha_), linestyle='--', color='k',
-                label='alpha: CV estimate')
-    plt.xlabel('-log(alpha)')
-    plt.ylabel('Mean square error')
-    plt.title('Mean square error on each fold: coordinate descent')
-
-
 # UTILITY FUNCTIONS
-def type_convert(value, example):
-    """ Convert value (str) to dtype of `example`
-
-    Args:
-      value (str): string value to convert type
-      example (int, float, bool, list, tuple, np.ndarray, etc.): `value`
-        converted to type of `example` variable
-
+def trawl_replace_keys(d, key, value, s=''):
+    """ Return modified dictionary ``d``
     """
-    dtype = type(example)
-    if dtype is int:
-        return int(value)
-    elif dtype is float:
-        return float(value)
-    elif dtype in (list, tuple, np.ndarray):
-        _dtype = type(example[0])
-        return np.array([_dtype(v) for v in value.replace(',', ' ').split(' ')
-                         if v])
-    elif dtype is bool:
-        if value.lower()[0] in ('t', 'y'):
-            return True
+    md = d.copy()
+    for _key in md:
+        if isinstance(md[_key], dict):
+            # Recursively replace
+            md[_key] = trawl_replace_keys(md[_key], key, value,
+                                          s='{}[{}]'.format(s, _key))
         else:
-            return False
+            if _key == key:
+                s += '[{}]'.format(_key)
+                click.echo('Replacing d{k}={ov} with {nv}'
+                           .format(k=s, ov=md[_key], nv=value))
+                md[_key] = value
+    return md

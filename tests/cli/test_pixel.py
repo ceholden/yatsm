@@ -58,10 +58,27 @@ def test_cli_pixel_pass_3(example_timeseries, monkeypatch):
     result = runner.invoke(
         cli,
         ['-v', 'pixel',
-         '--band', '5',
+         '--band', '5', '--ylim', '0', '10000',
          '--plot', 'TS', '--plot', 'DOY', '--plot', 'VAL',
          '--style', 'ggplot',
          example_timeseries['config'], '1', '1'
+         ])
+    assert result.exit_code == 0
+
+
+@mpl_skip
+def test_cli_pixel_pass_4(example_timeseries):
+    """ Correctly run for one pixel with change and override algorithm config
+    """
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ['-v', 'pixel',
+         '--band', '5',
+         '--plot', 'TS',
+         '--algo_kw', 'consecutive=3',
+         '--style', 'ggplot',
+         example_timeseries['config'], '1', '3'
          ])
     assert result.exit_code == 0
 
