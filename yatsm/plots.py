@@ -71,8 +71,8 @@ def plot_feature_importance(algo, cfg):
     n_bands = cfg['dataset']['n_bands'] - 1
 
     # Form betas from design matrix
-    if 'design_info' not in cfg['YATSM']:
-        logger.warning('Design info not provided to plot -- will use less '
+    if 'design' not in cfg['YATSM']:
+        logger.warning('Design info not provided to plot -- will use basic '
                        'coefficient labels')
         # First remove out RMSE  # TODO: check if we used RMSE
         n_feat = algo.feature_importances_.size - n_bands
@@ -81,7 +81,7 @@ def plot_feature_importance(algo, cfg):
     else:
         # Rename slope, convert harm.*[0] to cos, and harm.*[1] to sin
         betas = []
-        for _beta in cfg['YATSM']['design_info'].keys():
+        for _beta in cfg['YATSM']['design'].keys():
             _beta = re.sub(r'^x$', 'slope', _beta)
             _beta = re.sub(r'harm(.*)\[0\]', r'cos\1', _beta)
             _beta = re.sub(r'harm(.*)\[1\]', r'sin\1', _beta)
