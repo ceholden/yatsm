@@ -1,0 +1,95 @@
+""" Test ``yatsm train``
+"""
+import os
+import shutil
+
+from click.testing import CliRunner
+import matplotlib as mpl
+import pytest
+
+from yatsm.cli.main import cli
+
+mpl_skip = pytest.mark.skipif(
+    mpl.get_backend() != 'agg' and "DISPLAY" not in os.environ,
+    reason='Requires either matplotlib "agg" backend or that DISPLAY" is set')
+
+
+def test_train_pass_1(example_timeseries, example_results, modify_config,
+                      tmpdir):
+    """ Correctly run training script
+    """
+    mod_cfg = {'dataset': {'output': example_results['results_dir']}}
+    tmppkl = tmpdir.join('tmp.pkl').strpath
+    with modify_config(example_timeseries['config'], mod_cfg) as cfg:
+        runner = CliRunner()
+        result = runner.invoke(
+            cli, [
+                '-v', 'train',
+                cfg,
+                example_timeseries['classify_config'],
+                tmppkl
+            ]
+        )
+    assert result.exit_code == 0
+
+
+def test_train_pass_2(example_timeseries, example_results, modify_config,
+                      tmpdir):
+    """ Correctly run training script, overwriting a result
+    """
+    tmppkl = tmpdir.join('tmp.pkl').strpath
+    shutil.copyfile(example_timeseries['example_classify_pickle'], tmppkl)
+    mod_cfg = {'dataset': {'output': example_results['results_dir']}}
+    with modify_config(example_timeseries['config'], mod_cfg) as cfg:
+        runner = CliRunner()
+        result = runner.invoke(
+            cli, [
+                '-v', 'train', '--overwrite',
+                cfg,
+                example_timeseries['classify_config'],
+                tmppkl
+            ]
+        )
+    assert result.exit_code == 0
+
+
+@mpl_skip
+def test_train_pass_3(example_timeseries, example_results, modify_config):
+    """ Correctly run training script with plots
+    """
+    mod_cfg = {'dataset': {'output': example_results['results_dir']}}
+    with modify_config(example_timeseries['config'], mod_cfg) as cfg:
+        shutil.copy(cfg, 'test.yaml')
+        runner = CliRunner()
+        result = runner.invoke(
+            cli, [
+                '-v', 'train', '--overwrite',
+                '--plot', '--diagnostics',
+                cfg,
+                example_timeseries['classify_config'],
+                example_timeseries['example_classify_pickle']
+            ]
+        )
+        assert result.exit_code == 0
+
+
+# FAILURES
+def test_train_fail_1(example_timeseries, example_results, modify_config,
+                      tmpdir):
+    """ Fail because of existing pickle file
+    """
+    tmppkl = tmpdir.join('tmp.pkl').strpath
+    shutil.copyfile(example_timeseries['example_classify_pickle'], tmppkl)
+    mod_cfg = {'dataset': {'output': example_results['results_dir']}}
+    with modify_config(example_timeseries['config'], mod_cfg) as cfg:
+        runner = CliRunner()
+        result = runner.invoke(
+            cli, [
+                '-v', 'train',
+                cfg,
+                example_timeseries['classify_config'],
+                tmppkl
+            ]
+        )
+    assert result.exit_code == 1
+    assert '<model> exists and --overwrite was not specified' in result.output

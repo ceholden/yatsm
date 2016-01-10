@@ -102,6 +102,7 @@ def test_cli_line_fail_2(example_timeseries, modify_config):
         assert result.exit_code == 1
         assert 'Number of bands in' in result.output
 
+
 # PHENOLOGY
 @pytest.fixture(scope='function')
 def break_pheno(request):

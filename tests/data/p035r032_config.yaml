@@ -88,8 +88,8 @@ classification:
     # Training data masked values
     roi_mask_values: [0, 255]
     # Date range
-    training_start: "1999-01-01"
-    training_end: "2001-01-01"
+    training_start: "1995-01-01"
+    training_end: "1996-01-01"
     training_date_format: "%Y-%m-%d"
     # Cache X feature input and y labels for training data image into file?
     cache_training:

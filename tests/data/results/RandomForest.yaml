@@ -1,0 +1,33 @@
+# Default configuration file for Random Forest algorithm
+#
+# See sklearn implementation API here:
+# http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html
+
+algorithm: RandomForest
+
+# Specify algorithm and hyperparameters
+RandomForest:
+    init:  # hyperparameters
+        # Number of trees in forest
+        n_estimators: 500
+        # Criterion for qualify of split ['gini', 'entropy']
+        criterion: "gini"
+        # number of features tried at each node
+        max_features: "auto"
+        # maximum depth orf tree
+        max_depth:
+        # minimum number of samples required to split an internal node
+        min_samples_split: 2
+        # minimum number of samples in newly created leaves
+        min_samples_leaf: 1
+        # maximum leaf nodes -- if not None max_depth is ignored
+        max_leaf_nodes:
+        # Use bootstrap sample
+        bootstrap: True
+        # use out-of-bag sample for generalization error
+        oob_score: True
+        # number of jobs in parallel for fit and predict
+        n_jobs: 1
+    fit:  # data-dependent fit parameters
+        # Sample weights for training data
+        sample_weight:

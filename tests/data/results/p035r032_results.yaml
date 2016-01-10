@@ -25,9 +25,9 @@ classification:
   cache_training: null
   roi_mask_values: [0, 255]
   training_date_format: '%Y-%m-%d'
-  training_end: '2001-01-01'
+  training_end: '1995-01-01'
   training_image: TRAINING_IMAGE
-  training_start: '1999-01-01'
+  training_start: '1996-01-01'
 dataset:
   cache_line_dir: /tmp/tmpSzGdKC_yatsm/cache
   date_format: '%Y%j'
@@ -43,7 +43,7 @@ dataset:
   swir1_band: 5
   use_bip_reader: false
 phenology:
-  enable: true 
+  enable: true
   init: {blue_index: 0, evi_index: null, evi_scale: null, nir_index: 3, q_max: 90,
     q_min: 10, red_index: 2, scale: 0.0001, year_interval: 3}
 version: 0.6.0

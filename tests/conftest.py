@@ -24,6 +24,11 @@ import pytest
 here = os.path.dirname(__file__)
 example_cachedir = os.path.join(here, 'data', 'cache')
 example_cachefile = os.path.join(example_cachedir, 'yatsm_r0_n447_b8.npy.npz')
+example_training = os.path.join(here, 'data', 'results',
+                                'training_image_1995-06-01.gtif')
+example_classify_config = os.path.join(here, 'data', 'results',
+                                       'RandomForest.yaml')
+example_classify_pickle = os.path.join(here, 'data', 'results', 'train_rf.pkl')
 yaml_config = os.path.join(here, 'data', 'p035r032_config.yaml')
 
 
@@ -71,6 +76,7 @@ def example_timeseries(request):
     config['dataset']['input_file'] = input_file
     config['dataset']['output'] = os.path.join(path, 'YATSM')
     config['dataset']['cache_line_dir'] = os.path.join(path, 'cache')
+    config['classification']['training_image'] = example_training
     yaml.dump(config, open(dest_config, 'w'))
 
     return {
@@ -79,7 +85,9 @@ def example_timeseries(request):
         'image_IDs': stack_image_IDs,
         'input_file': input_file,
         'images.csv': df,
-        'config': dest_config
+        'config': dest_config,
+        'classify_config': example_classify_config,
+        'example_classify_pickle': example_classify_pickle
     }
 
 
