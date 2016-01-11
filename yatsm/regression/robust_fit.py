@@ -239,28 +239,3 @@ class RLM(object):
             setattr(self, key, value)
 
         return self
-
-
-if __name__ == '__main__':
-    # Do some tests versus `statsmodels.robust.RLM`
-    import timeit
-
-    setup = 'from __main__ import RLM; import statsmodels.api as sm; import numpy as np; np.random.seed(123456789); y = np.random.rand(1000); X = np.random.rand(1000, 4)'
-    my_rlm = 'my_rlm = RLM().fit(X, y)'
-    sm_rlm = 'sm_rlm = sm.RLM(y, X, M=sm.robust.norms.TukeyBiweight()).fit(conv="coefs")'
-
-    ns = {}
-    exec setup in ns
-    exec my_rlm in ns
-    exec sm_rlm in ns
-    if np.allclose(ns['my_rlm'].coef_, ns['sm_rlm'].params):
-        print('Pass: Two RLM solutions produce the same answers')
-    else:
-        print('Error: Two RLM solutions do not produce the same answers')
-
-    t_my_rlm = timeit.timeit(stmt=my_rlm, setup=setup, number=1000)
-    t_sm_rlm = timeit.timeit(stmt=sm_rlm, setup=setup, number=1000)
-
-    print('My RLM: {t}s'.format(t=t_my_rlm))
-    print('statsmodels RLM: {t}s'.format(t=t_sm_rlm))
-    print('Speedup: {t}%'.format(t=t_sm_rlm / t_my_rlm * 100))
