@@ -1,7 +1,6 @@
 """ Test ``yatsm train``
 """
 import os
-import shutil
 
 from click.testing import CliRunner
 import matplotlib as mpl
@@ -26,7 +25,7 @@ def test_train_pass_1(example_timeseries, example_results, modify_config,
             cli, [
                 '-v', 'train',
                 cfg,
-                example_timeseries['classify_config'],
+                example_results['classify_config'],
                 tmppkl
             ]
         )
@@ -37,8 +36,6 @@ def test_train_pass_2(example_timeseries, example_results, modify_config,
                       tmpdir):
     """ Correctly run training script, overwriting a result
     """
-    tmppkl = tmpdir.join('tmp.pkl').strpath
-    shutil.copyfile(example_timeseries['example_classify_pickle'], tmppkl)
     mod_cfg = {'dataset': {'output': example_results['results_dir']}}
     with modify_config(example_timeseries['config'], mod_cfg) as cfg:
         runner = CliRunner()
@@ -46,8 +43,8 @@ def test_train_pass_2(example_timeseries, example_results, modify_config,
             cli, [
                 '-v', 'train', '--overwrite',
                 cfg,
-                example_timeseries['classify_config'],
-                tmppkl
+                example_results['classify_config'],
+                example_results['example_classify_pickle']
             ]
         )
     assert result.exit_code == 0
@@ -59,15 +56,14 @@ def test_train_pass_3(example_timeseries, example_results, modify_config):
     """
     mod_cfg = {'dataset': {'output': example_results['results_dir']}}
     with modify_config(example_timeseries['config'], mod_cfg) as cfg:
-        shutil.copy(cfg, 'test.yaml')
         runner = CliRunner()
         result = runner.invoke(
             cli, [
                 '-v', 'train', '--overwrite',
                 '--plot', '--diagnostics',
                 cfg,
-                example_timeseries['classify_config'],
-                example_timeseries['example_classify_pickle']
+                example_results['classify_config'],
+                example_results['example_classify_pickle']
             ]
         )
         assert result.exit_code == 0
@@ -78,8 +74,6 @@ def test_train_fail_1(example_timeseries, example_results, modify_config,
                       tmpdir):
     """ Fail because of existing pickle file
     """
-    tmppkl = tmpdir.join('tmp.pkl').strpath
-    shutil.copyfile(example_timeseries['example_classify_pickle'], tmppkl)
     mod_cfg = {'dataset': {'output': example_results['results_dir']}}
     with modify_config(example_timeseries['config'], mod_cfg) as cfg:
         runner = CliRunner()
@@ -87,8 +81,8 @@ def test_train_fail_1(example_timeseries, example_results, modify_config,
             cli, [
                 '-v', 'train',
                 cfg,
-                example_timeseries['classify_config'],
-                tmppkl
+                example_results['classify_config'],
+                example_results['example_classify_pickle']
             ]
         )
     assert result.exit_code == 1

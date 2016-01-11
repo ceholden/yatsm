@@ -26,10 +26,10 @@ example_cachedir = os.path.join(here, 'data', 'cache')
 example_cachefile = os.path.join(example_cachedir, 'yatsm_r0_n447_b8.npy.npz')
 example_training = os.path.join(here, 'data', 'results',
                                 'training_image_1995-06-01.gtif')
-example_classify_config = os.path.join(here, 'data', 'results',
-                                       'RandomForest.yaml')
-example_classify_pickle = os.path.join(here, 'data', 'results', 'train_rf.pkl')
 yaml_config = os.path.join(here, 'data', 'p035r032_config.yaml')
+
+example_classify_config = 'RandomForest.yaml'
+example_classify_pickle = 'train_rf.pkl'
 
 
 # EXAMPLE DATASETS
@@ -86,8 +86,6 @@ def example_timeseries(request):
         'input_file': input_file,
         'images.csv': df,
         'config': dest_config,
-        'classify_config': example_classify_config,
-        'example_classify_pickle': example_classify_pickle
     }
 
 
@@ -100,7 +98,9 @@ def example_results(request, tmpdir):
         'root': dst,
         'results_dir': os.path.join(dst, 'YATSM'),
         'results_dir_classified': os.path.join(dst, 'YATSM_classified'),
-        'example_img': os.path.join(dst, 'example_image.gtif')
+        'example_img': os.path.join(dst, 'example_image.gtif'),
+        'classify_config': os.path.join(dst, example_classify_config),
+        'example_classify_pickle': os.path.join(dst, example_classify_pickle)
     }
     return results
 
