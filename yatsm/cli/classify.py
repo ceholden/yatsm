@@ -68,11 +68,11 @@ def try_resume(filename):
     """ Return True/False if dataset has already been classified
 
     Args:
-      filename (str): filename of the result to be checked
+        filename (str): filename of the result to be checked
 
     Returns:
-      bool: If the `npz` file exists and contains a file 'class', this test
-        will return True, else False.
+        bool: If the `npz` file exists and contains a file 'class', this test
+            will return True, else False.
 
     """
     try:
@@ -90,8 +90,8 @@ def classify_line(filename, classifier):
     """ Use `classifier` to classify data stored in `filename`
 
     Args:
-      filename (str): filename of stored results
-      classifier (sklearn classifier): pre-trained classifier
+        filename (str): filename of stored results
+        classifier (sklearn classifier): pre-trained classifier
 
     """
     z = np.load(filename)

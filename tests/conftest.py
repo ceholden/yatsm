@@ -1,4 +1,3 @@
-from datetime import datetime as dt
 import fnmatch
 from functools import partial
 import os
@@ -15,11 +14,11 @@ if os.environ.get('TRAVIS'):
     import matplotlib as mpl
     mpl.use('agg')
 
-import numpy as np
-import pandas as pd
-import yaml
+import numpy as np  # noqa
+import pandas as pd  # noqa
+import pytest  # noqa
+import yaml  # noqa
 
-import pytest
 
 here = os.path.dirname(__file__)
 example_cachedir = os.path.join(here, 'data', 'cache')
