@@ -18,6 +18,7 @@ import inspect
 # https://github.com/numba/numba/issues/1559
 import numpy
 import six
+import sklearn
 
 from yatsm.accel import try_jit
 
@@ -98,7 +99,7 @@ def _weight_fit(X, y, w):
 
 
 # Robust regression
-class RLM(object):
+class RLM(sklearn.base.BaseEstimator):
     """ Robust Linear Model using Iterative Reweighted Least Squares (RIRLS)
 
     Perform robust fitting regression via iteratively reweighted least squares
@@ -190,52 +191,3 @@ class RLM(object):
                 (self.__class__.__name__,
                  numpy.array_str(self.coef_, precision=4),
                  self.intercept_))
-
-    # SUPPORT CLONING VIA sklearn
-    def get_params(self, deep=True):
-        """ Return parameters for this estimator
-
-        Args:
-            deep (bool): return the parameters from parameters of this
-                estimator that are also estimators
-
-        Returns:
-            dict: parameter names mapped to their values
-
-        """
-        # Get our own __init__ signature
-        args, _, _, _ = inspect.getargspec(self.__init__)
-        args.pop(0)  # remove `self` from __init__
-
-        params = dict()
-        for key in args:
-            value = getattr(self, key, None)
-
-            if deep and hasattr(value, 'get_params'):
-                deep_items = value.get_params().items()
-                params.update((key + '__' + k, val) for k, val in deep_items)
-            params[key] = value
-
-        return params
-
-    def set_params(self, **params):
-        """ Set parameters for estimator
-
-        Args:
-            params (dict): dict of parameter=value to set
-
-        Returns:
-            self
-        """
-        if not params:
-            return self
-
-        _params = self.get_params()
-
-        for key, value in six.iteritems(params):
-            if key not in _params:
-                raise ValueError('Invalid parameter %s for %s' %
-                                 (key, self.__class__.__name__))
-            setattr(self, key, value)
-
-        return self
