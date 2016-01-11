@@ -92,15 +92,17 @@ def example_timeseries(request):
 
 
 @pytest.fixture(scope='function')
-def example_results(request):
-    return {
-        'root': os.path.join(here, 'data', 'results'),
-        'results_dir': os.path.join(here, 'data', 'results', 'YATSM'),
-        'results_dir_classified': os.path.join(here, 'data', 'results',
-                                               'YATSM_classified'),
-        'example_img': os.path.join(here, 'data', 'results',
-                                    'example_image.gtif')
+def example_results(request, tmpdir):
+    dst = os.path.join(tmpdir.mkdir('data').strpath, 'results')
+    shutil.copytree(os.path.join(here, 'data', 'results'), dst)
+
+    results = {
+        'root': dst,
+        'results_dir': os.path.join(dst, 'YATSM'),
+        'results_dir_classified': os.path.join(dst, 'YATSM_classified'),
+        'example_img': os.path.join(dst, 'example_image.gtif')
     }
+    return results
 
 
 @pytest.fixture(scope='session')
