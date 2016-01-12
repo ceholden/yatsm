@@ -21,8 +21,6 @@ before_install:
     # Update conda
     - conda update --yes conda
 install:
-    # TEMPORARY WORKAROUND FOR md5sum MISMATCH IN R CHANNEL
-    - ./fix_conda_md5sum_problem.sh
     # Create conda matching requirements
     - conda env create -n test python=$TRAVIS_PYTHON_VERSION -f environment.yaml
     - source activate test

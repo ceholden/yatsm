@@ -2,7 +2,7 @@
 # Includes optional dependencies since conda makes installing them pretty easy
 name: yatsm
 channels:
-    - r
+    - asmeurer
 dependencies:
     # Base
     - python=2.7
