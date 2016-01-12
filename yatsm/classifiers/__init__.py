@@ -26,13 +26,21 @@ def cfg_to_algorithm(config_file):
     Returns:
         tuple: scikit-learn estimator (object) and configuration file (dict)
 
+    Raises:
+        KeyError: raise if configuration file is malformed
+        AlgorithmNotFoundException: raise if algorithm is not implemented in
+            YATSM
+        TypeError: raise if configuration file cannot be used to initialize
+            the classifier
+
     """
     # Determine which algorithm is used
     try:
         with open(config_file, 'r') as f:
             config = yaml.safe_load(f)
-    except:
-        logger.error('Could not read config file %s' % config_file)
+    except Exception as e:
+        logger.error('Could not read config file {} ({})'
+                     .format(config_file, str(e)))
         raise
 
     algo_name = config['algorithm']
