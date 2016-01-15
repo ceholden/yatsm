@@ -13,14 +13,12 @@ except ImportError:
 
 # Alter expected JIT'd function class based on environment variable
 if os.environ.get('NUMBA_DISABLE_JIT') is not None:
-    jitd_class = nb.decorators.DisableJitWrapper
+    nb.config.DISABLE_JIT = 1
+    jitd_class = type(nb.jit(lambda x: x ** 2))
     jit_enabled = False
 else:
-    # numba >= 0.23.0: CPUOverloaded -> CPUDispatcher
-    try:
-        jitd_class = nb.targets.registry.CPUDispatcher
-    except:
-        jitd_class = nb.targets.registry.CPUOverloaded
+    nb.config.DISABLE_JIT = 0
+    jitd_class = type(nb.jit(lambda x: x ** 2))
     jit_enabled = True
 
 
