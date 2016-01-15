@@ -29,16 +29,16 @@ classification:
   training_image: TRAINING_IMAGE
   training_start: '1996-01-01'
 dataset:
-  cache_line_dir: /tmp/tmpSzGdKC_yatsm/cache
+  cache_line_dir: p035r032/cache
   date_format: '%Y%j'
   green_band: 2
-  input_file: /tmp/tmpSzGdKC_yatsm/images.csv
+  input_file: results/images.csv
   mask_band: 8
   mask_values: [2, 3, 4, 255]
   max_values: 10000
   min_values: 0
   n_bands: 8
-  output: /tmp/tmpSzGdKC_yatsm/YATSM
+  output: results/YATSM
   output_prefix: yatsm_r
   swir1_band: 5
   use_bip_reader: false
