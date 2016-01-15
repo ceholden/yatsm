@@ -17,20 +17,20 @@ dummies = np.arange(28, 35)
 rmse = np.arange(35, 42)
 all_coef = [intercepts, slopes, seasonality_1, seasonality_2, dummies, rmse]
 # SWIR coefficients for Lasso20
-coef_int_b5 = np.array([-9999., -16322.921875, 16221.29199219,
+coef_int_b5 = np.array([-9999., -16441.076172, 16221.29199219,
                         117207.890625, 393939.25], dtype=np.float32)
-coef_slope_b5 = np.array([-9.99900000e+03, 2.31609251e-02, -2.05697268e-02,
+coef_slope_b5 = np.array([-9.99900000e+03, 2.333318e-02, -2.05697268e-02,
                           -1.55864090e-01, -5.34402490e-01], dtype=np.float32)
-coef_season1_b5 = np.array([-9999., -13.01419163, -0., -0., -0.],
+coef_season1_b5 = np.array([-9999., -3.76317239, -0., -0., -0.],
                            dtype=np.float32)
-coef_season2_b5 = np.array([-9999., 108.34246826, 165.92492676, 228.65888977,
+coef_season2_b5 = np.array([-9999., 112.587677, 165.92492676, 228.65888977,
                             255.87475586], dtype=np.float32)
 coef_dummy_b5 = np.array([-9999., 0., -0., 0., -0.], dtype=np.float32)
-coef_rmse_b5 = np.array([-9999., 112.52444458, 132.36845398, 140.73822021,
+coef_rmse_b5 = np.array([-9999., 113.20720673, 132.36845398, 140.73822021,
                          142.13438416], dtype=np.float32)
 truths_b5 = [coef_int_b5, coef_slope_b5, coef_season1_b5, coef_season2_b5,
              coef_dummy_b5, coef_rmse_b5]
-coef_amp_b5 = np.array([-9999., 109.12130737, 165.92492676, 228.65888977,
+coef_amp_b5 = np.array([-9999., 112.650551, 165.92492676, 228.65888977,
                         255.87475586], dtype=np.float32)
 # TODO: SWIR coefficients for OLS
 # TODO: SWIR coefficients for RLM
