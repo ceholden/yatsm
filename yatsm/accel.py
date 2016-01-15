@@ -2,6 +2,7 @@
 """
 from functools import wraps
 import logging
+import os
 
 logger = logging.getLogger('yatsm')
 
@@ -11,6 +12,9 @@ try:
 except ImportError:
     has_numba = False
 else:
+    # Check if disabled via environment
+    if os.environ.get('NUMBA_DISABLE_JIT') == '1':
+        has_numba = False
     # Check for an adequate version number
     try:
         nb_ver = nb.__version__.split('.')
