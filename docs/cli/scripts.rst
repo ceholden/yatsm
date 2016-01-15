@@ -14,4 +14,4 @@ The following are command line utilities included in YATSM. When ``yatsm`` is in
    yatsm_classify
    yatsm_changemap
    yatsm_map
-   gen_date_file.sh
+   gen_date_file

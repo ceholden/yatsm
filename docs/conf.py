@@ -15,11 +15,6 @@ d = os.path.dirname
 sys.path.insert(0, d(d(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(d(d(os.path.abspath(__file__))), 'scripts'))
 
-# Add scripts directory to PATH for sphinxcontrib.programoutput
-os.environ['PATH'] = '{root}{sep}{dir}{psep}{path}'.format(
-    root=d(d(__file__)), sep=os.sep, dir='scripts',
-    psep=os.pathsep, path=os.environ['PATH'])
-
 # -- General configuration ------------------------------------------------
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -31,7 +26,6 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.graphviz',
     'sphinx.ext.todo',
-    'sphinxcontrib.programoutput',
     'sphinxcontrib.bibtex'
 ]
 # Napoleon extension moving to sphinx.ext.napoleon as of sphinx 1.3

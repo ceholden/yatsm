@@ -7,7 +7,7 @@ Documentation built using [Sphinx](http://sphinx-doc.org/) and hosted on [Github
 
 ### API
 
-Regenerate API module information for Sphinx 
+Regenerate API module information for Sphinx
 
 ``` bash
 $ sphinx-apidoc -f -e -o docs/yatsm yatsm/
@@ -15,10 +15,11 @@ $ sphinx-apidoc -f -e -o docs/yatsm yatsm/
 
 ### Utilities
 
-The documentation of command line utility and script usages can be automatically updated using [Sphinx programoutput](https://pythonhosted.org/sphinxcontrib-programoutput/). For example, this directive will provide the output of a command (e.g., get the help for a program):
+The documentation of command line utility and script usages can be automatically updated ``build_cli_docs.py``. This script writes the usages into ``cli/usage`` and can be included in documentation for scripts as follows:
 
 ``` rst
-.. command-output:: gen_date_file.sh -h
+.. literalinclude:: usage/yatsm_line.rst
+    :language: bash
 ```
 
 Any additional text and documentation information can be included in the Restructured Text documents inside the `docs/scripts` folder.

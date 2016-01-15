@@ -40,7 +40,7 @@ command. Documentation about the CLI is available below:
 .. toctree::
    :maxdepth: 2
 
-   scripts/scripts
+   cli/scripts
 
 Indices and tables
 ------------------
