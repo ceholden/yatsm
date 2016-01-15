@@ -16,7 +16,11 @@ if os.environ.get('NUMBA_DISABLE_JIT') is not None:
     jitd_class = nb.decorators.DisableJitWrapper
     jit_enabled = False
 else:
-    jitd_class = nb.targets.registry.CPUOverloaded
+    # numba >= 0.23.0: CPUOverloaded -> CPUDispatcher
+    try:
+        jitd_class = nb.targets.registry.CPUDispatcher
+    except:
+        jitd_class = nb.targets.registry.CPUOverloaded
     jit_enabled = True
 
 
