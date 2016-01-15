@@ -1,5 +1,6 @@
 """ Test ``yatsm line``
 """
+import imp
 import os
 
 from click.testing import CliRunner
@@ -51,9 +52,15 @@ def test_cli_pixel_pass_2(example_timeseries):
 def test_cli_pixel_pass_3(example_timeseries, monkeypatch):
     """ Correctly run for one pixel when default colormap isn't available
     """
+    # Pop out default colormap
     cmap_d = mpl.cm.cmap_d.copy()
     cmap_d.pop(yatsm.cli.pixel._DEFAULT_PLOT_CMAP, None)
     monkeypatch.setattr('matplotlib.cm.cmap_d', cmap_d)
+    # Reload CLI
+    imp.reload(yatsm.cli.pixel)
+    imp.reload(yatsm.cli.main)
+    from yatsm.cli.main import cli
+
     runner = CliRunner()
     result = runner.invoke(
         cli,
