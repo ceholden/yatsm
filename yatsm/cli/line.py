@@ -110,6 +110,10 @@ def line(ctx, config, job_number, total_jobs,
     }
     if cfg['phenology']['enable']:
         md.update({'phenology': cfg['phenology']})
+    # Remove all objects from metadata
+    # Pickled objects potentially unstable across library versions)
+    md['YATSM']['estimator'].pop('object', None)
+    md['YATSM']['refit'].pop('prediction_object', None)
 
     # Begin process
     start_time_all = time.time()
