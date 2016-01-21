@@ -1,4 +1,5 @@
 """ Command line interface for running YATSM on image lines """
+import copy
 import logging
 import os
 import time
@@ -104,9 +105,10 @@ def line(ctx, config, job_number, total_jobs,
         X = np.flipud(X)
 
     # Create output metadata to save
+    algo = cfg['YATSM']['algorithm']
     md = {
-        'YATSM': cfg['YATSM'],
-        cfg['YATSM']['algorithm']: cfg[cfg['YATSM']['algorithm']]
+        'YATSM': copy.deepcopy(cfg['YATSM']),
+        algo: copy.deepcopy(cfg[algo])
     }
     if cfg['phenology']['enable']:
         md.update({'phenology': cfg['phenology']})
