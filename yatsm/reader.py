@@ -4,14 +4,12 @@ from datetime import datetime as dt
 import fnmatch
 import logging
 import os
-import sys
 import time
 
 import numpy as np
 from osgeo import gdal, gdal_array
 
 from . import cache
-from . import log_yatsm
 
 logger = logging.getLogger('yatsm')
 
@@ -23,18 +21,18 @@ def get_image_attribute(image_filename):
     """ Use GDAL to open image and return some attributes
 
     Args:
-      image_filename (str): image filename
+        image_filename (str): image filename
 
     Returns:
-      tuple (int, int, int, type): nrow, ncol, nband, NumPy datatype
+        tuple: nrow (int), ncol (int), nband (int), NumPy datatype (type)
 
     """
     try:
         image_ds = gdal.Open(image_filename, gdal.GA_ReadOnly)
-    except:
-        logger.error('Could not open example image dataset ({f})'.format(
-            f=image_filename))
-        sys.exit(1)
+    except Exception as e:
+        logger.error('Could not open example image dataset ({f}): {e}'
+                     .format(f=image_filename), e=str(e))
+        raise
 
     nrow = image_ds.RasterYSize
     ncol = image_ds.RasterXSize
@@ -49,19 +47,20 @@ def read_image(image_filename, bands=None, dtype=None):
     """ Return raster image bands as a sequence of NumPy arrays
 
     Args:
-      image_filename (str): Image filename
-      bands (iterable, optional): A sequence of bands to read from image.
-        If `bands` is None, function returns all bands in raster. Note that
-        bands are indexed on 1 (default: None)
-      dtype (np.dtype): NumPy datatype to use for image bands. If `dtype` is
-        None, arrays are kept as the image datatype (default: None)
+        image_filename (str): Image filename
+        bands (iterable, optional): A sequence of bands to read from image.
+            If `bands` is None, function returns all bands in raster. Note that
+            bands are indexed on 1 (default: None)
+        dtype (np.dtype): NumPy datatype to use for image bands. If `dtype` is
+            None, arrays are kept as the image datatype (default: None)
 
     Returns:
-      list: list of NumPy arrays for each band specified
+        list: list of NumPy arrays for each band specified
 
     Raises:
-      IOError: raise IOError if bands specified are not contained within raster
-      RuntimeError: raised if GDAL encounters errors
+        IOError: raise IOError if bands specified are not contained within
+            raster
+        RuntimeError: raised if GDAL encounters errors
 
     """
     try:
@@ -93,13 +92,13 @@ def read_pixel_timeseries(files, px, py):
     """ Returns NumPy array containing timeseries values for one pixel
 
     Args:
-      files (list): List of filenames to read from
-      px (int): Pixel X location
-      py (int): Pixel Y location
+        files (list): List of filenames to read from
+        px (int): Pixel X location
+        py (int): Pixel Y location
 
     Returns:
-      np.ndarray: Array (nband x n_images) containing all timeseries data
-        from one pixel
+        np.ndarray: Array (nband x n_images) containing all timeseries data
+            from one pixel
 
     """
     nrow, ncol, nband, dtype = get_image_attribute(files[0])
@@ -125,22 +124,22 @@ def read_line(line, images, image_IDs, dataset_config,
     """ Reads in dataset from cache or images if required
 
     Args:
-      line (int): line to read in from images
-      images (list): list of image filenames to read from
-      image_IDs (iterable): list image identifying strings
-      dataset_config (dict): dictionary of dataset configuration options
-      ncol (int): number of columns
-      nband (int): number of bands
-      dtype (type): NumPy datatype
-      read_cache (bool, optional): try to read from cache directory
-        (default: False)
-      write_cache (bool, optional): try to to write to cache directory
-        (default: False)
-      validate_cache (bool, optional): validate that cache data come from same
-        images specified in `images` (default: False)
+        line (int): line to read in from images
+        images (list): list of image filenames to read from
+        image_IDs (iterable): list image identifying strings
+        dataset_config (dict): dictionary of dataset configuration options
+        ncol (int): number of columns
+        nband (int): number of bands
+        dtype (type): NumPy datatype
+        read_cache (bool, optional): try to read from cache directory
+            (default: False)
+        write_cache (bool, optional): try to to write to cache directory
+            (default: False)
+        validate_cache (bool, optional): validate that cache data come from
+            same images specified in `images` (default: False)
 
     Returns:
-      Y (np.ndarray): 3D array of image data (nband, n_image, n_cols)
+        np.ndarray: 3D array of image data (nband, n_image, n_cols)
 
     """
     start_time = time.time()
@@ -191,23 +190,23 @@ def find_stack_images(location, folder_pattern='L*', image_pattern='L*stack',
     """ Find and identify dates and filenames of Landsat image stacks
 
     Args:
-      location (str): Stacked image dataset location
-      folder_pattern (str, optional): Filename pattern for stack image
-        folders located within `location` (default: 'L*')
-      image_pattern (str, optional): Filename pattern for stacked images
-        located within each folder (default: 'L*stack')
-      date_index_start (int, optional): Starting index of image date string
-        within folder name (default: 9)
-      date_index_end (int, optional): Ending index of image date string within
-        folder name (default: 16)
-      date_format (str, optional): String format of date within folder names
-        (default: '%Y%j')
-      ignore (list, optional): List of folder names within `location` to
-        ignore from search (default: ['YATSM'])
+        location (str): Stacked image dataset location
+        folder_pattern (str, optional): Filename pattern for stack image
+            folders located within `location` (default: 'L*')
+        image_pattern (str, optional): Filename pattern for stacked images
+            located within each folder (default: 'L*stack')
+        date_index_start (int, optional): Starting index of image date string
+            within folder name (default: 9)
+        date_index_end (int, optional): Ending index of image date string
+            within folder name (default: 16)
+        date_format (str, optional): String format of date within folder names
+            (default: '%Y%j')
+        ignore (list, optional): List of folder names within `location` to
+            ignore from search (default: ['YATSM'])
 
     Returns:
-      tuple: Tuple of lists containing the dates and filenames of all stacked
-        images located
+        tuple: Tuple of lists containing the dates and filenames of all stacked
+            images located
 
     """
     if isinstance(ignore, str):
@@ -275,18 +274,18 @@ class _BIPStackReader(object):
     are of the same geographic extent.
 
     Args:
-      filenames (list): list of filenames to read from
-      size (tuple): tuple of (int, int) containing the number of columns and
-        bands in the image
-      datatype (np.dtype): NumPy datatype of the images
+        filenames (list): list of filenames to read from
+        size (tuple): tuple of (int, int) containing the number of columns and
+            bands in the image
+        datatype (np.dtype): NumPy datatype of the images
 
     Attributes:
-      filenames (list): list of filenames to read from
-      n_image (int): number of images
-      size (tuple): tuple of (int, int) containing the number of columns and
-        bands in the image
-      datatype (np.dtype): NumPy datatype of images
-      files (list): list of file objects for each image
+        filenames (list): list of filenames to read from
+        n_image (int): number of images
+        size (tuple): tuple of (int, int) containing the number of columns and
+            bands in the image
+        datatype (np.dtype): NumPy datatype of images
+        files (list): list of file objects for each image
 
     """
     def __init__(self, filenames, size, datatype):
@@ -323,14 +322,14 @@ def read_row_BIP(filenames, row, size, dtype):
     """ Reads in an entire row of data from every image
 
     Args:
-      filenames (iterable): sequence of filenames to read from
-      row (int): row to read
-      size (tuple): tuple of (int, int) containing the number of columns and
-        bands in the image
+        filenames (iterable): sequence of filenames to read from
+        row (int): row to read
+        size (tuple): tuple of (int, int) containing the number of columns and
+            bands in the image
 
     Returns:
-      np.ndarray: 3D array (nband x nimage x ncol) containing the row
-        of data
+        np.ndarray: 3D array (nband x nimage x ncol) containing the row
+            of data
 
     """
     global _BIP_stack_reader
@@ -354,17 +353,17 @@ class _GDALStackReader(object):
     are of the same geographic extent.
 
     Args:
-      filenames (list): list of filenames to read from
+        filenames (list): list of filenames to read from
 
     Attributes:
-      filenames (list): list of filenames to read from
-      n_image (int): number of images
-      n_band (int): number of bands in an image
-      n_col (int): number of columns per row
-      datatype (np.dtype): NumPy datatype of images
-      datasets (list): list of GDAL datasets for all filenames
-      dataset_bands (list): list of lists containing all GDAL raster band
-        datasets, for all image filenames
+        filenames (list): list of filenames to read from
+        n_image (int): number of images
+        n_band (int): number of bands in an image
+        n_col (int): number of columns per row
+        datatype (np.dtype): NumPy datatype of images
+        datasets (list): list of GDAL datasets for all filenames
+        dataset_bands (list): list of lists containing all GDAL raster band
+            datasets, for all image filenames
 
     """
     def __init__(self, filenames):
@@ -391,11 +390,11 @@ class _GDALStackReader(object):
         """ Return a 3D NumPy array (nband x nimage x ncol) of one row's data
 
         Args:
-          row (int): row in image to return
+            row (int): row in image to return
 
         Returns:
-          np.ndarray: 3D NumPy array (nband x nimage x ncol) of image
-            data for desired row
+            np.ndarray: 3D NumPy array (nband x nimage x ncol) of image
+                data for desired row
 
         """
         data = np.empty((self.n_band, self.n_image, self.n_col),
@@ -412,12 +411,12 @@ def read_row_GDAL(filenames, row):
     """ Reads in an entire row of data from every image using GDAL
 
     Args:
-      filenames (iterable): sequence of filenames to read from
-      row (int): row to read
+        filenames (iterable): sequence of filenames to read from
+        row (int): row to read
 
     Returns:
-      np.ndarray: 3D array (nband x nimage x ncol) containing the row
-        of data
+        np.ndarray: 3D array (nband x nimage x ncol) containing the row
+            of data
 
     """
     global _gdal_stack_reader
