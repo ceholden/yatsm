@@ -216,7 +216,8 @@ def iter_records(records, warn_on_empty=False, yield_filename=False):
         try:
             rec = np.load(r)['record']
         except (ValueError, AssertionError, IOError) as e:
-            logger.warning('Error reading a result file (may be corrupted) (%s): %s' % (r, e.message))
+            logger.warning('Error reading a result file (may be corrupted) '
+                           '({}): {}'.format(r, str(e)))
             continue
 
         if rec.shape[0] == 0:
