@@ -148,7 +148,7 @@ def write_cache_file(cache_filename, Y, image_IDs):
 # Cache file updating
 def update_cache_file(images, image_IDs,
                       old_cache_filename, new_cache_filename,
-                      line, reader, reader_kwargs={}):
+                      line, reader):
     """ Modify an existing cache file to contain data within `images`
 
     This should be useful for updating a set of cache files to reflect
@@ -170,9 +170,7 @@ def update_cache_file(images, image_IDs,
             modified data
         line (int): the line of data to be updated
         reader (callable): GDAL or BIP image reader function from
-            ``yatsm.readers``
-        reader_kwargs (dict): additional keyword arguments for ``reader`` other
-            than the filenames to read and the line to read
+            ``yatsm.io.stack_line_readers``
 
     Raises:
         ValueError: Raise error if old cache file does not record ``image_IDs``
@@ -227,7 +225,7 @@ def update_cache_file(images, image_IDs,
     if insert.size > 0:
         logger.debug('Inserting {n} new images into cache'.format(
             n=insert.size))
-        insert_Y = reader(images[insert], line, **reader_kwargs)
+        insert_Y = reader.read_row(images[insert], line)
         new_Y[:, insert, :] = insert_Y
         new_IDs[insert] = image_IDs[insert]
 

@@ -17,8 +17,8 @@ from yatsm.config_parser import parse_config_file
 from yatsm import classifiers
 from yatsm.classifiers import diagnostics
 from yatsm.errors import TrainingDataException
+from yatsm import io
 from yatsm import plots
-from yatsm import reader
 from yatsm import utils
 
 logger = logging.getLogger('yatsm')
@@ -199,7 +199,7 @@ def get_training_inputs(cfg, exit_on_missing=False):
 
     """
     # Find and parse training data
-    roi = reader.read_image(cfg['classification']['training_image'])
+    roi = io.read_image(cfg['classification']['training_image'])
     logger.debug('Read in training data')
     if len(roi) == 2:
         logger.info('Found labels for ROIs -- including in output')

@@ -15,8 +15,8 @@ import yaml
 from yatsm.algorithms import postprocess  # TODO: implement postprocessors
 from yatsm.cli import options, console
 from yatsm.config_parser import convert_config, parse_config_file
+from yatsm.io import read_pixel_timeseries
 from yatsm.utils import csvfile_to_dataframe, get_image_IDs
-from yatsm.reader import read_pixel_timeseries
 from yatsm.regression.transforms import harm  # noqa
 
 avail_plots = ['TS', 'DOY', 'VAL']

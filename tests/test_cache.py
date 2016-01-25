@@ -5,7 +5,7 @@ import tempfile
 
 import numpy as np
 import pytest
-from yatsm import cache, reader
+from yatsm import cache, io
 
 cache_params = pytest.mark.parametrize('n_images,n_row,n_bands', [(447, 0, 8)])
 
@@ -101,7 +101,7 @@ def test_update_cache_file_delete_obs(cachefile, example_cache):
     cache.update_cache_file(new_image_IDs, new_image_IDs,
                             cachefile,
                             'test.npz',
-                            0, reader.read_row_GDAL)
+                            0, io.gdal_reader)
     test = np.load('test.npz')
     Y, image_IDs = test['Y'], test['image_IDs']
     os.remove('test.npz')
@@ -136,7 +136,7 @@ def test_update_cache_file_add_obs(cachefile, example_cache,
     # Write update and read back
     cache.update_cache_file(stack_images, stack_IDs,
                             'test.npz', 'test_new.npz',
-                            0, reader.read_row_GDAL)
+                            0, io.gdal_reader)
     updated = np.load('test_new.npz')
 
     # Test and clean update

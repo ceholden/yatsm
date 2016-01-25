@@ -7,7 +7,7 @@ import time
 
 import click
 
-from yatsm import reader
+from yatsm import io
 from yatsm.cache import (get_line_cache_name, get_line_cache_pattern,
                          update_cache_file, write_cache_file)
 from yatsm.cli import options
@@ -37,7 +37,7 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
                               cfg['dataset']['date_format'])
     df['image_IDs'] = get_image_IDs(df['filename'])
 
-    nrow, ncol, nband, dtype = reader.get_image_attribute(df['filename'][0])
+    nrow, ncol, nband, dtype = io.get_image_attribute(df['filename'][0])
 
     # Determine lines to work on
     job_lines = distribute_jobs(job_number, total_jobs, nrow,
@@ -47,13 +47,10 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
     # Determine file reader
     if cfg['dataset']['use_bip_reader']:
         logger.debug('Reading in data from disk using BIP reader')
-        image_reader = reader.read_row_BIP
-        image_reader_kwargs = {'size': (ncol, nband),
-                               'dtype': dtype}
+        image_reader = io.read_row_BIP
     else:
         logger.debug('Reading in data from disk using GDAL')
-        image_reader = reader.read_row_GDAL
-        image_reader_kwargs = {}
+        image_reader = io.read_row_GDAL
 
     # Attempt to update cache files
     previous_cache = None
@@ -99,17 +96,16 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
         if update:
             update_cache_file(df['filename'], df['image_IDs'],
                               update, cache_filename,
-                              job_line, image_reader, image_reader_kwargs)
+                              job_line, image_reader)
         else:
             if cfg['dataset']['use_bip_reader']:
                 # Use BIP reader
                 logger.debug('Reading in data from disk using BIP reader')
-                Y = reader.read_row_BIP(df['filename'], job_line,
-                                        (ncol, nband), dtype)
+                Y = io.bip_reader.read_row(df['filename'], job_line)
             else:
                 # Read in data just using GDAL
                 logger.debug('Reading in data from disk using GDAL')
-                Y = reader.read_row_GDAL(df['filename'], job_line)
+                Y = io.gdal_reader.read_row(df['filename'], job_line)
             write_cache_file(cache_filename, Y, df['image_IDs'])
 
         logger.debug('Took {s}s to cache the data'.format(

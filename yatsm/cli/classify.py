@@ -15,7 +15,7 @@ from sklearn.externals import joblib
 from yatsm.cli import options
 from yatsm.config_parser import parse_config_file
 from yatsm.utils import distribute_jobs, get_output_name, csvfile_to_dataframe
-from yatsm.reader import get_image_attribute
+from yatsm.io import get_image_attribute
 
 logger = logging.getLogger('yatsm')
 
