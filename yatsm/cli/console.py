@@ -13,7 +13,7 @@ import textwrap
 import matplotlib.pyplot as plt
 import numpy as np
 
-from yatsm import __version__
+from ..version import __version__
 
 _funcs = locals()
 

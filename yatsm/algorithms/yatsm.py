@@ -5,7 +5,7 @@ import patsy
 import sklearn
 import sklearn.linear_model
 
-from .. import _cyprep as cyprep
+from .._cyprep import get_valid_mask
 from ..regression.diagnostics import rmse
 from ..regression.transforms import harm  # noqa
 
@@ -134,7 +134,7 @@ class YATSM(object):
 
         """
         # Mask range of data
-        valid = cyprep.get_valid_mask(
+        valid = get_valid_mask(
             Y,
             config['dataset']['min_values'],
             config['dataset']['max_values']).astype(bool)

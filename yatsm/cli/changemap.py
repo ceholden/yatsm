@@ -6,9 +6,9 @@ import os
 import click
 from osgeo import gdal
 
-from yatsm.cli import options
-from yatsm.mapping import get_change_date, get_change_num
-from yatsm.utils import write_output
+from . import options
+from ..mapping import get_change_date, get_change_num
+from ..utils import write_output
 
 gdal.AllRegister()
 gdal.UseExceptions()

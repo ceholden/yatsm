@@ -7,12 +7,12 @@ import time
 
 import click
 
-from yatsm import io
-from yatsm.cache import (get_line_cache_name, get_line_cache_pattern,
-                         update_cache_file, write_cache_file)
-from yatsm.cli import options
-from yatsm.config_parser import parse_config_file
-from yatsm.utils import csvfile_to_dataframe, distribute_jobs, get_image_IDs
+from . import options
+from .. import io
+from ..cache import (get_line_cache_name, get_line_cache_pattern,
+                     update_cache_file, write_cache_file)
+from ..config_parser import parse_config_file
+from ..utils import csvfile_to_dataframe, distribute_jobs, get_image_IDs
 
 logger = logging.getLogger('yatsm')
 

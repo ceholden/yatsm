@@ -6,11 +6,11 @@ import click
 import numpy as np
 from osgeo import gdal
 
-from yatsm.cli import options
-from yatsm.mapping import (get_classification, get_phenology,
-                           get_coefficients, get_prediction)
-from yatsm.utils import write_output
-from yatsm.regression import design_coefs
+from . import options
+from ..mapping import (get_classification, get_phenology,
+                       get_coefficients, get_prediction)
+from ..utils import write_output
+from ..regression import design_coefs
 
 gdal.AllRegister()
 gdal.UseExceptions()

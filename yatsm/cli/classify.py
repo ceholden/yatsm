@@ -12,10 +12,10 @@ import numpy.lib.recfunctions as nprfn
 import six
 from sklearn.externals import joblib
 
-from yatsm.cli import options
-from yatsm.config_parser import parse_config_file
-from yatsm.utils import distribute_jobs, get_output_name, csvfile_to_dataframe
-from yatsm.io import get_image_attribute
+from . import options
+from ..config_parser import parse_config_file
+from ..utils import distribute_jobs, get_output_name, csvfile_to_dataframe
+from ..io import get_image_attribute
 
 logger = logging.getLogger('yatsm')
 

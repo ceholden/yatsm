@@ -7,20 +7,20 @@ import time
 import click
 import numpy as np
 
-from yatsm.cache import test_cache
-from yatsm.cli import options
-from yatsm.config_parser import parse_config_file
-from yatsm.errors import TSLengthException
-from yatsm.io import get_image_attribute, mkdir_p, read_line
-from yatsm.utils import (distribute_jobs, get_output_name, get_image_IDs,
-                         csvfile_to_dataframe)
-from yatsm.algorithms import postprocess
+from . import options
+from ..cache import test_cache
+from ..config_parser import parse_config_file
+from ..errors import TSLengthException
+from ..io import get_image_attribute, mkdir_p, read_line
+from ..utils import (distribute_jobs, get_output_name, get_image_IDs,
+                     csvfile_to_dataframe)
+from ..algorithms import postprocess
 try:
-    import yatsm.phenology.longtermmean as pheno
+    from ..phenology import longtermmean as pheno
 except ImportError as e:
     pheno = None
     pheno_exception = e.message
-from yatsm.version import __version__
+from ..version import __version__
 
 logger = logging.getLogger('yatsm')
 
