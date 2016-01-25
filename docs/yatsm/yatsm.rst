@@ -26,7 +26,6 @@ Submodules
    yatsm.log_yatsm
    yatsm.masking
    yatsm.plots
-   yatsm.reader
    yatsm.utils
    yatsm.vegetation_indices
    yatsm.version

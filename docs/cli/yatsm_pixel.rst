@@ -5,5 +5,5 @@
 
 Run YATSM for individual pixels with specified parameters:
 
-.. literalinclude:: usage/yatsm_pixel.rst
+.. literalinclude:: usage/yatsm_pixel.txt
     :language: bash

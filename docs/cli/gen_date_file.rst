@@ -5,5 +5,5 @@
 
 Generate Date and Filename Lists:
 
-.. literalinclude:: usage/gen_date_file.rst
+.. literalinclude:: usage/gen_date_file.txt
     :language: bash

@@ -1,12 +1,16 @@
 """ YATSM IO module
 
-TODO: include result file IO abstraction (issue #69)
+.. todo::
+
+   Include result file IO abstraction (:issue:`69`)
 
 Contents:
 
-    * ``helpers``: Collection of helper functions that ease common filesystem
-      operations
-    * ``stack_line_reader.py``: Two readers of stacked timeseries images that
+    * :mod:`.helpers`: Collection of helper functions that ease common
+      filesystem operations
+    * :mod:`.readers`: Collection of functions designed to ease common image
+      or timeseries reading tasks
+    * :mod:`.stack_line_readers`: Two readers of stacked timeseries images that
       trade storing file handles for reducing repeated and relatively expensive
       file open calls
 """

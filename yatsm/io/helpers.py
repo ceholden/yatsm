@@ -35,6 +35,7 @@ def find_stack_images(location, folder_pattern='L*', image_pattern='L*stack',
                       date_format='%Y%j',
                       ignore=['YATSM']):
     """ Find and identify dates and filenames of Landsat image stacks
+
     Args:
         location (str): Stacked image dataset location
         folder_pattern (str, optional): Filename pattern for stack image
@@ -49,6 +50,7 @@ def find_stack_images(location, folder_pattern='L*', image_pattern='L*stack',
             (default: '%Y%j')
         ignore (list, optional): List of folder names within `location` to
             ignore from search (default: ['YATSM'])
+
     Returns:
         tuple: Tuple of lists containing the dates and filenames of all stacked
             images located

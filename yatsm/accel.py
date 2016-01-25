@@ -31,6 +31,9 @@ def _doublewrap(f):
     """ Allows decorators to be called with/without args/kwargs
 
     Allows:
+
+    .. code-block:: python
+
         @decorator
         @decorator()
         @decorator(args, kwargs=values)
@@ -61,7 +64,10 @@ def try_jit(f, *args, **kwargs):
     """ Apply numba.jit to function ``f`` if Numba is available
 
     Accepts arguments to Numba jit function (signature, nopython, etc.).
+
     Examples:
+
+    .. code-block:: python
 
         @try_jit
         @try_jit()

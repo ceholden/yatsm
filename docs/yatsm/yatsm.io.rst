@@ -7,6 +7,8 @@ Submodules
 .. toctree::
 
    yatsm.io.helpers
+   yatsm.io.readers
+   yatsm.io.stack_line_readers
 
 Module contents
 ---------------

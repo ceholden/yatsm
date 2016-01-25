@@ -2,14 +2,14 @@
 u""" Recursive residuals computation
 
 Citations:
-Brown, RL, J Durbin, and JM Evans. 1975. Techniques for Testing the Consistency
-    of Regression Relationships over Time. Journal of the Royal Statistical
-    Society. Series B (Methodological) 37 (2): 149-192.
 
-Judge George G., William E. Griffiths, R. Carter Hill, Helmut Lütkepohl,
-    and Tsoung-Chao Lee. 1985. The theory and practice of econometrics.
-    New York: Wiley.
-    ISBN: 978-0-471-89530-5
+- Brown, RL, J Durbin, and JM Evans. 1975. Techniques for Testing the Consistency
+  of Regression Relationships over Time. Journal of the Royal Statistical
+  Society. Series B (Methodological) 37 (2): 149-192.
+
+- Judge George G., William E. Griffiths, R. Carter Hill, Helmut Lütkepohl,
+  and Tsoung-Chao Lee. 1985. The theory and practice of econometrics.
+  New York: Wiley. ISBN: 978-0-471-89530-5
 
 """
 import numpy as np

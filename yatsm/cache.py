@@ -100,8 +100,8 @@ def test_cache(dataset_config):
 def read_cache_file(cache_filename, image_IDs=None):
     """ Returns image data from a cache file
 
-    If `image_IDs` is not None this function will try to ensure data from cache
-    file come from the list of image IDs provided. If cache file does not
+    If ``image_IDs`` is not None this function will try to ensure data from
+    cache file come from the list of image IDs provided. If cache file does not
     contain a list of image IDs, it will skip the check and return cache data.
 
     Args:
@@ -112,7 +112,7 @@ def read_cache_file(cache_filename, image_IDs=None):
 
     Returns:
         np.ndarray, or None: Return Y as np.ndarray if possible and if the
-            cache file passes the consistency check specified by `image_IDs`,
+            cache file passes the consistency check specified by ``image_IDs``,
             else None
 
     """
@@ -135,7 +135,7 @@ def write_cache_file(cache_filename, Y, image_IDs):
 
     Args:
         cache_filename (str): cache filename
-        Y (np.ndarray)
+        Y (np.ndarray): data to write to cache file
         image_IDs (iterable): list of image IDs corresponding to data in cache
             file. If not specified, function will not check for correspondence
 
@@ -170,7 +170,7 @@ def update_cache_file(images, image_IDs,
             modified data
         line (int): the line of data to be updated
         reader (callable): GDAL or BIP image reader function from
-            ``yatsm.io.stack_line_readers``
+            :mod:`yatsm.io.stack_line_readers`
 
     Raises:
         ValueError: Raise error if old cache file does not record ``image_IDs``

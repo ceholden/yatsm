@@ -1,4 +1,18 @@
 """ Helper classes for reading individual lines from stacked timeseries images
+
+The classes, and instances of these classes, are designed to decrease the
+number of relatively expensive file open calls that are made unnecessarily
+if reading from the same files over and over. When using GDAL, for example,
+tests have shown that unnecessary opening and closing of images and image
+bands is slower compared to keeping the file reference and opening the files
+only once.
+
+Attributes:
+
+    bip_reader (_BIPStackReader): instance of :class:`_BIPStackReader` that
+        reads from Band-Interleave-by-Pixel (BIP) images
+    gdal_reader (_GDALStackReader): instance of :class:`_GDALStackReader` that
+        reads from file formats supported by GDAL
 """
 import numpy as np
 from osgeo import gdal, gdal_array

@@ -6,5 +6,5 @@
 
 Create maps of change information from YATSM outupt:
 
-.. literalinclude:: usage/yatsm_changemap.rst
+.. literalinclude:: usage/yatsm_changemap.txt
     :language: bash

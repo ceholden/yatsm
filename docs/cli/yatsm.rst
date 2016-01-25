@@ -1,9 +1,9 @@
 .. _yatsm_cli:
 
-`yatsm`
----------------
+``yatsm``
+---------
 
 YATSM Command Line Interface and Subcommands:
 
-.. literalinclude:: usage/yatsm.rst
+.. literalinclude:: usage/yatsm.txt
     :language: bash

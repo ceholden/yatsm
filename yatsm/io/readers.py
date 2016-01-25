@@ -14,8 +14,10 @@ logger = logging.getLogger('yatsm')
 
 def get_image_attribute(image_filename):
     """ Use GDAL to open image and return some attributes
+
     Args:
         image_filename (str): image filename
+
     Returns:
         tuple: nrow (int), ncol (int), nband (int), NumPy datatype (type)
     """
@@ -37,6 +39,7 @@ def get_image_attribute(image_filename):
 
 def read_image(image_filename, bands=None, dtype=None):
     """ Return raster image bands as a sequence of NumPy arrays
+
     Args:
         image_filename (str): Image filename
         bands (iterable, optional): A sequence of bands to read from image.
@@ -44,8 +47,10 @@ def read_image(image_filename, bands=None, dtype=None):
             bands are indexed on 1 (default: None)
         dtype (np.dtype): NumPy datatype to use for image bands. If `dtype` is
             None, arrays are kept as the image datatype (default: None)
+
     Returns:
         list: list of NumPy arrays for each band specified
+
     Raises:
         IOError: raise IOError if bands specified are not contained within
             raster
@@ -78,10 +83,12 @@ def read_image(image_filename, bands=None, dtype=None):
 
 def read_pixel_timeseries(files, px, py):
     """ Returns NumPy array containing timeseries values for one pixel
+
     Args:
         files (list): List of filenames to read from
         px (int): Pixel X location
         py (int): Pixel Y location
+
     Returns:
         np.ndarray: Array (nband x n_images) containing all timeseries data
             from one pixel
@@ -107,6 +114,7 @@ def read_line(line, images, image_IDs, dataset_config,
               ncol, nband, dtype,
               read_cache=False, write_cache=False, validate_cache=False):
     """ Reads in dataset from cache or images if required
+
     Args:
         line (int): line to read in from images
         images (list): list of image filenames to read from
@@ -121,6 +129,7 @@ def read_line(line, images, image_IDs, dataset_config,
             (default: False)
         validate_cache (bool, optional): validate that cache data come from
             same images specified in `images` (default: False)
+
     Returns:
         np.ndarray: 3D array of image data (nband, n_image, n_cols)
     """

@@ -22,12 +22,24 @@ sys.path.insert(0, os.path.join(d(d(os.path.abspath(__file__))), 'scripts'))
 extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.autodoc',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.graphviz',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'sphinx.ext.graphviz',
     'sphinx.ext.todo',
     'sphinxcontrib.bibtex'
 ]
+extlinks = {
+    'issue': ('https://github.com/ceholden/yatsm/issues/%s', 'issue ')
+}
+intersphinx_mapping = {
+    'sklearn': ('http://scikit-learn.org/stable', None),
+    'python': ('https://docs.python.org/3/', None)
+}
+todo_include_todos = True
+
+
 # Napoleon extension moving to sphinx.ext.napoleon as of sphinx 1.3
 sphinx_version = sphinx.version_info
 if sphinx_version[0] >= 1 and sphinx_version[1] >= 3:

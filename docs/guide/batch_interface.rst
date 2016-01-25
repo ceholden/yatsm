@@ -13,7 +13,8 @@ generated as described by :ref:`guide_model_config`.
 The batch interface which runs each line separately is
 :ref:`yatsm line <yatsm_line>`. It's usage is:
 
-.. command-output:: yatsm line -h
+.. literalinclude:: ../cli/usage/yatsm_line.txt
+    :language: bash
 
 Let's say our image stack contains 1,000 rows. If we use 50 total CPUs
 to process the image stack, then each CPU will be responsible for only

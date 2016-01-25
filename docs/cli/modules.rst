@@ -10,3 +10,4 @@ scripts
    yatsm_classify
    yatsm_changemap
    yatsm_map
+   gen_date_file

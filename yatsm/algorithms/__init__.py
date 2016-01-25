@@ -1,9 +1,9 @@
 """ Submodule for YATSM algorithms
 
 Algorithms currently include:
-    - ccdc.CCDCesque
+    - :py:class:`ccdc.CCDCesque`
 
 """
-from .ccdc import CCDCesque
+from .ccdc import CCDCesque  # noqa
 
 available = ['CCDCesque']

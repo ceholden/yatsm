@@ -20,7 +20,9 @@ def parse_config_file(config_file):
 
     Returns:
         dict: dict of sub-dicts, each sub-dict containing configuration keys
-            and values pertinent to a process or algorithm. Pickled `sklearn`
+            and values pertinent to a process or algorithm. Pickled
+            estimators compatible with ``scikit-learn``
+            (i.e., that follow :class:`sklearn.base.BaseEstimator`)
             models will be loaded and returned as an object within the dict
 
     Raises:
@@ -202,8 +204,8 @@ def expand_envvars(d):
     """ Recursively convert lookup that look like environment vars in a dict
 
     This function things that environmental variables are values that begin
-    with '$' and are evaluated with ``os.path.expandvars``. No exception will
-    be raised if an environment variable is not set.
+    with `$` and are evaluated with :func:`os.path.expandvars`. No exception
+    will be raised if an environment variable is not set.
 
     Args:
         d (dict): expand environment variables used in the values of this

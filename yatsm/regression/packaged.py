@@ -1,4 +1,9 @@
 """ Module for finding regression algorithms packaged with YATSM
+
+Attributes:
+    packaged_regressions (list): regression estimators packaged within
+        ``YATSM``
+
 """
 import json
 import logging
@@ -7,10 +12,9 @@ import pkg_resources
 
 logger = logging.getLogger('yatsm')
 
-# packaged_regressions = ['OLS', 'sklearn_Lasso20', 'glmnet_Lasso20',
-#                         'glmnet_LassoCV_n50', 'glmnet_LassoCV_n100',
-#                         'rlm_maxiter10']
+
 packaged_regressions = []
+
 _packaged = pkg_resources.resource_filename(
     __package__, os.path.join('pickles', 'pickles.json'))
 if pkg_resources.resource_exists(__package__,
@@ -22,7 +26,7 @@ if pkg_resources.resource_exists(__package__,
 def find_packaged_regressor(name):
     """ Find location of a regression method packaged with YATSM
 
-    See ``yatsm.regression.packaged.packaged_regressions`` for a list of
+    See :data:`packaged_regressions` for a list of
     available pre-packaged regressors
 
     Args:

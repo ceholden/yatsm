@@ -5,5 +5,5 @@
 
 Classify all lines within an image using a trained classifier:
 
-.. literalinclude:: usage/yatsm_classify.rst
+.. literalinclude:: usage/yatsm_classify.txt
     :language: bash
