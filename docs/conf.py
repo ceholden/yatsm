@@ -27,13 +27,12 @@ MOCK_MODULES = [
     'patsy',
     'rpy2', 'rpy2.robjects', 'rpy2.robjects.numpy2ri',
     'rpy2.robjects.packages',
-    'scipy', 'scipy.stats',
+    'scipy', 'scipy.ndimage', 'scipy.stats',
     'sklearn', 'sklearn.cross_validation', 'sklearn.ensemble',
-    'sklearn.linear_model',
     'sklearn.externals', 'sklearn.externals.joblib',
+    'sklearn.linear_model', 'sklearn.utils',
     'statsmodels', 'statsmodels.api',
-    'yatsm.accel', 'yatsm._cyprep',
-    'yatsm.classifiers', 'yatsm.classifiers.diagnostics',
+    'yatsm._cyprep'
 ]
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = MagicMock()
@@ -127,7 +126,7 @@ html_context = dict(
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+_path = ['static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
