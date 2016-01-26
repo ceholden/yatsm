@@ -1,7 +1,7 @@
 Yet Another Timeseries Model (YATSM)
 ====================================
 
-|Build Status| |Coverage Status| |DOI| |Gitter| |asv|
+|Build Status| |Coverage Status| |RTFD| |DOI| |Gitter| |asv|
 
 About
 -----
@@ -56,7 +56,7 @@ For further visualization of timeseries of remotely sensed images, I encourage y
 Documentation
 -------------
 
-Documentation is available `here <http://ceholden.github.io/yatsm/>`_.
+Documentation is available `here <https://yatsm.readthedocs.org/en/latest/>`_.
 
 Contributions to the documentation, especially for the user guide, is more than welcomed. The documentation for this project is built using `Sphinx <http://sphinx-doc.org/>`__ using the `ReadTheDocs <https://readthedocs.org/>`__ theme. See the ``docs/`` folder for documentation source material.
 
@@ -128,7 +128,7 @@ Since conda_ makes installation so easy, installation through conda_ will instal
 And as with ``pip``, you need to install ``YATSM``:
 
 .. code:: bash
-        
+
         # Install YATSM
         pip install .
 
@@ -137,6 +137,9 @@ And as with ``pip``, you need to install ``YATSM``:
    :target: https://travis-ci.org/ceholden/yatsm
 .. |Coverage Status| image:: https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=master&service=github
    :target: https://coveralls.io/github/ceholden/yatsm?branch=master&q=q
+.. |RTFD| image:: https://readthedocs.org/projects/yatsm/badge/?version=latest
+   :target: http://yatsm.readthedocs.org/en/latest/?badge=latest
+   :alt: Documentation Status
 .. |DOI| image:: https://zenodo.org/badge/6804/ceholden/yatsm.svg
    :target: https://zenodo.org/badge/latestdoi/6804/ceholden/yatsm
 .. |Gitter| image:: https://badges.gitter.im/Join%20Chat.svg

@@ -30,7 +30,8 @@ Added
    ``yatsm.regression.robust_fit.RLM``, and others `#70 <https://github.com/ceholden/yatsm/issues/70>`__
 -  Benchmark algorithm performance across project history using `Airspeed Velocity <https://github.com/spacetelescope/asv/>`__ `#71 <https://github.com/ceholden/yatsm/issues/71>`__
 -  Improve ``clean`` target in package's ``setup.py`` so it deletes built estimator pickles and ``.c``/``.so`` built with Cython (`commit <https://github.com/ceholden/yatsm/commit/bb868922a2f6f2f68c9f71153c4307e8727468cb>`__)
--  Increase test coverage from ~20% to ~62%
+-  Increase test coverage from ~20% to ~80%
+-  Added documentation to `Read the Docs <readthedocs.org>`_
 
 Fixed
 ~~~~~
