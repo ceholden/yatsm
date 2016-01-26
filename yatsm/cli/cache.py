@@ -47,10 +47,10 @@ def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
     # Determine file reader
     if cfg['dataset']['use_bip_reader']:
         logger.debug('Reading in data from disk using BIP reader')
-        image_reader = io.read_row_BIP
+        image_reader = io.bip_reader
     else:
         logger.debug('Reading in data from disk using GDAL')
-        image_reader = io.read_row_GDAL
+        image_reader = io.gdal_reader
 
     # Attempt to update cache files
     previous_cache = None
