@@ -88,7 +88,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'YATSM'
-copyright = u'2014 - 2015, Chris Holden'
+copyright = u'2014 - 2016, Chris Holden'
 
 import yatsm  # noqa
 version = yatsm.__version__
