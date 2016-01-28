@@ -1,39 +1,54 @@
-digraph CCDCesque {
-    graph [label="CCDCesque"]
+digraph G {
+    label = "Algorithm Flowchart:\nCCDCesque"
+    compound=true;
+    newrank=true;
+    ratio=1.5;
+    /*ranksep=1.0;*/
 
-    preprocess [label="Preprocess Data"]
-    while [label="while (has observations)"]
-    trained [label="Segment initialized?"]
-    train [label="Clean and train on historic period"]
-    end [label="End here++"]
+    preprocess [label="preprocess" shape="box"];
+    fit [label="fit" shape="box"]
+    while [label="while\n(has observations)"];
+    trained [label="Segment\ninitialized?"];
+    end [label="Iterate\nforward"];
+    # Training
+    clean [label="Multitemp mask" shape="box"];
+    stable [label="Test\nStability"];
+    is_stable [label="Stable:\ninit segment"]
+    is_unstable [label="Unstable:\nmove forward"]
+    # Monitoring
+    monitor [label="Check next\nobservations"];
+    noise [label="Delete noise"]
+    change [label="Change:\nnew segment"]
+    nochange [label="No change"]
 
-    train_stable [label="Training period stable. Initialized"]
-    train_unstable [label="Training period unstable. Remove observation and try again"]
+    { rank=min;  preprocess; fit; while; }
+    { rank=same; trained; }
+    { rank=same; clean; monitor; }
+    { rank=max; end; }
 
-    monitor [label="Monitor observations for change"]
-    monitor_change [label="End segment record attributes"]
-    monitor_noise [label="Delete <here>th observation"]
-    monitor_stable [label="No change detected"]
+    preprocess -> fit -> while -> trained;
+    trained -> clean [label="No" lhead=cluster0];
+    trained -> monitor [label="Yes" lhead=cluster1];
 
-    preprocess -> while
+    subgraph cluster0 {
+        label="Historic Period";
+        clean -> stable;
+        stable -> is_stable [label="Yes"];
+        stable -> is_unstable [label="No"];
+    }
+    subgraph cluster1 {
+        label="Monitoring Period"
+        monitor -> noise [label="Noise\ndetected"];
+        monitor -> change [label="Above\nthreshold"];
+        monitor -> nochange [label="Within\nthreshold"];
+    }
 
-    while -> trained [label="Can monitor"]
-    trained -> train [label="No"]
+    noise -> end [ltail=cluster1];
+    change -> end [ltail=cluster1];
+    nochange -> end [ltail=cluster1];
 
-    train -> train_stable [label="Fit model and test"]
-    train -> train_unstable [label="Fit model and test"]
-    train_stable -> end [label="Segment initialized here++"]
-    train_unstable -> end [label="start++ here++"]
+    is_stable -> end [ltail=cluster0];
+    is_unstable -> end [ltail=cluster0];
+    end -> while;
 
-    trained -> monitor [label="Yes"]
-    monitor -> monitor_change [label="Change detected"]
-    monitor_change -> end [label="start = here + consec here = start + min_obs"]
-    monitor -> monitor_noise [label="Noise detected"]
-    monitor_noise -> end [label="here++"]
-    monitor -> monitor_stable [label="No change"]
-    monitor_stable -> end [label="here++"]
-
-    end -> while
-
-    while -> end
 }

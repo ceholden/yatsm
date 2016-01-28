@@ -68,6 +68,7 @@ intersphinx_mapping = {
 }
 todo_include_todos = True
 graphviz_output_format = "svg"
+graphviz_dot_args = ['-Gratio="compress"']
 
 # Napoleon extension moving to sphinx.ext.napoleon as of sphinx 1.3
 sphinx_version = sphinx.version_info
