@@ -1,0 +1,4 @@
+xray
+dask
+netCDF4
+bottleneck
