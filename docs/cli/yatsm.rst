@@ -1,7 +1,7 @@
 .. _yatsm_cli:
 
-``yatsm``
----------
+`yatsm`
+-------
 
 YATSM Command Line Interface and Subcommands:
 

@@ -67,7 +67,7 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None)
 }
 todo_include_todos = True
-
+graphviz_output_format = "svg"
 
 # Napoleon extension moving to sphinx.ext.napoleon as of sphinx 1.3
 sphinx_version = sphinx.version_info

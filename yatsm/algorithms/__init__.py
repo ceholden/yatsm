@@ -6,4 +6,4 @@ Algorithms currently include:
 """
 from .ccdc import CCDCesque  # noqa
 
-available = ['CCDCesque']
+available = ['CCDCesque']  #:

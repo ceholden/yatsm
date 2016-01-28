@@ -22,6 +22,7 @@ To get started with YATSM, please follow this user guide:
    guide/dataset
    guide/exploration
    guide/model_specification
+   guide/models/models
    guide/configuration
    guide/batch_interface
    guide/map_static
