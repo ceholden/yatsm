@@ -251,7 +251,7 @@ def refit_record(model, prefix, estimator, fitopt={}, keep_regularized=False):
                 # Find nonzero in case of regularized regression
                 nonzero = np.nonzero(rec['coef'][:, i_y])[0]
                 if nonzero.size == 0:
-                    refit[i_rec][refit_rmse] = rec['rmse']
+                    refit[i_rec][refit_rmse][:] = rec['rmse']
                     continue
             else:
                 nonzero = np.arange(n_series)
