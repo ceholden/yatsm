@@ -378,18 +378,24 @@ class CCDCesque(YATSM):
                 \\right)
                 > \\color{red}{consec}
 
-        where the variables in red are model hyperparameters:
+        where the symbols in red are model hyperparameters:
 
-            * :math:`\\color{red}{consec}`: :class:`consec <CCDCesque>`
-            * :math:`\\color{red}{B_{test}}`: :class:`test_indices <CCDCesque>`
-            * :math:`\\color{red}{T_{crit}}`: :class:`threshold <CCDCesque>`
-            * :math:`{RMSE}_b^{\\color{red}{*}}`:
+            * :math:`\\color{red}{consec}`:
+              :paramref:`consecutive <.CCDCesque.consecutive>`
+            * :math:`\\color{red}{B_{test}}`:
+              :paramref:`test_indices <.CCDCesque.test_indices>`
+            * :math:`\\color{red}{T_{crit}}`:
+              :paramref:`threshold <.CCDCesque.threshold>`
+            * :math:`{RMSE}_b^{\\color{red}{*}}` depends on
+              :paramref:`dynamic_rmse <.CCDCesque.dynamic_rmse>`:
 
-                * Use :func:`~_get_dynamic_rmse` if
-                  :class:`dynamic_rmse <CCDCesque>`
-                * Otherwise use :func:`~_get_model_rmse`
+                * True: :func:`~_get_dynamic_rmse` is used for RMSE estimate
+                * False: :func:`~_get_model_rmse` is used for RMSE estimate
 
-
+        If :paramref:`remove_noise <.CCDCesque.remove_noise>` is `True`,
+        the first of ``consecutive`` observations will be removed if first
+        scaled residual is above ``threshold`` but not all ``consecutive``
+        scaled residuals exceed ``threshold``.
         """
         _rmse = self.get_rmse()
 

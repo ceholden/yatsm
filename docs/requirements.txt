@@ -5,3 +5,4 @@ sphinxcontrib-bibtex>=0.3.1
 sphinxcontrib-napoleon>=0.2.8
 sphinx_rtd_theme>=0.1.6
 Sphinx>=1.2.3
+sphinx-paramlinks>=0.3.1

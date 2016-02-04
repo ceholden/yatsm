@@ -57,7 +57,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
-    'sphinxcontrib.bibtex'
+    'sphinxcontrib.bibtex',
+    'sphinx_paramlinks'
 ]
 autodoc_member_order = 'groupwise'
 extlinks = {
