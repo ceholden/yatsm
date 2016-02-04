@@ -2,7 +2,7 @@
 #
 # YATSM documentation build configuration file, created by
 # sphinx-quickstart on Tue Nov  4 18:26:04 2014.
-
+import datetime as dt
 import sys
 import os
 
@@ -59,16 +59,27 @@ extensions = [
     'sphinx.ext.todo',
     'sphinxcontrib.bibtex'
 ]
+autodoc_member_order = 'groupwise'
 extlinks = {
     'issue': ('https://github.com/ceholden/yatsm/issues/%s', 'issue ')
 }
 intersphinx_mapping = {
     'sklearn': ('http://scikit-learn.org/stable', None),
-    'python': ('https://docs.python.org/3/', None)
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None),
+    'python': ('https://docs.python.org/dev', None)
 }
 todo_include_todos = True
 graphviz_output_format = "svg"
 graphviz_dot_args = ['-Gratio="compress"']
+
+latex_elements = {
+    'preamble': r'''
+        \usepackage{amsmath}
+        \usepackage{bm}
+        \usepackage{color}
+    '''
+}
 
 # Napoleon extension moving to sphinx.ext.napoleon as of sphinx 1.3
 sphinx_version = sphinx.version_info
@@ -76,6 +87,7 @@ if sphinx_version[0] >= 1 and sphinx_version[1] >= 3:
     extensions.append('sphinx.ext.napoleon')
 else:
     extensions.append('sphinxcontrib.napoleon')
+napoleon_use_ivar = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -88,7 +100,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'YATSM'
-copyright = u'2014 - 2016, Chris Holden'
+copyright = u'2014 - {}, Chris Holden'.format(dt.datetime.utcnow().year)
 
 import yatsm  # noqa
 version = yatsm.__version__

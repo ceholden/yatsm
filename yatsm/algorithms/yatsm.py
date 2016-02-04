@@ -13,56 +13,55 @@ from ..regression.transforms import harm  # noqa
 class YATSM(object):
     """ Yet Another TimeSeries Model baseclass
 
+    .. note::
+        When ``YATSM`` objects are fit, the intended order of method calls is:
+
+            1. Setup the model with :func:`~setup`
+            2. Preprocess a time series with :func:`~preprocess`
+            3. Fit the time series with the YATSM model using :func:`~fit`
+            4. A fitted model can be used to
+
+                * Predict on additional design matrixes with :func:`~predict`
+                * Plot diagnostic information with :func:`~plot`
+                * Return goodness of fit diagnostic metrics with :func:`~score`
+
+    .. note::
+        Record structured arrays must contain the following:
+
+            * ``start`` (`int`): starting dates of timeseries segments
+            * ``end`` (`int`): ending dates of timeseries segments
+            * ``break`` (`int`): break dates of timeseries segments
+            * ``coef`` (`double (n x p shape)`): number of bands x number of
+              features coefficients matrix for predictions
+            * ``rmse`` (`double (n length)`): Root Mean Squared Error for each
+              band
+            * ``px`` (`int`): pixel X coordinate
+            * ``py`` (`int`): pixel Y coordinate
+
     Args:
-        test_indices (np.ndarray): Test for changes with these
+        test_indices (numpy.ndarray): Test for changes with these
             indices of ``Y``. If not provided, all series in ``Y`` will be used
             as test indices
         estimator (dict): dictionary containing estimation model from
             ``scikit-learn`` used to fit and predict timeseries and,
             optionally, a dict of options for the estimation model ``fit``
             method (default: ``{'object': Lasso(alpha=20), 'fit': {}}``)
+        kwargs (dict): dictionary of addition keyword arguments
+            (for sub-classes)
 
     Attributes:
-        record_template (np.ndarray): An empty NumPy structured array that is
-            a template for the model's ``record``
-        models (np.ndarray): prediction model objects
-        record (np.ndarray): NumPy structured array containing timeseries model
-            attribute information
+        record_template (numpy.ndarray): An empty NumPy structured array that
+            is a template for the model's ``record``
+        models (numpy.ndarray): prediction model objects
+        record (numpy.ndarray): NumPy structured array containing timeseries
+            model attribute information
+        n_record (int): number of recorded segments in time series model
         n_series (int): number of bands in ``Y``
+        px (int): pixel X location or index
         n_features (int): number of coefficients in ``X`` design matrix
-
-    Methods:
-        setup(self, df, **config): Configure model and (optionally) return
-            design matrix (or None if not required for model)
-        preprocess(self, X, Y, dates, **config): Preprocess a unit area of
-            data (pixel, segment, etc.) (e.g., mask, scale, transform, etc.)
-        fit(self, X, Y, dates): Fit timeseries model
-        fit_models(self, X, Y, bands=None): Fit timeseries
-            models for ``bands`` within ``Y`` for a given ``X``
-        predict(self, X, dates, series=None): Return a 2D NumPy
-            array of y-hat predictions of requested series for a given X
-        score(self, X, Y, dates): Return timeseries model
-            performance scores
-        plot(self, X, Y, dates, **config): Plot the timeseries model
-            results
-
-    Record structured arrays must contain the following:
-
-        * ``start`` (int): starting dates of timeseries segments
-        * ``end`` (int): ending dates of timeseries segments
-        * ``break`` (int): break dates of timeseries segments
-        * ``coef`` (n x p double): number of bands x number of features
-          coefficients matrix for predictions
-        * ``rmse`` (n double): Root Mean Squared Error for each band
-        * ``px`` (int): pixel X coordinate
-        * ``py`` (int): pixel Y coordinate
+        py (int): pixel Y location or index
 
     """
-
-    px = 0
-    py = 0
-    n_series = 0
-    n_features = 0
 
     def __init__(self,
                  test_indices=None,
@@ -77,16 +76,20 @@ class YATSM(object):
         self.n_record = 0
         self.record = []
 
+        self.n_series, self.n_features = 0, 0
+        self.px = kwargs.get('px', 0)
+        self.py = kwargs.get('py', 0)
+
     @property
     def record_template(self):
-        """ Return a YATSM record template for features in X and series in Y
+        """ YATSM record template for features in X and series in Y
 
-        Record template will set `px` and `py` if defined as class attributes.
-        Otherwise `px` and `py` coordinates will default to 0.
+        Record template will set ``px`` and ``py`` if defined as class
+        attributes. Otherwise ``px`` and ``py`` coordinates will default to 0.
 
         Returns:
-            np.ndarray: NumPy structured array containing a template of a YATSM
-                record
+            numpy.ndarray: NumPy structured array containing a template of a
+                YATSM record
 
         """
         record_template = np.zeros(1, dtype=[
@@ -98,8 +101,8 @@ class YATSM(object):
             ('px', 'u2'),
             ('py', 'u2')
         ])
-        record_template['px'] = getattr(self, 'px', 0)
-        record_template['py'] = getattr(self, 'py', 0)
+        record_template['px'] = self.px
+        record_template['py'] = self.py
 
         return record_template
 
@@ -114,7 +117,8 @@ class YATSM(object):
                 'dataset' and 'YATSM' sub-configurations
 
         Returns:
-            X (np.ndarray, or None): return design matrix if used by algorithm
+            X (numpy.ndarray, or None): return design matrix if used by
+                algorithm
 
         """
         X = patsy.dmatrix(config['YATSM']['design_matrix'], data=df)
@@ -124,11 +128,11 @@ class YATSM(object):
         """ Preprocess a unit area of data (e.g., pixel, segment, etc.)
 
         Args:
-            X (np.ndarray): design matrix (number of observations x number of
-                features)
-            Y (np.ndarray): independent variable matrix (number of series x
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
                 number of observations)
-            dates (np.ndarray): ordinal dates for each observation in X/Y
+            dates (numpy.ndarray): ordinal dates for each observation in X/Y
             config (dict): YATSM configuration dictionary from user, including
                 'dataset' and 'YATSM' sub-configurations
 
@@ -155,14 +159,14 @@ class YATSM(object):
         """ Fit timeseries model
 
         Args:
-            X (np.ndarray): design matrix (number of observations x number of
-                features)
-            Y (np.ndarray): independent variable matrix (number of series x
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
                 number of observations)
-            dates (np.ndarray): ordinal dates for each observation in X/Y
+            dates (numpy.ndarray): ordinal dates for each observation in X/Y
 
         Returns:
-            np.ndarray: NumPy structured array containing timeseries
+            numpy.ndarray: NumPy structured array containing timeseries
                 model attribute information
 
         """
@@ -174,9 +178,9 @@ class YATSM(object):
         Updates or initializes fit for ``self.models``
 
         Args:
-            X (np.ndarray): design matrix (number of observations x number of
-                features)
-            Y (np.ndarray): independent variable matrix (number of series x
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
                 number of observations) observation in the X design matrix
             bands (iterable): Subset of bands of `Y` to fit. If None are
                 provided, fit all bands in Y
@@ -206,17 +210,17 @@ class YATSM(object):
         timeseries segment that intersects each date.
 
         Args:
-            X (np.ndarray): Design matrix (number of observations x number of
-                features)
-            dates (int or np.ndarray): A single ordinal date or a np.ndarray of
-                length X.shape[0] specifying the ordinal dates for each
+            X (numpy.ndarray): Design matrix (number of observations x number
+                of features)
+            dates (int or numpy.ndarray): A single ordinal date or a np.ndarray
+                of length X.shape[0] specifying the ordinal dates for each
                 prediction
             series (iterable, optional): Return prediction for subset of series
                 within timeseries model. If None is provided, returns
                 predictions from all series
 
         Returns:
-            np.ndarray: Prediction for given X (number of series x number of
+            numpy.ndarray: Prediction for given X (number of series x number of
                 observations)
 
         """
@@ -228,11 +232,11 @@ class YATSM(object):
         """ Return timeseries model performance scores
 
         Args:
-            X (np.ndarray): design matrix (number of observations x number of
-                features)
-            Y (np.ndarray): independent variable matrix (number of series x
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
                 number of observations)
-            dates (np.ndarray): ordinal dates for each observation in X/Y
+            dates (numpy.ndarray): ordinal dates for each observation in X/Y
 
         Returns:
             namedtuple: performance summary statistics
@@ -244,11 +248,11 @@ class YATSM(object):
         """ Plot the timeseries model results
 
         Args:
-            X (np.ndarray): design matrix (number of observations x number of
-                features)
-            Y (np.ndarray): independent variable matrix (number of series x
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
                 number of observations)
-            dates (np.ndarray): ordinal dates for each observation in X/Y
+            dates (numpy.ndarray): ordinal dates for each observation in X/Y
             config (dict): YATSM configuration dictionary from user, including
                 'dataset' and 'YATSM' sub-configurations
 

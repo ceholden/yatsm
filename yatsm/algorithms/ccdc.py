@@ -37,14 +37,14 @@ class CCDCesque(YATSM):
     Classification (CCDC) algorithm by Zhu and Woodcock, 2014.
 
     Args:
-        test_indices (np.ndarray, optional): Test for changes with these
+        test_indices (numpy.ndarray): Test for changes with these
             indices of ``Y``. If not provided, all series in ``Y`` will be used
             as test indices
         estimator (dict): dictionary containing estimation model from
             ``scikit-learn`` used to fit and predict timeseries and,
             optionally, a dict of options for the estimation model ``fit``
             method (default: ``{'object': Lasso(alpha=20), 'fit': {}}``)
-        consecutive (int, optional): Consecutive observations to trigger change
+        consecutive (int): Consecutive observations to trigger change
         threshold (float): Test statistic threshold for change
         min_obs (int): Minimum observations in model
         min_rmse (float): Minimum RMSE for models during testing
@@ -52,24 +52,29 @@ class CCDCesque(YATSM):
             monitoring period
         screening (str): Style of prescreening of the timeseries for noise.
             Options are 'RLM' or 'LOWESS' (default: RLM)
-        screening_crit (float, optional): critical value for multitemporal
+        screening_crit (float): critical value for multitemporal
             noise screening (default: 400.0)
-        remove_noise (bool, optional): Remove observation if change is not
+        remove_noise (bool): Remove observation if change is not
             detected but first observation is above threshold (if it looks like
             noise) (default: True)
-        green_band (int, optional): Index of green band in ``Y`` for
+        green_band (int): Index of green band in ``Y`` for
             multitemporal masking (default: 1)
-        swir1_band (int, optional): Index of first SWIR band in ``Y`` for
+        swir1_band (int): Index of first SWIR band in ``Y`` for
             multitemporal masking (default: 4)
-        dynamic_rmse (bool, optional): Vary RMSE as a function of day of year
+        dynamic_rmse (bool): Vary RMSE as a function of day of year
             (default: False)
-        slope_test (float or bool, optional): Use an additional slope test to
+        slope_test (float or bool): Use an additional slope test to
             assess the suitability of the training period. A value of True
             enables the test and uses the `threshold` parameter as the test
             criterion. False turns off the test or a float value enables the
             test but overrides the test criterion threshold. (default: False)
         idx_slope (int): if ``slope_test`` is enabled, provide index of ``X``
             containing slope term (default: 1)
+
+
+    .. document private functions
+    .. automethod:: _get_dynamic_rmse
+    .. automethod:: _get_model_rmse
 
     """
 
@@ -82,9 +87,10 @@ class CCDCesque(YATSM):
                  consecutive=5, threshold=2.56, min_obs=None, min_rmse=None,
                  retrain_time=365.25, screening='RLM', screening_crit=400.0,
                  remove_noise=True, green_band=1, swir1_band=4,
-                 dynamic_rmse=False, slope_test=False, idx_slope=1):
+                 dynamic_rmse=False, slope_test=False, idx_slope=1,
+                 **kwargs):
         # Parent sets up test_indices and lm
-        super(CCDCesque, self).__init__(test_indices, estimator)
+        super(CCDCesque, self).__init__(test_indices, estimator, **kwargs)
 
         # Store model hyperparameters
         self.consecutive = consecutive
@@ -119,14 +125,14 @@ class CCDCesque(YATSM):
 
     @property
     def record_template(self):
-        """ Return a YATSM record template for features in X and series in Y
+        """ YATSM record template for features in X and series in Y
 
         Record template will set `px` and `py` if defined as class attributes.
         Otherwise `px` and `py` coordinates will default to 0.
 
         Returns:
-            np.ndarray: NumPy structured array containing a template of a YATSM
-                record
+            numpy.ndarray: NumPy structured array containing a template of a
+                YATSM record
 
         """
         record_template = np.zeros(1, dtype=[
@@ -139,8 +145,8 @@ class CCDCesque(YATSM):
             ('px', 'u2'),
             ('py', 'u2')
         ])
-        record_template['px'] = getattr(self, 'px', 0)
-        record_template['py'] = getattr(self, 'py', 0)
+        record_template['px'] = self.px
+        record_template['py'] = self.py
 
         return record_template
 
@@ -170,14 +176,14 @@ class CCDCesque(YATSM):
         """ Fit timeseries model
 
         Args:
-            X (np.ndarray): design matrix (number of observations x number of
-                features)
-            Y (np.ndarray): independent variable matrix (number of series x
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
                 number of observations)
-            dates (np.ndarray): ordinal dates for each observation in X/Y
+            dates (numpy.ndarray): ordinal dates for each observation in X/Y
 
         Returns:
-            np.ndarray: NumPy structured array containing timeseries
+            numpy.ndarray: NumPy structured array containing timeseries
                 model attribute information
 
         """
@@ -353,7 +359,38 @@ class CCDCesque(YATSM):
         self.monitoring = True
 
     def monitor(self):
-        """ Monitor for changes in time series """
+        """ Monitor for changes in time series
+
+        The test criteria for CCDC can be represented as:
+
+        .. math::
+            \\sum_{i=0}^{\\color{red}{consec}}
+                I \\left(
+                \\sqrt{
+                    \\sum_{b\in \\color{red}{B_{test}}}
+                        \\left(
+                        \\frac
+                            {\hat\\rho_{b,i} - \\rho_{b,i}}
+                            {{RMSE}_b^{\\color{red}{*}}}
+                        \\right)
+                        ^2
+                } > \\color{red}{T_{crit}}
+                \\right)
+                > \\color{red}{consec}
+
+        where the variables in red are model hyperparameters:
+
+            * :math:`\\color{red}{consec}`: :class:`consec <CCDCesque>`
+            * :math:`\\color{red}{B_{test}}`: :class:`test_indices <CCDCesque>`
+            * :math:`\\color{red}{T_{crit}}`: :class:`threshold <CCDCesque>`
+            * :math:`{RMSE}_b^{\\color{red}{*}}`:
+
+                * Use :func:`~_get_dynamic_rmse` if
+                  :class:`dynamic_rmse <CCDCesque>`
+                * Otherwise use :func:`~_get_model_rmse`
+
+
+        """
         _rmse = self.get_rmse()
 
         for idx, model in enumerate(self.models[self.test_indices]):
@@ -424,7 +461,7 @@ class CCDCesque(YATSM):
         """ Screen entire dataset for noise before training using LOWESS
 
         Args:
-            span (int, optional): span for LOWESS
+            span (int): span for LOWESS
 
         Returns:
             bool: True if timeseries is screened and we can train, else False
@@ -500,7 +537,7 @@ class CCDCesque(YATSM):
         """ Return the normal RMSE of each fitted model
 
         Returns:
-          np.ndarray: NumPy array containing RMSE of each tested model
+          numpy.ndarray: RMSE of each tested model
 
         """
         return np.array([m.rmse for m in self.models])[self.test_indices]
@@ -515,7 +552,7 @@ class CCDCesque(YATSM):
         the signal) while decreasing omission during stable times of year.
 
         Returns:
-          np.ndarray: NumPy array containing dynamic RMSE of each tested model
+          numpy.ndarray: dynamic RMSE of each tested model
 
         """
         # Indices of closest observations based on DOY
