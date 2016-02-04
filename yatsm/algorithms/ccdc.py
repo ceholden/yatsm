@@ -386,11 +386,17 @@ class CCDCesque(YATSM):
               :paramref:`test_indices <.CCDCesque.test_indices>`
             * :math:`\\color{red}{T_{crit}}`:
               :paramref:`threshold <.CCDCesque.threshold>`
-            * :math:`{RMSE}_b^{\\color{red}{*}}` depends on
-              :paramref:`dynamic_rmse <.CCDCesque.dynamic_rmse>`:
+            * :math:`{RMSE}_b^{\\color{red}{*}}` depends on:
 
-                * True: :func:`~_get_dynamic_rmse` is used for RMSE estimate
-                * False: :func:`~_get_model_rmse` is used for RMSE estimate
+                * :paramref:`dynamic_rmse <.CCDCesque.dynamic_rmse>`:
+
+                    * True: :func:`~_get_dynamic_rmse` is used for RMSE
+                    * False: :func:`~_get_model_rmse` is used for RMSE
+                * :paramref:`min_rmse <.CCDCesque.min_rmse>`
+
+                    * If a `float` or `int` is given, override RMSE estimate
+                      if estimate is smaller than
+                      :paramref:`min_rmse <.CCDCesque.min_rmse>`
 
         If :paramref:`remove_noise <.CCDCesque.remove_noise>` is `True`,
         the first of ``consecutive`` observations will be removed if first
