@@ -17,7 +17,8 @@ class YATSM(object):
         When ``YATSM`` objects are fit, the intended order of method calls is:
 
             1. Setup the model with :func:`~setup`
-            2. Preprocess a time series with :func:`~preprocess`
+            2. Preprocess a time series for one unit area with
+               :func:`~preprocess`
             3. Fit the time series with the YATSM model using :func:`~fit`
             4. A fitted model can be used to
 
@@ -117,9 +118,7 @@ class YATSM(object):
                 'dataset' and 'YATSM' sub-configurations
 
         Returns:
-            X (numpy.ndarray, or None): return design matrix if used by
-                algorithm
-
+            numpy.ndarray or None: return design matrix if used by algorithm
         """
         X = patsy.dmatrix(config['YATSM']['design_matrix'], data=df)
         return X
