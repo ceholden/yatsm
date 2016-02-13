@@ -201,7 +201,8 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
         return np.all(omission, 1)
 
 
-def refit_record(model, prefix, estimator, fitopt={}, keep_regularized=False):
+def refit_record(model, prefix, estimator,
+                 fitopt=None, keep_regularized=False):
     """ Refit YATSM model segments with a new estimator and update record
 
     YATSM class model must be ran and contain at least one record before this
@@ -214,7 +215,7 @@ def refit_record(model, prefix, estimator, fitopt={}, keep_regularized=False):
         estimator (object): instance of a scikit-learn compatible estimator
             object
         fitopt (dict, optional): dict of options for the ``fit`` method of the
-            ``estimator`` provided (default: {})
+            ``estimator`` provided (default: None)
         keep_regularized (bool, optional): do not use features with coefficient
             estimates that are fit to 0 (i.e., if using L1 regularization)
 
@@ -225,6 +226,8 @@ def refit_record(model, prefix, estimator, fitopt={}, keep_regularized=False):
     """
     if not model:
         return None
+
+    fitopt = fitopt or {}
 
     refit_coef = prefix + '_coef'
     refit_rmse = prefix + '_rmse'
