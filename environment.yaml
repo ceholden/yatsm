@@ -2,7 +2,7 @@
 # Includes optional dependencies since conda makes installing them pretty easy
 name: yatsm
 channels:
-    - asmeurer
+    - r
 dependencies:
     # Base
     - python=2.7
@@ -15,7 +15,7 @@ dependencies:
     - pandas>=0.16.0
     - patsy>=0.3.0
     # GDAL
-    - gdal==1.11.2
+    - gdal>=2.0.0
     # CLI
     - click>=4.0
     # Config file
