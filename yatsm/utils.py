@@ -3,10 +3,12 @@ from __future__ import division
 from datetime import datetime as dt
 import fnmatch
 import os
+import re
 import sys
 
 import numpy as np
 import pandas as pd
+import six
 
 try:
     from scandir import walk
@@ -254,3 +256,16 @@ def is_integer(s):
         return True
     except:
         return False
+
+
+def copy_dict_filter_key(d, regex):
+    """ Copy a dict recursively, but only if key doesn't match regex pattern
+    """
+    out = {}
+    for k, v in six.iteritems(d):
+        if not re.match(regex, k):
+            if isinstance(v, dict):
+                out[k] = copy_dict_filter_key(v, regex)
+            else:
+                out[k] = v
+    return out

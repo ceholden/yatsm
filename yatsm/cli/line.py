@@ -1,5 +1,4 @@
 """ Command line interface for running YATSM on image lines """
-import copy
 import logging
 import os
 import time
@@ -13,7 +12,7 @@ from ..config_parser import parse_config_file
 from ..errors import TSLengthException
 from ..io import get_image_attribute, mkdir_p, read_line
 from ..utils import (distribute_jobs, get_output_name, get_image_IDs,
-                     csvfile_to_dataframe)
+                     csvfile_to_dataframe, copy_dict_filter_key)
 from ..algorithms import postprocess
 try:
     from ..phenology import longtermmean as pheno
@@ -106,15 +105,13 @@ def line(ctx, config, job_number, total_jobs,
     # Create output metadata to save
     algo = cfg['YATSM']['algorithm']
     md = {
-        'YATSM': copy.deepcopy(cfg['YATSM']),
-        algo: copy.deepcopy(cfg[algo])
+        # Do not copy over prediction objects
+        # Pickled objects potentially unstable across library versions
+        'YATSM': copy_dict_filter_key(cfg['YATSM'], '.*object.*'),
+        algo: cfg[algo].copy()
     }
     if cfg['phenology']['enable']:
         md.update({'phenology': cfg['phenology']})
-    # Remove all objects from metadata
-    # Pickled objects potentially unstable across library versions)
-    md['YATSM']['estimator'].pop('object', None)
-    md['YATSM']['refit'].pop('prediction_object', None)
 
     # Begin process
     start_time_all = time.time()
