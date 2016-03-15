@@ -78,6 +78,7 @@ GLMNET_LassoCV:
 GLMNET_Lasso20:
     pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl"
     fit:
+        # 6 penalties for 6 coefficients
         penalties: [1, 0, 1, 1, 1, 1]
 
 RLM:

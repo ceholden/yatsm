@@ -37,7 +37,7 @@ dataset:
 YATSM:
     algorithm: "CCDCesque"
     prediction: "GLMNET_Lasso20"
-    design_matrix: "1 + x + harm(x, 1) + harm(x, 2)"
+    design_matrix: "1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3)"
     reverse: False
     commission_alpha:
     # Re-fit each segment, adding new coefficients & RMSE info to record
@@ -78,7 +78,8 @@ GLMNET_LassoCV:
 GLMNET_Lasso20:
     pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl"
     fit:
-        penalties: [1, 0, 1, 1, 1, 1]
+        # 8 penalties for 8 coefficients
+        penalties: [1, 0, 1, 1, 1, 1, 1, 1]
 
 RLM:
     pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/rlm_maxiter10.pkl"
