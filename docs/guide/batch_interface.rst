@@ -42,7 +42,7 @@ follows:
     $ njob=200
     $ for job in $(seq 1 $njob); do
         qsub -j y -V -l h_rt=24:00:00 -N yatsm_$job -b y \
-            yatsm line --resume -v config.ini $job $njob
+            yatsm -v line --resume config.ini $job $njob
       done
 
 By setting the environment variable, ``PYTHONUNBUFFERED``, to a nonzero and
@@ -56,7 +56,7 @@ YATSM jobs with unbuffered output as follows in the example for ``yatsm line``:
 .. code-block:: bash
 
     $ qsub -j y -V -l h_rt=24:00:00 -N yatsm -b y \
-        PYTHONUNBUFFERED=1 yatsm line --resume -v config.ini 1 1
+        PYTHONUNBUFFERED=1 yatsm -v line --resume config.ini 1 1
 
 One useful tip is to optimize the use of the CPU nodes by first transforming the
 dataset from an image based format to a timeseries format by saving all
