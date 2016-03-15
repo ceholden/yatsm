@@ -74,7 +74,7 @@ specific request for computer nodes with fast ethernet speeds,
     $ njob=16
     $ for job in $(seq 1 $njob); do
         qsub -j y -V -l h_rt=24:00:00 -l eth_speed=10 -N yatsm_$job -b y \
-            yatsm line --resume --do-not-run -v config.ini $job $njob
+            yatsm -v line --resume --do-not-run config.ini $job $njob
       done
 
 
