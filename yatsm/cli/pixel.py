@@ -13,7 +13,7 @@ import patsy
 import yaml
 
 from . import options, console
-from ..algorithms import postprocess  # TODO: implement postprocessors
+from ..algorithms import postprocess
 from ..config_parser import convert_config, parse_config_file
 from ..io import read_pixel_timeseries
 from ..utils import csvfile_to_dataframe, get_image_IDs
@@ -56,13 +56,19 @@ logger = logging.getLogger('yatsm')
 @click.option('--seed', help='Set NumPy RNG seed value')
 @click.option('--algo_kw', multiple=True, callback=options.callback_dict,
               help='Algorithm parameter overrides')
+@click.option('--result_prefix', type=str, default='', show_default=True,
+              help='Plot coef/rmse from refit that used this prefix')
 @click.pass_context
 def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
-          embed, seed, algo_kw):
+          embed, seed, algo_kw, result_prefix):
     # Set seed
     np.random.seed(seed)
     # Convert band to index
     band -= 1
+    # Format result prefix
+    if result_prefix:
+        result_prefix = (result_prefix if result_prefix[-1] == '_' else
+                         result_prefix + '_')
 
     # Get colormap
     if cmap not in mpl.cm.cmap_d:
@@ -133,26 +139,37 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
 
     # Fit model
     yatsm.fit(X, Y, dates, **algo_cfg.get('fit', {}))
+    for prefix, estimator, stay_reg, fitopt in zip(
+            cfg['YATSM']['refit']['prefix'],
+            cfg['YATSM']['refit']['prediction_object'],
+            cfg['YATSM']['refit']['stay_regularized'],
+            cfg['YATSM']['refit']['fit']):
+        yatsm.record = postprocess.refit_record(
+            yatsm, prefix, estimator,
+            fitopt=fitopt, keep_regularized=stay_reg)
 
     # Plot after predictions
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
-        for _plot in plot:
-            if _plot == 'TS':
-                plot_TS(dt_dates, Y[band, :])
-            elif _plot == 'DOY':
-                plot_DOY(dt_dates, Y[band, :], cmap)
-            elif _plot == 'VAL':
-                plot_VAL(dt_dates, Y[band, :], cmap)
-
-            if ylim:
-                plt.ylim(ylim)
-            plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
-            plt.ylabel('Band {b}'.format(b=band + 1))
-
-            plot_results(band, cfg, yatsm, design_info, plot_type=_plot)
-
-            plt.tight_layout()
-            plt.show()
+            for _plot in plot:
+                if _plot == 'TS':
+                    plot_TS(dt_dates, Y[band, :])
+                elif _plot == 'DOY':
+                    plot_DOY(dt_dates, Y[band, :], cmap)
+                elif _plot == 'VAL':
+                    plot_VAL(dt_dates, Y[band, :], cmap)
+    
+                if ylim:
+                    plt.ylim(ylim)
+                plt.title('Timeseries: px={px} py={py}'.format(px=px, py=py))
+                plt.ylabel('Band {b}'.format(b=band + 1))
+    
+                for _prefix in set((result_prefix, '')):
+                    plot_results(band, cfg, yatsm, design_info,
+                                 result_prefix=_prefix,
+                                 plot_type=_plot)
+    
+                plt.tight_layout()
+                plt.show()
 
     if embed:
         console.open_interpreter(
@@ -232,7 +249,8 @@ def plot_VAL(dates, y, mpl_cmap, reps=2):
     plt.xlabel('Day of Year')
 
 
-def plot_results(band, cfg, model, design_info, plot_type='TS'):
+def plot_results(band, cfg, model, design_info,
+                 result_prefix='', plot_type='TS'):
     """ Plot model results
 
     Args:
@@ -240,8 +258,18 @@ def plot_results(band, cfg, model, design_info, plot_type='TS'):
         cfg (dict): YATSM configuration dictionary
         model (YATSM model): fitted YATSM timeseries model
         design_info (patsy.DesignInfo): patsy design information
+        result_prefix (str): Prefix to 'coef' and 'rmse'
         plot_type (str): type of plot to add results to (TS, DOY, or VAL)
     """
+    # Results prefix
+    result_k = model.record.dtype.names
+    coef_k = result_prefix + 'coef'
+    rmse_k = result_prefix + 'rmse'
+    if coef_k not in result_k or rmse_k not in result_k:
+        raise KeyError('Cannot find result prefix in results')
+    if result_prefix:
+        click.echo('Using "{}" re-fitted results'.format(result_prefix))
+
     # Handle reverse
     step = -1 if cfg['YATSM']['reverse'] else 1
 
@@ -255,14 +283,15 @@ def plot_results(band, cfg, model, design_info, plot_type='TS'):
             i_coef.append(v)
     i_coef = np.asarray(i_coef)
 
+    _prefix = result_prefix or cfg['YATSM']['prediction'] 
     for i, r in enumerate(model.record):
-        label = 'Model {i}'.format(i=i)
+        label = 'Model {i} ({prefix}'.format(i=i, prefix=_prefix)
         if plot_type == 'TS':
             # Prediction
             mx = np.arange(r['start'], r['end'], step)
             mX = patsy.dmatrix(design, {'x': mx}).T
 
-            my = np.dot(r['coef'][i_coef, band], mX)
+            my = np.dot(r[coef_k][i_coef, band], mX)
             mx_date = np.array([dt.datetime.fromordinal(int(_x)) for _x in mx])
             # Break
             if r['break']:
@@ -278,11 +307,13 @@ def plot_results(band, cfg, model, design_info, plot_type='TS'):
                            dt.date(yr_mid + 1, 1, 1).toordinal(), 1)
             mX = patsy.dmatrix(design, {'x': mx}).T
 
-            my = np.dot(r['coef'][i_coef, band], mX)
+            my = np.dot(r[coef_k][i_coef, band], mX)
             mx_date = np.array([dt.datetime.fromordinal(d).timetuple().tm_yday
                                 for d in mx])
 
-            label = 'Model {i} - {yr}'.format(i=i, yr=yr_mid)
+            
+            label = 'Model {i} - {yr} ({prefix})'.format(i=i, yr=yr_mid,
+                                                         prefix=_prefix)
 
         plt.plot(mx_date, my, lw=2, label=label)
     leg = plt.legend()
