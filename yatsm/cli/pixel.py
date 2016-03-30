@@ -285,7 +285,7 @@ def plot_results(band, cfg, model, design_info,
 
     _prefix = result_prefix or cfg['YATSM']['prediction'] 
     for i, r in enumerate(model.record):
-        label = 'Model {i} ({prefix}'.format(i=i, prefix=_prefix)
+        label = 'Model {i} ({prefix})'.format(i=i, prefix=_prefix)
         if plot_type == 'TS':
             # Prediction
             mx = np.arange(r['start'], r['end'], step)
@@ -315,7 +315,7 @@ def plot_results(band, cfg, model, design_info,
             label = 'Model {i} - {yr} ({prefix})'.format(i=i, yr=yr_mid,
                                                          prefix=_prefix)
 
-        plt.plot(mx_date, my, lw=2, label=label)
+        plt.plot(mx_date, my, lw=3, label=label)
     leg = plt.legend()
     leg.draggable(state=True)
 
