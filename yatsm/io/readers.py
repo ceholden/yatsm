@@ -25,7 +25,7 @@ def get_image_attribute(image_filename):
         image_ds = gdal.Open(image_filename, gdal.GA_ReadOnly)
     except Exception as e:
         logger.error('Could not open example image dataset ({f}): {e}'
-                     .format(f=image_filename), e=str(e))
+                     .format(f=image_filename, e=str(e)))
         raise
 
     nrow = image_ds.RasterYSize
