@@ -115,19 +115,19 @@ def find_indices(record, date, after=False, before=False):
     """ Yield indices matching time segments for a given date
 
     Args:
-      record (np.ndarray): Saved model result
-      date (int): Ordinal date to use when finding matching segments
-      after (bool, optional): If date intersects a disturbed period, use next
-        available time segment
-      before (bool, optional): If date does not intersect a model, use previous
-        non-disturbed time segment
+        record (np.ndarray): Saved model result
+        date (int): Ordinal date to use when finding matching segments
+        after (bool, optional): If date intersects a disturbed period, use next
+            available time segment
+        before (bool, optional): If date does not intersect a model, use
+            previous non-disturbed time segment
 
     Yields:
-      tuple: (int, np.ndarray) the QA value and indices of `record` containing
-        indices matching criteria. If `before` or `after` are specified,
-        indices will be yielded in order of least desirability to allow
-        overwriting -- `before` indices, `after` indices, and intersecting
-        indices.
+        tuple: (int, np.ndarray) the QA value and indices of `record`
+            containing indices matching criteria. If `before` or `after` are
+            specified, indices will be yielded in order of least desirability
+            to allow overwriting -- `before` indices, `after` indices, and
+            intersecting indices.
 
     """
     if before:
