@@ -38,3 +38,6 @@ after_success:
     - pip install coveralls
     - coverage report
     - coveralls
+before_cache:
+    # Deactivate conda so we use system 'curl'
+    - source deactivate
