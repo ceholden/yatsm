@@ -1,8 +1,8 @@
 language: python
 sudo: false
 cache:
-    - pip
-    - apt
+    directories:
+        - $HOME/conda/pkgs
 python:
     - "2.7"
 branches:
@@ -30,7 +30,7 @@ install:
     # Install YATSM
     - "pip install -e ."
 script:
-    - py.test tests/
+    - py.test -ra tests/
     # Disable numba JIT for coverage to correctly identify JIT-ed lines
     # See: http://stackoverflow.com/questions/26875191/analyzing-coverage-of-numba-wrapped-functions
     - NUMBA_DISABLE_JIT=1 coverage run --source yatsm -m py.test
