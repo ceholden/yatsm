@@ -68,6 +68,7 @@ intersphinx_mapping = {
     'sklearn': ('http://scikit-learn.org/stable', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/stable/', None),
+    'setuptools': ('https://pythonhosted.org/setuptools/', None),
     'python': ('https://docs.python.org/dev', None)
 }
 todo_include_todos = True

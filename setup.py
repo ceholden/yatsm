@@ -141,6 +141,9 @@ entry_points = '''
     classify=yatsm.cli.classify:classify
     map=yatsm.cli.map:map
     changemap=yatsm.cli.changemap:changemap
+
+    [yatsm.algorithms.change]
+    CCDCesque=yatsm.algorithms.ccdc:CCDCesque
 '''
 
 desc = ('Algorithms for remote sensing land cover and condition monitoring '

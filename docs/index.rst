@@ -29,6 +29,7 @@ To get started with YATSM, please follow this user guide:
    guide/map_changes
    guide/classification
    guide/phenology
+   guide/developer/custom_timeseries_algorithms.rst
 
 
 Command Line Interface Utilities

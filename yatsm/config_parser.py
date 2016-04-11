@@ -47,13 +47,14 @@ def parse_config_file(config_file):
                        'configuration file' % algo)
 
     # Embed algorithm in YATSM key
-    if algo not in algorithms.available:
+    # TODO: broaden this concept to at least algo['change']
+    if algo not in algorithms.available['change']:
         raise NotImplementedError('Algorithm specified (%s) is not currently '
                                   'available' % algo)
-    cfg['YATSM']['algorithm_cls'] = getattr(algorithms, algo)
+    cfg['YATSM']['algorithm_cls'] = algorithms.available['change'][algo]
     if not cfg['YATSM']['algorithm_cls']:
         raise KeyError('Could not find algorithm specified (%s) in '
-                       '`yatsm.algorithms`' % algo)
+                       '`yatsm.algorithms.available`' % algo)
 
     # Add in dummy phenology and classification dicts if not included
     if 'phenology' not in cfg:
