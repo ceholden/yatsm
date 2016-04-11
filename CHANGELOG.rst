@@ -15,8 +15,10 @@ Changed
 ~~~~~~~
 
 -  ``CCDCesque``: Optimize algorithm implementation. Performance estimates show 2x speed gain `#70 <https://github.com/ceholden/yatsm/issues/70>`__
+-  CLI: Improve ``yatsm pixel`` by enabling the plotting of multiple refit model estimates on the same graph (`commit <https://github.com/ceholden/yatsm/commit/0e6e1e5265e2786588b2cddf061693880cbe2e3c>`__)
 -  CLI: Improve ``yatsm pixel`` ``--embed`` option (`commit <https://github.com/ceholden/yatsm/commit/b1cf47ff3feeeb93b9f671bccc4379a9da1ad808>`__)
 -  CLI: Add ``--verbose-yatsm`` to main ``yatsm`` command so it works with all programs running a YATSM algorithm (`commit <https://github.com/ceholden/yatsm/commit/772badc980c56d2d5c4185a40bf856bc6875be91>`__)
+-  Use ``setuptools`` entry points to point YATSM to available time series algorithms (`commit <https://github.com/ceholden/yatsm/commit/a30424e044391062150851e566100bec4df66623>`__)
 
 Added
 ~~~~~
