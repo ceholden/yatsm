@@ -79,6 +79,15 @@ def commission_test(yatsm, alpha=0.10):
         m_r_start = m_1_start
         m_r_end = m_2_end
 
+        # Need enough obs to fit models (n > k)
+        if (m_1_end - m_1_start) <= k or (m_2_end - m_2_start) <= k:
+            logger.debug('Too few obs (n <= k) to merge segment')
+            merged = False
+            if i == 0:
+                models.append(m_1)
+            models.append(m_2)
+            continue
+
         n = m_r_end - m_r_start
         F_crit = scipy.stats.f.ppf(1 - alpha, k, n - 2 * k)
 
