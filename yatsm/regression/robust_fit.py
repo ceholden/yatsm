@@ -9,7 +9,7 @@ Reference:
     http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf
 
 Run this file to test performance gains. Implementation is ~3x faster than
-statesmodels and can reach ~4x faster if Numba is available to accelerate.
+statsmodels and can reach ~4x faster if Numba is available to accelerate.
 
 """
 import inspect
