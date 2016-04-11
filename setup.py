@@ -132,7 +132,7 @@ entry_points = '''
     [console_scripts]
     yatsm=yatsm.cli.main:cli
 
-    [yatsm.yatsm_commands]
+    [yatsm.cli]
     cache=yatsm.cli.cache:cache
     pixel=yatsm.cli.pixel:pixel
     segment=yatsm.cli.segment:segment

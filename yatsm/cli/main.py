@@ -54,7 +54,7 @@ _context = dict(
 
 
 @click_plugins.with_plugins(ep for ep in
-                            iter_entry_points('yatsm.yatsm_commands'))
+                            iter_entry_points('yatsm.cli'))
 @click.group(help='YATSM command line interface', context_settings=_context)
 @click.version_option(yatsm.__version__)
 @click.option('--num_threads', metavar='<threads>', default=1, type=int,
