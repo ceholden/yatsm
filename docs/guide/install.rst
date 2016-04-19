@@ -105,30 +105,7 @@ Finally, install YATSM:
     # Install YATSM
     pip install .
 
-Ubuntu 14.04
-------------
 
-On Ubuntu 14.04, for example, the GDAL build dependencies may be satisfied by installing the following:
-
-.. code-block:: bash
-
-    sudo apt-get install python2.7-dev
-    sudo apt-get install gdal-bin libgdal-dev
-    sudo apt-get install python-gdal
-
-This installation guide will also utilize the `pip <http://pip.readthedocs.org/en/latest/installing.html>`_ utility for installing Python modules. `pip` may be installed or upgraded following the instructions `here <http://pip.readthedocs.org/en/latest/installing.html>`_, but it is usual preferable to use your package manager:
-
-.. code-block:: bash
-
-    $ sudo apt-get install python-pip
-
-You will also need two font packages for `matplotlib` that are not installed with Ubuntu by default:
-
-.. code-block:: bash
-
-    $ sudo apt-get install libfreetype6-dev libxft-dev
-
-With the GDAL library and `pip` installed, follow the guide for how to install YATSM below using `virtualenv and pip`_.
 
 Developer Installation
 ----------------------
@@ -153,6 +130,31 @@ Platform Support
 
 YATSM is developed on Linux (CentOS 6, Arch, and Ubuntu 14.04) and has not been tested on any other platforms, though I have seen it working on Mac OS. I am welcome to any help fixing bugs or better supporting Windows, but I will not try to support Windows myself.
 
+
+Ubuntu 14.04
+~~~~~~~~~~~~
+
+On Ubuntu 14.04, for example, the GDAL build dependencies may be satisfied by installing the following:
+
+.. code-block:: bash
+
+    sudo apt-get install python2.7-dev
+    sudo apt-get install gdal-bin libgdal-dev
+    sudo apt-get install python-gdal
+
+This installation guide will also utilize the `pip <http://pip.readthedocs.org/en/latest/installing.html>`_ utility for installing Python modules. `pip` may be installed or upgraded following the instructions `here <http://pip.readthedocs.org/en/latest/installing.html>`_, but it is usual preferable to use your package manager:
+
+.. code-block:: bash
+
+    $ sudo apt-get install python-pip
+
+You will also need two font packages for `matplotlib` that are not installed with Ubuntu by default:
+
+.. code-block:: bash
+
+    $ sudo apt-get install libfreetype6-dev libxft-dev
+
+With the GDAL library and `pip` installed, follow the guide for how to install YATSM below using `virtualenv and pip`_.
 
 .. _GDAL: http://gdal.org/
 .. _conda: http://conda.pydata.org/docs/
