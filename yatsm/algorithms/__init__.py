@@ -8,6 +8,8 @@ from collections import defaultdict
 import functools
 from pkg_resources import iter_entry_points
 
+from .ccdc import CCDCesque
+
 
 def _broken_ep(ep, exc, *args, **kwargs):
     """ Delay error due to broken entry point until it executes
