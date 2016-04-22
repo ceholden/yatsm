@@ -157,16 +157,17 @@ def get_change_num(start, end, result_location, image_ds,
 
     logger.debug('Processing results')
     for rec in iter_records(records, warn_on_empty=warn_on_empty):
-        # X location of each changed model
-        px_changed = rec['px'][(rec['break'] >= start) & (rec['break'] <= end)]
-        # Count occurrences of changed pixel locations
-        bincount = np.bincount(px_changed)
-        # How many changes for unique values of px_changed?
-        n_change = bincount[np.nonzero(bincount)[0]]
-
+        # Find all changes in time period
+        changed = (rec['break'] >= start) & (rec['break'] <= end)
+        # Use raveled index to get unique x/y positions
+        idx_changed = np.ravel_multi_index(
+            (rec['py'][changed], rec['px'][changed]),
+            raster.shape
+        )
+        # Now possible in numpy>=1.9 -- return counts of unique indices
+        idx_uniq, idx_count = np.unique(idx_changed, return_counts=True)
         # Add in the values
-        px = np.unique(px_changed)
-        py = rec['py'][np.in1d(px, rec['px'])]
-        raster[py, px] = n_change
+        py, px = np.unravel_index(idx_uniq, raster.shape)
+        raster[py, px] = idx_count
 
     return raster
