@@ -5,8 +5,8 @@ All notable changes will appear in this log that begins with the release of ``v0
 
 For information on the style of this change log, see `keepachangelog.com <http://keepachangelog.com/>`__.
 
-`UNRELEASED (v0.6.0) <https://github.com/ceholden/yatsm/compare/v0.5.5...HEAD>`__
----------------------------------------------------------------------------------
+`v0.6.0 <https://github.com/ceholden/yatsm/compare/v0.5.5...v0.6.0>`__ - 2016-04-22
+-----------------------------------------------------------------------------------
 
 `Milestone
 v0.6.0 <https://github.com/ceholden/yatsm/milestones/v0.6.0>`__
@@ -43,6 +43,8 @@ Fixed
 -  ``CCDCesque``: Fix bug in parsing of ``test_indices`` if user doesn't supply any `#73 <https://github.com/ceholden/yatsm/issues/73>`__
 -  "Packaged" estimator pickles are built on installation of YATSM so they will work with user versions of libraries (`commit <https://github.com/ceholden/yatsm/commit/d9b4b80c1c70137525abfde7fc7933e34bcf6820>`__)
 -  Fix ``DeprecationWarnings`` with ``scikit-learn>=0.17.0`` (`commit <https://github.com/ceholden/yatsm/commit/29ddd4c0da29904b49fca7e452ee23ca1f938261>`__)
+- ``yatsm.regression.robust_fit.RLM``: Fix a bug caused by dividing by zero. This bug only occurs when the number of observations in a time series segment is approximately equal to the number of parameters (``n ~= k``) `#86 <https://github.com/ceholden/yatsm/issues/86>`_
+- Fix NumPy deprecation warnings and improve ``yatsm changemap num`` performance `#83 <https://github.com/ceholden/yatsm/issues/83>`__
 
 `v0.5.5 <https://github.com/ceholden/yatsm/compare/v0.5.4...v0.5.5>`__ - 2015-11-24
 -----------------------------------------------------------------------------------
