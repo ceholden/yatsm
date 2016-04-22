@@ -68,7 +68,7 @@ def test_cli_line_pass_reverse(example_timeseries, modify_config):
 # Seems like this scenario -- installed pickles using JIT but run disabled
 # using CLI -- is very unlikely
 # This behavior seems to have started between 0.24 - 0.25 of numba
-@pytest.mark.skip(
+@pytest.mark.skipif(
     'NUMBA_DISABLE_JIT' in os.environ,
     reason="Numba disabled, but would use pickle that is JIT-d in test"
 )
