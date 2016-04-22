@@ -143,7 +143,7 @@ def line(ctx, config, job_number, total_jobs,
         for col in np.arange(Y.shape[-1]):
             _Y = Y.take(col, axis=2)
             # Preprocess
-            _X, _Y, _dates = yatsm.preprocess(X, _Y, dates, **cfg)
+            _X, _Y, _dates = yatsm.preprocess(X, _Y, dates, **cfg['dataset'])
 
             # Run model
             yatsm.px = col

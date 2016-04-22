@@ -119,7 +119,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
                 nc=cfg['dataset']['n_bands']))
 
     # Preprocess pixel data
-    X, Y, dates = yatsm.preprocess(X, Y, dates, **cfg)
+    X, Y, dates = yatsm.preprocess(X, Y, dates, **cfg['dataset'])
 
     # Convert ordinal to datetime
     dt_dates = np.array([dt.datetime.fromordinal(d) for d in dates])

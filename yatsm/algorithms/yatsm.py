@@ -123,8 +123,17 @@ class YATSM(object):
         X = patsy.dmatrix(config['YATSM']['design_matrix'], data=df)
         return X
 
-    def preprocess(self, X, Y, dates, **config):
+    def preprocess(self, X, Y, dates,
+                   min_values=None, max_values=None,
+                   mask_band=None, mask_values=None, **kwargs):
         """ Preprocess a unit area of data (e.g., pixel, segment, etc.)
+
+        This preprocessing step will remove all observations that either
+        fall outside of the minimum/maximum range of the data or are flagged
+        for masking in the ``mask_band`` variable in ``Y``. If ``min_values``
+        or ``max_values`` are not specified, this masking step is skipped.
+        Similarly, masking based on a QA/QC or cloud mask will not be performed
+        if ``mask_band`` or ``mask_values`` are not provided.
 
         Args:
             X (numpy.ndarray): design matrix (number of observations x number
@@ -132,20 +141,30 @@ class YATSM(object):
             Y (numpy.ndarray): independent variable matrix (number of series x
                 number of observations)
             dates (numpy.ndarray): ordinal dates for each observation in X/Y
-            config (dict): YATSM configuration dictionary from user, including
-                'dataset' and 'YATSM' sub-configurations
+            min_values (np.ndarray): Minimum possible range of values for each
+                variable in Y (optional)
+            max_values (np.ndarray): Maximum possible range of values for each
+                variable in Y (optional)
+            mask_band (int): The mask band in Y (optional)
+            mask_values (sequence): A list or np.ndarray of values in the
+                ``mask_band`` to mask (optional)
+
+        Returns:
+            tuple (np.ndarray, np.ndarray, np.ndarray): X, Y, and dates after
+                being preprocessed and masked
 
         """
-        # Mask range of data
-        valid = get_valid_mask(
-            Y,
-            config['dataset']['min_values'],
-            config['dataset']['max_values']).astype(bool)
+        if min_values is None or max_values is None:
+            valid = np.ones(dates.shape[0], dtype=np.bool)
+        else:
+            # Mask range of data
+            valid = get_valid_mask(Y, min_values, max_values).astype(bool)
+
         # Apply mask band
-        idx_mask = config['dataset']['mask_band'] - 1
-        valid *= np.in1d(Y.take(idx_mask, axis=0),
-                         config['dataset']['mask_values'],
-                         invert=True).astype(np.bool)
+        if mask_band is not None and mask_values is not None:
+            idx_mask = mask_band - 1
+            valid *= np.in1d(Y.take(idx_mask, axis=0), mask_values,
+                             invert=True).astype(np.bool)
 
         Y = np.delete(Y, idx_mask, axis=0)[:, valid]
         X = X[valid, :]
