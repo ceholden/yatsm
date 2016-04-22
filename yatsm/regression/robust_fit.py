@@ -22,6 +22,8 @@ import sklearn
 
 from yatsm.accel import try_jit
 
+EPS = numpy.finfo('float').eps
+
 
 # Weight scaling methods
 @try_jit(nopython=True)
@@ -166,7 +168,8 @@ class RLM(sklearn.base.BaseEstimator):
             self.weights = self.M(resid / self.scale, c=self.tune)
             self.coef_, resid = _weight_fit(X, y, self.weights)
             if self.update_scale:
-                self.scale = self.scale_est(resid, c=self.scale_constant)
+                self.scale = max(EPS,
+                                 self.scale_est(resid, c=self.scale_constant))
             iteration += 1
             converged = _check_converge(self.coef_, _coef, tol=self.tol)
 
