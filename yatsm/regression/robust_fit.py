@@ -161,6 +161,9 @@ class RLM(sklearn.base.BaseEstimator):
         self.coef_, resid = _weight_fit(X, y, numpy.ones_like(y))
         self.scale = self.scale_est(resid, c=self.scale_constant)
 
+        if self.scale < EPS:
+            return self
+
         iteration = 1
         converged = 0
         while not converged and iteration < self.maxiter:
