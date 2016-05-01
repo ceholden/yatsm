@@ -12,12 +12,9 @@ Run this file to test performance gains. Implementation is ~3x faster than
 statsmodels and can reach ~4x faster if Numba is available to accelerate.
 
 """
-import inspect
-
 # Don't alias to ``np`` until fix is implemented
 # https://github.com/numba/numba/issues/1559
 import numpy
-import six
 import sklearn
 
 from yatsm.accel import try_jit
