@@ -3,6 +3,7 @@
 name: yatsm
 channels:
     - r
+    - conda-forge
 dependencies:
     # Base
     - python=2.7
