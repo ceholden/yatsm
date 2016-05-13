@@ -87,7 +87,9 @@ install_requires = [
     'click',
     'click_plugins',
     'patsy',
-    'GDAL'
+    'GDAL',
+    'rasterio',
+    'xarray'
 ]
 
 # NumPy/Cython build setup
