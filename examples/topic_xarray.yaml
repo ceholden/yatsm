@@ -1,0 +1,51 @@
+# Example configuration file for YATSM line runner
+#
+# This configuration includes details about the dataset and how YATSM should
+# run
+
+# Version of config
+version: "0.6.0"
+
+data:
+    # Optional: Directory location for caching dataset
+    # cache_dir: "/home/ceholden/Documents/landsat_stack/p013r030/subset/cache"
+    datasets:
+        Landsat:
+            # Type of reader for this dataset (GDAL | BIP)
+            reader: GDAL
+            # Text file containing dates and images
+            input_file: "/home/ceholden/Documents/yatsm/examples/p013r030/images.csv"
+            # Input date format
+            date_format: "%Y%j"
+            # Band names
+            band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
+            # Mask band (e.g., Fmask)
+            mask_band: fmask
+            # List of integer values to mask within the mask band
+            mask_values: [2, 3, 4, 255]
+            # Valid range of band data
+            min_values: [0, 0, 0, 0, 0, 0, -100, 0]
+            max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
+        Landsat2:
+            # Type of reader for this dataset (GDAL | BIP)
+            reader: GDAL
+            # Text file containing dates and images
+            input_file: "/home/ceholden/Documents/yatsm/examples/p013r030/images.csv"
+            # Input date format
+            date_format: "%Y%j"
+            # Band names
+            band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
+            # Mask band (e.g., Fmask)
+            mask_band: fmask
+            # List of integer values to mask within the mask band
+            mask_values: [2, 3, 4, 255]
+            # Valid range of band data
+            # specify 1 range for all bands, or specify ranges for each band
+            max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
+            max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
+
+results:
+    # Output location
+    output: "/home/ceholden/Documents/landsat_stack/p013r030/subset/YATSM"
+    # Output filename pattern
+    output_prefix: "yatsm_r{line}.npz"

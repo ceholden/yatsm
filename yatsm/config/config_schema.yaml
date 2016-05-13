@@ -1,0 +1,58 @@
+# http://json-schema.org/example2.html
+"$schema": "http://json-schema.org/draft-04/schema#"
+description: YATSM configuration
+type: object
+properties:
+    version:
+        type: string
+        # TODO: pattern:
+    data:
+        "$ref": "#/definitions/data"
+
+
+
+definitions:
+    data:
+        type: object
+        properties:
+            cache_dir:
+                type: string
+                default: ''
+            datasets:
+                type: object
+                minProperties: 1
+                patternProperties:
+                    # Datasets can be labeled anything the user wants...
+                    '.*':
+                        "$ref": "#/definitions/datasets"
+        required:
+            - datasets
+    datasets:
+        type: object
+        properties:
+            reader:
+                enum: [GDAL, BIP]
+            input_file:
+                type: string
+            date_format:
+                type: string
+            band_names:
+                type: array
+                uniqueItems: true
+                items:
+                    type: string
+            mask_band:
+                type: string
+            mask_values:
+                "$ref": "#/types/array_num"
+            min_values:
+                "$ref": "#/types/array_num"
+types:
+    array_num:
+        type: array
+        items:
+            type: number
+    array_str:
+        type: array
+        items:
+            type: string
