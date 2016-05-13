@@ -72,7 +72,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
                          for _pref in result_prefix)
         result_prefix.add('')  # add in no prefix to show original fit
     else:
-        result_prefix = ('')
+        result_prefix = ('', )
 
     # Get colormap
     if cmap not in mpl.cm.cmap_d:
@@ -286,7 +286,7 @@ def plot_results(band, cfg, model, design_info,
     for k, v in design_info.column_name_indexes.iteritems():
         if not re.match('C\(.*\)', k):
             i_coef.append(v)
-    i_coef = np.asarray(i_coef)
+    i_coef = np.sort(np.asarray(i_coef))
 
     _prefix = result_prefix or cfg['YATSM']['prediction']
     for i, r in enumerate(model.record):
