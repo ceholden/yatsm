@@ -12,3 +12,7 @@ class TrainingDataException(Exception):
 class AlgorithmNotFoundException(Exception):
     """ Custom exception for algorithm config files without handlers """
     pass
+
+
+class InvalidConfigurationException(Exception):
+    pass

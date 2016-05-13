@@ -4,7 +4,7 @@
 # run
 
 # Version of config
-version: "0.6.0"
+version: "0.7.0"
 
 data:
     # Optional: Directory location for caching dataset
@@ -14,7 +14,7 @@ data:
             # Type of reader for this dataset (GDAL | BIP)
             reader: GDAL
             # Text file containing dates and images
-            input_file: "/home/ceholden/Documents/yatsm/examples/p013r030/images.csv"
+            input_file: "$ROOT/Landsat.csv"
             # Input date format
             date_format: "%Y%j"
             # Band names
@@ -26,26 +26,26 @@ data:
             # Valid range of band data
             min_values: [0, 0, 0, 0, 0, 0, -100, 0]
             max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
-        Landsat2:
+        ALOS:
             # Type of reader for this dataset (GDAL | BIP)
             reader: GDAL
             # Text file containing dates and images
-            input_file: "/home/ceholden/Documents/yatsm/examples/p013r030/images.csv"
+            input_file: "$ROOT/ALOS.csv"
             # Input date format
-            date_format: "%Y%j"
+            date_format: "%Y%m%d"
             # Band names
-            band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
+            band_names: [hh, hv, hh_hv_ratio]
             # Mask band (e.g., Fmask)
-            mask_band: fmask
+            mask_band:
             # List of integer values to mask within the mask band
-            mask_values: [2, 3, 4, 255]
+            mask_values:
             # Valid range of band data
             # specify 1 range for all bands, or specify ranges for each band
-            max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
-            max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
+            max_values: [0, 0, 0]
+            max_values: [255, 255, 255]
 
 results:
     # Output location
-    output: "/home/ceholden/Documents/landsat_stack/p013r030/subset/YATSM"
+    output: "$ROOT/TSR"
     # Output filename pattern
     output_prefix: "yatsm_r{line}.npz"

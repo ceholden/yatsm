@@ -9,8 +9,6 @@ properties:
     data:
         "$ref": "#/definitions/data"
 
-
-
 definitions:
     data:
         type: object
@@ -42,10 +40,19 @@ definitions:
                 items:
                     type: string
             mask_band:
-                type: string
+                oneOf: [
+                    type: string,
+                    type: 'null'
+                ]
+                default: ''
             mask_values:
-                "$ref": "#/types/array_num"
+                oneOf: [
+                    "$ref": "#/types/array_num",
+                    type: 'null'
+                ]
             min_values:
+                "$ref": "#/types/array_num"
+            max_values:
                 "$ref": "#/types/array_num"
 types:
     array_num:
