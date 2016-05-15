@@ -29,9 +29,12 @@ def extend_with_default(validator_cls):
 
 
 DefaultValidatingDraft4Validator = extend_with_default(Draft4Validator)
+
 #: jsonschema.validate called with instance of DefaultValidatingDraft4Validator
-validate_with_defaults = partial(validate,
-                                cls=DefaultValidatingDraft4Validator)
+def validate_with_defaults(schema, config):
+    return DefaultValidatingDraft4Validator(schema).validate(config)
+#validate_with_defaults = partial(validate,
+#                                cls=DefaultValidatingDraft4Validator)
 
 
 def expand_envvars(d):

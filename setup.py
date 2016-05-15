@@ -122,7 +122,8 @@ cy_ext_modules = cythonize([
 package_data = {
     'yatsm': [
         os.path.join('regression', 'pickles', 'pickles.json'),
-        os.path.join('regression', 'pickles', '*.pkl')
+        os.path.join('regression', 'pickles', '*.pkl'),
+        os.path.join('config', 'config_schema.yaml')
     ]
 }
 
