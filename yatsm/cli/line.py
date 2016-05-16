@@ -8,7 +8,7 @@ import numpy as np
 
 from . import options
 from ..cache import test_cache
-from ..config_parser import parse_config_file
+from ..config import validate_and_parse_configfile
 from ..errors import TSLengthException
 from ..io import get_image_attribute, mkdir_p, read_line
 from ..utils import (distribute_jobs, get_output_name, get_image_IDs,
@@ -37,8 +37,18 @@ logger = logging.getLogger('yatsm')
 @click.pass_context
 def line(ctx, config, job_number, total_jobs,
          resume, check_cache, do_not_run):
+    from ..io import _xarray as xru
     # Parse config
-    cfg = parse_config_file(config)
+    cfg = validate_and_parse_configfile(config)
+
+    # IO
+    data = {}
+    for k in cfg['data']['datasets']:
+        data[k] = xru.config_to_dataarray(0, 0,
+                                          cfg['data']['datasets'][k])
+
+    data = xru.merge_datasets(data)
+    from IPython.core.debugger import Pdb; Pdb().set_trace()
 
     if ('phenology' in cfg and cfg['phenology'].get('enable')):
         if not pheno:
@@ -134,6 +144,7 @@ def line(ctx, config, job_number, total_jobs,
                       ncol, nband, dtype,
                       read_cache=read_cache, write_cache=write_cache,
                       validate_cache=False)
+        from IPython.core.debugger import Pdb; Pdb().set_trace()
         if do_not_run:
             continue
         if cfg['YATSM']['reverse']:

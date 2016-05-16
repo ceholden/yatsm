@@ -27,6 +27,9 @@ data:
             min_values: [0, 0, 0, 0, 0, 0, -100, 0]
             max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
         ALOS:
+            # Note:
+            #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
+            #
             # Type of reader for this dataset (GDAL | BIP)
             reader: GDAL
             # Text file containing dates and images
