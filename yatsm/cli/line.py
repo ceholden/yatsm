@@ -35,19 +35,13 @@ logger = logging.getLogger('yatsm')
 @click.option('--do-not-run', is_flag=True,
               help='Do not run YATSM (useful for just caching data)')
 @click.pass_context
-def line(ctx, config, job_number, total_jobs,
+def line(ctx, configfile, job_number, total_jobs,
          resume, check_cache, do_not_run):
     from ..io import _xarray as xru
     # Parse config
-    cfg = validate_and_parse_configfile(config)
+    config = validate_and_parse_configfile(configfile)
 
-    # IO
-    data = {}
-    for k in cfg['data']['datasets']:
-        data[k] = xru.config_to_dataarray(0, 0,
-                                          cfg['data']['datasets'][k])
-
-    data = xru.merge_datasets(data)
+    data = xru.read_and_preprocess(config, 0, 0)
     from IPython.core.debugger import Pdb; Pdb().set_trace()
 
     if ('phenology' in cfg and cfg['phenology'].get('enable')):
