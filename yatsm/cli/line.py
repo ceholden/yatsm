@@ -41,7 +41,7 @@ def line(ctx, configfile, job_number, total_jobs,
     # Parse config
     config = validate_and_parse_configfile(configfile)
 
-    data = xru.read_and_preprocess(config, 0, 0)
+    data = xru.read_and_preprocess(config, 0, 0, ncol=250, nrow=250)
     from IPython.core.debugger import Pdb; Pdb().set_trace()
 
     if ('phenology' in cfg and cfg['phenology'].get('enable')):

@@ -73,17 +73,29 @@ def config_to_dataarray(config, row0, col0, nrow=1, ncol=':'):
     return da
 
 
-def read_and_preprocess(config, row0, col0):
+def read_and_preprocess(config, row0, col0, nrow=1, ncol=':'):
+    """
+
+    Note:
+        To get a time series of a single pixel out of this:
+
+    .. code:: python
+
+        arr.isel(x=0, y=0).dropna('time')
+    """
     datasets = {}
     for name, cfg in six.iteritems(config['data']['datasets']):
         logger.debug('Reading "{}" dataset'.format(name))
-        arr = config_to_dataarray(cfg, row0, col0, nrow=1, ncol=1)
+        arr = config_to_dataarray(cfg, row0, col0, nrow=nrow, ncol=ncol)
 
         # Mask -- done here for now
         if cfg['mask_band']:
+            _shape = (arr.time.size, arr.y.size, arr.x.size)
             mask = np.in1d(arr.sel(band=cfg['mask_band']), cfg['mask_values'],
-                           invert=True)
-            arr = arr.isel(time=mask)
+                           invert=True).reshape(_shape)
+            mask = xr.DataArray(mask, dims=['time', 'y', 'x'],
+                                coords=[arr.time, arr.y, arr.x])
+            arr = arr.where(mask)
 
         # Min/Max values -- done here for now
         if cfg['max_values'] and cfg['min_values']:
@@ -92,13 +104,8 @@ def read_and_preprocess(config, row0, col0):
                                 coords=[cfg['band_names']])
             maxs = xr.DataArray(cfg['max_values'], dims=['band'],
                                 coords=[cfg['band_names']])
-
-            mask = np.ones((arr.time.size,
-                            arr.band.size,
-                            arr.y.size,
-                            arr.x.size)).astype(np.bool)
-
             arr = arr.where((arr >= mins) & (arr <= maxs))
+
         datasets[name] = arr
 
     return merge_datasets(datasets)
