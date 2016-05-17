@@ -14,7 +14,7 @@ Contents:
       trade storing file handles for reducing repeated and relatively expensive
       file open calls
 """
-from .helpers import find_stack_images, mkdir_p
+from .helpers import mkdir_p
 from .readers import (get_image_attribute, read_image, read_pixel_timeseries,
                       read_line)
 from .stack_line_readers import bip_reader, gdal_reader
