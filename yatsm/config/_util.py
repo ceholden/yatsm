@@ -64,7 +64,7 @@ def expand_envvars(d):
             _d[k] = expand_envvars(v)
         elif isinstance(v, str):
             _d[k] = os.path.expandvars(v)
-            check_envvar(k, v)
+            check_envvar(k, _d[k])
         elif isinstance(v, (list, tuple)):
             n_v = []
             for _v in v:
