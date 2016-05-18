@@ -138,7 +138,6 @@ entry_points = '''
     [yatsm.cli]
     cache=yatsm.cli.cache:cache
     pixel=yatsm.cli.pixel:pixel
-    segment=yatsm.cli.segment:segment
     line=yatsm.cli.line:line
     train=yatsm.cli.train:train
     classify=yatsm.cli.classify:classify
