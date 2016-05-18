@@ -38,13 +38,8 @@ data:
             date_format: "%Y%m%d"
             # Band names
             band_names: [hh, hv, hh_hv_ratio]
-            # Mask band (e.g., Fmask)
-            mask_band:
-            # List of integer values to mask within the mask band
-            mask_values:
             # Valid range of band data
-            # specify 1 range for all bands, or specify ranges for each band
-            max_values: [0, 0, 0]
+            min_values: [1, 1, 1]
             max_values: [255, 255, 255]
 
 results:

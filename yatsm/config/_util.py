@@ -1,10 +1,9 @@
 """ Utilities for configuration file validation via jsonschema
 """
-from functools import partial
 import logging
 import os
 
-from jsonschema import Draft4Validator, validators, validate
+from jsonschema import Draft4Validator, validators
 import six
 
 logger = logging.getLogger(__name__)
@@ -28,13 +27,27 @@ def extend_with_default(validator_cls):
     return validators.extend(validator_cls, {'properties': set_defaults})
 
 
+#: Draft4Validator: A Draft 4 validator that applies defaults to properties
+#                   when available
 DefaultValidatingDraft4Validator = extend_with_default(Draft4Validator)
 
-#: jsonschema.validate called with instance of DefaultValidatingDraft4Validator
-def validate_with_defaults(schema, config):
-    return DefaultValidatingDraft4Validator(schema).validate(config)
-#validate_with_defaults = partial(validate,
-#                                cls=DefaultValidatingDraft4Validator)
+
+def validate_with_defaults(config, schema):
+    """
+
+    Essentially, just `jsonschema.validate` called with instance of
+    :ref:`DefaultValidatingDraft4Validator`
+
+    Args:
+        config (dict): Configuration to validate
+        schema (dict): Schema -- properties defining a `default` will have
+            this default value applied if the property is missing in `config`
+
+    Returns:
+        dict: `config`, validated with default values added
+    """
+    DefaultValidatingDraft4Validator(schema).validate(config)
+    return config
 
 
 def expand_envvars(d):

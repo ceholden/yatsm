@@ -50,10 +50,16 @@ definitions:
                     "$ref": "#/types/array_num",
                     type: 'null'
                 ]
+                default: []
             min_values:
                 "$ref": "#/types/array_num"
+                default: []
             max_values:
                 "$ref": "#/types/array_num"
+                default: []
+        required:
+            - reader
+            - band_names
 types:
     array_num:
         type: array

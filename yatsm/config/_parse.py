@@ -21,7 +21,7 @@ def _validate_config(config):
             pkgutil.get_data('yatsm', 'config/config_schema.yaml'),
             Loader=SafeLoader
         )
-        validate_with_defaults(config, schema)
+        config = validate_with_defaults(config, schema)
     except jsonschema.ValidationError as exc:
         raise InvalidConfigurationException(exc)
     return config
@@ -47,7 +47,7 @@ def validate_and_parse_configfile(path, parsers=None):
         config = yaml.load(fid, Loader=SafeLoader)
 
     config = expand_envvars(config)
-    _validate_config(config)
+    config = _validate_config(config)
 
     for parse in parsers:
         config = parse(config)
