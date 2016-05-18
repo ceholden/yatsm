@@ -1,4 +1,4 @@
-""" Collection of helper functions that ease common filesystem operations
+""" Collection of  functions that ease common filesystem operations
 """
 import errno
 import os

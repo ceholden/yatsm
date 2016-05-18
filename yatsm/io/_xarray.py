@@ -1,42 +1,88 @@
-from functools import partial
 import logging
-import os
 
 import numpy as np
-import pandas as pd
 import rasterio
 import six
 import xarray as xr
 
+from . import _gdal
+
 logger = logging.getLogger(__name__)
 
 
-def _read_dataset_input_file(input_file, date_format):
-    """ Return parsed dataset CSV file as pd.DataFrame
+def apply_band_mask(arr, mask_band, mask_values):
+    """ Mask all `bands` in `arr` based on some mask values in a band
 
     Args:
-        input_file (str): CSV filename
-        date_format (str): Format of date in input file
+        arr (xarray.DataArray): Data array to mask
+        mask_band (str): Name of `band` in `arr` to use for masking
+        mask_values (sequence): Sequence of values to mask
 
     Returns:
-        pd.DataFrame: Dataset information
+        xarray.DataArray: Masked version of `arr`
     """
-    dt_parser = lambda x: pd.datetime.strptime(x, date_format)
-    df = pd.read_csv(input_file,
-                     parse_dates=['date'], date_parser=dt_parser)
-    if not os.path.isabs(df['filename'][0]):
-        _root = os.path.abspath(os.path.dirname(input_file))
-        _root_join = partial(os.path.join, _root)
-        df['filename'] = map(_root_join, df['filename'])
+    _shape = (arr.time.size, arr.y.size, arr.x.size)
+    mask = np.in1d(arr.sel(band=mask_band), mask_values,
+                   invert=True).reshape(_shape)
+    mask = xr.DataArray(mask, dims=['time', 'y', 'x'],
+                        coords=[arr.time, arr.y, arr.x])
 
-    return df
+    return arr.where(mask)
+
+
+def apply_range_mask(arr, min_values, max_values):
+    """ Mask a DataArray based on a range of acceptable values
+
+    Args:
+        arr (xarray.DataArray): Data array to mask
+        min_values (sequence): Minimum values per `band` in `arr`
+        max_values (sequence): Maximum values per `band` in `arr`
+
+    Returns:
+        xarray.DataArray: Masked version of `arr`
+    """
+    # If we turn these into DataArrays, magic happens
+    maxs = xr.DataArray(max_values, dims=['band'], coords=[arr.coords['band']])
+    mins = xr.DataArray(min_values, dims=['band'], coords=[arr.coords['band']])
+
+    return arr.where((arr >= mins) & (arr <= maxs))
+
+
+def read_and_preprocess(config, row0, col0, nrow=1, ncol=':'):
+    """
+
+    Note:
+        To get a time series of a single pixel out of this:
+
+    .. code:: python
+
+        arr.isel(x=0, y=0).dropna('time')
+    """
+    datasets = {}
+    for name, cfg in six.iteritems(config['data']['datasets']):
+        logger.debug('Reading "{}" dataset'.format(name))
+        arr = config_to_dataarray(cfg, row0, col0, nrow=nrow, ncol=ncol)
+
+        if cfg['mask_band'] and cfg['mask_values']:
+            logger.debug('Applying mask band to "{}"'.format(name))
+            arr = apply_band_mask(arr, cfg['mask_band'], cfg['mask_values'])
+
+        # Min/Max values -- done here for now
+        if cfg['min_values'] and cfg['max_values']:
+            logger.debug('Applying range mask to "{}"'.format(name))
+            arr = apply_range_mask(arr, cfg['min_values'], cfg['max_values'])
+
+        datasets[name] = arr
+
+    return merge_datasets(datasets)
 
 
 def config_to_dataarray(config, row0, col0, nrow=1, ncol=':'):
     """ Turns a data configuration section into xarray.DataArray
     """
-    df = _read_dataset_input_file(config['input_file'], config['date_format'])
+    df = _gdal.parse_dataset_file(config['input_file'], config['date_format'])
 
+    # TODO: get these from "driver" (GDAL / BIP / eventually, ARD connection)
     md = dict()
     with rasterio.drivers():
         with rasterio.open(df['filename'][0]) as src:
@@ -59,6 +105,7 @@ def config_to_dataarray(config, row0, col0, nrow=1, ncol=':'):
     values = np.empty((nobs, nband, nrow, ncol), dtype=md['dtypes'][0])
 
     # Read time series
+    # TODO: remove from here
     with rasterio.drivers():
         for i, row in df.iterrows():
             with rasterio.open(row['filename']) as src:
@@ -71,44 +118,6 @@ def config_to_dataarray(config, row0, col0, nrow=1, ncol=':'):
         coords=[df['date'], config['band_names'], coord_y, coord_x]
     )
     return da
-
-
-def read_and_preprocess(config, row0, col0, nrow=1, ncol=':'):
-    """
-
-    Note:
-        To get a time series of a single pixel out of this:
-
-    .. code:: python
-
-        arr.isel(x=0, y=0).dropna('time')
-    """
-    datasets = {}
-    for name, cfg in six.iteritems(config['data']['datasets']):
-        logger.debug('Reading "{}" dataset'.format(name))
-        arr = config_to_dataarray(cfg, row0, col0, nrow=nrow, ncol=ncol)
-
-        # Mask -- done here for now
-        if cfg['mask_band']:
-            _shape = (arr.time.size, arr.y.size, arr.x.size)
-            mask = np.in1d(arr.sel(band=cfg['mask_band']), cfg['mask_values'],
-                           invert=True).reshape(_shape)
-            mask = xr.DataArray(mask, dims=['time', 'y', 'x'],
-                                coords=[arr.time, arr.y, arr.x])
-            arr = arr.where(mask)
-
-        # Min/Max values -- done here for now
-        if cfg['max_values'] and cfg['min_values']:
-            # If we turn these into DataArrays, magic happens
-            mins = xr.DataArray(cfg['min_values'], dims=['band'],
-                                coords=[cfg['band_names']])
-            maxs = xr.DataArray(cfg['max_values'], dims=['band'],
-                                coords=[cfg['band_names']])
-            arr = arr.where((arr >= mins) & (arr <= maxs))
-
-        datasets[name] = arr
-
-    return merge_datasets(datasets)
 
 
 def merge_datasets(dataarrays):
