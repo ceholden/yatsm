@@ -12,6 +12,7 @@ data:
     datasets:
         Landsat:
             # Type of reader for this dataset (GDAL | BIP)
+            # TODO: subsume GDAL stuff into a sub-object
             reader: GDAL
             # Text file containing dates and images
             input_file: "$ROOT/Landsat.csv"

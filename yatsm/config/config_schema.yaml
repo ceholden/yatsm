@@ -32,8 +32,10 @@ definitions:
                 enum: [GDAL, BIP]
             input_file:
                 type: string
+                default: ''
             date_format:
                 type: string
+                default: ''
             band_names:
                 type: array
                 uniqueItems: true
