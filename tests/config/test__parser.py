@@ -1,3 +1,3 @@
-""" Tests for yatsm.io._parse.py
+""" Tests for yatsm.config._parse.py
 """
-import yatsm.io.parser as parse
+import yatsm.config._parse as parse

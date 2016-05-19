@@ -7,6 +7,7 @@ import sklearn.externals.joblib as joblib
 import yaml
 
 from . import algorithms
+from .config import expand_envvars
 from .regression.packaged import find_packaged_regressor, packaged_regressions
 
 logger = logging.getLogger('yatsm')
