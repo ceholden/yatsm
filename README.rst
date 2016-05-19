@@ -134,7 +134,7 @@ And as with ``pip``, you need to install ``YATSM``:
 
 
 .. |Build Status| image:: https://travis-ci.org/ceholden/yatsm.svg
-   :target: https://travis-ci.org/ceholden/yatsm
+   :target: https://travis-ci.org/ceholden/yatsm.svg?branch=master
 .. |Coverage Status| image:: https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=master&service=github
    :target: https://coveralls.io/github/ceholden/yatsm?branch=master&q=q
 .. |RTFD| image:: https://readthedocs.org/projects/yatsm/badge/?version=latest
