@@ -38,7 +38,7 @@ def parse_dataset_file(input_file, date_format):
     return df
 
 
-class GDALDataset(object):
+class GDALTimeSeries(object):
     """ A time series that can be read in by GDAL
 
     Args:

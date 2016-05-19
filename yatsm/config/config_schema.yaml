@@ -29,7 +29,9 @@ definitions:
         type: object
         properties:
             reader:
-                enum: [GDAL, BIP]
+                oneOf: [
+                    "$ref": "#/definitions/readers"
+                ]
             input_file:
                 type: string
                 default: ''
@@ -62,6 +64,20 @@ definitions:
         required:
             - reader
             - band_names
+    readers:
+        GDAL:
+            type: object
+            properties:
+                input_file:
+                    type: string
+                date_format:
+                    type: string
+                keep_open:
+                    type: boolean
+                    default: True
+            required:
+                - input_file
+                - date_format
 types:
     array_num:
         type: array

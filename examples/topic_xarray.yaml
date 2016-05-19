@@ -13,11 +13,16 @@ data:
         Landsat:
             # Type of reader for this dataset (GDAL | BIP)
             # TODO: subsume GDAL stuff into a sub-object
-            reader: GDAL
-            # Text file containing dates and images
-            input_file: "$ROOT/Landsat.csv"
-            # Input date format
-            date_format: "%Y%j"
+            reader:
+                GDAL:
+                    # Text file containing dates and images
+                    input_file: "$ROOT/Landsat.csv"
+                    # Input date format
+                    date_format: "%Y%j"
+                    # Keep references to input files open throughout process
+                    #   Can cut down on overhead of repeatedly opening files
+                    #   assuming the OS lets users keep many open
+                    keep_open: True
             # Band names
             band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
             # Mask band (e.g., Fmask)
@@ -32,11 +37,12 @@ data:
             #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
             #
             # Type of reader for this dataset (GDAL | BIP)
-            reader: GDAL
-            # Text file containing dates and images
-            input_file: "$ROOT/ALOS.csv"
-            # Input date format
-            date_format: "%Y%m%d"
+            reader:
+                GDAL:
+                    # Text file containing dates and images
+                    input_file: "$ROOT/ALOS.csv"
+                    # Input date format
+                    date_format: "%Y%m%d"
             # Band names
             band_names: [hh, hv, hh_hv_ratio]
             # Valid range of band data
