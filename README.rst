@@ -133,12 +133,12 @@ And as with ``pip``, you need to install ``YATSM``:
         pip install .
 
 
-.. |Build Status| image:: https://travis-ci.org/ceholden/yatsm.svg
-   :target: https://travis-ci.org/ceholden/yatsm.svg?branch=master
+.. |Build Status| image:: https://travis-ci.org/ceholden/yatsm.svg?branch=master
+   :target: https://travis-ci.org/ceholden/yatsm
 .. |Coverage Status| image:: https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=master&service=github
    :target: https://coveralls.io/github/ceholden/yatsm?branch=master&q=q
-.. |RTFD| image:: https://readthedocs.org/projects/yatsm/badge/?version=latest
-   :target: http://yatsm.readthedocs.org/en/latest/?badge=latest
+.. |RTFD| image:: https://readthedocs.org/projects/yatsm/badge/?version=stable
+   :target: http://yatsm.readthedocs.org/en/latest/?badge=stable
    :alt: Documentation Status
 .. |DOI| image:: https://zenodo.org/badge/6804/ceholden/yatsm.svg
    :target: https://zenodo.org/badge/latestdoi/6804/ceholden/yatsm
