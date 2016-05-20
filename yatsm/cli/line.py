@@ -40,6 +40,13 @@ def line(ctx, configfile, job_number, total_jobs,
         (name, io_api.get_reader(**cfg['reader'])) for name, cfg
         in six.iteritems(config['data']['datasets'])
     ))
-    from IPython.core.debugger import Pdb; Pdb().set_trace()
-    data = xru.read_and_preprocess(config, 0, 0, ncol=250, nrow=250)
-    from IPython.core.debugger import Pdb; Pdb().set_trace()
+
+    blocks = (250, 250)
+    windows = [
+        ((0, 250), (0, 250)),
+    ]
+
+    for window in windows:
+        data = io_api.read_and_preprocess(config['data']['datasets'],
+                                          readers, window, out=None)
+        from IPython.core.debugger import Pdb; Pdb().set_trace()

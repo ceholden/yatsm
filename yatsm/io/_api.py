@@ -56,7 +56,7 @@ def get_reader(name=None, **kwargs):
 
 
 # TODO: this function should take in one or more readers and a window
-def read_and_preprocess(config, row0, col0, nrow=1, ncol=':', out=None):
+def read_and_preprocess(config, readers, window, out=None):
     """
 
     Note:
@@ -66,27 +66,23 @@ def read_and_preprocess(config, row0, col0, nrow=1, ncol=':', out=None):
 
         arr.isel(x=0, y=0).dropna('time')
     """
-    # TODO: calculate windows elsewhere
-    windows = [((row0, row0 + nrow), (col0, col0 + ncol))]
-    # TODO: iterate over windows?
-    window = windows[0]
-
     datasets = {}
-    for name, cfg in six.iteritems(config['data']['datasets']):
-        if cfg['reader'] in READERS:
-            reader = READERS[cfg['reader']](**cfg)
-            arr = reader.read_dataarray(window=window, out=out)
-        else:
-            raise KeyError('"{}" reader backend is not supported at this time'
-                           .format(cfg['reader']))
+    for name, cfg in six.iteritems(config):
+        reader = readers[name]
+        arr = reader.read_dataarray(window=window,
+                                    band_names=cfg['band_names'],
+                                    out=out)
+        from IPython.core.debugger import Pdb; Pdb().set_trace()
 
         if cfg['mask_band'] and cfg['mask_values']:
             logger.debug('Applying mask band to "{}"'.format(name))
+            from IPython.core.debugger import Pdb; Pdb().set_trace()
             arr = apply_band_mask(arr, cfg['mask_band'], cfg['mask_values'])
 
         # Min/Max values -- donberline here for now
         if cfg['min_values'] and cfg['max_values']:
             logger.debug('Applying range mask to "{}"'.format(name))
+            from IPython.core.debugger import Pdb; Pdb().set_trace()
             arr = apply_range_mask(arr, cfg['min_values'], cfg['max_values'])
 
         datasets[name] = arr
