@@ -53,7 +53,6 @@ class GDALTimeSeries(object):
 
     """
     def __init__(self, df=None, input_file='', date_format='%Y%m%d',
-                 band_names=None,
                  keep_open=False, **kwargs):
         if isinstance(df, pd.DataFrame):
             if not all([k in df.keys() for k in ('date', 'filename')]):
@@ -66,7 +65,6 @@ class GDALTimeSeries(object):
             raise ValueError('Must specify either a pd.DataFrame or both'
                              '"input_file" and "date_format" arguments')
         self.keep_open = keep_open
-        self.band_names = band_names
 
         self._init_attrs_from_file(self.df['filename'][0])
 
@@ -79,9 +77,10 @@ class GDALTimeSeries(object):
                 self.affine = src.affine
                 self.res = src.res
                 self.ul = src.ul(0, 0)
-                self.nrow = src.height
-                self.ncol = src.width
-                self.nobs = len(self.df)
+                self.height = src.height
+                self.width = src.width
+                self.count = src.count
+                self.length = len(self.df)
                 # We only use one datatype for reading -- promote to largest
                 # if hetereogeneous
                 self.dtype = src.dtypes[0]
@@ -137,10 +136,12 @@ class GDALTimeSeries(object):
         x_max, y_max = (col_max, row_min) * self.affine
         coord_bounds = (x_min, y_min, x_max, y_max)
 
-        # TODO: check `out` is compatible if provided by user
-        shape = (self.nobs, len(self.band_names), window[0][1], window[1][1])
-        out = (out if isinstance(out, np.ndarray)
-               else np.empty((shape), dtype=self.dtype))
+        shape = (self.length, self.count, window[0][1], window[1][1])
+        if not isinstance(out, np.ndarray):
+            # TODO: check `out` is compatible if provided by user
+            logger.debug('Allocating memory to read data of shape {}'
+                         .format(shape))
+            out = np.empty((shape), dtype=self.dtype)
 
         for idx, src in enumerate(self._src):
             _window = src.window(*coord_bounds, boundless=True)
@@ -148,12 +149,13 @@ class GDALTimeSeries(object):
 
         return out
 
-    def read_dataarray(self, window=None, out=None):
+    def read_dataarray(self, window=None, band_names=None, out=None):
         """ Read time series, usually inside of a window, as xarray.DataArray
 
         Args:
             window (tuple): A pair (tuple) of pairs of ints specifying
                 the start and stop indices of the window rows and columns
+            band_names (list[str]): Names of bands to use for xarray.DataArray
             out (np.ndarray): A NumPy array of pre-allocated memory to read
                 the time series into. Its shape should be:
 
@@ -162,13 +164,22 @@ class GDALTimeSeries(object):
         Returns:
             xarray.DataArray: A DataArray containing the time series data with
                 coordinate dimenisons (time, band, y, and x)
+
+        Raises:
+            IndexError: if `band_names` is specified but is not the same length
+                as the number of bands, `self.count`
         """
+        if band_names and len(band_names) != self.count:
+            raise IndexError('{0.__class__.__name__} has {0.count} bands but '
+                             '`band_names` provided has {1} names'
+                             .format(self, len(band_names)))
+
         values = self.read(window=window, out=out)
         coords_y, coords_x = self.window_coords(window)
         da = xr.DataArray(
             values,
             dims=['time', 'band', 'y', 'x'],
-            coords=[self.df['date'], self.band_names, coords_y, coords_x]
+            coords=[self.df['date'], band_names, coords_y, coords_x]
         )
         return da
 
