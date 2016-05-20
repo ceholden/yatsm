@@ -39,8 +39,10 @@ def apply_range_mask(arr, min_values, max_values):
         xarray.DataArray: Masked version of `arr`
     """
     # If we turn these into DataArrays, magic happens
-    maxs = xr.DataArray(max_values, dims=['band'], coords=[arr.coords['band']])
-    mins = xr.DataArray(min_values, dims=['band'], coords=[arr.coords['band']])
+    maxs = xr.DataArray(np.asarray(max_values, dtype=arr.dtype),
+                        dims=['band'], coords=[arr.coords['band']])
+    mins = xr.DataArray(np.asarray(min_values, dtype=arr.dtype),
+                        dims=['band'], coords=[arr.coords['band']])
 
     return arr.where((arr >= mins) & (arr <= maxs))
 
