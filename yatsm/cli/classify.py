@@ -13,8 +13,8 @@ import six
 from sklearn.externals import joblib
 
 from . import options
-from ..config_parser import parse_config_file
 from ..utils import distribute_jobs, get_output_name, csvfile_to_dataframe
+from ..config_parser import parse_config_file
 from ..io import get_image_attribute
 
 logger = logging.getLogger('yatsm')
@@ -29,8 +29,8 @@ logger = logging.getLogger('yatsm')
 @click.option('--resume', is_flag=True,
               help="Resume classification (don't overwrite)")
 @click.pass_context
-def classify(ctx, config, algo, job_number, total_jobs, resume):
-    cfg = parse_config_file(config)
+def classify(ctx, configfile, algo, job_number, total_jobs, resume):
+    cfg = parse_config_file(configfile)
 
     df = csvfile_to_dataframe(cfg['dataset']['input_file'],
                               cfg['dataset']['date_format'])

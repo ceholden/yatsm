@@ -1,0 +1,89 @@
+# http://json-schema.org/example2.html
+"$schema": "http://json-schema.org/draft-04/schema#"
+description: YATSM configuration
+type: object
+properties:
+    version:
+        type: string
+        # TODO: pattern:
+    data:
+        "$ref": "#/definitions/data"
+
+definitions:
+    data:
+        type: object
+        properties:
+            cache_dir:
+                type: string
+                default: ''
+            datasets:
+                type: object
+                minProperties: 1
+                patternProperties:
+                    # Datasets can be labeled anything the user wants...
+                    '.*':
+                        "$ref": "#/definitions/datasets"
+        required:
+            - datasets
+    datasets:
+        type: object
+        properties:
+            reader:
+                oneOf: [
+                    "$ref": "#/definitions/readers"
+                ]
+            input_file:
+                type: string
+                default: ''
+            date_format:
+                type: string
+                default: ''
+            band_names:
+                type: array
+                uniqueItems: true
+                items:
+                    type: string
+            mask_band:
+                oneOf: [
+                    type: string,
+                    type: 'null'
+                ]
+                default: ''
+            mask_values:
+                oneOf: [
+                    "$ref": "#/types/array_num",
+                    type: 'null'
+                ]
+                default: []
+            min_values:
+                "$ref": "#/types/array_num"
+                default: []
+            max_values:
+                "$ref": "#/types/array_num"
+                default: []
+        required:
+            - reader
+            - band_names
+    readers:
+        GDAL:
+            type: object
+            properties:
+                input_file:
+                    type: string
+                date_format:
+                    type: string
+                keep_open:
+                    type: boolean
+                    default: True
+            required:
+                - input_file
+                - date_format
+types:
+    array_num:
+        type: array
+        items:
+            type: number
+    array_str:
+        type: array
+        items:
+            type: string

@@ -87,7 +87,9 @@ install_requires = [
     'click',
     'click_plugins',
     'patsy',
-    'GDAL'
+    'GDAL',
+    'rasterio',
+    'xarray'
 ]
 
 # NumPy/Cython build setup
@@ -120,7 +122,8 @@ cy_ext_modules = cythonize([
 package_data = {
     'yatsm': [
         os.path.join('regression', 'pickles', 'pickles.json'),
-        os.path.join('regression', 'pickles', '*.pkl')
+        os.path.join('regression', 'pickles', '*.pkl'),
+        os.path.join('config', 'config_schema.yaml')
     ]
 }
 
@@ -135,7 +138,6 @@ entry_points = '''
     [yatsm.cli]
     cache=yatsm.cli.cache:cache
     pixel=yatsm.cli.pixel:pixel
-    segment=yatsm.cli.segment:segment
     line=yatsm.cli.line:line
     train=yatsm.cli.train:train
     classify=yatsm.cli.classify:classify

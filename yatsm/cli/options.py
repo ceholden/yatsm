@@ -27,7 +27,7 @@ def valid_int_gt_zero(ctx, param, value):
 
 # CLI ARGUMENTS
 arg_config_file = click.argument(
-    'config',
+    'configfile',
     nargs=1,
     type=click.Path(exists=True, readable=True,
                     dir_okay=False, resolve_path=True),
