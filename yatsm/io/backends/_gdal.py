@@ -81,6 +81,7 @@ class GDALTimeSeries(object):
                 self.width = src.width
                 self.count = src.count
                 self.length = len(self.df)
+                self.block_windows = list(src.block_windows())
                 # We only use one datatype for reading -- promote to largest
                 # if hetereogeneous
                 self.dtype = src.dtypes[0]
@@ -90,7 +91,6 @@ class GDALTimeSeries(object):
                                    'largest datatype of source bands')
                     for dtype in src.dtypes[1:]:
                         self.dtype = np.promote_types(self.dtype, dtype)
-                # TODO: block shape?
 
     @property
     def time(self):
@@ -111,10 +111,6 @@ class GDALTimeSeries(object):
             with rasterio.drivers():
                 for f in self.df['filename']:
                     yield rasterio.open(f, 'r')
-
-    def get_blocks(self):
-        # TODO: return reader's best guess at what blocks should be
-        raise NotImplementedError
 
     def read(self, window=None, out=None):
         """ Read time series, usually inside of a specified window

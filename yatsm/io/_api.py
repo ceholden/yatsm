@@ -55,7 +55,6 @@ def get_reader(name=None, **kwargs):
 
 
 
-# TODO: this function should take in one or more readers and a window
 def read_and_preprocess(config, readers, window, out=None):
     """
 
@@ -72,17 +71,14 @@ def read_and_preprocess(config, readers, window, out=None):
         arr = reader.read_dataarray(window=window,
                                     band_names=cfg['band_names'],
                                     out=out)
-        from IPython.core.debugger import Pdb; Pdb().set_trace()
 
         if cfg['mask_band'] and cfg['mask_values']:
             logger.debug('Applying mask band to "{}"'.format(name))
-            from IPython.core.debugger import Pdb; Pdb().set_trace()
             arr = apply_band_mask(arr, cfg['mask_band'], cfg['mask_values'])
 
         # Min/Max values -- donberline here for now
         if cfg['min_values'] and cfg['max_values']:
             logger.debug('Applying range mask to "{}"'.format(name))
-            from IPython.core.debugger import Pdb; Pdb().set_trace()
             arr = apply_range_mask(arr, cfg['min_values'], cfg['max_values'])
 
         datasets[name] = arr
