@@ -19,17 +19,18 @@ def multitemp_mask(x, Y, n_year, crit=400,
     procedure was ported from CCDC v9.3.
 
     Args:
-      x (ndarray): array of ordinal dates
-      Y (ndarray): matrix of observed spectra
-      n_year (float): "number of years to mask"
-      crit (float, optional): critical value for masking clouds/shadows
-      green (int, optional): 0 indexed value for green band in Y (default: 1)
-      swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
-        (default: 4)
-      maxiter (int, optional): maximum iterations for RLM fit
+        x (ndarray): array of ordinal dates
+        Y (ndarray): matrix of observed spectra
+        n_year (float): "number of years to mask"
+        crit (float): critical value for masking clouds/shadows
+        green (int): 0 indexed value for green band in Y
+            (default: 1)
+        swir1 (int): 0 indexed value for SWIR (~1.55-1.75um) band
+            in Y (default: 4)
+        maxiter (int): maximum iterations for RLM fit
 
     Returns:
-      mask (ndarray): mask where False indicates values to be masked
+        mask (np.ndarray): mask where False indicates values to be masked
 
     """
     green = Y[green, :]
@@ -57,33 +58,38 @@ def smooth_mask(x, Y, span, crit=400, green=1, swir1=4,
                 maxiter=5):
     """ Multi-temporal masking using LOWESS
 
-    Taken directly from newer version of CCDC than Zhu and Woodcock, 2014. This
-    "temporal masking" replaced the older method which used robust linear
-    models. This version uses a regular LOWESS instead of robust LOWESS
+    Taken directly from newer version of CCDC than Zhu and Woodcock, 2014.
+    This "temporal masking" replaced the older method which used robust
+    linear models. This version uses a regular LOWESS instead of robust
+    LOWESS
 
-    Note:   "span" argument is the inverse of "frac" from statsmodels and is
-            actually 'k' in their code:
+    .. note::
+
+        "span" argument is the inverse of "frac" from statsmodels and is
+        actually 'k' in their code:
 
         `n = x.shape[0]`
         `k = int(frac * n + 1e-10)`
 
+    .. todo::
+
+        We need to put the data on a regular period since span changes as
+        is right now. Statsmodels will only allow for dropna, so we would
+        need to impute missing data somehow...
+
     Args:
-      x (ndarray): array of ordinal dates
-      Y (ndarray): matrix of observed spectra
-      span (int): span of LOWESS
-      crit (float, optional): critical value for masking clouds/shadows
-      green (int, optional): 0 indexed value for green band in Y (default: 1)
-      swir1 (int, optional): 0 indexed value for SWIR (~1.55-1.75um) band in Y
-        (default: 4)
-      maxiter (int, optional): maximum increases to span when checking for
-        NaN in LOWESS results
+        x (np.ndarray): array of ordinal dates
+        Y (np.ndarray): matrix of observed spectra
+        span (int): span of LOWESS
+        crit (float): critical value for masking clouds/shadows
+        green (int): 0 indexed value for green band in Y (default: 1)
+        swir1 (int): 0 indexed value for SWIR (~1.55-1.75um) band
+            in Y (default: 4)
+        maxiter (int): maximum increases to span when checking for
+            NaN in LOWESS results
 
     Returns:
       mask (ndarray): mask where False indicates values to be masked
-
-    #TODO - We need to put the data on a regular period since span changes as
-            is right now. Statsmodels will only allow for dropna, so we would
-            need to impute missing data somehow...
 
     """
     # Reverse span to get frac
