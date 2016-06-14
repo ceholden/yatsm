@@ -54,3 +54,37 @@ results:
     output: "$ROOT/TSR"
     # Output filename pattern
     output_prefix: "yatsm_r{line}.npz"
+
+pipeline:
+    tasks:
+        ndvi:
+            task: ND
+            requires:
+                data: [nir, red]
+            provides:
+                data: [ndvi]
+        ndmi:
+            task: ND
+            requires:
+                data: [nir, swir1]
+            provides:
+                data: [ndmi]
+        ccdc:
+            task: ccdc
+            requires:
+                data: [red, nir, swir1, ndvi, ndmi]
+            provides:
+                record: [ccdc]
+        ccdc_fix:
+            task: commission
+            requires:
+                record: [ccdc]
+            provides:
+                record: [ccdc_fix]
+        merged:
+            task: merge_results
+            requires:
+                data: [ndvi]
+                record: [ccdc, ccdc_fix]
+            provides:
+                record: [fixed]

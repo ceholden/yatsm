@@ -1,0 +1,12 @@
+ndvi:
+    task: 
+    requires:
+        data: [nir, red]
+    provides:
+        data: [ndvi]
+ccdc:
+    task: ccdc
+    requires:
+        data: [red, nir, swir1, ndvi]
+    provides:
+        record: [ccdc]

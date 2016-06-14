@@ -10,6 +10,7 @@ import six
 
 from . import options
 from ..errors import TSLengthException
+from ..pipeline import config_to_tasks
 from ..version import __version__
 
 logger = logging.getLogger('yatsm')
@@ -40,4 +41,9 @@ def line(ctx, configfile, job_number, total_jobs):
     for idx, window in block_windows:
         data = io_api.read_and_preprocess(config['data']['datasets'],
                                           readers, window, out=None)
+        pipe = {
+            'data': data,
+            'record': {}  # TODO: read this from pre-existing results
+        }
+        tasks = config_to_tasks(config['pipeline']['tasks'], pipe)
         from IPython.core.debugger import Pdb; Pdb().set_trace()
