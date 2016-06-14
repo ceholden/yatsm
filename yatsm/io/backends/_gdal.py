@@ -132,7 +132,9 @@ class GDALTimeSeries(object):
         x_max, y_max = (col_max, row_min) * self.affine
         coord_bounds = (x_min, y_min, x_max, y_max)
 
-        shape = (self.length, self.count, window[0][1], window[1][1])
+        shape = (self.length, self.count,
+                 window[0][1] - window[0][0],
+                 window[1][1] - window[1][0])
         if not isinstance(out, np.ndarray):
             # TODO: check `out` is compatible if provided by user
             logger.debug('Allocating memory to read data of shape {}'
