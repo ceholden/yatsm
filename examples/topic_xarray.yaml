@@ -1,7 +1,7 @@
 # Example configuration file for YATSM line runner
 #
-# This configuration includes details about the dataset and how YATSM should
-# run
+# This configuration includes details about the dataset and to run an analysis
+# pipeline using YATSM
 
 # Version of config
 version: "0.7.0"
@@ -58,13 +58,13 @@ results:
 pipeline:
     tasks:
         ndvi:
-            task: ND
+            task: norm_diff
             requires:
                 data: [nir, red]
             provides:
                 data: [ndvi]
         ndmi:
-            task: ND
+            task: norm_diff
             requires:
                 data: [nir, swir1]
             provides:
@@ -75,6 +75,9 @@ pipeline:
                 data: [red, nir, swir1, ndvi, ndmi]
             provides:
                 record: [ccdc]
+            config:
+                init:
+                    consecutive: 5
         ccdc_fix:
             task: commission
             requires:
