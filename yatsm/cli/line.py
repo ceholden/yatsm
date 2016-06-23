@@ -5,12 +5,10 @@ import os
 import time
 
 import click
-import numpy as np
 import six
 
 from . import options
 from ..errors import TSLengthException
-from ..pipeline import config_to_tasks
 from ..version import __version__
 
 logger = logging.getLogger('yatsm')
@@ -25,6 +23,7 @@ def line(ctx, configfile, job_number, total_jobs):
     # Imports inside CLI for speed
     from yatsm.config import validate_and_parse_configfile
     from yatsm.io import _api as io_api
+    from yatsm.pipeline import config_to_tasks
 
     config = validate_and_parse_configfile(configfile)
     readers = OrderedDict((
