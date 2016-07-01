@@ -78,6 +78,8 @@ with open('README.rst') as f:
 
 # Installation requirements
 install_requires = [
+    'future',
+    'six',
     'numpy',
     'scipy',
     'Cython',
