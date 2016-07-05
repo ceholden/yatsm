@@ -1,6 +1,8 @@
 # Py2/3
 six>=1.10
 future>=0.15.0
+# Decorator helpers
+decorator>=4.0.9
 # Base
 numpy>=1.9.0
 scipy>=0.14.0

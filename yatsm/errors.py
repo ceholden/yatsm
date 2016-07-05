@@ -16,3 +16,9 @@ class AlgorithmNotFoundException(Exception):
 
 class InvalidConfigurationException(Exception):
     pass
+
+
+class PipelineConfigurationError(TypeError):
+    """ Exception for invalid ``require``/``output`` specification in pipeline
+    """
+    pass
