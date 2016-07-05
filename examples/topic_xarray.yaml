@@ -59,35 +59,45 @@ pipeline:
     tasks:
         ndvi:
             task: norm_diff
-            requires:
+            require:
                 data: [nir, red]
-            provides:
+            output:
                 data: [ndvi]
         ndmi:
             task: norm_diff
-            requires:
+            require:
                 data: [nir, swir1]
-            provides:
+            output:
                 data: [ndmi]
         ccdc:
             task: ccdc
-            requires:
+            require:
                 data: [red, nir, swir1, ndvi, ndmi]
-            provides:
+            output:
                 record: [ccdc]
             config:
                 init:
                     consecutive: 5
+                    design: 1 + x + harm(x, 1)
+        refit_RLM:
+            task: refit
+            require:
+                data: [red, nir, swir1, ndvi, ndmi]
+                record: [ccdc_fix]
+            output:
+                record: [ccdc_refit_RLM]
+            config:
+                design: 1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3) + harm(x, 0.25)
+        classify:
+            task: classify_segment
+            require:
+                data: [red, nir, ...]
+                record: [ccdc_refit_RLM]
+            output:
+                record: [classify_ccdc_RLM]
         ccdc_fix:
             task: commission
-            requires:
+            require:
                 record: [ccdc]
-            provides:
+            output:
                 record: [ccdc_fix]
-        merged:
-            task: merge_results
-            requires:
-                data: [ndvi]
-                record: [ccdc, ccdc_fix]
-            provides:
-                record: [fixed]
