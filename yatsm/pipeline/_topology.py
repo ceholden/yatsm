@@ -13,7 +13,7 @@ def format_deps(d):
 
     .. code-block:: python
 
-        >>> d = req = {
+        >>> d = {
             'data': ['red', 'nir', 'ndvi'],
             'record': ['ccdc'],
         }
@@ -28,9 +28,8 @@ def format_deps(d):
     """
     out = []
     for _type, names in six.iteritems(d):
-        out.extend(['{t}-{n}'.format(t=_type, n=name) for name in names])
+        out.extend(['%s-%s' % (_type, name) for name in names])
     return out
-
 
 
 def pipe_deps(pipe):
@@ -100,8 +99,10 @@ def validate_dependencies(tasks, dsk):
         check = [dep in dsk for dep in deps]
         if not all(check):
             missing = [dep for dep, ok in zip(deps, check) if not ok]
+            missing_str = ', '.join(['%i) "%s"' % (i + 1, m) for i, m in
+                                     enumerate(missing)])
             raise KeyError('Task "{}" has unmet dependencies: {}'
-                           .format(task, missing))
+                           .format(task, missing_str))
     return tasks
 
 
