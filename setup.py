@@ -141,7 +141,7 @@ entry_points = '''
     yatsm=yatsm.cli.main:cli
 
     [yatsm.cli]
-    line=yatsm.cli.line:line
+    batch=yatsm.cli.batch:batch
 
     [yatsm.algorithms.change]
     CCDCesque=yatsm.algorithms.ccdc:CCDCesque

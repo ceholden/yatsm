@@ -32,22 +32,22 @@ data:
             # Valid range of band data
             min_values: [0, 0, 0, 0, 0, 0, -100, 0]
             max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
-        ALOS:
-            # Note:
-            #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
-            #
-            # Type of reader for this dataset (GDAL | BIP)
-            reader:
-                GDAL:
-                    # Text file containing dates and images
-                    input_file: "$ROOT/ALOS.csv"
-                    # Input date format
-                    date_format: "%Y%m%d"
-            # Band names
-            band_names: [hh, hv, hh_hv_ratio]
-            # Valid range of band data
-            min_values: [1, 1, 1]
-            max_values: [255, 255, 255]
+        # ALOS:
+        #     # Note:
+        #     #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
+        #     #
+        #     # Type of reader for this dataset (GDAL | BIP)
+        #     reader:
+        #         GDAL:
+        #             # Text file containing dates and images
+        #             input_file: "$ROOT/ALOS.csv"
+        #             # Input date format
+        #             date_format: "%Y%m%d"
+        #     # Band names
+        #     band_names: [hh, hv, hh_hv_ratio]
+        #     # Valid range of band data
+        #     min_values: [1, 1, 1]
+        #     max_values: [255, 255, 255]
 
 results:
     # Output location
@@ -57,6 +57,16 @@ results:
 
 pipeline:
     tasks:
+        ccdc:
+            task: pixel_CCDCesque
+            require:
+                data: [red, nir, swir1, ndvi, ndmi]
+            output:
+                record: [ccdc]
+            config:
+                init:
+                    consecutive: 5
+                    design: 1 + x + harm(x, 1)
         ndvi:
             task: norm_diff
             require:
@@ -69,35 +79,21 @@ pipeline:
                 data: [nir, swir1]
             output:
                 data: [ndmi]
-        ccdc:
-            task: ccdc
-            require:
-                data: [red, nir, swir1, ndvi, ndmi]
-            output:
-                record: [ccdc]
-            config:
-                init:
-                    consecutive: 5
-                    design: 1 + x + harm(x, 1)
-        refit_RLM:
-            task: refit
-            require:
-                data: [red, nir, swir1, ndvi, ndmi]
-                record: [ccdc_fix]
-            output:
-                record: [ccdc_refit_RLM]
-            config:
-                design: 1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3) + harm(x, 0.25)
-        classify:
-            task: classify_segment
-            require:
-                data: [red, nir, ...]
-                record: [ccdc_refit_RLM]
-            output:
-                record: [classify_ccdc_RLM]
-        ccdc_fix:
-            task: commission
-            require:
-                record: [ccdc]
-            output:
-                record: [ccdc_fix]
+        # refit_RLM:
+        #     task: refit
+        #     require:
+        #         data: [red, nir, swir1, ndvi, ndmi]
+        #         record: [ccdc]
+        #     output:
+        #         record: [ccdc_refit_RLM]
+        #     config:
+        #         design: 1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3) + harm(x, 0.25)
+        # classify:
+        #     task: classify_segment
+        #     require:
+        #         data: [red, nir, swir1, swir2, ndvi, ndmi]
+        #         record: [ccdc_refit_RLM]
+        #     output:
+        #         record: [classify_ccdc_RLM]
+        #     output:
+        #         record: [ccdc_fix]
