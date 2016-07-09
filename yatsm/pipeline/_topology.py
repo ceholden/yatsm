@@ -5,6 +5,8 @@ from collections import defaultdict
 import six
 import toposort
 
+from .language import OUTPUT, REQUIRE, PIPE
+
 
 def format_deps(d):
     """ Return formatted list of dependencies from 'requires'/'provides'
@@ -44,14 +46,14 @@ def pipe_deps(pipe):
     Returns:
         dict: Dependency graph for data or results inside of `pipe`
     """
-    dsk = {'pipe': set()}
+    dsk = {PIPE: set()}
     deps = {
         'data': pipe['data'].keys(),
         'record': pipe['record'].keys()
     }
     _deps = format_deps(deps)
     for _dep in _deps:
-        dsk[_dep] = set(['pipe'])
+        dsk[_dep] = set([PIPE])
     return dsk
 
 
@@ -70,11 +72,11 @@ def config_to_deps(config, dsk=None):
 
     for task, spec in six.iteritems(config):
         # Add in task requirements
-        deps = format_deps(spec['requires'])
+        deps = format_deps(spec[REQUIRE])
         dsk[task] = dsk[task].union(deps)
 
         # Add in data/record provided by task
-        prov = format_deps(spec['provides'])
+        prov = format_deps(spec[OUTPUT])
         for _prov in prov:
             dsk[_prov].add(task)
 

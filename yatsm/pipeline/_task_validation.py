@@ -60,13 +60,8 @@ import inspect
 import decorator
 import future.utils
 
+from .language import OUTPUT, REQUIRE
 from ..errors import PipelineConfigurationError as PCError
-
-
-#: str: Name of function argument for specifying task requirements
-REQUIRE = 'require'
-#: str: Name of function argument for specifying task outputs
-OUTPUT = 'output'
 
 
 def _parse_signature(signature):
