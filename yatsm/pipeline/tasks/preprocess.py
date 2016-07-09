@@ -1,6 +1,6 @@
 """ Calculations one might want to perform in a preprocessing pipeline
 """
-from .. import requires, outputs
+from .._task_validation import requires, outputs
 
 
 @requires(data=[str, str])
