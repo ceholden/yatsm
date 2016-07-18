@@ -1,8 +1,13 @@
 """ Calculations one might want to perform in a preprocessing pipeline
 """
-from .._task_validation import requires, outputs
+import logging
+
+from .._task_validation import eager_task, requires, outputs
+
+logger = logging.getLogger(__name__)
 
 
+@eager_task
 @requires(data=[str, str])
 @outputs(data=[str])
 def norm_diff(work, require, output, **config):

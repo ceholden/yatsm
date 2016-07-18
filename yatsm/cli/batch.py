@@ -73,7 +73,9 @@ def batch(ctx, configfile, job_number, total_jobs):
             'record': {}  # TODO: read this from pre-existing results
         }
 
-        pipeline = setup_pipeline(tasks, pipe, overwrite=overwrite)
+        eager_pipeline, pipeline = setup_pipeline(tasks, pipe,
+                                                  overwrite=overwrite)
+        pipe = delay_pipeline(eager_pipeline, pipe).compute()
 
         for y, x in product(data.y.values, data.x.values):
             logger.debug('Processing pixel y/x: {}/{}'.format(y, x))
@@ -82,4 +84,4 @@ def batch(ctx, configfile, job_number, total_jobs):
 
             # TODO: how to put this pixel's result back into full block result
             result = _pipeline.compute()
-            # from IPython.core.debugger import Pdb; Pdb().set_trace()
+            from IPython.core.debugger import Pdb; Pdb().set_trace()

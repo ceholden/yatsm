@@ -32,22 +32,34 @@ def setup_pipeline(config, pipe, overwrite=True):
             been computed
 
     Returns:
-        list: List of curried, delayed functions ready to be ran in a pipeline
+        tuple(list, list): Two lists of curried functions ready to be ran in a
+            pipeline. The first list contains functions that are "eager",
+            meaning that they may be ran for all pixels in the dataset
     """
     tasks = config_to_tasks(config, pipe, overwrite=overwrite)
 
+    halt_eager, eager_pipeline = False, []
     pipeline = []
     for task in tasks:
-        # TODO: curry & delay these
         try:
             func = PIPELINE_TASKS[config[task]['task']]
         except KeyError as exc:
             logger.error('Unknown pipeline task "{}" referenced in "{}"'
                          .format(config[task]['task'], task))
             raise
-        pipeline.append(curry_pipeline_task(func, config[task]))
 
-    return pipeline
+        is_eager = getattr(func, 'is_eager', False)
+        if is_eager and not halt_eager:
+            eager_pipeline.append(curry_pipeline_task(func, config[task]))
+        else:
+            if is_eager:
+                logger.debug('Not able to compute eager function "{}" on all '
+                             'all pixels at once because it can after '
+                             'non-eager tasks'.format(task))
+            pipeline.append(curry_pipeline_task(func, config[task]))
+            halt_eager = True
+
+    return eager_pipeline, pipeline
 
 
 def delay_pipeline(pipeline, pipe):

@@ -64,6 +64,13 @@ from .language import OUTPUT, REQUIRE
 from ..errors import PipelineConfigurationError as PCError
 
 
+def eager_task(func):
+    """ A task decorator that declares it can compute all pixels at once
+    """
+    func.is_eager = True
+    return func
+
+
 def _parse_signature(signature):
     """ Parse a signature for basic validity and structure
 
