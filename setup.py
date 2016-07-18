@@ -88,13 +88,17 @@ install_requires = [
     'matplotlib',
     'click',
     'click_plugins',
+    'pyyaml',
+    'jsonschema',
     'patsy',
     'GDAL',
     'rasterio',
     'xarray',
     'dask',
     'bottleneck',
-    'toolz'
+    'toolz',
+    'decorator',
+    'toposort'
 ]
 
 # NumPy/Cython build setup

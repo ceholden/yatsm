@@ -23,6 +23,7 @@ dependencies:
     - click>=4.0
     # Config file
     - pyyaml>=3.11
+    - jsonschema>=2.5.1
     # Plotting
     - matplotlib>=1.4.2
     # Accelerated functions w/ numba (OPTIONAL)
@@ -35,3 +36,5 @@ dependencies:
         # Required but missing from conda
         - palettable>=2.0.0
         - click_plugins>=1.0
+        - decorator>=4.0.10
+        - toposort>=1.4
