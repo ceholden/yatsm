@@ -59,17 +59,21 @@ def batch(ctx, configfile, job_number, total_jobs):
             'record': pipe['record']  # TODO: select pixel
         }
 
+    overwrite = config['pipeline'].get('overwrite', True)
     tasks = config['pipeline']['tasks']
 
     # TODO: iterate over block_windows assigned to ``job_id``
     for idx, window in block_windows:
         data = io_api.read_and_preprocess(config['data']['datasets'],
-                                          readers, ((0, 10), (0, 10)), out=None)
+                                          readers,
+                                          ((0, 10), (0, 10)),
+                                          out=None)
         pipe = {
             'data': data,
             'record': {}  # TODO: read this from pre-existing results
         }
-        pipeline = setup_pipeline(tasks, pipe)
+
+        pipeline = setup_pipeline(tasks, pipe, overwrite=overwrite)
 
         for y, x in product(data.y.values, data.x.values):
             logger.debug('Processing pixel y/x: {}/{}'.format(y, x))

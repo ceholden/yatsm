@@ -5,7 +5,7 @@ from .change import pixel_CCDCesque
 
 
 # TODO: allow 3rd party tasks via an entry point
-pipeline_tasks = {
+PIPELINE_TASKS = {
     'norm_diff': norm_diff,
     'pixel_CCDCesque': pixel_CCDCesque
 }

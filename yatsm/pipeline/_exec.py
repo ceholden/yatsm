@@ -7,7 +7,7 @@ from dask import delayed
 
 from ._topology import config_to_tasks
 from .language import OUTPUT, REQUIRE
-from .tasks import pipeline_tasks
+from .tasks import PIPELINE_TASKS
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ def curry_pipeline_task(func, spec):
                     'config': spec.get('config', {})})
 
 
-def setup_pipeline(config, pipe):
+def setup_pipeline(config, pipe, overwrite=True):
     """ Process the configuration for a YATSM pipeline
 
     Args:
@@ -28,17 +28,19 @@ def setup_pipeline(config, pipe):
             information. At this point, ``data`` and ``record`` can either
             store actual data (e.g., an `xarray.Dataset`) or simply a
             dictionary that mimics the data (i.e., it contains the same keys).
+        overwrite (bool): Allow tasks to overwrite values that have already
+            been computed
 
     Returns:
         list: List of curried, delayed functions ready to be ran in a pipeline
     """
-    tasks = config_to_tasks(config, pipe)
+    tasks = config_to_tasks(config, pipe, overwrite=overwrite)
 
     pipeline = []
     for task in tasks:
         # TODO: curry & delay these
         try:
-            func = pipeline_tasks[config[task]['task']]
+            func = PIPELINE_TASKS[config[task]['task']]
         except KeyError as exc:
             logger.error('Unknown pipeline task "{}" referenced in "{}"'
                          .format(config[task]['task'], task))
