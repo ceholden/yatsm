@@ -177,10 +177,10 @@ def get_prediction(date, result_location, image_ds,
     X = patsy.dmatrix(design, {'x': date}).squeeze()
 
     i_coef = []
-    for k, v in design_info.iteritems():
+    for k, v in design_info.items():
         if not re.match('C\(.*\)', k):
             i_coef.append(v)
-    i_coef = np.asarray(i_coef)
+    i_coef = np.sort(i_coef)
 
     logger.debug('Allocating memory')
     raster = np.ones((image_ds.RasterYSize, image_ds.RasterXSize, n_bands),
