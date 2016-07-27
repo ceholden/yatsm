@@ -146,16 +146,16 @@ entry_points = '''
 
     [yatsm.cli]
     batch=yatsm.cli.batch:batch
+    cache=yatsm.cli.cache:cache
+    pixel=yatsm.cli.pixel:pixel
+    train=yatsm.cli.train:train
+    classify=yatsm.cli.classify:classify
+    map=yatsm.cli.map:map
+    changemap=yatsm.cli.changemap:changemap
 
     [yatsm.algorithms.change]
     CCDCesque=yatsm.algorithms.ccdc:CCDCesque
 '''
-#    cache=yatsm.cli.cache:cache
-#    pixel=yatsm.cli.pixel:pixel
-#    train=yatsm.cli.train:train
-#    classify=yatsm.cli.classify:classify
-#    map=yatsm.cli.map:map
-#    changemap=yatsm.cli.changemap:changemap
 
 
 desc = ('Algorithms for remote sensing land cover and condition monitoring '

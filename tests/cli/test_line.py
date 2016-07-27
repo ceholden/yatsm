@@ -5,7 +5,7 @@ import os
 from click.testing import CliRunner
 import pytest
 
-from yatsm.cli import line
+# from yatsm.cli import line
 
 
 # PASSES

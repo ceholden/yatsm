@@ -1,31 +1,31 @@
 ndvi:
     task: ND
-    requires:
+    require:
         data: [nir, red]
-    provides:
+    output:
         data: [ndvi]
 ndmi:
     task: ND
-    requires:
+    require:
         data: [nir, swir1]
-    provides:
+    output:
         data: [ndmi]
 ccdc:
     task: ccdc
-    requires:
+    require:
         data: [red, nir, swir1, ndvi, ndmi]
-    provides:
+    output:
         record: [ccdc]
 ccdc_fix:
     task: commission
-    requires:
+    require:
         record: [ccdc]
-    provides:
+    output:
         record: [ccdc_fix]
 merged:
     task: merge_results
-    requires:
+    require:
         data: [ndvi]
         record: [ccdc, ccdc_fix]
-    provides:
+    output:
         record: [fixed]
