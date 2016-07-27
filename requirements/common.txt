@@ -8,6 +8,8 @@ numpy>=1.9.0
 scipy>=0.14.0
 Cython>=0.20.1
 setuptools>=0.7.2  # wicked old setuptools broken for .pyx -> .c
+# GDAL
+rasterio>=0.36.0
 # Statistics
 statsmodels>=0.5.0
 scikit-learn>=0.15.1

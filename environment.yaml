@@ -17,7 +17,7 @@ dependencies:
     - patsy>=0.3.0
     # GDAL and IO
     - gdal>=1.11
-    - rasterio>=0.35.1
+    - rasterio>=0.36.0
     - xarray>=0.7.1
     # CLI
     - click>=4.0

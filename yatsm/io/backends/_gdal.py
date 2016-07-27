@@ -82,6 +82,7 @@ class GDALTimeSeries(object):
                 self.count = src.count
                 self.length = len(self.df)
                 self.block_windows = list(src.block_windows())
+                self.nodatavals = src.nodatavals
                 # We only use one datatype for reading -- promote to largest
                 # if hetereogeneous
                 self.dtype = src.dtypes[0]
@@ -184,6 +185,13 @@ class GDALTimeSeries(object):
             dims=['time', 'band', 'y', 'x'],
             coords=[self.df['date'], band_names, coords_y, coords_x]
         )
+
+        da.attrs['crs'] = self.crs.to_string()
+        da.attrs['crs_wkt'] = self.crs.wkt
+        da.attrs['affine'] = self.affine
+        da.attrs['rs'] = self.res
+        da.attrs['nodata'] = self.nodatavals
+
         return da
 
     def window_coords(self, window):
