@@ -1,0 +1,100 @@
+# Example configuration file for YATSM line runner
+#
+# This configuration includes details about the dataset and to run an analysis
+# pipeline using YATSM
+
+# Version of config
+version: "0.7.0"
+
+data:
+    # Optional: Directory location for caching dataset
+    # cache_dir: "/home/ceholden/Documents/landsat_stack/p013r030/subset/cache"
+    datasets:
+        Landsat:
+            # Type of reader for this dataset (GDAL | BIP)
+            # TODO: subsume GDAL stuff into a sub-object
+            reader:
+                GDAL:
+                    # Text file containing dates and images
+                    input_file: "$ROOT/Landsat.csv"
+                    # Input date format
+                    date_format: "%Y%j"
+                    # Keep references to input files open throughout process
+                    #   Can cut down on overhead of repeatedly opening files
+                    #   assuming the OS lets users keep many open
+                    keep_open: True
+            # Band names
+            band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
+            # Mask band (e.g., Fmask)
+            mask_band: fmask
+            # List of integer values to mask within the mask band
+            mask_values: [2, 3, 4, 255]
+            # Valid range of band data
+            min_values: [0, 0, 0, 0, 0, 0, -100, 0]
+            max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
+        # ALOS:
+        #     # Note:
+        #     #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
+        #     #
+        #     # Type of reader for this dataset (GDAL | BIP)
+        #     reader:
+        #         GDAL:
+        #             # Text file containing dates and images
+        #             input_file: "$ROOT/ALOS.csv"
+        #             # Input date format
+        #             date_format: "%Y%m%d"
+        #     # Band names
+        #     band_names: [hh, hv, hh_hv_ratio]
+        #     # Valid range of band data
+        #     min_values: [1, 1, 1]
+        #     max_values: [255, 255, 255]
+
+results:
+    # Output location
+    output: "$ROOT/TSR"
+    # Output filename pattern
+    output_prefix: "yatsm_r{line}.npz"
+
+pipeline:
+    overwrite: False
+    tasks:
+        ccdc:
+            task: pixel_CCDCesque
+            require:
+                data: [red, nir, swir1, ndvi, ndmi]
+            output:
+                record: [ccdc]
+            config:
+                init:
+                    consecutive: 5
+                    design: 1 + x + harm(x, 1)
+        ndvi:
+            task: norm_diff
+            require:
+                data: [nir, red]
+            output:
+                data: [ndvi]
+        ndmi:
+            task: norm_diff
+            require:
+                data: [nir, swir1]
+            output:
+                data: [ndmi]
+        # refit_RLM:
+        #     task: refit
+        #     require:
+        #         data: [red, nir, swir1, ndvi, ndmi]
+        #         record: [ccdc]
+        #     output:
+        #         record: [ccdc_refit_RLM]
+        #     config:
+        #         design: 1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3) + harm(x, 0.25)
+        # classify:
+        #     task: classify_segment
+        #     require:
+        #         data: [red, nir, swir1, swir2, ndvi, ndmi]
+        #         record: [ccdc_refit_RLM]
+        #     output:
+        #         record: [classify_ccdc_RLM]
+        #     output:
+        #         record: [ccdc_fix]

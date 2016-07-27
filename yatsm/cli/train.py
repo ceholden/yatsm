@@ -43,7 +43,7 @@ if hasattr(plt, 'style') and 'ggplot' in plt.style.available:
 @click.option('--diagnostics', is_flag=True, help='Run K-Fold diagnostics')
 @click.option('--overwrite', is_flag=True, help='Overwrite output model file')
 @click.pass_context
-def train(ctx, config, classifier_config, model, n_fold, seed,
+def train(ctx, configfile, classifier_config, model, n_fold, seed,
           plot, diagnostics, overwrite):
     """
     Train a classifier from ``scikit-learn`` on YATSM output and save result to
@@ -61,7 +61,7 @@ def train(ctx, config, classifier_config, model, n_fold, seed,
         np.random.seed(seed)
 
     # Parse config & algorithm config
-    cfg = parse_config_file(config)
+    cfg = parse_config_file(configfile)
     algo, algo_cfg = cfg_to_algorithm(classifier_config)
 
     training_image = cfg['classification']['training_image']

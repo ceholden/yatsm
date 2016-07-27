@@ -1,0 +1,12 @@
+ndvi:
+    task: norm_diff
+    requires:
+        data: [nir, red]
+    provides:
+        data: [ndvi]
+ccdc:
+    task: ccdc
+    requires:
+        data: [red, nir, swir1, ndmi]
+    provides:
+        record: [ccdc]

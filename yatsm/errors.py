@@ -12,3 +12,13 @@ class TrainingDataException(Exception):
 class AlgorithmNotFoundException(Exception):
     """ Custom exception for algorithm config files without handlers """
     pass
+
+
+class InvalidConfigurationException(Exception):
+    pass
+
+
+class PipelineConfigurationError(TypeError):
+    """ Exception for invalid ``require``/``output`` specification in pipeline
+    """
+    pass

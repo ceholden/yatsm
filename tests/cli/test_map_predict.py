@@ -2,9 +2,11 @@
 """
 from click.testing import CliRunner
 import numpy as np
+import pytest
 
 from yatsm.cli.main import cli
 
+xfail = pytest.mark.xfail(reason='Will fail until v0.7.0 stabilizes')
 
 # Truth for diagonals
 diag = np.eye(5).astype(bool)
@@ -13,6 +15,7 @@ BAND_SWIR = 4
 pred_swir = np.array([-9999, 723, 1279, 3261, 2885], dtype=np.int16)
 
 
+@xfail
 def test_map_predict_pass_1(example_results, tmpdir, read_image):
     """ Make a map of predictions
     """

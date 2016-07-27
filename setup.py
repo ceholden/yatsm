@@ -78,6 +78,8 @@ with open('README.rst') as f:
 
 # Installation requirements
 install_requires = [
+    'future',
+    'six',
     'numpy',
     'scipy',
     'Cython',
@@ -86,8 +88,17 @@ install_requires = [
     'matplotlib',
     'click',
     'click_plugins',
+    'pyyaml',
+    'jsonschema',
     'patsy',
-    'GDAL'
+    'GDAL',
+    'rasterio',
+    'xarray',
+    'dask',
+    'bottleneck',
+    'toolz',
+    'decorator',
+    'toposort'
 ]
 
 # NumPy/Cython build setup
@@ -120,7 +131,8 @@ cy_ext_modules = cythonize([
 package_data = {
     'yatsm': [
         os.path.join('regression', 'pickles', 'pickles.json'),
-        os.path.join('regression', 'pickles', '*.pkl')
+        os.path.join('regression', 'pickles', '*.pkl'),
+        os.path.join('config', 'config_schema.yaml')
     ]
 }
 
@@ -133,18 +145,18 @@ entry_points = '''
     yatsm=yatsm.cli.main:cli
 
     [yatsm.cli]
-    cache=yatsm.cli.cache:cache
-    pixel=yatsm.cli.pixel:pixel
-    segment=yatsm.cli.segment:segment
-    line=yatsm.cli.line:line
-    train=yatsm.cli.train:train
-    classify=yatsm.cli.classify:classify
-    map=yatsm.cli.map:map
-    changemap=yatsm.cli.changemap:changemap
+    batch=yatsm.cli.batch:batch
 
     [yatsm.algorithms.change]
     CCDCesque=yatsm.algorithms.ccdc:CCDCesque
 '''
+#    cache=yatsm.cli.cache:cache
+#    pixel=yatsm.cli.pixel:pixel
+#    train=yatsm.cli.train:train
+#    classify=yatsm.cli.classify:classify
+#    map=yatsm.cli.map:map
+#    changemap=yatsm.cli.changemap:changemap
+
 
 desc = ('Algorithms for remote sensing land cover and condition monitoring '
         'in Python')

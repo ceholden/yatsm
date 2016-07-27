@@ -15,12 +15,15 @@ dependencies:
     - scikit-learn>=0.15.1
     - pandas>=0.16.0
     - patsy>=0.3.0
-    # GDAL
-    - gdal>=2.0.0
+    # GDAL and IO
+    - gdal>=1.11
+    - rasterio>=0.36.0
+    - xarray>=0.7.1
     # CLI
     - click>=4.0
     # Config file
     - pyyaml>=3.11
+    - jsonschema>=2.5.1
     # Plotting
     - matplotlib>=1.4.2
     # Accelerated functions w/ numba (OPTIONAL)
@@ -33,3 +36,5 @@ dependencies:
         # Required but missing from conda
         - palettable>=2.0.0
         - click_plugins>=1.0
+        - decorator>=4.0.10
+        - toposort>=1.4
