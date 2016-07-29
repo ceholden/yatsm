@@ -3,17 +3,9 @@
 import logging
 
 import click
-import numpy as np
-from osgeo import gdal
 
 from . import options
-from ..mapping import (get_classification, get_phenology,
-                       get_coefficients, get_prediction)
-from ..utils import write_output
-from ..regression import design_coefs
-
-gdal.AllRegister()
-gdal.UseExceptions()
+from ..regression.design import design_coefs
 
 logger = logging.getLogger('yatsm')
 
@@ -86,6 +78,15 @@ def map(ctx, map_type, date, output,
         - Image predictions will not use categorical information in timeseries
           models.
     """
+    from osgeo import gdal
+
+    from ..mapping import (get_classification, get_phenology,
+                           get_coefficients, get_prediction)
+    from ..utils import write_output
+
+    gdal.AllRegister()
+    gdal.UseExceptions()
+
     if len(band) == 0:
         band = 'all'
 

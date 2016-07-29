@@ -4,14 +4,10 @@ import logging
 import os
 
 import click
-from osgeo import gdal
+
 
 from . import options
-from ..mapping import get_change_date, get_change_num
-from ..utils import write_output
 
-gdal.AllRegister()
-gdal.UseExceptions()
 
 logger = logging.getLogger('yatsm')
 
@@ -43,6 +39,14 @@ def changemap(ctx, map_type, start_date, end_date, output,
     """
     Examples: TODO
     """
+    from osgeo import gdal
+
+    from ..mapping import get_change_date, get_change_num
+    from ..utils import write_output
+
+    gdal.AllRegister()
+    gdal.UseExceptions()
+
     gdal_frmt = str(gdal_frmt)  # GDAL GetDriverByName doesn't work on Unicode
 
     frmt = '%Y%j'

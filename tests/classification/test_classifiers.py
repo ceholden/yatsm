@@ -1,9 +1,9 @@
-""" Tests for ``yatsm.classifiers``
+""" Tests for ``yatsm.classification``
 """
 import pytest
 import yaml
 
-from yatsm import classifiers
+from yatsm import classification
 from yatsm.errors import AlgorithmNotFoundException
 
 
@@ -19,20 +19,20 @@ def write_yaml(tmpdir):
 
 
 def test_cfg_to_algorithm_pass_1(write_yaml):
-    """ Test ``yatsm.classifiers.cfg_to_algorithm`` with an empty config
+    """ Test ``yatsm.classification.cfg_to_algorithm`` with an empty config
     """
     cfg = {'algorithm': 'RandomForest'}
-    classifiers.cfg_to_algorithm(write_yaml(cfg))
+    classification.cfg_to_algorithm(write_yaml(cfg))
 
 
 def test_cfg_to_algorithm_pass_2(write_yaml):
-    """ Test ``yatsm.classifiers.cfg_to_algorithm`` with an empty config
+    """ Test ``yatsm.classification.cfg_to_algorithm`` with an empty config
     """
     cfg = {
         'algorithm': 'RandomForest',
         'RandomForest': {'init': {}, 'fit': {}}
     }
-    classifiers.cfg_to_algorithm(write_yaml(cfg))
+    classification.cfg_to_algorithm(write_yaml(cfg))
 
 
 # FAILURES
@@ -41,7 +41,7 @@ def test_cfg_to_algorithm_fail_1(write_yaml):
     """
     cfg = {'algorithm': 'hopefully_not_an_algo'}
     with pytest.raises(AlgorithmNotFoundException):
-        classifiers.cfg_to_algorithm(write_yaml(cfg))
+        classification.cfg_to_algorithm(write_yaml(cfg))
 
 
 def test_cfg_to_algorithm_fail_2(write_yaml):
@@ -52,7 +52,7 @@ def test_cfg_to_algorithm_fail_2(write_yaml):
         'RandomForest': {'init': {'not_a_param': 42}, 'fit': {}}
     }
     with pytest.raises(TypeError):
-        classifiers.cfg_to_algorithm(write_yaml(cfg))
+        classification.cfg_to_algorithm(write_yaml(cfg))
 
 
 def test_cfg_to_algorithm_fail_3(tmpdir):
@@ -60,4 +60,4 @@ def test_cfg_to_algorithm_fail_3(tmpdir):
     """
     f = tmpdir.mkdir('clf').join('test').strpath
     with pytest.raises(IOError):
-        classifiers.cfg_to_algorithm(f)
+        classification.cfg_to_algorithm(f)

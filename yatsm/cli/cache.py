@@ -9,10 +9,7 @@ import click
 
 from . import options
 from .. import io
-from ..cache import (get_line_cache_name, get_line_cache_pattern,
-                     update_cache_file, write_cache_file)
-from ..config_parser import parse_config_file
-from ..utils import csvfile_to_dataframe, distribute_jobs, get_image_IDs
+
 
 logger = logging.getLogger('yatsm')
 
@@ -28,8 +25,12 @@ logger = logging.getLogger('yatsm')
               help='Assign rows interlaced by job instead of sequentially')
 @click.pass_context
 def cache(ctx, config, job_number, total_jobs, update_pattern, interlace):
-    cfg = parse_config_file(config)
+    from ..cache import (get_line_cache_name, get_line_cache_pattern,
+                         update_cache_file, write_cache_file)
+    from ..config_parser import parse_config_file
+    from ..utils import csvfile_to_dataframe, distribute_jobs, get_image_IDs
 
+    cfg = parse_config_file(config)
     if not os.path.isdir(cfg['dataset']['cache_line_dir']):
         os.makedirs(cfg['dataset']['cache_line_dir'])
 

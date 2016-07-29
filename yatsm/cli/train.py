@@ -14,7 +14,7 @@ from sklearn.externals import joblib
 
 from . import options
 from ..config_parser import parse_config_file
-from ..classifiers import cfg_to_algorithm, diagnostics
+from ..classification import cfg_to_algorithm, diagnostics
 from ..errors import TrainingDataException
 from .. import io, plots, utils
 
