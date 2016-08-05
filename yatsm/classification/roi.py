@@ -5,22 +5,19 @@ from rasterio.features import rasterize
 from shapely.geometry import shape as geom_shape
 
 
-def extract_roi(src, features, feature_prop=None, all_touched=False, fill=0):
+def extract_roi(raster, vector, feature_prop=None, all_touched=False):
     """ Yield pixel data from ``src`` for ROIs in ``features``
 
     Args:
-        src (rasterio.RasterReader): The ``rasterio`` dataset used to extract
-            training data values from
-        features (list[dict]): A list of features from a polygon vector file
-            given in the format used by fiona
+        raster (rasterio.RasterReader): The ``rasterio`` dataset used to
+            extract training data values from
+        vector (list[dict]): A list of features from a polygon vector file as
+            GeoJSON-like
         feature_prop (str): The name of the attribute from ``features``
             containing the ROI labels
         all_touched (bool): Rasterization option that decides if all pixels
             touching the ROI should be included, or just pixels from within
             the ROI
-        fill (int, float): A fill value for the ROI rasterization. This fill
-            value should not be the same as any of the labels in the set of
-            ROIs
 
     Returns:
         tuple (np.ndarray, np.ndarray, np.ndarray, np.ndarray): A tuple
@@ -30,28 +27,29 @@ def extract_roi(src, features, feature_prop=None, all_touched=False, fill=0):
 
     """
     if not feature_prop:
-        feature_prop = list(features[0]['properties'].keys())[0]
+        feature_prop = list(vector[0]['properties'].keys())[0]
 
-    for feat, label in features:
-        geom = geom_shape(feat)
+    for feat in vector:
+        geom = geom_shape(feat['geometry'])
+        label = feat['properties'][feature_prop]
         bounds = tuple(geom.bounds)
 
-        window = src.window(*bounds, boundless=True)
-        data = src.read(window=window, boundless=True)
+        window = raster.window(*bounds, boundless=True)
+        data = raster.read(window=window, boundless=True)
         shape = data.shape
-        transform = src.window_transform(window)
+        transform = raster.window_transform(window)
 
         roi = rasterize(
-            [feat],
+            [(feat['geometry'], 1)],
             out_shape=shape[1:],
             transform=transform,
-            fill=fill,
+            fill=0,
             all_touched=all_touched
         )
 
         mask = np.logical_or(
-            (data == src.nodata).any(axis=0),
-            roi == fill
+            (data == raster.nodata).any(axis=0),
+            roi == 1
         )
         masked = np.ma.MaskedArray(
             data,
@@ -65,6 +63,6 @@ def extract_roi(src, features, feature_prop=None, all_touched=False, fill=0):
         npix = masked.size / shape[0]
         masked = masked.reshape((shape[0], npix))
 
-        label = label * np.ones(coord_ys.size, dtype=np.uint8)
+        label = np.repeat(label, coord_ys.size)
 
         yield (masked, label, coord_xs, coord_ys, )
