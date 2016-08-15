@@ -1,5 +1,6 @@
 """ Tools related to reading time series data using GDAL / rasterio
 """
+from collections import OrderedDict
 from functools import partial
 import logging
 import os
@@ -65,6 +66,9 @@ class GDALTimeSeries(object):
             raise ValueError('Must specify either a pd.DataFrame or both'
                              '"input_file" and "date_format" arguments')
         self.keep_open = keep_open
+
+        # Determine if input file has extra metadata
+        self.extra_md = self.df.columns.difference(['date', 'filename'])
 
         self._init_attrs_from_file(self.df['filename'][0])
 
@@ -180,6 +184,7 @@ class GDALTimeSeries(object):
 
         values = self.read(window=window, out=out)
         coords_y, coords_x = self.window_coords(window)
+
         da = xr.DataArray(
             values,
             dims=['time', 'band', 'y', 'x'],
@@ -191,6 +196,9 @@ class GDALTimeSeries(object):
         da.attrs['affine'] = self.affine
         da.attrs['rs'] = self.res
         da.attrs['nodata'] = self.nodatavals
+
+        for md in self.extra_md:
+            da.attrs[md] = self.df[md]
 
         return da
 

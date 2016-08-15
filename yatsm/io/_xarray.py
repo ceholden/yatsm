@@ -1,6 +1,7 @@
 import logging
 
 import numpy as np
+import pandas as pd
 import xarray as xr
 
 logger = logging.getLogger(__name__)
@@ -52,17 +53,31 @@ def apply_range_mask(arr, min_values, max_values):
     return _where_with_attrs(arr, ((arr >= mins) & (arr <= maxs)))
 
 
-def merge_datasets(dataarrays):
-    """
+def merge_datasets(dataarrays, merge_attrs=True):
+    """ Combine multiple data arrays into one dataset
+
     Args:
-        dataarrays (dict): name: xr.DataArray
+        dataarrays (dict[name, xr.DataArray]): xr.DataArray objects to merge
+        merge_attrs (bool): Attempt to merge DataArray attributes. In order for
+            these attributes to be able to merge, they must be pd.Series
+            and have compatible indexes.
+
+    Returns:
+        xr.Dataset: Merged xr.DataArray objects in one xr.Dataset
     """
     datasets = [arr.to_dataset(dim='band') for arr in dataarrays.values()]
 
     ds = datasets[0]
+    ds_attrs = ds.attrs
     for _ds in datasets[1:]:
-        ds = ds.merge(_ds,
-                      overwrite_vars=['time', 'y', 'x'],
-                      inplace=True)
+        ds = ds.merge(_ds, inplace=True)
+        for attr in _ds.attrs.keys():
+            if attr in ds_attrs:
+                to_join = [ds.attrs[attr], _ds.attrs[attr]]
+                if all([isinstance(a, pd.Series) for a in to_join]):
+                    ds.attrs[attr] = pd.concat(to_join).sort_index()
+            else:
+                ds.attrs[attr] = (pd.Series(index=ds.time)
+                                  .fillna(_ds.attrs[attr]))
 
     return ds
