@@ -70,24 +70,28 @@ def merge_data(data, merge_attrs=True):
                 else dat for dat in data.values()]
 
     ds = xr.merge(datasets, compat='minimal')
-    # Overlapping but not conflicting coords can't be merged for now
+
+    # Overlapping but not conflicting variables can't be merged for now
     # https://github.com/pydata/xarray/issues/835
-    # In meantime, check for dropped coords
+    # In meantime, check for dropped variables
     dropped = set()
     for _ds in datasets:
-        dropped.update(set(_ds.coords).difference(set(ds.coords)))
+        dropped.update(set(_ds.data_vars).difference(set(ds.data_vars)))
 
+    # TODO: refactor this and repeat for coords and vars
     if dropped:
-        dropped_coords = {}
-        for coord in dropped:
-            dims = [_ds[coord].dims for _ds in datasets]
+        # dropped_vars = {}
+        for var in dropped:
+            dims = [_ds[var].dims for _ds in datasets]
             if all([dims[0] == d for d in dims[1:]]):
-                dfs = [_ds.reset_coords()[coord].to_series()
+                dfs = [_ds.reset_coords()[var].to_series()
                        for _ds in datasets]
-                dropped_coords[coord] = (dims[0], pd.concat(dfs).sort_index())
+                # dropped_vars[var] = (dims[0], pd.concat(dfs).sort_index())
+                da = xr.DataArray(pd.concat(dfs).sort_index())
+                ds[var] = da
             else:
                 logger.debug("Cannot restore dropped coord {} because "
                              "dimensions are inconsistent across datasets")
-        ds = ds.assign_coords(**ds.coords.merge(dropped_coords))
+        # ds = ds.assign_coords(**ds.coords.merge(dropped_vars))
 
     return ds

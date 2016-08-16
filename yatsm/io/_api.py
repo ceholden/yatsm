@@ -83,9 +83,7 @@ def read_and_preprocess(config, readers, window, out=None):
         # Add in metadata
         md = reader.get_metadata().to_dataset(dim='band')
         ds = arr.to_dataset(dim='band')
-        ds = ds.assign_coords(**ds.coords.merge(md))
-        # ds.update(md)
-        # ds.coords.set_coords(ds.coords.keys() + md.data_vars.keys())
+        ds.update(md)
 
         datasets[name] = ds
 
