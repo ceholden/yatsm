@@ -4,7 +4,7 @@ import logging
 
 import six
 
-from ._xarray import (apply_band_mask, apply_range_mask, merge_datasets)
+from ._xarray import (apply_band_mask, apply_range_mask, merge_data)
 from .backends import READERS
 
 logger = logging.getLogger(__name__)
@@ -89,4 +89,4 @@ def read_and_preprocess(config, readers, window, out=None):
 
         datasets[name] = ds
 
-    return merge_datasets(datasets)
+    return merge_data(datasets)
