@@ -1,6 +1,5 @@
 """ Tools related to reading time series data using GDAL / rasterio
 """
-from collections import OrderedDict
 from functools import partial
 import logging
 import os
@@ -152,12 +151,15 @@ class GDALTimeSeries(object):
 
         return out
 
-    def read_dataarray(self, window=None, band_names=None, out=None):
+    def read_dataarray(self, window=None,
+                       name=None, band_names=None,
+                       out=None):
         """ Read time series, usually inside of a window, as xarray.DataArray
 
         Args:
             window (tuple): A pair (tuple) of pairs of ints specifying
                 the start and stop indices of the window rows and columns
+            name (str): Name of the xr.DataArray
             band_names (list[str]): Names of bands to use for xarray.DataArray
             out (np.ndarray): A NumPy array of pre-allocated memory to read
                 the time series into. Its shape should be:
@@ -187,6 +189,7 @@ class GDALTimeSeries(object):
 
         da = xr.DataArray(
             values,
+            name=name,
             dims=['time', 'band', 'y', 'x'],
             coords=[self.df['date'], band_names, coords_y, coords_x]
         )
@@ -197,9 +200,22 @@ class GDALTimeSeries(object):
         da.attrs['rs'] = self.res
         da.attrs['nodata'] = self.nodatavals
 
-        for md in self.extra_md:
-            da.attrs[md] = self.df[md]
+        return da
 
+    def get_metadata(self, name=None):
+        """ Return a xr.DataArray of metadata from the input image list
+
+        Args:
+            name (str): Name of the xr.DataArray
+
+        Returns:
+            xarray.DataArray: A DataArray containing the time series metadata
+                with coordinate dimenisons (time)
+
+        """
+        da = xr.DataArray(self.df[self.extra_md],
+                          dims=['time', 'band'],
+                          coords=[self.df['date'], list(self.extra_md)])
         return da
 
     def window_coords(self, window):
