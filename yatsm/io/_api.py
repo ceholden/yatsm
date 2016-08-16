@@ -1,6 +1,5 @@
 """ Functions, classes, etc. useful to CLI or other users
 """
-from collections import OrderedDict
 import logging
 
 import six
@@ -81,6 +80,13 @@ def read_and_preprocess(config, readers, window, out=None):
             logger.debug('Applying range mask to "{}"'.format(name))
             arr = apply_range_mask(arr, cfg['min_values'], cfg['max_values'])
 
-        datasets[name] = arr
+        # Add in metadata
+        md = reader.get_metadata().to_dataset(dim='band')
+        ds = arr.to_dataset(dim='band')
+        ds = ds.assign_coords(**ds.coords.merge(md))
+        # ds.update(md)
+        # ds.coords.set_coords(ds.coords.keys() + md.data_vars.keys())
+
+        datasets[name] = ds
 
     return merge_datasets(datasets)
