@@ -49,7 +49,7 @@ def extract_roi(raster, vector, feature_prop=None, all_touched=False):
 
         mask = np.logical_or(
             (data == raster.nodata).any(axis=0),
-            roi == 1
+            roi == 0
         )
         masked = np.ma.MaskedArray(
             data,
