@@ -47,10 +47,10 @@ def extract_roi(raster, vector, feature_prop=None, all_touched=False):
             all_touched=all_touched
         )
 
-        mask = np.logical_or(
-            (data == raster.nodata).any(axis=0),
-            roi == 0
-        )
+        mask = roi == 0
+        if raster.nodata:
+            mask = np.logical_or((data == raster.nodata).any(axis=0), mask)
+
         masked = np.ma.MaskedArray(
             data,
             mask=np.ones_like(data) * mask
