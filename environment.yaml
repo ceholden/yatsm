@@ -16,8 +16,10 @@ dependencies:
     - pandas>=0.16.0
     - patsy>=0.3.0
     # GDAL and IO
+    - fiona>=1.7.0
     - gdal>=1.11
     - rasterio>=0.36.0
+    - shapely>=1.5.16
     - xarray>=0.7.1
     # CLI
     - click>=4.0
