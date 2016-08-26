@@ -14,6 +14,7 @@ data:
             # Type of reader for this dataset (GDAL | BIP)
             # TODO: subsume GDAL stuff into a sub-object
             reader:
+                name: GDAL
                 GDAL:
                     # Text file containing dates and images
                     input_file: "$ROOT/Landsat.csv"
@@ -32,22 +33,23 @@ data:
             # Valid range of band data
             min_values: [0, 0, 0, 0, 0, 0, -100, 0]
             max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
-        # ALOS:
-        #     # Note:
-        #     #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
-        #     #
-        #     # Type of reader for this dataset (GDAL | BIP)
-        #     reader:
-        #         GDAL:
-        #             # Text file containing dates and images
-        #             input_file: "$ROOT/ALOS.csv"
-        #             # Input date format
-        #             date_format: "%Y%m%d"
-        #     # Band names
-        #     band_names: [hh, hv, hh_hv_ratio]
-        #     # Valid range of band data
-        #     min_values: [1, 1, 1]
-        #     max_values: [255, 255, 255]
+        ALOS:
+            # Note:
+            #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
+            #
+            # Type of reader for this dataset (GDAL | BIP)
+            reader:
+                name: GDAL
+                GDAL:
+                    # Text file containing dates and images
+                    input_file: "$ROOT/ALOS.csv"
+                    # Input date format
+                    date_format: "%Y%m%d"
+            # Band names
+            band_names: [hh, hv, hh_hv_ratio]
+            # Valid range of band data
+            min_values: [1, 1, 1]
+            max_values: [255, 255, 255]
 
 results:
     # Output location

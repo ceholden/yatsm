@@ -25,19 +25,16 @@ definitions:
                         "$ref": "#/definitions/datasets"
         required:
             - datasets
+        additionalProperties: False
     datasets:
         type: object
         properties:
             reader:
+                type: object
                 oneOf: [
-                    "$ref": "#/definitions/readers"
+                    "$ref": "#/definitions/readers/reader/GDAL",
+                    "$ref": "#/definitions/readers/reader/AGDCv2"
                 ]
-            input_file:
-                type: string
-                default: ''
-            date_format:
-                type: string
-                default: ''
             band_names:
                 type: array
                 uniqueItems: true
@@ -78,6 +75,27 @@ definitions:
             required:
                 - input_file
                 - date_format
+        AGDCv2:
+            # TODO
+            type: string
+        reader:
+            GDAL:
+                properties:
+                    name:
+                        enum: ['GDAL']
+                    GDAL:
+                        "$ref": "#/definitions/readers/GDAL"
+                dependencies:
+                    name: ['GDAL']
+            AGDCv2:
+                properties:
+                    name:
+                        enum: ['AGDCv2']
+                    AGDCv2:
+                        "$ref": "#/definitions/readers/AGDCv2"
+                dependencies:
+                    name: ['AGDCv2']
+
 types:
     array_num:
         type: array

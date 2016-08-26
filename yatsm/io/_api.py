@@ -38,20 +38,19 @@ def get_reader(name=None, **kwargs):
         KeyError: when asking for a reader that doesn't exist
     """
     if isinstance(name, six.string_types) and isinstance(kwargs, dict):
-        pass
+        if kwargs.keys() == [name]:
+            kwargs = kwargs[name]
     elif name is None and kwargs:
         name, kwargs = kwargs.popitem()
     else:
         raise ValueError('"name" must either be a `str` or None, with '
                          'reader options specified by kwargs')
 
-
     reader_cls = READERS.get(name, None)
     if not reader_cls:
         raise KeyError('Unknown time series reader "{}"'.format(name))
 
     return reader_cls(**kwargs)
-
 
 
 def read_and_preprocess(config, readers, window, out=None):
