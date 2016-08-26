@@ -210,21 +210,21 @@ class GDALTimeSeries(object):
 
         return da
 
-    def get_metadata(self, name=None):
-        """ Return a xr.DataArray of metadata from the input image list
+    def get_metadata(self, items=None):
+        """ Return a xr.Dataset of metadata from the input image list
 
         Args:
-            name (str): Name of the xr.DataArray
+            items (iterable): Subset of metadata column names (`self.extra_md`)
+                to return
 
         Returns:
-            xarray.DataArray: A DataArray containing the time series metadata
+            xarray.Dataset: A Dataset containing the time series metadata
                 with coordinate dimenisons (time)
 
         """
-        da = xr.DataArray(self.df[self.extra_md],
-                          dims=['time', 'band'],
-                          coords=[self.df['date'], list(self.extra_md)])
-        return da
+        if not items:
+            items = self.extra_md
+        return xr.Dataset.from_dataframe(self.df[items])
 
     def window_coords(self, window):
         """ Return Y/X coordinates of a raster to pass to xarray

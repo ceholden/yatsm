@@ -80,7 +80,7 @@ def read_and_preprocess(config, readers, window, out=None):
             arr = apply_range_mask(arr, cfg['min_values'], cfg['max_values'])
 
         # Add in metadata
-        md = reader.get_metadata().to_dataset(dim='band')
+        md = reader.get_metadata()
         ds = arr.to_dataset(dim='band')
         ds.update(md)
 
