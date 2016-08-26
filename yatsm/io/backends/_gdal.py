@@ -12,12 +12,15 @@ import xarray as xr
 logger = logging.getLogger(__name__)
 
 
-def parse_dataset_file(input_file, date_format):
+def parse_dataset_file(input_file, date_format, column_dtype=None):
     """ Return parsed dataset CSV file as pd.DataFrame
 
     Args:
         input_file (str): CSV filename
         date_format (str): Format of date in input file
+        column_dtype (dict): Datatype format parsing options for
+            all or subset of columns passed as ``dtype`` argument to
+            ``pandas.read_csv``
 
     Returns:
         pd.DataFrame: Dataset information
@@ -25,7 +28,8 @@ def parse_dataset_file(input_file, date_format):
     dt_parser = lambda x: pd.datetime.strptime(x, date_format)
 
     df = pd.read_csv(input_file,
-                     parse_dates=['date'], date_parser=dt_parser)
+                     parse_dates=['date'], date_parser=dt_parser,
+                     dtype=column_dtype)
     df.set_index('date', inplace=True, drop=False)
     df.index.name = 'time'
 
@@ -42,17 +46,21 @@ class GDALTimeSeries(object):
     """ A time series that can be read in by GDAL
 
     Args:
-        df (pd.DataFrame): A Pandas dataframe describing time series (requires
-            keys 'filename' and 'date')
-        input_file (str): If `df` is not specified, read time series dataset
+        df (pd.DataFrame): A Pandas dataframe describing time series. Requires
+            keys 'filename' and 'date' be column names. Additional columns
+            will be used as metadata available via ``get_metadata``.
+        input_file (str): If ``df`` is not specified, read time series dataset
             information from this file
-        date_format (str): If `df` is not specified, parse date column in
-            `input_file` with this date string format
-        band_names (list[str]): Names of all  bands in this time series
+        date_format (str): If ``df`` is not specified, parse date column in
+            ``input_file`` with this date string format
+        column_dtype (dict[str, str]): Datatype format parsing options for
+            all or subset of ``df`` columns passed as ``dtype`` argument to
+            ``pandas.read_csv``.
         keep_open (bool): Keep ``rasterio`` file descriptors open once opened?
 
     """
     def __init__(self, df=None, input_file='', date_format='%Y%m%d',
+                 column_dtype=None,
                  keep_open=False, **kwargs):
         if isinstance(df, pd.DataFrame):
             if not all([k in df.keys() for k in ('date', 'filename')]):
@@ -60,7 +68,7 @@ class GDALTimeSeries(object):
                                '"filename" keys')
             self.df = df
         elif input_file and date_format:
-            self.df = parse_dataset_file(input_file, date_format)
+            self.df = parse_dataset_file(input_file, date_format, column_dtype)
         else:
             raise ValueError('Must specify either a pd.DataFrame or both'
                              '"input_file" and "date_format" arguments')

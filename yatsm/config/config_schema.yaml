@@ -72,6 +72,12 @@ definitions:
                 keep_open:
                     type: boolean
                     default: True
+                column_dtype:
+                    type: object
+                    minProperties: 1
+                    patternProperties:
+                        '.*':
+                            type: string
             required:
                 - input_file
                 - date_format
