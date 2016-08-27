@@ -51,8 +51,8 @@ def parse_config_file(config_file):
     if algo not in algorithms.available['change']:
         raise NotImplementedError('Algorithm specified (%s) is not currently '
                                   'available' % algo)
-    cfg['YATSM']['algorithm_cls'] = algorithms.available['change'][algo]
-    if not cfg['YATSM']['algorithm_cls']:
+    cfg['YATSM']['algorithm_object'] = algorithms.available['change'][algo]
+    if not cfg['YATSM']['algorithm_object']:
         raise KeyError('Could not find algorithm specified (%s) in '
                        '`yatsm.algorithms.available`' % algo)
 

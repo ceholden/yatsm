@@ -97,7 +97,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     dates = df['date'].values
 
     # Initialize timeseries model
-    model = cfg['YATSM']['algorithm_cls']
+    model = cfg['YATSM']['algorithm_object']
     algo_cfg = cfg[cfg['YATSM']['algorithm']]
     yatsm = model(estimator=cfg['YATSM']['estimator'],
                   **algo_cfg.get('init', {}))

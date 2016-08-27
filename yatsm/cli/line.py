@@ -86,7 +86,7 @@ def line(ctx, config, job_number, total_jobs,
     logger.debug('Responsible for lines: {l}'.format(l=job_lines))
 
     # Initialize timeseries model
-    model = cfg['YATSM']['algorithm_cls']
+    model = cfg['YATSM']['algorithm_object']
     algo_cfg = cfg[cfg['YATSM']['algorithm']]
     yatsm = model(estimator=cfg['YATSM']['estimator'],
                   **algo_cfg.get('init', {}))
