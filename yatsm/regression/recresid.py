@@ -14,7 +14,10 @@ Citations:
 """
 import numpy as np
 
+from yatsm.accel import try_jit
 
+
+@try_jit(nopython=True)
 def recresid(X, y, span=None):
     """ Return standardized recursive residuals for y ~ X
 
@@ -91,17 +94,16 @@ def recresid(X, y, span=None):
     XTY = np.dot(X0.T, y0)
     beta = np.dot(XTX_j, XTY)
 
-    yhat_j = np.dot(X[span - 1], beta)
+    yhat_j = np.dot(X[span - 1, :], beta)
     recresid[span - 1] = y[span - 1] - yhat_j
     recvar[span - 1] = 1 + np.dot(X[span - 1],
                                   np.dot(XTX_j, X[span - 1]))
     for j in range(span, nobs):
-        x_j = X[j:j + 1, :]
+        x_j = X[j:j+1, :]
         y_j = y[j]
 
         # Prediction with previous beta
-        yhat_j = np.dot(x_j, beta)
-        resid_j = y_j - yhat_j
+        resid_j = y_j - np.dot(x_j, beta)
 
         # Update
         XTXx_j = np.dot(XTX_j, x_j.T)
@@ -109,8 +111,7 @@ def recresid(X, y, span=None):
         XTX_j = XTX_j - np.dot(XTXx_j, XTXx_j.T) / f_t  # eqn 5.5.15
 
         beta = beta + (XTXx_j * resid_j / f_t).ravel()  # eqn 5.5.14
-
-        recresid[j] = resid_j
-        recvar[j] = f_t
+        recresid[j] = resid_j.item()
+        recvar[j] = f_t.item()
 
     return recresid / np.sqrt(recvar)
