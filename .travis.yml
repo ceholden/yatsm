@@ -30,7 +30,6 @@ install:
     - source activate test
     # Rest of dependencies
     - "pip install -r requirements/dev.txt"
-    - "pip install pytest"
     # Install YATSM
     - "pip install -e ."
 script:
