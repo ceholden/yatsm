@@ -4,7 +4,9 @@ from functools import wraps
 import logging
 import os
 
-logger = logging.getLogger('yatsm')
+logger = logging.getLogger(__name__)
+
+NUMBA_MINIMUM_VERSION = (0, 27, 0)
 
 has_numba = True
 try:
@@ -17,8 +19,9 @@ else:
         has_numba = False
     # Check for an adequate version number
     try:
-        nb_ver = nb.__version__.split('.')
-        if int(nb_ver[0]) == 0 and int(nb_ver[1]) < 22:
+        nb_ver = nb.__version__.split('+')[0].split('.')
+        if (int(nb_ver[0]) < NUMBA_MINIMUM_VERSION[0] or
+                int(nb_ver[1]) < NUMBA_MINIMUM_VERSION[1]):
             has_numba = False
             logger.warning('You have numba installed, but the version is too '
                            'old to be used (%s)' % nb.__version__)

@@ -1,5 +1,5 @@
 # Accelerating computation via Numba
-numba>=0.22
+numba>=0.27
 # Faster Enet/Lasso with GLMNET fortran wrapper
 git+git://github.com/ceholden/glmnet-python.git@v2.0.1
 # Faster file navigation with `scandir` (also available in Python 3.5)
