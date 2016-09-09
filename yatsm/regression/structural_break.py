@@ -78,9 +78,13 @@ def cusum_OLS(X, y, alpha=0.05):
 
     cusum, score, idx = _cusum_OLS(_X, _y)
     if isinstance(y, (pd.Series, pd.DataFrame)):
-        idx = y.index[idx]
+        index = y.index
+        idx = index[idx]
     elif isinstance(y, xr.DataArray):
-        idx = y.to_series().index[idx]
+        index = y.to_series().index
+        idx = index[idx]
+    if isinstance(y, pandas_like):
+        cusum = pd.Series(data=cusum, index=index, name='CUSUM')
 
     # crit = stats.kstwobign.isf(alpha)  ~70usec
     crit = CUSUM_OLS_CRIT[alpha]
