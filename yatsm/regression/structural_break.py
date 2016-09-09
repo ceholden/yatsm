@@ -30,14 +30,22 @@ CUSUM_OLS_CRIT = {
 
 
 @try_jit(nopython=True, nogil=True)
+def _cusum(resid, ddof):
+    n = resid.size
+    df = n - ddof
+
+    sigma = ((resid ** 2).sum() / df * n) ** 0.5
+    process = resid.cumsum() / sigma
+    return process
+
+
+@try_jit(nopython=True, nogil=True)
 def _cusum_OLS(X, y):
     n, p = X.shape
     beta = np.linalg.lstsq(X, y)[0]
     resid = np.dot(X, beta) - y
 
-    sigma = ((resid ** 2).sum() / (n - p) * n) ** 0.5
-
-    process = resid.cumsum() / sigma
+    process = _cusum(resid, p)
     _process = np.abs(process)
     score = _process.max()
     idx = _process.argmax()
