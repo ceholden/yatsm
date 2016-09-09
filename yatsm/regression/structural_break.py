@@ -83,4 +83,4 @@ def cusum_OLS(X, y, alpha=0.05):
     pval = stats.kstwobign.sf(score)
 
     return CUSUMOLSResult(index=idx, score=score, cusum=cusum,
-                          pvalue=pval, signif=pval < crit)
+                          pvalue=pval, signif=score > crit)
