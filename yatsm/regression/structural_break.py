@@ -56,6 +56,10 @@ def _cusum_OLS(X, y):
 def cusum_OLS(X, y, alpha=0.05):
     u""" CUSUM-OLS test for structural breaks
 
+    Tested against R's ``strucchange`` package and is faster than
+    the equivalent function in the ``statsmodels`` Python package when
+    Numba is installed.
+
     # TODO: same function for cusum_REC?
 
     Args:
@@ -65,9 +69,9 @@ def cusum_OLS(X, y, alpha=0.05):
             Ploberger and Krämer (1992)
 
     Returns:
-        tuple: the change point (index of ``y``), the test pvalue, and
-            a boolean testing if the CUSUM score is significant at the given
-            ``alpha``
+        CUSUMOLSResult: A named tuple include the the change point (index of
+            ``y``), the test ``score`` and ``pvalue``, and a boolean testing
+            if the CUSUM score is significant at the given ``alpha``
     """
     _X = X.values if isinstance(X, pandas_like) else X
     _y = y.values if isinstance(y, pandas_like) else y
