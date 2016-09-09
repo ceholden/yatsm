@@ -35,7 +35,10 @@ def rpy2_strucchange():
     if has_rpy2:
         try:
             utils = importr('utils')
-            utils.install_packages('strucchange')
+            utils.install_packages(
+                'strucchange',
+                repos='http://cran.revolutionanalytics.com/'
+            )
         except Exception as exc:
             pytest.skip('Unable to install "strucchange"')
         else:
