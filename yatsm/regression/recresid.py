@@ -68,8 +68,8 @@ def recresid(X, y, span=None):
     `recursive_olsresiduals`, within the `statsmodels.stats.diagnostic` module.
 
     Args:
-        X (np.ndarray): 2D (n_features x n_obs) design matrix
-        y (np.ndarray): 1D independent variable
+        X (array like): 2D (n_obs x n_features) design matrix
+        y (array like): 1D independent variable
         span (int, optional): minimum number of observations for initial
             regression. If ``span`` is None, use the number of features in
             ``X``

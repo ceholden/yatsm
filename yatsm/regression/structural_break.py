@@ -63,7 +63,7 @@ def cusum_OLS(X, y, alpha=0.05):
     # TODO: same function for cusum_REC?
 
     Args:
-        X (array like): 2D (n_features x n_obs) design matrix
+        X (array like): 2D (n_obs x n_features) design matrix
         y (array like): 1D (n_obs) indepdent variable
         alpha (float): Test threshold (either 0.01, 0.05, or 0.10) from
             Ploberger and Krämer (1992)
