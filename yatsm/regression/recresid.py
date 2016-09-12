@@ -13,11 +13,52 @@ Citations:
 
 """
 import numpy as np
+import pandas as pd
+import xarray as xr
 
 from yatsm.accel import try_jit
 
+pandas_like = (pd.DataFrame, pd.Series, xr.DataArray)
+
 
 @try_jit(nopython=True)
+def _recresid(X, y, span):
+    nobs, nvars = X.shape
+
+    recresid = np.nan * np.zeros((nobs))
+    recvar = np.nan * np.zeros((nobs))
+
+    X0 = X[:span, :]
+    y0 = y[:span]
+
+    # Initial fit
+    XTX_j = np.linalg.inv(np.dot(X0.T, X0))
+    XTY = np.dot(X0.T, y0)
+    beta = np.dot(XTX_j, XTY)
+
+    yhat_j = np.dot(X[span - 1, :], beta)
+    recresid[span - 1] = y[span - 1] - yhat_j
+    recvar[span - 1] = 1 + np.dot(X[span - 1, :],
+                                  np.dot(XTX_j, X[span - 1, :]))
+    for j in range(span, nobs):
+        x_j = X[j:j+1, :]
+        y_j = y[j]
+
+        # Prediction with previous beta
+        resid_j = y_j - np.dot(x_j, beta)
+
+        # Update
+        XTXx_j = np.dot(XTX_j, x_j.T)
+        f_t = 1 + np.dot(x_j, XTXx_j)
+        XTX_j = XTX_j - np.dot(XTXx_j, XTXx_j.T) / f_t  # eqn 5.5.15
+
+        beta = beta + (XTXx_j * resid_j / f_t).ravel()  # eqn 5.5.14
+        recresid[j] = resid_j.item()
+        recvar[j] = f_t.item()
+
+    return recresid / np.sqrt(recvar)
+
+
 def recresid(X, y, span=None):
     """ Return standardized recursive residuals for y ~ X
 
@@ -75,43 +116,22 @@ def recresid(X, y, span=None):
             ``X``
 
     Returns:
-        np.ndarray: array containing recursive residuals standardized by
-            prediction error variance
+        array like: np.ndarray or pd.Series containing recursive residuals
+            standardized by prediction error variance
 
     """
-    nobs, nvars = X.shape
-    if span is None:
-        span = nvars
+    if not span:
+        span = X.shape[1]
+    _X = X.values if isinstance(X, pandas_like) else X
+    _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()
 
-    recresid = np.nan * np.zeros((nobs))
-    recvar = np.nan * np.zeros((nobs))
+    rresid = _recresid(_X, _y, span)
 
-    X0 = X[:span]
-    y0 = y[:span]
+    if isinstance(y, pandas_like):
+        if isinstance(y, (pd.Series, pd.DataFrame)):
+            index = y.index
+        elif isinstance(y, xr.DataArray):
+            index = y.to_series().index
+        rresid = pd.Series(data=rresid, index=index, name='recresid')
 
-    # Initial fit
-    XTX_j = np.linalg.inv(np.dot(X0.T, X0))
-    XTY = np.dot(X0.T, y0)
-    beta = np.dot(XTX_j, XTY)
-
-    yhat_j = np.dot(X[span - 1, :], beta)
-    recresid[span - 1] = y[span - 1] - yhat_j
-    recvar[span - 1] = 1 + np.dot(X[span - 1],
-                                  np.dot(XTX_j, X[span - 1]))
-    for j in range(span, nobs):
-        x_j = X[j:j+1, :]
-        y_j = y[j]
-
-        # Prediction with previous beta
-        resid_j = y_j - np.dot(x_j, beta)
-
-        # Update
-        XTXx_j = np.dot(XTX_j, x_j.T)
-        f_t = 1 + np.dot(x_j, XTXx_j)
-        XTX_j = XTX_j - np.dot(XTXx_j, XTXx_j.T) / f_t  # eqn 5.5.15
-
-        beta = beta + (XTXx_j * resid_j / f_t).ravel()  # eqn 5.5.14
-        recresid[j] = resid_j.item()
-        recvar[j] = f_t.item()
-
-    return recresid / np.sqrt(recvar)
+    return rresid

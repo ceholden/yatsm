@@ -74,16 +74,16 @@ def cusum_OLS(X, y, alpha=0.05):
             if the CUSUM score is significant at the given ``alpha``
     """
     _X = X.values if isinstance(X, pandas_like) else X
-    _y = y.values if isinstance(y, pandas_like) else y
+    _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()
 
     cusum, score, idx = _cusum_OLS(_X, _y)
-    if isinstance(y, (pd.Series, pd.DataFrame)):
-        index = y.index
-        idx = index[idx]
-    elif isinstance(y, xr.DataArray):
-        index = y.to_series().index
-        idx = index[idx]
     if isinstance(y, pandas_like):
+        if isinstance(y, (pd.Series, pd.DataFrame)):
+            index = y.index
+            idx = index[idx]
+        elif isinstance(y, xr.DataArray):
+            index = y.to_series().index
+            idx = index[idx]
         cusum = pd.Series(data=cusum, index=index, name='CUSUM')
 
     # crit = stats.kstwobign.isf(alpha)  ~70usec

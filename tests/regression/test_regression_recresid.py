@@ -1,9 +1,7 @@
 """ Tests for yatsm.regression.recresid
 """
-import os
-
 import numpy as np
-import pandas as pd
+import xarray as xr
 import patsy
 
 from yatsm.regression.recresid import recresid
@@ -73,11 +71,23 @@ def test_regression_recresid_recresid(airquality):
         28.8236627073026, -10.5175372637295, -9.48699874178777,
         -24.6182062947431, -3.04044885384074
     ])
-
     # Python implementation
-    y = np.asarray(airquality['Ozone'])
+    # np.ndarray
+    y = airquality['Ozone'].values
     X = patsy.dmatrix('1 + SolarR + Wind + Temp', data=airquality)
 
     rr = recresid(X, y)
+    np.testing.assert_allclose(rr[X.shape[1]:], strucchange_rr)
 
+    # pd.DataFrame
+    y = airquality['Ozone']
+    X = patsy.dmatrix('1 + SolarR + Wind + Temp', data=airquality,
+                      return_type='dataframe')
+
+    rr = recresid(X, y)
+    np.testing.assert_allclose(rr[X.shape[1]:], strucchange_rr)
+
+    # xarray
+    y = xr.DataArray(y.squeeze(), coords={'time': y.index}, dims=['time'])
+    rr = recresid(X, y)
     np.testing.assert_allclose(rr[X.shape[1]:], strucchange_rr)
