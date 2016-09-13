@@ -140,8 +140,8 @@ def ordinal2yeardoy(ordinal):
     """
     _date = [dt.fromordinal(_d) for _d in ordinal]
     yeardoy = np.empty((ordinal.size, 2), dtype=np.uint16)
-    yeardoy[:, 0] = np.array([int(_d.strftime('%Y')) for _d in _date])
-    yeardoy[:, 1] = np.array([int(_d.strftime('%j')) for _d in _date])
+    yeardoy[:, 0] = np.array([_d.timetuple().tm_year for _d in _date])
+    yeardoy[:, 1] = np.array([_d.timetuple().tm_yday for _d in _date])
 
     return yeardoy
 
