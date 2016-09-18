@@ -6,7 +6,7 @@ channels:
     - conda-forge
 dependencies:
     # Base
-    - python=2.7
+    - python
     - numpy>=1.9.0
     - scipy>=0.14.0
     - Cython>=0.20.1
