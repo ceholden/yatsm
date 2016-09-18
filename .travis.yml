@@ -23,9 +23,10 @@ before_install:
     - conda update -q conda
     - conda info -a
 install:
+    # Edit in the correct Python version into environment.yaml
+    - sed -i "s/- python/- python=${TRAVIS_PYTHON_VERSION}/g" environment.yaml
     # Create conda matching requirements
-    - conda create -n test -c conda-forge python=$TRAVIS_PYTHON_VERSION
-    - conda env update -n test -f environment.yaml
+    - conda env create -n test -f environment.yaml
     - source activate test
     # Rest of dependencies
     - "pip install -r requirements/dev.txt"
