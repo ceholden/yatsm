@@ -8,24 +8,27 @@ See:
 """
 from __future__ import division
 
+from collections import namedtuple
 from datetime import datetime as dt
 import logging
 import math
 
 import numpy as np
 import numpy.lib.recfunctions
+import pandas as pd
 
-# Grab `stats` package from R for smoothing spline
-from rpy2 import robjects as ro
-from rpy2.robjects.packages import importr
-import rpy2.robjects.numpy2ri
-
-rpy2.robjects.numpy2ri.activate()
-Rstats = importr('stats')
-
+from ..regression.cran import CRAN_spline
 from ..vegetation_indices import EVI
 
 logger = logging.getLogger('yatsm')
+
+
+#: tuple: Tuple containing the results of the long term mean phenology
+#         transition date calculation
+LongTermMeanPhenologyResults = namedtuple('LongTermMeanPhenologyResults', [
+    'springDOY', 'autumnDOY', 'peakEVIDOY',
+    'peakEVI', 'corrcoef', 'smoothEVI'
+])
 
 
 def group_years(years, interval=3):
@@ -62,52 +65,23 @@ def scale_EVI(evi, periods, qmin=10, qmax=90):
     will be removed.
 
     Args:
-        evi (np.ndarray): EVI values
+        evi (pd.Series): EVI values
         periods (np.ndarray): intervals of years to group and scale together
         qmin (float, optional): lower quantile for scaling (default: 10)
         qmax (float, optional): upper quantile for scaling (default: 90)
 
     Returns:
-        np.ndarray: scaled EVI array
+        pd.Series: scaled EVI array
 
     """
     _evi = evi.copy()
     for u in np.unique(periods):
-        index = np.where(periods == u)
+        index = periods == u
         evi_min = np.percentile(evi[index], qmin)
         evi_max = np.percentile(evi[index], qmax)
         _evi[index] = (evi[index] - evi_min) / (evi_max - evi_min)
 
     return _evi
-
-
-def CRAN_spline(x, y, spar=0.55):
-    """ Return a prediction function for a smoothing spline from R
-
-    Use `rpy2` package to fit a smoothing spline using "smooth.spline".
-
-    Args:
-        x (np.ndarray): independent variable
-        y (np.ndarray): dependent variable
-        spar (float): smoothing parameter
-
-    Returns:
-        callable: prediction function of smoothing spline that provides
-            smoothed estimates of the dependent variable given an input
-            independent variable array
-
-    Example:
-      Fit a smoothing spline for y ~ x and predict for days in year:
-
-        .. code-block:: python
-
-            pred_spl = CRAN_spline(x, y)
-            y_smooth = pred_spl(np.arange(1, 366))
-
-    """
-    spl = Rstats.smooth_spline(x, y, spar=spar)
-
-    return lambda _x: np.array(Rstats.predict_smooth_spline(spl, _x)[1])
 
 
 def halfmax(x):
@@ -127,6 +101,7 @@ def halfmax(x):
         (np.nanmax(x) - np.nanmin(x)) - 0.5))
 
 
+# TODO: delete
 def ordinal2yeardoy(ordinal):
     """ Convert ordinal dates to two arrays of year and doy
 
@@ -144,6 +119,94 @@ def ordinal2yeardoy(ordinal):
     yeardoy[:, 1] = np.array([_d.timetuple().tm_yday for _d in _date])
 
     return yeardoy
+
+
+def longtermmeanphenology(evi, periods=None, year_interval=3,
+                          q_min=10., q_max=90.):
+    """ Calculate the long term mean phenology transition dates
+
+    EVI should be scaled within [0, 1]. Values outside of this range will be
+    removed before processing.
+
+    Args:
+        evi (pd.Series): EVI values in a Pandas Series. The index should be
+            the date of each observation
+        periods (pd.Series): User provided groupings to scale EVI time series
+            with. If not provided, groupings will be calculated based on
+            ``year_interval``.
+        year_interval (int): number of years to group together when
+            normalizing EVI to upper and lower percentiles of EVI within the
+            group
+        q_min (float): lower percentile for scaling EVI
+        q_max (float): upper percentile for scaling EVI
+
+    Returns:
+        LongTermMeanPhenologyResults: Named tuple of phenological transition
+            dates and diagnostics
+
+    """
+    evi = evi.loc[evi.notnull() & (evi >= 0.) & (evi <= 1.)]
+
+    # Calculate year-to-year groupings for EVI normalization
+    if periods is None:
+        periods = group_years(evi.index.year, year_interval)
+    else:
+        periods = periods[evi.index]
+    evi_norm = scale_EVI(evi, periods, qmin=q_min, qmax=q_max)
+
+    # Mask out np.nan
+    evi_norm = evi_norm.loc[evi_norm.notnull()]
+    if evi_norm.size == 0:
+        logger.debug('No valid EVI after scaling -- skipping')
+        return
+
+    # Pad missing DOY values (e.g. in winter) with 0's to improve
+    # spline fit
+    def make_date(doy):
+        return pd.DatetimeIndex(['2000']) + doy.astype('timedelta64[D]')
+    pad_start = make_date(np.arange(1, evi_norm.index.dayofyear.min() + 1))
+    pad_end = make_date(np.arange(evi_norm.index.dayofyear.max(), 365 + 1))
+
+    pad_evi_norm = pd.concat((
+        evi_norm,
+        pd.Series(np.zeros(pad_start.size), index=pad_start),
+        pd.Series(np.zeros(pad_end.size), index=pad_end)
+    ))
+
+    # Fit spline and predict EVI
+    spl_pred = CRAN_spline(pad_evi_norm.index.dayofyear, pad_evi_norm.values,
+                           spar=0.55)
+    # 366 to include leap years
+    evi_smooth = pd.Series(spl_pred(np.arange(1, 367)),
+                           index=np.arange(1, 367))
+
+    # Check correlation
+    pheno_cor = np.corrcoef(evi_smooth[evi_norm.index.dayofyear],
+                            evi_norm)[0, 1]
+
+    # Separate into spring / autumn
+    peak_doy = evi_smooth.argmax()
+    peak_evi = evi_smooth.max()
+    evi_smooth_spring = evi_smooth[:peak_doy + 1]
+    evi_smooth_autumn = evi_smooth[peak_doy + 1:]
+
+    # Compute half-maximum of spring logistic for "ruling in" image dates
+    # (points) for anomaly calculation
+    # Note: we add + 1 to go from index (on 0) to day of year (on 1)
+    if evi_smooth_spring.size > 0:
+        ltm_spring = halfmax(evi_smooth_spring)
+    else:
+        ltm_spring = 0
+
+    if evi_smooth_autumn.size > 0:
+        ltm_autumn = halfmax(evi_smooth_autumn)
+    else:
+        ltm_autumn = 0
+
+    return LongTermMeanPhenologyResults(
+        springDOY=ltm_spring, autumnDOY=ltm_autumn, peakEVIDOY=peak_doy,
+        peakEVI=peak_evi, corrcoef=pheno_cor, smoothEVI=evi_smooth
+    )
 
 
 class LongTermMeanPhenology(object):
@@ -233,59 +296,6 @@ class LongTermMeanPhenology(object):
             ('pheno_nobs', 'u2')
         ])
 
-    def _fit_record(self, evi, yeardoy, year_interval, q_min, q_max):
-        # Calculate year-to-year groupings for EVI normalization
-        periods = group_years(yeardoy[:, 0], year_interval)
-        evi_norm = scale_EVI(evi, periods, qmin=q_min, qmax=q_max)
-
-        # Mask out np.nan
-        valid = np.isfinite(evi_norm)
-        if not np.any(valid):
-            logger.debug('No valid EVI in segment -- skipping')
-            return
-        yeardoy = yeardoy[valid, :]
-        evi_norm = evi_norm[valid]
-
-        # Pad missing DOY values (e.g. in winter) with 0's to improve
-        # spline fit
-        pad_start = np.arange(1, yeardoy[:, 1].min() + 1)
-        pad_end = np.arange(yeardoy[:, 1].max(), 365 + 1)
-
-        pad_doy = np.concatenate((yeardoy[:, 1], pad_start, pad_end))
-        pad_evi_norm = np.concatenate((
-            evi_norm,
-            np.zeros_like(pad_start, dtype=evi.dtype),
-            np.zeros_like(pad_end, dtype=evi.dtype)
-        ))
-
-        # Fit spline and predict EVI
-        spl_pred = CRAN_spline(pad_doy, pad_evi_norm, spar=0.55)
-        evi_smooth = spl_pred(np.arange(1, 367))  # 366 to include leap years
-
-        # Check correlation
-        pheno_cor = np.corrcoef(evi_smooth[yeardoy[:, 1] - 1], evi_norm)[0, 1]
-
-        # Separate into spring / autumn
-        peak_doy = np.argmax(evi_smooth)
-        peak_evi = np.max(evi_smooth)
-        evi_smooth_spring = evi_smooth[:peak_doy + 1]
-        evi_smooth_autumn = evi_smooth[peak_doy + 1:]
-
-        # Compute half-maximum of spring logistic for "ruling in" image dates
-        # (points) for anomaly calculation
-        # Note: we add + 1 to go from index (on 0) to day of year (on 1)
-        if evi_smooth_spring.size > 0:
-            ltm_spring = halfmax(evi_smooth_spring) + 1
-        else:
-            ltm_spring = 0
-
-        if evi_smooth_autumn.size > 0:
-            ltm_autumn = halfmax(evi_smooth_autumn) + 1 + peak_doy + 1
-        else:
-            ltm_autumn = 0
-
-        return (ltm_spring, ltm_autumn, pheno_cor,
-                peak_evi, peak_doy, evi_smooth)
 
     def fit(self, model):
         """ Fit phenology metrics for each time segment within a YATSM model
@@ -313,6 +323,7 @@ class LongTermMeanPhenology(object):
             _evi = self.evi[rec_range]
             _yeardoy = self.yeardoy[rec_range, :]
 
+            # TODO
             # Fit and save results
             _result = self._fit_record(_evi, _yeardoy,
                                        self.year_interval,
