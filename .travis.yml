@@ -1,8 +1,5 @@
 language: python
 sudo: false
-cache:
-    directories:
-        - $HOME/conda/pkgs
 python:
     - "2.7"
 branches:
@@ -14,12 +11,16 @@ addons:
         packages:
             - gfortran
 before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+          wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+      else
+          wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+      fi
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
-    - conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes
-    # Update conda
-    - conda update --yes conda
+    - conda config --set always_yes yes --set changeps1 no --set show_channel_urls yes --add channels conda-forge
+    - conda update -q conda
+    - conda info -a
 install:
     # Create conda matching requirements
     - conda create -n test -c conda-forge python=$TRAVIS_PYTHON_VERSION
