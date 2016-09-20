@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; YATSM 0.6.0dev documentation</title>
+  <title>Index &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -29,9 +29,11 @@
   
 
   
+    <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -85,15 +87,17 @@
 <li class="toctree-l1"><a class="reference internal" href="guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -171,13 +175,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.__iter__">__iter__() (yatsm.algorithms.yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque._get_dynamic_rmse">_get_dynamic_rmse() (yatsm.algorithms.ccdc.CCDCesque method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.__len__">__len__() (yatsm.algorithms.yatsm.YATSM method)</a>
+  <dt><a href="yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque._get_model_rmse">_get_model_rmse() (yatsm.algorithms.ccdc.CCDCesque method)</a>
   </dt>
 
   </dl></td>
@@ -194,14 +198,18 @@
   <dt><a href="yatsm/yatsm.errors.html#yatsm.errors.AlgorithmNotFoundException">AlgorithmNotFoundException</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.cli.options.html#yatsm.cli.options.arg_date">arg_date() (in module yatsm.cli.options)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.cli.options.html#yatsm.cli.options.arg_job_number">arg_job_number() (in module yatsm.cli.options)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.autumnDOY">autumnDOY (yatsm.phenology.longtermmean.LongTermMeanPhenologyResults attribute)</a>
   </dt>
 
   </dl></td>
@@ -239,25 +247,13 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.classifiers.html#yatsm.classifiers.cfg_to_algorithm">cfg_to_algorithm() (in module yatsm.classifiers)</a>
+  <dt><a href="yatsm/yatsm.classification.html#yatsm.classification.cfg_to_algorithm">cfg_to_algorithm() (in module yatsm.classification)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.cli.classify.html#yatsm.cli.classify.classify_line">classify_line() (in module yatsm.cli.classify)</a>
+  <dt><a href="yatsm/yatsm.classification.batch.html#yatsm.classification.batch.classify_line">classify_line() (in module yatsm.classification.batch)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="yatsm/yatsm.regression.html#yatsm.regression.RLM.coef_">coef_ (yatsm.regression.RLM attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.coef_">(yatsm.regression.robust_fit.RLM attribute)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.commission_test">commission_test() (in module yatsm.algorithms.postprocess)</a>
   </dt>
@@ -266,12 +262,34 @@
   <dt><a href="yatsm/yatsm.config_parser.html#yatsm.config_parser.convert_config">convert_config() (in module yatsm.config_parser)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.CRAN_spline">CRAN_spline() (in module yatsm.phenology.longtermmean)</a>
+  <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.copy_dict_filter_key">copy_dict_filter_key() (in module yatsm.utils)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.corrcoef">corrcoef (yatsm.phenology.longtermmean.LongTermMeanPhenologyResults attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.cran.html#yatsm.regression.cran.CRAN_spline">CRAN_spline() (in module yatsm.regression.cran)</a>
   </dt>
 
       
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataframe">csvfile_to_dataframe() (in module yatsm.utils)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.CUSUMOLSResult.cusum">cusum (yatsm.regression.structural_break.CUSUMOLSResult attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.cusum_OLS">cusum_OLS() (in module yatsm.regression.structural_break)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.CUSUMOLSResult">CUSUMOLSResult (class in yatsm.regression.structural_break)</a>
   </dt>
 
   </dl></td>
@@ -285,6 +303,12 @@
   </dt>
 
       
+  <dt><a href="yatsm/yatsm.pipeline.html#yatsm.pipeline.delay_pipeline">delay_pipeline() (in module yatsm.pipeline)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
   <dt><a href="yatsm/yatsm.regression.html#yatsm.regression.design_to_indices">design_to_indices() (in module yatsm.regression)</a>
   </dt>
 
@@ -294,8 +318,6 @@
   </dt>
 
       </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.distribute_jobs">distribute_jobs() (in module yatsm.utils)</a>
   </dt>
@@ -307,13 +329,21 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="yatsm/yatsm.pipeline.html#yatsm.pipeline.eager_task">eager_task() (in module yatsm.pipeline)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.vegetation_indices.html#yatsm.vegetation_indices.EVI">EVI() (in module yatsm.vegetation_indices)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.config_parser.html#yatsm.config_parser.expand_envvars">expand_envvars() (in module yatsm.config_parser)</a>
+  <dt><a href="yatsm/yatsm.config.html#yatsm.config.expand_envvars">expand_envvars() (in module yatsm.config)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.classification.roi.html#yatsm.classification.roi.extract_roi">extract_roi() (in module yatsm.classification.roi)</a>
   </dt>
 
   </dl></td>
@@ -346,14 +376,10 @@
   </dt>
 
       </dl></dd>
-      
-  <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.find_results">find_results() (in module yatsm.utils)</a>
-  </dt>
-
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.find_stack_images">find_stack_images() (in module yatsm.reader)</a>
+  <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.find_results">find_results() (in module yatsm.utils)</a>
   </dt>
 
       
@@ -362,7 +388,7 @@
 
       <dd><dl>
         
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit">(yatsm.algorithms.yatsm.YATSM method)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit">[1]</a>
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit">(yatsm.algorithms.yatsm.YATSM method)</a>
   </dt>
 
         
@@ -379,7 +405,7 @@
 
       </dl></dd>
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit_models">fit_models() (yatsm.algorithms.yatsm.YATSM method)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit_models">[1]</a>
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.fit_models">fit_models() (yatsm.algorithms.yatsm.YATSM method)</a>
   </dt>
 
   </dl></td>
@@ -429,10 +455,6 @@
 
       </dl></dd>
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.get_image_attribute">get_image_attribute() (in module yatsm.reader)</a>
-  </dt>
-
-      
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.get_image_IDs">get_image_IDs() (in module yatsm.utils)</a>
   </dt>
 
@@ -454,16 +476,6 @@
   <dt><a href="yatsm/yatsm.utils.html#yatsm.utils.get_output_name">get_output_name() (in module yatsm.utils)</a>
   </dt>
 
-      
-  <dt><a href="yatsm/yatsm.regression.html#yatsm.regression.RLM.get_params">get_params() (yatsm.regression.RLM method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.get_params">(yatsm.regression.robust_fit.RLM method)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.mapping.html#yatsm.mapping.get_phenology">get_phenology() (in module yatsm.mapping)</a>
   </dt>
@@ -525,15 +537,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.regression.html#yatsm.regression.RLM.intercept_">intercept_ (yatsm.regression.RLM attribute)</a>
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.CUSUMOLSResult.index">index (yatsm.regression.structural_break.CUSUMOLSResult attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.intercept_">(yatsm.regression.robust_fit.RLM attribute)</a>
+      
+  <dt><a href="yatsm/yatsm.errors.html#yatsm.errors.InvalidConfigurationException">InvalidConfigurationException</a>
   </dt>
 
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.cli.train.html#yatsm.cli.train.is_cache_old">is_cache_old() (in module yatsm.cli.train)</a>
   </dt>
@@ -555,7 +565,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.kfold_scores">kfold_scores() (in module yatsm.classifiers.diagnostics)</a>
+  <dt><a href="yatsm/yatsm.classification.diagnostics.html#yatsm.classification.diagnostics.kfold_scores">kfold_scores() (in module yatsm.classification.diagnostics)</a>
   </dt>
 
   </dl></td>
@@ -566,6 +576,16 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenology">LongTermMeanPhenology (class in yatsm.phenology.longtermmean)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.longtermmeanphenology">longtermmeanphenology() (in module yatsm.phenology.longtermmean)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults">LongTermMeanPhenologyResults (class in yatsm.phenology.longtermmean)</a>
   </dt>
 
   </dl></td>
@@ -593,7 +613,7 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.models">models (yatsm.algorithms.yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.io.html#yatsm.io.mkdir_p">mkdir_p() (in module yatsm.io)</a>
   </dt>
 
       
@@ -611,17 +631,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.n_features">n_features (yatsm.algorithms.yatsm.YATSM attribute)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.n_features">[1]</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.n_series">n_series (yatsm.algorithms.yatsm.YATSM attribute)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.n_series">[1]</a>
+  <dt><a href="yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.ndays">ndays (yatsm.algorithms.ccdc.CCDCesque attribute)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.ndays">ndays (yatsm.algorithms.ccdc.CCDCesque attribute)</a>
+  <dt><a href="yatsm/yatsm.pipeline.tasks.preprocess.html#yatsm.pipeline.tasks.preprocess.norm_diff">norm_diff() (in module yatsm.pipeline.tasks.preprocess)</a>
   </dt>
 
   </dl></td>
@@ -652,6 +668,10 @@
   <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.ordinal2yeardoy">ordinal2yeardoy() (in module yatsm.phenology.longtermmean)</a>
   </dt>
 
+      
+  <dt><a href="yatsm/yatsm.pipeline.language.html#yatsm.pipeline.language.OUTPUT">OUTPUT (in module yatsm.pipeline.language)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -663,7 +683,23 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenology.self.pheno">pheno (yatsm.phenology.longtermmean.LongTermMeanPhenology.self attribute)</a>
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.peakEVI">peakEVI (yatsm.phenology.longtermmean.LongTermMeanPhenologyResults attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.peakEVIDOY">peakEVIDOY (yatsm.phenology.longtermmean.LongTermMeanPhenologyResults attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.language.html#yatsm.pipeline.language.PIPE">PIPE (in module yatsm.pipeline.language)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.errors.html#yatsm.errors.PipelineConfigurationError">PipelineConfigurationError</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.tasks.change.html#yatsm.pipeline.tasks.change.pixel_CCDCesque">pixel_CCDCesque() (in module yatsm.pipeline.tasks.change)</a>
   </dt>
 
       
@@ -672,7 +708,7 @@
 
       <dd><dl>
         
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.plot">(yatsm.algorithms.yatsm.YATSM method)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.plot">[1]</a>
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.plot">(yatsm.algorithms.yatsm.YATSM method)</a>
   </dt>
 
       </dl></dd>
@@ -680,6 +716,8 @@
   <dt><a href="yatsm/yatsm.plots.html#yatsm.plots.plot_crossvalidation_scores">plot_crossvalidation_scores() (in module yatsm.plots)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_DOY">plot_DOY() (in module yatsm.cli.pixel)</a>
   </dt>
@@ -688,12 +726,6 @@
   <dt><a href="yatsm/yatsm.plots.html#yatsm.plots.plot_feature_importance">plot_feature_importance() (in module yatsm.plots)</a>
   </dt>
 
-      
-  <dt><a href="yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_lasso_debug">plot_lasso_debug() (in module yatsm.cli.pixel)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_results">plot_results() (in module yatsm.cli.pixel)</a>
   </dt>
@@ -707,7 +739,7 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.predict">predict() (yatsm.algorithms.yatsm.YATSM method)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.predict">[1]</a>
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.predict">predict() (yatsm.algorithms.yatsm.YATSM method)</a>
   </dt>
 
       <dd><dl>
@@ -721,15 +753,11 @@
 
       </dl></dd>
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.preprocess">preprocess() (yatsm.algorithms.yatsm.YATSM method)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.preprocess">[1]</a>
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.preprocess">preprocess() (yatsm.algorithms.yatsm.YATSM method)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.px">px (yatsm.algorithms.yatsm.YATSM attribute)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.py">py (yatsm.algorithms.yatsm.YATSM attribute)</a>
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.CUSUMOLSResult.pvalue">pvalue (yatsm.regression.structural_break.CUSUMOLSResult attribute)</a>
   </dt>
 
   </dl></td>
@@ -743,38 +771,12 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_image">read_image() (in module yatsm.reader)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_line">read_line() (in module yatsm.reader)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_pixel_timeseries">read_pixel_timeseries() (in module yatsm.reader)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_row_BIP">read_row_BIP() (in module yatsm.reader)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.reader.html#yatsm.reader.read_row_GDAL">read_row_GDAL() (in module yatsm.reader)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.record">record (yatsm.algorithms.yatsm.YATSM attribute)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
   <dt><a href="yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.record_template">record_template (yatsm.algorithms.ccdc.CCDCesque attribute)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.record_template">(yatsm.algorithms.yatsm.YATSM attribute)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.record_template">[1]</a>
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.record_template">(yatsm.algorithms.yatsm.YATSM attribute)</a>
   </dt>
 
       </dl></dd>
@@ -792,6 +794,12 @@
   <dt><a href="yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.refit_record">refit_record() (in module yatsm.algorithms.postprocess)</a>
   </dt>
 
+      
+  <dt><a href="yatsm/yatsm.pipeline.language.html#yatsm.pipeline.language.REQUIRE">REQUIRE (in module yatsm.pipeline.language)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.reset">reset() (yatsm.algorithms.ccdc.CCDCesque method)</a>
   </dt>
@@ -825,7 +833,11 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.score">score() (yatsm.algorithms.yatsm.YATSM method)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.score">[1]</a>
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.CUSUMOLSResult.score">score (yatsm.regression.structural_break.CUSUMOLSResult attribute)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.score">score() (yatsm.algorithms.yatsm.YATSM method)</a>
   </dt>
 
       
@@ -833,33 +845,35 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.regression.html#yatsm.regression.RLM.set_params">set_params() (yatsm.regression.RLM method)</a>
+  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.setup">setup() (yatsm.algorithms.yatsm.YATSM method)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.html#yatsm.pipeline.setup_pipeline">setup_pipeline() (in module yatsm.pipeline)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.classification.diagnostics.html#yatsm.classification.diagnostics.SpatialKFold.shuffle">shuffle (yatsm.classification.diagnostics.SpatialKFold attribute)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.set_params">(yatsm.regression.robust_fit.RLM method)</a>
+  <dt><a href="yatsm/yatsm.classification.diagnostics.html#yatsm.classification.diagnostics.SpatialKFold_ROI.shuffle">(yatsm.classification.diagnostics.SpatialKFold_ROI attribute)</a>
   </dt>
 
       </dl></dd>
       
-  <dt><a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.setup">setup() (yatsm.algorithms.yatsm.YATSM method)</a>, <a href="yatsm/yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM.setup">[1]</a>
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.CUSUMOLSResult.signif">signif (yatsm.regression.structural_break.CUSUMOLSResult attribute)</a>
   </dt>
 
-      
-  <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold.shuffle">shuffle (yatsm.classifiers.diagnostics.SpatialKFold attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold_ROI.shuffle">(yatsm.classifiers.diagnostics.SpatialKFold_ROI attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.masking.html#yatsm.masking.smooth_mask">smooth_mask() (in module yatsm.masking)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.smoothEVI">smoothEVI (yatsm.phenology.longtermmean.LongTermMeanPhenologyResults attribute)</a>
   </dt>
 
       
@@ -871,11 +885,15 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold">SpatialKFold (class in yatsm.classifiers.diagnostics)</a>
+  <dt><a href="yatsm/yatsm.classification.diagnostics.html#yatsm.classification.diagnostics.SpatialKFold">SpatialKFold (class in yatsm.classification.diagnostics)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#yatsm.classifiers.diagnostics.SpatialKFold_ROI">SpatialKFold_ROI (class in yatsm.classifiers.diagnostics)</a>
+  <dt><a href="yatsm/yatsm.classification.diagnostics.html#yatsm.classification.diagnostics.SpatialKFold_ROI">SpatialKFold_ROI (class in yatsm.classification.diagnostics)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.springDOY">springDOY (yatsm.phenology.longtermmean.LongTermMeanPhenologyResults attribute)</a>
   </dt>
 
   </dl></td>
@@ -903,19 +921,19 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.trawl_replace_keys">trawl_replace_keys() (in module yatsm.cli.pixel)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.accel.html#yatsm.accel.try_jit">try_jit() (in module yatsm.accel)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.cli.classify.html#yatsm.cli.classify.try_resume">try_resume() (in module yatsm.cli.classify)</a>
+  <dt><a href="yatsm/yatsm.classification.batch.html#yatsm.classification.batch.try_resume">try_resume() (in module yatsm.classification.batch)</a>
   </dt>
 
       
   <dt><a href="yatsm/yatsm.errors.html#yatsm.errors.TSLengthException">TSLengthException</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.type_convert">type_convert() (in module yatsm.cli.pixel)</a>
   </dt>
 
   </dl></td>
@@ -939,21 +957,17 @@
   </dt>
 
   </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="yatsm/yatsm.config.html#yatsm.config.validate_and_parse_configfile">validate_and_parse_configfile() (in module yatsm.config)</a>
+  </dt>
+
+  </dl></td>
 </tr></table>
 
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="yatsm/yatsm.regression.html#yatsm.regression.RLM.weights">weights (yatsm.regression.RLM attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="yatsm/yatsm.regression.robust_fit.html#yatsm.regression.robust_fit.RLM.weights">(yatsm.regression.robust_fit.RLM attribute)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="yatsm/yatsm.cache.html#yatsm.cache.write_cache_file">write_cache_file() (in module yatsm.cache)</a>
   </dt>
@@ -1003,15 +1017,27 @@
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.classifiers.html#module-yatsm.classifiers">yatsm.classifiers (module)</a>
+  <dt><a href="yatsm/yatsm.classification.html#module-yatsm.classification">yatsm.classification (module)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.classifiers.diagnostics.html#module-yatsm.classifiers.diagnostics">yatsm.classifiers.diagnostics (module)</a>
+  <dt><a href="yatsm/yatsm.classification.batch.html#module-yatsm.classification.batch">yatsm.classification.batch (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.classification.diagnostics.html#module-yatsm.classification.diagnostics">yatsm.classification.diagnostics (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.classification.roi.html#module-yatsm.classification.roi">yatsm.classification.roi (module)</a>
   </dt>
 
       
   <dt><a href="yatsm/yatsm.cli.html#module-yatsm.cli">yatsm.cli (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.cli.batch.html#module-yatsm.cli.batch">yatsm.cli.batch (module)</a>
   </dt>
 
       
@@ -1028,10 +1054,6 @@
 
       
   <dt><a href="yatsm/yatsm.cli.console.html#module-yatsm.cli.console">yatsm.cli.console (module)</a>
-  </dt>
-
-      
-  <dt><a href="yatsm/yatsm.cli.line.html#module-yatsm.cli.line">yatsm.cli.line (module)</a>
   </dt>
 
       
@@ -1055,6 +1077,10 @@
   </dt>
 
       
+  <dt><a href="yatsm/yatsm.config.html#module-yatsm.config">yatsm.config (module)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.config_parser.html#module-yatsm.config_parser">yatsm.config_parser (module)</a>
   </dt>
 
@@ -1063,15 +1089,23 @@
   </dt>
 
       
+  <dt><a href="yatsm/yatsm.io.html#module-yatsm.io">yatsm.io (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.io.backends.html#module-yatsm.io.backends">yatsm.io.backends (module)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.log_yatsm.html#module-yatsm.log_yatsm">yatsm.log_yatsm (module)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.mapping.html#module-yatsm.mapping">yatsm.mapping (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="yatsm/yatsm.mapping.changes.html#module-yatsm.mapping.changes">yatsm.mapping.changes (module)</a>
   </dt>
@@ -1105,15 +1139,43 @@
   </dt>
 
       
+  <dt><a href="yatsm/yatsm.pipeline.html#module-yatsm.pipeline">yatsm.pipeline (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.language.html#module-yatsm.pipeline.language">yatsm.pipeline.language (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.tasks.html#module-yatsm.pipeline.tasks">yatsm.pipeline.tasks (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.tasks.change.html#module-yatsm.pipeline.tasks.change">yatsm.pipeline.tasks.change (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.tasks.classify.html#module-yatsm.pipeline.tasks.classify">yatsm.pipeline.tasks.classify (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.tasks.postprocess.html#module-yatsm.pipeline.tasks.postprocess">yatsm.pipeline.tasks.postprocess (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.pipeline.tasks.preprocess.html#module-yatsm.pipeline.tasks.preprocess">yatsm.pipeline.tasks.preprocess (module)</a>
+  </dt>
+
+      
   <dt><a href="yatsm/yatsm.plots.html#module-yatsm.plots">yatsm.plots (module)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.reader.html#module-yatsm.reader">yatsm.reader (module)</a>
+  <dt><a href="yatsm/yatsm.regression.html#module-yatsm.regression">yatsm.regression (module)</a>
   </dt>
 
       
-  <dt><a href="yatsm/yatsm.regression.html#module-yatsm.regression">yatsm.regression (module)</a>
+  <dt><a href="yatsm/yatsm.regression.cran.html#module-yatsm.regression.cran">yatsm.regression.cran (module)</a>
   </dt>
 
       
@@ -1142,6 +1204,10 @@
 
       
   <dt><a href="yatsm/yatsm.regression.robust_fit.html#module-yatsm.regression.robust_fit">yatsm.regression.robust_fit (module)</a>
+  </dt>
+
+      
+  <dt><a href="yatsm/yatsm.regression.structural_break.html#module-yatsm.regression.structural_break">yatsm.regression.structural_break (module)</a>
   </dt>
 
       
@@ -1174,8 +1240,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -1197,7 +1263,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

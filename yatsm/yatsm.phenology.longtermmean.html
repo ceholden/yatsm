@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.phenology.longtermmean module &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.phenology.longtermmean module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -115,7 +119,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -146,55 +150,19 @@
 deciduous broadleaf forest phenology using Landsat TM/ETM+ data. Remote
 Sensing of Environment 132: 176-185.</dd>
 </dl>
-<dl class="function">
-<dt id="yatsm.phenology.longtermmean.CRAN_spline">
-<code class="descclassname">yatsm.phenology.longtermmean.</code><code class="descname">CRAN_spline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>spar=0.55</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology/longtermmean.html#CRAN_spline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.longtermmean.CRAN_spline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a prediction function for a smoothing spline from R</p>
-<p>Use <cite>rpy2</cite> package to fit a smoothing spline using &#8220;smooth.spline&#8221;.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>np.ndarray</em>) &#8211; independent variable</li>
-<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; dependent variable</li>
-<li><strong>spar</strong> (<em>float</em>) &#8211; smoothing parameter</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">prediction function of smoothing spline that provides
-smoothed estimates of the dependent variable given an input
-independent variable array</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">callable</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Example</p>
-<p>Fit a smoothing spline for y ~ x and predict for days in year:</p>
-<blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span class="n">pred_spl</span> <span class="o">=</span> <span class="n">CRAN_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">y_smooth</span> <span class="o">=</span> <span class="n">pred_spl</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">366</span><span class="p">))</span>
-</pre></div>
-</div>
-</div></blockquote>
-</dd></dl>
-
 <dl class="class">
 <dt id="yatsm.phenology.longtermmean.LongTermMeanPhenology">
 <em class="property">class </em><code class="descclassname">yatsm.phenology.longtermmean.</code><code class="descname">LongTermMeanPhenology</code><span class="sig-paren">(</span><em>red_index=2</em>, <em>nir_index=3</em>, <em>blue_index=0</em>, <em>scale=0.0001</em>, <em>evi_index=None</em>, <em>evi_scale=None</em>, <em>year_interval=3</em>, <em>q_min=10</em>, <em>q_max=90</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology/longtermmean.html#LongTermMeanPhenology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenology" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Calculate long term mean phenology metrics for each YATSM record</p>
 <p>Long term mean phenology metrics describe the general spring greenup and
 autumn senescence timing using an algorithm by Melaas <em>et al.</em>, 2013 based
 on fitting smoothing splines to timeseries of EVI.</p>
-<dl class="attribute">
-<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenology.self.pheno">
-<code class="descclassname">self.</code><code class="descname">pheno</code><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenology.self.pheno" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>np.ndarray</em></p>
-<p>NumPy structured array containing phenology
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><p class="first"><strong>self.pheno</strong> (<em>np.ndarray</em>) &#8211; <p>NumPy structured array containing phenology
 metrics. These metrics include:</p>
 <ul class="simple">
 <li>spring_doy: the long term mean day of year of the start of spring</li>
@@ -209,13 +177,10 @@ year between 1 and 365</li>
 <li>pheno_nobs: the number of observations used to fit the smoothing
 spline</li>
 </ul>
-</dd></dl>
-
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>red_index</strong> (<em>int, optional</em>) &#8211; index of model.Y containing red band
 (default: 2)</li>
 <li><strong>nir_index</strong> (<em>int, optional</em>) &#8211; index of model.Y containing NIR band
@@ -251,13 +216,59 @@ group (default: 3)</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<a class="reference internal" href="yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM" title="yatsm.algorithms.yatsm.YATSM"><em>yatsm.YATSM</em></a>) &#8211; instance of <cite>yatsm.YATSM</cite> that has been run
 for change detection</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">updated copy of YATSM model instance with phenology
-added into yatsm.record structured array</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>updated copy of YATSM model instance with phenology</dt>
+<dd>added into yatsm.record structured array</dd>
+</dl>
+</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults">
+<em class="property">class </em><code class="descclassname">yatsm.phenology.longtermmean.</code><code class="descname">LongTermMeanPhenologyResults</code><span class="sig-paren">(</span><em>springDOY</em>, <em>autumnDOY</em>, <em>peakEVIDOY</em>, <em>peakEVI</em>, <em>corrcoef</em>, <em>smoothEVI</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a></p>
+<p>tuple: Tuple containing the results of the long term mean phenology</p>
+<dl class="attribute">
+<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.autumnDOY">
+<code class="descname">autumnDOY</code><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.autumnDOY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.corrcoef">
+<code class="descname">corrcoef</code><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.corrcoef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.peakEVI">
+<code class="descname">peakEVI</code><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.peakEVI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.peakEVIDOY">
+<code class="descname">peakEVIDOY</code><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.peakEVIDOY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.smoothEVI">
+<code class="descname">smoothEVI</code><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.smoothEVI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.springDOY">
+<code class="descname">springDOY</code><a class="headerlink" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults.springDOY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
 </dd></dl>
@@ -301,7 +312,46 @@ added into yatsm.record structured array</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the index of the observation closest to the half-max of the data</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.phenology.longtermmean.longtermmeanphenology">
+<code class="descclassname">yatsm.phenology.longtermmean.</code><code class="descname">longtermmeanphenology</code><span class="sig-paren">(</span><em>evi</em>, <em>periods=None</em>, <em>year_interval=3</em>, <em>q_min=10.0</em>, <em>q_max=90.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/phenology/longtermmean.html#longtermmeanphenology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.phenology.longtermmean.longtermmeanphenology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the long term mean phenology transition dates</p>
+<p>EVI should be scaled within [0, 1]. Values outside of this range will be
+removed before processing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>evi</strong> (<em>pd.Series</em>) &#8211; EVI values in a Pandas Series. The index should be
+the date of each observation</li>
+<li><strong>periods</strong> (<em>pd.Series</em>) &#8211; User provided groupings to scale EVI time series
+with. If not provided, groupings will be calculated based on
+<code class="docutils literal"><span class="pre">year_interval</span></code>.</li>
+<li><strong>year_interval</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; number of years to group together when
+normalizing EVI to upper and lower percentiles of EVI within the
+group</li>
+<li><strong>q_min</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; lower percentile for scaling EVI</li>
+<li><strong>q_max</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; upper percentile for scaling EVI</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>Named tuple of phenological transition</dt>
+<dd><p class="first last">dates and diagnostics</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#yatsm.phenology.longtermmean.LongTermMeanPhenologyResults" title="yatsm.phenology.longtermmean.LongTermMeanPhenologyResults">LongTermMeanPhenologyResults</a></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -317,8 +367,11 @@ added into yatsm.record structured array</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ordinal</strong> (<em>np.ndarray</em>) &#8211; ordinal dates</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">nobs x 2 np.ndarray containing the year and DOY for each
-ordinal date</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>nobs x 2 np.ndarray containing the year and DOY for each</dt>
+<dd>ordinal date</dd>
+</dl>
+</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
 </tr>
@@ -338,7 +391,7 @@ will be removed.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>evi</strong> (<em>np.ndarray</em>) &#8211; EVI values</li>
+<li><strong>evi</strong> (<em>pd.Series</em>) &#8211; EVI values</li>
 <li><strong>periods</strong> (<em>np.ndarray</em>) &#8211; intervals of years to group and scale together</li>
 <li><strong>qmin</strong> (<em>float, optional</em>) &#8211; lower quantile for scaling (default: 10)</li>
 <li><strong>qmax</strong> (<em>float, optional</em>) &#8211; upper quantile for scaling (default: 90)</li>
@@ -348,7 +401,7 @@ will be removed.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scaled EVI array</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.Series</p>
 </td>
 </tr>
 </tbody>
@@ -367,8 +420,8 @@ will be removed.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -390,7 +443,7 @@ will be removed.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

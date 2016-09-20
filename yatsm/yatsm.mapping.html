@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.mapping package &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.mapping package &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -115,7 +119,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -164,11 +168,11 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<em>int</em>) &#8211; Ordinal date for start of map records</li>
-<li><strong>end</strong> (<em>int</em>) &#8211; Ordinal date for end of map records</li>
-<li><strong>result_location</strong> (<em>str</em>) &#8211; Location of results</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date for start of map records</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date for end of map records</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Location of results</li>
 <li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
-<li><strong>first</strong> (<em>bool</em>) &#8211; Use first change instead of last</li>
+<li><strong>first</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) &#8211; Use first change instead of last</li>
 <li><strong>out_format</strong> (<em>str, optional</em>) &#8211; Output date format</li>
 <li><strong>magnitude</strong> (<em>bool, optional</em>) &#8211; output magnitude of each change?</li>
 <li><strong>ndv</strong> (<em>int, optional</em>) &#8211; NoDataValue</li>
@@ -178,12 +182,16 @@ result records (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A 2D np.ndarray array containing the changes between the
-start and end date. Also includes, if specified, a 3D np.ndarray of
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A 2D np.ndarray array containing the changes between the</dt>
+<dd><p class="first last">start and end date. Also includes, if specified, a 3D np.ndarray of
 the magnitude of each change plus the indices of these magnitudes</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)">tuple</a></p>
 </td>
 </tr>
 </tbody>
@@ -199,9 +207,9 @@ the magnitude of each change plus the indices of these magnitudes</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<em>int</em>) &#8211; Ordinal date for start of map records</li>
-<li><strong>end</strong> (<em>int</em>) &#8211; Ordinal date for end of map records</li>
-<li><strong>result_location</strong> (<em>str</em>) &#8211; Location of results</li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date for start of map records</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date for end of map records</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Location of results</li>
 <li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
 <li><strong>ndv</strong> (<em>int, optional</em>) &#8211; NoDataValue</li>
 <li><strong>pattern</strong> (<em>str, optional</em>) &#8211; filename pattern of saved record results</li>
@@ -210,8 +218,12 @@ result records (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2D numpy array containing the number of changes
-between the start and end date; list containing band names</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>2D numpy array containing the number of changes</dt>
+<dd><p class="first last">between the start and end date; list containing band names</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -230,8 +242,8 @@ between the start and end date; list containing band names</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date</strong> (<em>int</em>) &#8211; ordinal date for prediction image</li>
-<li><strong>result_location</strong> (<em>str</em>) &#8211; Location of the results</li>
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Location of the results</li>
 <li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
 <li><strong>after</strong> (<em>bool, optional</em>) &#8211; If date intersects a disturbed period, use next
 available time segment</li>
@@ -248,8 +260,12 @@ result records (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2D numpy array containing the classification map for the
-date specified</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>2D numpy array containing the classification map for the</dt>
+<dd><p class="first last">date specified</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -270,8 +286,8 @@ peak_doy, and pheno_nobs.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date</strong> (<em>int</em>) &#8211; Ordinal date for prediction image</li>
-<li><strong>result_location</strong> (<em>str</em>) &#8211; Location of the results</li>
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Location of the results</li>
 <li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
 <li><strong>after</strong> (<em>bool, optional</em>) &#8211; If date intersects a disturbed period, use next
 available time segment</li>
@@ -286,16 +302,15 @@ result records (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>tuple</strong> &#8211;
-A tuple (np.ndarray, list) containing the 3D</p>
-<blockquote>
-<div><p>np.ndarray of the phenology metrics, and the band names for
-the output dataset</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A tuple (np.ndarray, list) containing the 3D np.ndarray of the</dt>
+<dd><p class="first last">phenology metrics, and the band names for the output dataset</p>
+</dd>
+</dl>
 </p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray, list</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)">tuple</a></p>
 </td>
 </tr>
 </tbody>
@@ -311,10 +326,10 @@ the output dataset</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date</strong> (<em>int</em>) &#8211; Ordinal date for prediction image</li>
-<li><strong>result_location</strong> (<em>str</em>) &#8211; Location of the results</li>
-<li><strong>bands</strong> (<em>list</em>) &#8211; Bands to predict</li>
-<li><strong>coefs</strong> (<em>list</em>) &#8211; List of coefficients to output</li>
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Location of the results</li>
+<li><strong>bands</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) &#8211; Bands to predict</li>
+<li><strong>coefs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) &#8211; List of coefficients to output</li>
 <li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
 <li><strong>prefix</strong> (<em>str, optional</em>) &#8211; Use coef/rmse with refit prefix (default: &#8216;&#8217;)</li>
 <li><strong>amplitude</strong> (<em>bool, optional</em>) &#8211; Map amplitude of seasonality instead of
@@ -333,12 +348,16 @@ result records (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tuple (np.ndarray, list) containing the 3D numpy.ndarray of
-the coefficients (coefficient x band x pixel), and the band names
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A tuple (np.ndarray, list) containing the 3D numpy.ndarray of</dt>
+<dd><p class="first last">the coefficients (coefficient x band x pixel), and the band names
 for the output dataset</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)">tuple</a></p>
 </td>
 </tr>
 </tbody>
@@ -354,8 +373,8 @@ for the output dataset</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date</strong> (<em>int</em>) &#8211; Ordinal date for prediction image</li>
-<li><strong>result_location</strong> (<em>str</em>) &#8211; Location of the results</li>
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Location of the results</li>
 <li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
 <li><strong>bands</strong> (<em>str, list</em>) &#8211; Bands to predict - &#8216;all&#8217; for every band, or specify
 a list of bands</li>
@@ -373,8 +392,12 @@ result records (default: False)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A 3D numpy.ndarray containing the prediction for each band,
-for each pixel</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A 3D numpy.ndarray containing the prediction for each band,</dt>
+<dd><p class="first last">for each pixel</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -397,8 +420,8 @@ for each pixel</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:30:23 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -420,7 +443,7 @@ for each pixel</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

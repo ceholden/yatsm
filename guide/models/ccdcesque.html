@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CCDCesque &mdash; YATSM 0.7.dev0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/>
+        <link rel="up" title="Science Models" href="models.html"/>
+        <link rel="next" title="Model Configuration" href="../configuration.html"/>
+        <link rel="prev" title="Science Models" href="models.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.dev0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="models.html">Science Models</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="models.html#models">Models</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">CCDCesque</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="models.html">Science Models</a> &raquo;</li>
+      
+    <li>CCDCesque</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/models/ccdcesque.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ccdcesque">
+<span id="guide-models-ccdcesque"></span><h1>CCDCesque<a class="headerlink" href="#ccdcesque" title="Permalink to this headline">¶</a></h1>
+<p>A guide for the YATSM implementation of Continuous Classification and Change Detection (CCDC) <a class="reference internal" href="../../index.html#zhu2014152" id="id1">[1]</a></p>
+digraph G {
+    label = &quot;Algorithm Flowchart:\nCCDCesque&quot;
+    compound=true;
+    newrank=true;
+    ratio=1.5;
+    /*ranksep=1.0;*/
+
+    preprocess [label=&quot;preprocess&quot; shape=&quot;box&quot;];
+    fit [label=&quot;fit&quot; shape=&quot;box&quot;]
+    while [label=&quot;while\n(has observations)&quot;];
+    trained [label=&quot;Segment\ninitialized?&quot;];
+    end [label=&quot;Iterate\nforward&quot;];
+    # Training
+    clean [label=&quot;Multitemp mask&quot; shape=&quot;box&quot;];
+    stable [label=&quot;Test\nStability&quot;];
+    is_stable [label=&quot;Stable:\ninit segment&quot;]
+    is_unstable [label=&quot;Unstable:\nmove forward&quot;]
+    # Monitoring
+    monitor [label=&quot;Check next\nobservations&quot;];
+    noise [label=&quot;Delete noise&quot;]
+    change [label=&quot;Change:\nnew segment&quot;]
+    nochange [label=&quot;No change&quot;]
+
+    { rank=min;  preprocess; fit; while; }
+    { rank=same; trained; }
+    { rank=same; clean; monitor; }
+    { rank=max; end; }
+
+    preprocess -&gt; fit -&gt; while -&gt; trained;
+    trained -&gt; clean [label=&quot;No&quot; lhead=cluster0];
+    trained -&gt; monitor [label=&quot;Yes&quot; lhead=cluster1];
+
+    subgraph cluster0 {
+        label=&quot;Historic Period&quot;;
+        clean -&gt; stable;
+        stable -&gt; is_stable [label=&quot;Yes&quot;];
+        stable -&gt; is_unstable [label=&quot;No&quot;];
+    }
+    subgraph cluster1 {
+        label=&quot;Monitoring Period&quot;
+        monitor -&gt; noise [label=&quot;Noise\ndetected&quot;];
+        monitor -&gt; change [label=&quot;Above\nthreshold&quot;];
+        monitor -&gt; nochange [label=&quot;Within\nthreshold&quot;];
+    }
+
+    noise -&gt; end [ltail=cluster1];
+    change -&gt; end [ltail=cluster1];
+    nochange -&gt; end [ltail=cluster1];
+
+    is_stable -&gt; end [ltail=cluster0];
+    is_unstable -&gt; end [ltail=cluster0];
+    end -&gt; while;
+
+}
+<p id="bibtex-bibliography-guide/models/ccdcesque-0"><table class="docutils citation" frame="void" id="zhu2014152" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Zhe Zhu and Curtis&nbsp;E. Woodcock. Continuous change detection and classification of land cover using all available landsat data. <em>Remote Sensing of Environment</em>, 144(0):152 – 171, 2014. URL: <a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0034425714000248">http://www.sciencedirect.com/science/article/pii/S0034425714000248</a>, <a class="reference external" href="http://dx.doi.org/http://dx.doi.org/10.1016/j.rse.2014.01.011">doi:http://dx.doi.org/10.1016/j.rse.2014.01.011</a>.</td></tr>
+</tbody>
+</table>
+</p>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../configuration.html" class="btn btn-neutral float-right" title="Model Configuration" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="models.html" class="btn btn-neutral" title="Science Models" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.7.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

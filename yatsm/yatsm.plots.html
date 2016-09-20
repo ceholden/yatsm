@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.plots module &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.plots module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -115,7 +119,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -150,13 +154,8 @@
 :type band: int
 :param freq: frequency of sine/cosine (for predictions)
 :type freq: iterable
-:param ylim: tuple of floats for y-axes limits</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-</tbody>
-</table>
+:param ylim: tuple of floats for y-axes limits
+:type ylim: tuple</p>
 </dd></dl>
 
 <dl class="function">
@@ -170,7 +169,7 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>kfold_scores</strong> (<em>np.ndarray</em>) &#8211; n by 2 shaped array of mean and standard
 deviation of KFold scores</li>
-<li><strong>test_labels</strong> (<em>list</em>) &#8211; n length list of KFold label names</li>
+<li><strong>test_labels</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) &#8211; n length list of KFold label names</li>
 </ul>
 </td>
 </tr>
@@ -190,8 +189,8 @@ feature.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>algo</strong> (<em>sklearn.ensemble.RandomForestClassifier</em>) &#8211; Random Forest algorithm</li>
-<li><strong>cfg</strong> (<em>dict</em>) &#8211; YATSM configuration dictionary</li>
+<li><strong>algo</strong> (<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier" title="(in scikit-learn v0.17.1)"><em>sklearn.ensemble.RandomForestClassifier</em></a>) &#8211; Random Forest algorithm</li>
+<li><strong>cfg</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) &#8211; YATSM configuration dictionary</li>
 </ul>
 </td>
 </tr>
@@ -211,8 +210,8 @@ feature.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -234,7 +233,7 @@ feature.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

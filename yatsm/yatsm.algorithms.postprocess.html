@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.postprocess module &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.algorithms.postprocess module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -115,7 +119,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -172,12 +176,16 @@ values from all <code class="docutils literal"><span class="pre">model.test_indi
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>yatsm</strong> (<em>YATSM model</em>) &#8211; fitted YATSM model to check for commission errors</li>
-<li><strong>alpha</strong> (<em>float</em>) &#8211; significance level for F-statistic (default: 0.10)</li>
+<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; significance level for F-statistic (default: 0.10)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">updated copy of <code class="docutils literal"><span class="pre">yatsm.record</span></code> with spurious models
-combined into unified model</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>updated copy of <code class="docutils literal"><span class="pre">yatsm.record</span></code> with spurious models</dt>
+<dd><p class="first last">combined into unified model</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -211,8 +219,12 @@ indices must be a subset of <cite>model.test_indices</cite>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Array of True or False for each record where
-True indicates omitted break point</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>Array of True or False for each record where</dt>
+<dd><p class="first last">True indicates omitted break point</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
@@ -224,7 +236,7 @@ True indicates omitted break point</p>
 
 <dl class="function">
 <dt id="yatsm.algorithms.postprocess.refit_record">
-<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">refit_record</code><span class="sig-paren">(</span><em>model</em>, <em>prefix</em>, <em>estimator</em>, <em>keep_regularized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#refit_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.refit_record" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">refit_record</code><span class="sig-paren">(</span><em>model</em>, <em>prefix</em>, <em>estimator</em>, <em>fitopt=None</em>, <em>keep_regularized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#refit_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.refit_record" title="Permalink to this definition">¶</a></dt>
 <dd><p>Refit YATSM model segments with a new estimator and update record</p>
 <p>YATSM class model must be ran and contain at least one record before this
 function is called.</p>
@@ -234,17 +246,23 @@ function is called.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>model</strong> (<em>YATSM model</em>) &#8211; YATSM model to refit</li>
-<li><strong>prefix</strong> (<em>str</em>) &#8211; prefix for refitted coefficient and RMSE (don&#8217;t include
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; prefix for refitted coefficient and RMSE (don&#8217;t include
 underscore as it will be added)</li>
-<li><strong>estimator</strong> (<em>object</em>) &#8211; instance of a scikit-learn compatible estimator
+<li><strong>estimator</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.6)"><em>object</em></a>) &#8211; instance of a scikit-learn compatible estimator
 object</li>
+<li><strong>fitopt</strong> (<em>dict, optional</em>) &#8211; dict of options for the <code class="docutils literal"><span class="pre">fit</span></code> method of the
+<code class="docutils literal"><span class="pre">estimator</span></code> provided (default: None)</li>
 <li><strong>keep_regularized</strong> (<em>bool, optional</em>) &#8211; do not use features with coefficient
 estimates that are fit to 0 (i.e., if using L1 regularization)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">updated model.record NumPy structured array with refitted
-coefficients and RMSE</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>updated model.record NumPy structured array with refitted</dt>
+<dd><p class="first last">coefficients and RMSE</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
@@ -266,8 +284,8 @@ coefficients and RMSE</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -289,7 +307,7 @@ coefficients and RMSE</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

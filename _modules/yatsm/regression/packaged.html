@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.packaged &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.regression.packaged &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -85,15 +87,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -141,31 +145,35 @@
            <div itemprop="articleBody">
             
   <h1>Source code for yatsm.regression.packaged</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot; Module for finding regression algorithms packaged with YATSM</span>
+<span></span><span class="sd">&quot;&quot;&quot; Module for finding regression algorithms packaged with YATSM</span>
+
+<span class="sd">Attributes:</span>
+<span class="sd">    packaged_regressions (list): regression estimators packaged within</span>
+<span class="sd">        ``YATSM``</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pkg_resources</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
 
-<span class="c"># packaged_regressions = [&#39;OLS&#39;, &#39;sklearn_Lasso20&#39;, &#39;glmnet_Lasso20&#39;,</span>
-<span class="c">#                         &#39;glmnet_LassoCV_n50&#39;, &#39;glmnet_LassoCV_n100&#39;,</span>
-<span class="c">#                         &#39;rlm_maxiter10&#39;]</span>
+
 <span class="n">packaged_regressions</span> <span class="o">=</span> <span class="p">[]</span>
+
 <span class="n">_packaged</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span>
-    <span class="n">__package__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;pickles&#39;</span><span class="p">,</span> <span class="s">&#39;pickles.json&#39;</span><span class="p">))</span>
+    <span class="n">__package__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;pickles&#39;</span><span class="p">,</span> <span class="s1">&#39;pickles.json&#39;</span><span class="p">))</span>
 <span class="k">if</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">__package__</span><span class="p">,</span>
-                                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;pickles&#39;</span><span class="p">,</span> <span class="s">&#39;pickles.json&#39;</span><span class="p">)):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_packaged</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;pickles&#39;</span><span class="p">,</span> <span class="s1">&#39;pickles.json&#39;</span><span class="p">)):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_packaged</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">packaged_regressions</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="find_packaged_regressor"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.packaged.html#yatsm.regression.find_packaged_regressor">[docs]</a><span class="k">def</span> <span class="nf">find_packaged_regressor</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Find location of a regression method packaged with YATSM</span>
 
-<span class="sd">    See ``yatsm.regression.packaged.packaged_regressions`` for a list of</span>
+<span class="sd">    See :data:`packaged_regressions` for a list of</span>
 <span class="sd">    available pre-packaged regressors</span>
 
 <span class="sd">    Args:</span>
@@ -180,18 +188,18 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">packaged_regressions</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&#39;Cannot load unknown packaged regressor </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot load unknown packaged regressor </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;pickles&#39;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Checking data files in </span><span class="si">%s</span><span class="s"> for packaged regressors&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;pickles&#39;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&#39;Cannot find packaged regressors in </span><span class="si">%s</span><span class="s">. Did you install &#39;</span>
-                      <span class="s">&#39;YATSM via setuptools?&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s1">&#39;pickles&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Checking data files in </span><span class="si">%s</span><span class="s1"> for packaged regressors&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s1">&#39;pickles&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Cannot find packaged regressors in </span><span class="si">%s</span><span class="s1">. Did you install &#39;</span>
+                      <span class="s1">&#39;YATSM via setuptools?&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
 
-    <span class="n">resource</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;pickles&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;.pkl&#39;</span><span class="p">)</span>
+    <span class="n">resource</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;pickles&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&#39;Cannot find packaged regression method </span><span class="si">%s</span><span class="s">, but package &#39;</span>
-                      <span class="s">&#39;directory exists. Check the contents of </span><span class="si">%s</span><span class="s"> if possible&#39;</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Cannot find packaged regression method </span><span class="si">%s</span><span class="s1">, but package &#39;</span>
+                      <span class="s1">&#39;directory exists. Check the contents of </span><span class="si">%s</span><span class="s1"> if possible&#39;</span>
                       <span class="o">%</span> <span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span></div>
@@ -206,8 +214,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -229,7 +237,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.robust_fit module &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.regression.robust_fit module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -115,7 +119,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -149,11 +153,11 @@ but costly, creature comforts.</p>
 <a class="reference external" href="http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf">http://cran.r-project.org/doc/contrib/Fox-Companion/appendix-robust-regression.pdf</a></dd>
 </dl>
 <p>Run this file to test performance gains. Implementation is ~3x faster than
-statesmodels and can reach ~4x faster if Numba is available to accelerate.</p>
+statsmodels and can reach ~4x faster if Numba is available to accelerate.</p>
 <dl class="class">
 <dt id="yatsm.regression.robust_fit.RLM">
-<em class="property">class </em><code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">RLM</code><span class="sig-paren">(</span><em>M=CPUOverloaded(&lt;function bisquare at 0x7f8b554d3230&gt;)</em>, <em>tune=4.685</em>, <em>scale_est=CPUOverloaded(&lt;function mad at 0x7f8b554d32a8&gt;)</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em>, <em>maxiter=50</em>, <em>tol=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">RLM</code><span class="sig-paren">(</span><em>M=CPUDispatcher(&lt;function bisquare&gt;)</em>, <em>tune=4.685</em>, <em>scale_est=CPUDispatcher(&lt;function mad&gt;)</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em>, <em>maxiter=50</em>, <em>tol=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.base.BaseEstimator.html#sklearn.base.BaseEstimator" title="(in scikit-learn v0.17.1)"><code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code></a></p>
 <p>Robust Linear Model using Iterative Reweighted Least Squares (RIRLS)</p>
 <p>Perform robust fitting regression via iteratively reweighted least squares
 according to weight function and tuning parameter.</p>
@@ -163,46 +167,32 @@ the scikit-learn __init__/fit/predict paradigm.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>scale_est</strong> (<em>callable</em>) &#8211; function for scaling residuals</li>
-<li><strong>tune</strong> (<em>float</em>) &#8211; tuning constant for scale estimate</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>scale_est</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) &#8211; function for scaling residuals</li>
+<li><strong>tune</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; tuning constant for scale estimate</li>
 <li><strong>maxiter</strong> (<em>int, optional</em>) &#8211; maximum number of iterations (default: 50)</li>
 <li><strong>tol</strong> (<em>float, optional</em>) &#8211; convergence tolerance of estimate
 (default: 1e-8)</li>
 <li><strong>scale_est</strong> &#8211; estimate used to scale the weights
 (default: <cite>mad</cite> for median absolute deviation)</li>
-<li><strong>scale_constant</strong> (<em>float</em>) &#8211; normalization constant (default: 0.6745)</li>
+<li><strong>scale_constant</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; normalization constant (default: 0.6745)</li>
 <li><strong>update_scale</strong> (<em>bool, optional</em>) &#8211; update scale estimate for weights
 across iterations (default: True)</li>
-<li><strong>M</strong> (<em>callable</em>) &#8211; function for scaling residuals</li>
+<li><strong>M</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a>) &#8211; function for scaling residuals</li>
 <li><strong>tune</strong> &#8211; tuning constant for scale estimate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>coef</strong> (<em>np.ndarray</em>) &#8211; 1D array of model coefficients</li>
+<li><strong>intercept</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; intercept</li>
+<li><strong>weights</strong> (<em>np.ndarray</em>) &#8211; 1D array of weights for each observation from a
+robust iteratively reweighted least squares</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="yatsm.regression.robust_fit.RLM.coef_">
-<code class="descname">coef_</code><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.coef_" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>np.ndarray</em></p>
-<p>1D array of model coefficients</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.regression.robust_fit.RLM.intercept_">
-<code class="descname">intercept_</code><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.intercept_" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em></p>
-<p>intercept</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.regression.robust_fit.RLM.weights">
-<code class="descname">weights</code><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.weights" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>np.ndarray</em></p>
-<p>1D array of weights for each observation from a
-robust iteratively reweighted least squares</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="yatsm.regression.robust_fit.RLM.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.fit" title="Permalink to this definition">¶</a></dt>
@@ -217,31 +207,16 @@ robust iteratively reweighted least squares</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">return <cite>self</cite> with model results stored for method
-chaining</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>return <cite>self</cite> with model results stored for method</dt>
+<dd><p class="first last">chaining</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">object</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.6)">object</a></p>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.regression.robust_fit.RLM.get_params">
-<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.get_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return parameters for this estimator</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep</strong> (<em>bool</em>) &#8211; return the parameters from parameters of this
-estimator that are also estimators</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">parameter names mapped to their values</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
 </tbody>
 </table>
@@ -265,22 +240,6 @@ estimator that are also estimators</td>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="yatsm.regression.robust_fit.RLM.set_params">
-<code class="descname">set_params</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.RLM.set_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set parameters for estimator</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> (<em>dict</em>) &#8211; dict of parameter=value to set</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">self</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="attribute">
@@ -293,12 +252,11 @@ estimator that are also estimators</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>resid</strong> (<em>np.ndarray</em>) &#8211; residuals to be weighted</li>
-<li><strong>c</strong> (<em>float</em>) &#8211; tuning constant for Tukey&#8217;s Biweight (default: 4.685)</li>
+<li><strong>c</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; tuning constant for Tukey&#8217;s Biweight (default: 4.685)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>weight</strong> &#8211;
-weights for residuals</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>weight</strong> &#8211; weights for residuals</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
@@ -322,7 +280,7 @@ weights for residuals</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>resid</strong> (<em>np.ndarray</em>) &#8211; residuals</li>
-<li><strong>c</strong> (<em>float</em>) &#8211; scale factor to get to ~standard normal (default: 0.6745)
+<li><strong>c</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; scale factor to get to ~standard normal (default: 0.6745)
 (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)</li>
 </ul>
 </td>
@@ -330,7 +288,7 @@ weights for residuals</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">MAD &#8216;robust&#8217; variance estimate</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)">float</a></p>
 </td>
 </tr>
 </tbody>
@@ -353,8 +311,8 @@ weights for residuals</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -376,7 +334,7 @@ weights for residuals</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

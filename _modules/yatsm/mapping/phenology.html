@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.mapping.phenology &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.mapping.phenology &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -85,15 +87,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -141,22 +145,22 @@
            <div itemprop="articleBody">
             
   <h1>Source code for yatsm.mapping.phenology</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot; Functions relevant for mapping phenology fit information</span>
+<span></span><span class="sd">&quot;&quot;&quot; Functions relevant for mapping phenology fit information</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">find_indices</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_results</span><span class="p">,</span> <span class="n">iter_records</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">find_indices</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">find_results</span><span class="p">,</span> <span class="n">iter_records</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_phenology"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.phenology.html#yatsm.mapping.phenology.get_phenology">[docs]</a><span class="k">def</span> <span class="nf">get_phenology</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
-                  <span class="n">after</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                  <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;yatsm_r*&#39;</span><span class="p">,</span>
-                  <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="get_phenology"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.phenology.html#yatsm.mapping.get_phenology">[docs]</a><span class="k">def</span> <span class="nf">get_phenology</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
+                  <span class="n">after</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;yatsm_r*&#39;</span><span class="p">,</span>
+                  <span class="n">warn_on_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Output a raster containing phenology information</span>
 
 <span class="sd">    Phenology information includes spring_doy, autumn_doy, pheno_cor, peak_evi,</span>
@@ -182,43 +186,43 @@
 <span class="sd">            phenology metrics, and the band names for the output dataset</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Find results</span>
+    <span class="c1"># Find results</span>
     <span class="n">records</span> <span class="o">=</span> <span class="n">find_results</span><span class="p">(</span><span class="n">result_location</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
 
     <span class="n">n_bands</span> <span class="o">=</span> <span class="mi">7</span>
-    <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;spring_doy&#39;</span><span class="p">,</span> <span class="s">&#39;autumn_doy&#39;</span><span class="p">,</span> <span class="s">&#39;pheno_cor&#39;</span><span class="p">,</span> <span class="s">&#39;peak_evi&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;peak_doy&#39;</span><span class="p">,</span> <span class="s">&#39;pheno_nobs&#39;</span><span class="p">]</span>
-    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;SpringDOY&#39;</span><span class="p">,</span> <span class="s">&#39;AutumnDOY&#39;</span><span class="p">,</span> <span class="s">&#39;Pheno_R*10000&#39;</span><span class="p">,</span> <span class="s">&#39;Peak_EVI*10000&#39;</span><span class="p">,</span>
-                  <span class="s">&#39;Peak_DOY&#39;</span><span class="p">,</span> <span class="s">&#39;Pheno_NObs&#39;</span><span class="p">,</span> <span class="s">&#39;GrowingDOY&#39;</span><span class="p">]</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spring_doy&#39;</span><span class="p">,</span> <span class="s1">&#39;autumn_doy&#39;</span><span class="p">,</span> <span class="s1">&#39;pheno_cor&#39;</span><span class="p">,</span> <span class="s1">&#39;peak_evi&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;peak_doy&#39;</span><span class="p">,</span> <span class="s1">&#39;pheno_nobs&#39;</span><span class="p">]</span>
+    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SpringDOY&#39;</span><span class="p">,</span> <span class="s1">&#39;AutumnDOY&#39;</span><span class="p">,</span> <span class="s1">&#39;Pheno_R*10000&#39;</span><span class="p">,</span> <span class="s1">&#39;Peak_EVI*10000&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;Peak_DOY&#39;</span><span class="p">,</span> <span class="s1">&#39;Pheno_NObs&#39;</span><span class="p">,</span> <span class="s1">&#39;GrowingDOY&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
         <span class="n">n_bands</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;SegmentQAQC&#39;</span><span class="p">)</span>
+        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SegmentQAQC&#39;</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Allocating memory&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Allocating memory&#39;</span><span class="p">)</span>
     <span class="n">raster</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">n_bands</span><span class="p">),</span>
                      <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Processing results&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing results&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="n">warn_on_empty</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">_attr</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="k">for</span> <span class="n">_attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Results do not have phenology metrics&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Results do not have phenology metrics&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">_qa</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">find_indices</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="n">before</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="c"># Apply scale factors for R and peak EVI</span>
-            <span class="n">rec</span><span class="p">[</span><span class="s">&#39;pheno_cor&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">10000.0</span>
-            <span class="n">rec</span><span class="p">[</span><span class="s">&#39;peak_evi&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">10000.0</span>
+            <span class="c1"># Apply scale factors for R and peak EVI</span>
+            <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;pheno_cor&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">10000.0</span>
+            <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;peak_evi&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">10000.0</span>
 
             <span class="k">for</span> <span class="n">_b</span><span class="p">,</span> <span class="n">_attr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">attributes</span><span class="p">):</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
-                       <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="n">_attr</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
-            <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
-                   <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> \
-                <span class="n">rec</span><span class="p">[</span><span class="s">&#39;autumn_doy&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;spring_doy&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
+                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
+                       <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="n">_attr</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
+                   <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;autumn_doy&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;spring_doy&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_qa</span>
+                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_qa</span>
 
     <span class="k">return</span> <span class="n">raster</span><span class="p">,</span> <span class="n">band_names</span></div>
 </pre></div>
@@ -232,8 +236,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -255,7 +259,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

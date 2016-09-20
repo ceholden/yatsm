@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.ccdc module &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.algorithms.ccdc module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -115,7 +119,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -141,7 +145,7 @@
 <span id="yatsm-algorithms-ccdc-module"></span><h1>yatsm.algorithms.ccdc module<a class="headerlink" href="#module-yatsm.algorithms.ccdc" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="yatsm.algorithms.ccdc.CCDCesque">
-<em class="property">class </em><code class="descclassname">yatsm.algorithms.ccdc.</code><code class="descname">CCDCesque</code><span class="sig-paren">(</span><em>test_indices=None</em>, <em>estimator=Lasso(alpha=20</em>, <em>copy_X=True</em>, <em>fit_intercept=True</em>, <em>max_iter=1000</em>, <em>normalize=False</em>, <em>positive=False</em>, <em>precompute=False</em>, <em>random_state=None</em>, <em>selection='cyclic'</em>, <em>tol=0.0001</em>, <em>warm_start=False)</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>retrain_time=365.25</em>, <em>screening='RLM'</em>, <em>screening_crit=400.0</em>, <em>remove_noise=True</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>dynamic_rmse=False</em>, <em>slope_test=False</em>, <em>idx_slope=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.algorithms.ccdc.</code><code class="descname">CCDCesque</code><span class="sig-paren">(</span><em>test_indices=None</em>, <em>estimator={'object': Lasso(alpha=20</em>, <em>copy_X=True</em>, <em>fit_intercept=True</em>, <em>max_iter=1000</em>, <em>normalize=False</em>, <em>positive=False</em>, <em>precompute=False</em>, <em>random_state=None</em>, <em>selection='cyclic'</em>, <em>tol=0.0001</em>, <em>warm_start=False)</em>, <em>'fit': {}}</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>retrain_time=365.25</em>, <em>screening='RLM'</em>, <em>screening_crit=400.0</em>, <em>remove_noise=True</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>dynamic_rmse=False</em>, <em>slope_test=False</em>, <em>idx_slope=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="yatsm.algorithms.yatsm.html#yatsm.algorithms.yatsm.YATSM" title="yatsm.algorithms.yatsm.YATSM"><code class="xref py py-class docutils literal"><span class="pre">yatsm.algorithms.yatsm.YATSM</span></code></a></p>
 <p>Initialize a CCDC-like model for data X (spectra) and Y (dates)</p>
 <p>An unofficial and unvalidated port of the Continuous Change Detection and
@@ -151,46 +155,79 @@ Classification (CCDC) algorithm by Zhu and Woodcock, 2014.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>test_indices</strong> (<em>np.ndarray, optional</em>) &#8211; Test for changes with these
-indices of Y. If not provided, all series in <cite>Y</cite> will be used as
-test indices</li>
-<li><strong>estimator</strong> (<em>sklearn compatible predictor</em>) &#8211; prediction model from
-scikit-learn used to fit and predict timeseries</li>
-<li><strong>consecutive</strong> (<em>int, optional</em>) &#8211; Consecutive observations to trigger change</li>
-<li><strong>threshold</strong> (<em>float</em>) &#8211; Test statistic threshold for change</li>
-<li><strong>min_obs</strong> (<em>int</em>) &#8211; Minimum observations in model</li>
-<li><strong>min_rmse</strong> (<em>float</em>) &#8211; Minimum RMSE for models during testing</li>
-<li><strong>retrain_time</strong> (<em>float</em>) &#8211; Number of days between model fit updates during
+<li><strong>test_indices</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><em>numpy.ndarray</em></a>) &#8211; Test for changes with these
+indices of <code class="docutils literal"><span class="pre">Y</span></code>. If not provided, all series in <code class="docutils literal"><span class="pre">Y</span></code> will be used
+as test indices</li>
+<li><strong>estimator</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) &#8211; dictionary containing estimation model from
+<code class="docutils literal"><span class="pre">scikit-learn</span></code> used to fit and predict timeseries and,
+optionally, a dict of options for the estimation model <code class="docutils literal"><span class="pre">fit</span></code>
+method (default: <code class="docutils literal"><span class="pre">{'object':</span> <span class="pre">Lasso(alpha=20),</span> <span class="pre">'fit':</span> <span class="pre">{}}</span></code>)</li>
+<li><strong>consecutive</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Consecutive observations to trigger change</li>
+<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Test statistic threshold for change</li>
+<li><strong>min_obs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Minimum observations in model</li>
+<li><strong>min_rmse</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Minimum RMSE for models during testing</li>
+<li><strong>retrain_time</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Number of days between model fit updates during
 monitoring period</li>
-<li><strong>screening</strong> (<em>str</em>) &#8211; Style of prescreening of the timeseries for noise.
+<li><strong>screening</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Style of prescreening of the timeseries for noise.
 Options are &#8216;RLM&#8217; or &#8216;LOWESS&#8217; (default: RLM)</li>
-<li><strong>screening_crit</strong> (<em>float, optional</em>) &#8211; critical value for multitemporal
+<li><strong>screening_crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; critical value for multitemporal
 noise screening (default: 400.0)</li>
-<li><strong>remove_noise</strong> (<em>bool, optional</em>) &#8211; Remove observation if change is not
+<li><strong>remove_noise</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) &#8211; Remove observation if change is not
 detected but first observation is above threshold (if it looks like
 noise) (default: True)</li>
-<li><strong>green_band</strong> (<em>int, optional</em>) &#8211; Index of green band in Y for
+<li><strong>green_band</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Index of green band in <code class="docutils literal"><span class="pre">Y</span></code> for
 multitemporal masking (default: 1)</li>
-<li><strong>swir1_band</strong> (<em>int, optional</em>) &#8211; Index of first SWIR band in Y for
+<li><strong>swir1_band</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Index of first SWIR band in <code class="docutils literal"><span class="pre">Y</span></code> for
 multitemporal masking (default: 4)</li>
-<li><strong>dynamic_rmse</strong> (<em>bool, optional</em>) &#8211; Vary RMSE as a function of day of year
+<li><strong>dynamic_rmse</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) &#8211; Vary RMSE as a function of day of year
 (default: False)</li>
-<li><strong>slope_test</strong> (<em>float or bool, optional</em>) &#8211; Use an additional slope test to
+<li><strong>slope_test</strong> (<em>float or bool</em>) &#8211; Use an additional slope test to
 assess the suitability of the training period. A value of True
 enables the test and uses the <cite>threshold</cite> parameter as the test
 criterion. False turns off the test or a float value enables the
 test but overrides the test criterion threshold. (default: False)</li>
-<li><strong>idx_slope</strong> (<em>int</em>) &#8211; if <code class="docutils literal"><span class="pre">slope_test</span></code> is enabled, provide index of <code class="docutils literal"><span class="pre">X</span></code>
+<li><strong>idx_slope</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; if <code class="docutils literal"><span class="pre">slope_test</span></code> is enabled, provide index of <code class="docutils literal"><span class="pre">X</span></code>
 containing slope term (default: 1)</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="yatsm.algorithms.ccdc.CCDCesque.can_monitor">
-<code class="descname">can_monitor</code><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.can_monitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine if timeseries can monitor the future consecutive obs</p>
+<dl class="method">
+<dt id="yatsm.algorithms.ccdc.CCDCesque._get_dynamic_rmse">
+<code class="descname">_get_dynamic_rmse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque._get_dynamic_rmse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque._get_dynamic_rmse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the dynamic RMSE for each model</p>
+<p>Dynamic RMSE refers to the Root Mean Squared Error calculated using
+<cite>self.min_obs</cite> number of observations closest in day of year to the
+observation <cite>self.consecutive</cite> steps into the future. Goal is to
+reduce false-positives during seasonal transitions (high variance in
+the signal) while decreasing omission during stable times of year.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dynamic RMSE of each tested model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)">numpy.ndarray</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.ccdc.CCDCesque._get_model_rmse">
+<code class="descname">_get_model_rmse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque._get_model_rmse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque._get_model_rmse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the normal RMSE of each fitted model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">RMSE of each tested model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)">numpy.ndarray</a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -202,19 +239,23 @@ containing slope term (default: 1)</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<em>np.ndarray</em>) &#8211; design matrix (number of observations x number of
-features)</li>
-<li><strong>Y</strong> (<em>np.ndarray</em>) &#8211; independent variable matrix (number of series x
+<li><strong>X</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><em>numpy.ndarray</em></a>) &#8211; design matrix (number of observations x number
+of features)</li>
+<li><strong>Y</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><em>numpy.ndarray</em></a>) &#8211; independent variable matrix (number of series x
 number of observations)</li>
-<li><strong>dates</strong> (<em>np.ndarray</em>) &#8211; ordinal dates for each observation in X/Y</li>
+<li><strong>dates</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)"><em>numpy.ndarray</em></a>) &#8211; ordinal dates for each observation in X/Y</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">NumPy structured array containing timeseries
-model attribute information</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>NumPy structured array containing timeseries</dt>
+<dd><p class="first last">model attribute information</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)">numpy.ndarray</a></p>
 </td>
 </tr>
 </tbody>
@@ -225,6 +266,103 @@ model attribute information</p>
 <dt id="yatsm.algorithms.ccdc.CCDCesque.monitor">
 <code class="descname">monitor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque.monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.monitor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Monitor for changes in time series</p>
+<p>The test criteria for CCDC can be represented as:</p>
+<div class="math">
+\[\sum_{i=0}^{\color{red}{consec}}
+    I \left(
+    \sqrt{
+        \sum_{b\in \color{red}{B_{test}}}
+            \left(
+            \frac
+                {\hat\rho_{b,i} - \rho_{b,i}}
+                {{RMSE}_b^{\color{red}{*}}}
+            \right)
+            ^2
+    } &gt; \color{red}{T_{crit}}
+    \right)
+    &gt; \color{red}{consec}\]</div>
+<p>where the symbols in red are model hyperparameters:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><span class="math">\(\color{red}{consec}\)</span>:
+<a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.consecutive" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-paramref docutils literal"><span class="pre">consecutive</span></code></a></p>
+</li>
+<li><p class="first"><span class="math">\(\color{red}{B_{test}}\)</span>:
+<a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.test_indices" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-paramref docutils literal"><span class="pre">test_indices</span></code></a></p>
+</li>
+<li><p class="first"><span class="math">\(\color{red}{T_{crit}}\)</span>:
+<a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.threshold" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-paramref docutils literal"><span class="pre">threshold</span></code></a></p>
+</li>
+<li><p class="first"><span class="math">\({RMSE}_b^{\color{red}{*}}\)</span> depends on:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.dynamic_rmse" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-paramref docutils literal"><span class="pre">dynamic_rmse</span></code></a>:</p>
+<blockquote>
+<div><ul class="simple">
+<li>True: <a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque._get_dynamic_rmse" title="yatsm.algorithms.ccdc.CCDCesque._get_dynamic_rmse"><code class="xref py py-func docutils literal"><span class="pre">_get_dynamic_rmse()</span></code></a> is used for RMSE</li>
+<li>False: <a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque._get_model_rmse" title="yatsm.algorithms.ccdc.CCDCesque._get_model_rmse"><code class="xref py py-func docutils literal"><span class="pre">_get_model_rmse()</span></code></a> is used for RMSE</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.min_rmse" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-paramref docutils literal"><span class="pre">min_rmse</span></code></a></p>
+<blockquote>
+<div><ul class="simple">
+<li>If a <cite>float</cite> or <cite>int</cite> is given, override RMSE estimate
+if estimate is smaller than
+<a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.min_rmse" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-paramref docutils literal"><span class="pre">min_rmse</span></code></a></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p>If <a class="reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.remove_noise" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-paramref docutils literal"><span class="pre">remove_noise</span></code></a> is <cite>True</cite>,
+the first of <code class="docutils literal"><span class="pre">consecutive</span></code> observations will be removed if first
+scaled residual is above <code class="docutils literal"><span class="pre">threshold</span></code> but not all <code class="docutils literal"><span class="pre">consecutive</span></code>
+scaled residuals exceed <code class="docutils literal"><span class="pre">threshold</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.ccdc.CCDCesque.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset state information required for model fittings</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.algorithms.ccdc.CCDCesque.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train time series model if stability criteria are met</p>
+<p>Stability criteria (Equation 5 in Zhu and Woodcock, 2014) include a
+test on the change in reflectance over the training period (slope test)
+and a test on the magnitude of the residuals for the first and last
+observations in the training period. Training periods with large slopes
+can indicate that a disturbance process is still in progress. Large
+residuals on the first or last observations have high leverage on the
+estimated regression and should be excluded from the training period.</p>
+<ol class="arabic simple">
+<li>Slope test:</li>
+</ol>
+<div class="math">
+\[\frac{1}{n}\sum\limits_{b\in B_{test}}\frac{
+    \left|\beta_{slope,b}(t_{end}-t_{start})\right|}
+    {RMSE_b} &gt; T_{crit}\]</div>
+<ol class="arabic simple" start="2">
+<li>First and last residual tests:</li>
+</ol>
+<div class="math">
+\[ \begin{align}\begin{aligned}\frac{1}{n}\sum\limits_{b\in B_{test}}\frac{
+    \left|\hat\rho_{b,i=1} - \rho_{b,i=1}\right|}
+    {RMSE_b} &gt; T_{crit}\\\frac{1}{n}\sum\limits_{b\in B_{test}}\frac{
+    \left|\hat\rho_{b,i=N} - \rho_{b,i=N}\right|}
+    {RMSE_b} &gt; T_{crit}\end{aligned}\end{align} \]</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.algorithms.ccdc.CCDCesque.can_monitor">
+<code class="descname">can_monitor</code><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.can_monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if timeseries can monitor the future consecutive obs</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -235,26 +373,23 @@ model attribute information</p>
 <dl class="attribute">
 <dt id="yatsm.algorithms.ccdc.CCDCesque.record_template">
 <code class="descname">record_template</code><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.record_template" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a YATSM record template for features in X and series in Y</p>
+<dd><p>YATSM record template for features in X and series in Y</p>
 <p>Record template will set <cite>px</cite> and <cite>py</cite> if defined as class attributes.
 Otherwise <cite>px</cite> and <cite>py</cite> coordinates will default to 0.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">NumPy structured array containing a template of a YATSM
-record</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>NumPy structured array containing a template of a</dt>
+<dd>YATSM record</dd>
+</dl>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.11)">numpy.ndarray</a></td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="yatsm.algorithms.ccdc.CCDCesque.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset state information required for model fittings</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -275,35 +410,6 @@ record</td>
 <dd><p>Return time span (in days) between start and end of model</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="yatsm.algorithms.ccdc.CCDCesque.train">
-<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/ccdc.html#CCDCesque.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Train time series model if stability criteria are met</p>
-<p>Stability criteria (Equation 5 in Zhu and Woodcock, 2014) include a
-test on the change in reflectance over the training period (slope test)
-and a test on the magnitude of the residuals for the first and last
-observations in the training period. Training periods with large slopes
-can indicate that a disturbance process is still in progress. Large
-residuals on the first or last observations have high leverage on the
-estimated regression and should be excluded from the training period.</p>
-<ol class="arabic simple">
-<li>Slope test:</li>
-</ol>
-<div class="math">
-\[\begin{split}\frac{1}{n}\sum\limits_{b\in B_{test}}\frac{
-    \left|\beta_{slope,b}(t_{end}-t_{start})\right|}
-    {RMSE_b} &gt; T_{crit}\end{split}\]</div>
-<ol class="arabic simple" start="2">
-<li>First and last residual tests:</li>
-</ol>
-<div class="math">
-\[\begin{split}\frac{1}{n}\sum\limits_{b\in B_{test}}\frac{
-    \left|\hat\rho_{b,i=1} - \rho_{b,i=1}\right|}
-    {RMSE_b} &gt; T_{crit}\end{split}\]\[\begin{split}\frac{1}{n}\sum\limits_{b\in B_{test}}\frac{
-    \left|\hat\rho_{b,i=N} - \rho_{b,i=N}\right|}
-    {RMSE_b} &gt; T_{crit}\end{split}\]</div>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -318,8 +424,8 @@ estimated regression and should be excluded from the training period.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -341,7 +447,7 @@ estimated regression and should be excluded from the training period.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

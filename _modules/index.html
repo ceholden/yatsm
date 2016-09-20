@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; YATSM 0.6.0dev documentation</title>
+  <title>Overview: module code &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -143,16 +147,20 @@
 <li><a href="yatsm/algorithms/postprocess.html">yatsm.algorithms.postprocess</a></li>
 <li><a href="yatsm/algorithms/yatsm.html">yatsm.algorithms.yatsm</a></li>
 <li><a href="yatsm/cache.html">yatsm.cache</a></li>
-<li><a href="yatsm/classifiers.html">yatsm.classifiers</a></li>
-<ul><li><a href="yatsm/classifiers/diagnostics.html">yatsm.classifiers.diagnostics</a></li>
-</ul><li><a href="yatsm/cli/classify.html">yatsm.cli.classify</a></li>
-<li><a href="yatsm/cli/console.html">yatsm.cli.console</a></li>
+<li><a href="yatsm/classification.html">yatsm.classification</a></li>
+<ul><li><a href="yatsm/classification/batch.html">yatsm.classification.batch</a></li>
+<li><a href="yatsm/classification/diagnostics.html">yatsm.classification.diagnostics</a></li>
+<li><a href="yatsm/classification/roi.html">yatsm.classification.roi</a></li>
+</ul><li><a href="yatsm/cli/console.html">yatsm.cli.console</a></li>
 <li><a href="yatsm/cli/main.html">yatsm.cli.main</a></li>
 <li><a href="yatsm/cli/options.html">yatsm.cli.options</a></li>
 <li><a href="yatsm/cli/pixel.html">yatsm.cli.pixel</a></li>
 <li><a href="yatsm/cli/train.html">yatsm.cli.train</a></li>
+<li><a href="yatsm/config/_parse.html">yatsm.config._parse</a></li>
+<li><a href="yatsm/config/_util.html">yatsm.config._util</a></li>
 <li><a href="yatsm/config_parser.html">yatsm.config_parser</a></li>
 <li><a href="yatsm/errors.html">yatsm.errors</a></li>
+<li><a href="yatsm/io/_util.html">yatsm.io._util</a></li>
 <li><a href="yatsm/mapping/changes.html">yatsm.mapping.changes</a></li>
 <li><a href="yatsm/mapping/classification.html">yatsm.mapping.classification</a></li>
 <li><a href="yatsm/mapping/phenology.html">yatsm.mapping.phenology</a></li>
@@ -160,14 +168,19 @@
 <li><a href="yatsm/mapping/utils.html">yatsm.mapping.utils</a></li>
 <li><a href="yatsm/masking.html">yatsm.masking</a></li>
 <li><a href="yatsm/phenology/longtermmean.html">yatsm.phenology.longtermmean</a></li>
+<li><a href="yatsm/pipeline/_exec.html">yatsm.pipeline._exec</a></li>
+<li><a href="yatsm/pipeline/_task_validation.html">yatsm.pipeline._task_validation</a></li>
+<li><a href="yatsm/pipeline/tasks/change.html">yatsm.pipeline.tasks.change</a></li>
+<li><a href="yatsm/pipeline/tasks/preprocess.html">yatsm.pipeline.tasks.preprocess</a></li>
 <li><a href="yatsm/plots.html">yatsm.plots</a></li>
-<li><a href="yatsm/reader.html">yatsm.reader</a></li>
+<li><a href="yatsm/regression/cran.html">yatsm.regression.cran</a></li>
 <li><a href="yatsm/regression/design.html">yatsm.regression.design</a></li>
 <li><a href="yatsm/regression/diagnostics.html">yatsm.regression.diagnostics</a></li>
 <li><a href="yatsm/regression/packaged.html">yatsm.regression.packaged</a></li>
 <li><a href="yatsm/regression/pickles/serialize.html">yatsm.regression.pickles.serialize</a></li>
 <li><a href="yatsm/regression/recresid.html">yatsm.regression.recresid</a></li>
 <li><a href="yatsm/regression/robust_fit.html">yatsm.regression.robust_fit</a></li>
+<li><a href="yatsm/regression/structural_break.html">yatsm.regression.structural_break</a></li>
 <li><a href="yatsm/regression/transforms.html">yatsm.regression.transforms</a></li>
 <li><a href="yatsm/utils.html">yatsm.utils</a></li>
 <li><a href="yatsm/vegetation_indices.html">yatsm.vegetation_indices</a></li>
@@ -182,8 +195,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -205,7 +218,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

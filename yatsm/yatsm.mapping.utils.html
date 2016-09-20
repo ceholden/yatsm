@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.mapping.utils module &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.mapping.utils module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -84,15 +86,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -115,7 +119,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -151,22 +155,23 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>record</strong> (<em>np.ndarray</em>) &#8211; Saved model result</li>
-<li><strong>date</strong> (<em>int</em>) &#8211; Ordinal date to use when finding matching segments</li>
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Ordinal date to use when finding matching segments</li>
 <li><strong>after</strong> (<em>bool, optional</em>) &#8211; If date intersects a disturbed period, use next
 available time segment</li>
-<li><strong>before</strong> (<em>bool, optional</em>) &#8211; If date does not intersect a model, use previous
-non-disturbed time segment</li>
+<li><strong>before</strong> (<em>bool, optional</em>) &#8211; If date does not intersect a model, use
+previous non-disturbed time segment</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first"><em>tuple</em> &#8211;
-(int, np.ndarray) the QA value and indices of <cite>record</cite> containing</p>
-<blockquote class="last">
-<div><p>indices matching criteria. If <cite>before</cite> or <cite>after</cite> are specified,
-indices will be yielded in order of least desirability to allow
-overwriting &#8211; <cite>before</cite> indices, <cite>after</cite> indices, and intersecting
-indices.</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first"><em>tuple</em> &#8211;</p>
+<dl class="last docutils">
+<dt>(int, np.ndarray) the QA value and indices of <cite>record</cite></dt>
+<dd><p class="first last">containing indices matching criteria. If <cite>before</cite> or <cite>after</cite> are
+specified, indices will be yielded in order of least desirability
+to allow overwriting &#8211; <cite>before</cite> indices, <cite>after</cite> indices, and
+intersecting indices.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
@@ -182,25 +187,28 @@ indices.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>results</strong> (<em>list</em>) &#8211; Result filenames</li>
-<li><strong>bands</strong> (<em>list</em>) &#8211; Bands to describe for output</li>
-<li><strong>coefs</strong> (<em>list</em>) &#8211; Coefficients to describe for output</li>
+<li><strong>results</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) &#8211; Result filenames</li>
+<li><strong>bands</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) &#8211; Bands to describe for output</li>
+<li><strong>coefs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) &#8211; Coefficients to describe for output</li>
 <li><strong>prefix</strong> (<em>str, optional</em>) &#8211; Search for coef/rmse results with given prefix
 (default: &#8216;&#8217;)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Tuple containing <code class="docutils literal"><span class="pre">list</span></code> of indices for output bands and output
-coefficients, <code class="docutils literal"><span class="pre">bool</span></code> for outputting RMSE, <code class="docutils literal"><span class="pre">list</span></code> of coefficient
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>Tuple containing <code class="docutils literal"><span class="pre">list</span></code> of indices for output bands and output</dt>
+<dd><p class="first last">coefficients, <code class="docutils literal"><span class="pre">bool</span></code> for outputting RMSE, <code class="docutils literal"><span class="pre">list</span></code> of coefficient
 names, <code class="docutils literal"><span class="pre">str</span></code> design specification, and <code class="docutils literal"><span class="pre">OrderedDict</span></code>
 design_info (i_bands, i_coefs, use_rmse, design, design_info)</p>
+</dd>
+</dl>
+</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)">tuple</a></p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211;
-Raise KeyError when a required result output is missing
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#KeyError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> &#8211; Raise KeyError when a required result output is missing
 from the saved record structure</p>
 </td>
 </tr>
@@ -220,8 +228,8 @@ from the saved record structure</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:30:23 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -243,7 +251,7 @@ from the saved record structure</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

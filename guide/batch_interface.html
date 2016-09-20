@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Batch Interface &mdash; YATSM 0.6.0dev documentation</title>
+  <title>Batch Interface &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/>
         <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
         <link rel="prev" title="Model Configuration" href="configuration.html"/> 
 
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -86,8 +88,9 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Batch Interface</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Batch Interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#sun-grid-engine">Sun Grid Engine</a></li>
 </ul>
 </li>
@@ -95,9 +98,10 @@
 <li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -120,7 +124,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -148,17 +152,17 @@
 separately from other lines. In a multiprocessing situation, the total
 number of lines can be broken up among the <code class="docutils literal"><span class="pre">n</span></code> available CPUs. Before
 using the batch interface, make sure you already have a parameter file
-generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><span>Model Configuration</span></a>.</p>
+generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><span class="std std-ref">Model Configuration</span></a>.</p>
 <p>The batch interface which runs each line separately is
-<a class="reference internal" href="../scripts/yatsm_line.html#yatsm-line"><span>yatsm line</span></a>. It&#8217;s usage is:</p>
-<div class="highlight-text"><div class="highlight"><pre>$ yatsm line -h
-Usage: yatsm line [OPTIONS] &lt;config&gt; &lt;job_number&gt; &lt;total_jobs&gt;
+<a class="reference internal" href="../cli/yatsm_line.html#yatsm-line"><span class="std std-ref">yatsm line</span></a>. It&#8217;s usage is:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ yatsm line --help
+Usage: yatsm line <span class="o">[</span>OPTIONS<span class="o">]</span> &lt;config&gt; &lt;job_number&gt; &lt;total_jobs&gt;
 
 Options:
   --check_cache  Check that cache file contains matching data
   --resume       Do not overwrite preexisting results
-  --do-not-run   Do not run YATSM (useful for just caching data)
-  -h, --help     Show this message and exit.
+  --do-not-run   Do not run YATSM <span class="o">(</span>useful <span class="k">for</span> just caching data<span class="o">)</span>
+  --help         Show this message and exit.
 </pre></div>
 </div>
 <p>Let&#8217;s say our image stack contains 1,000 rows. If we use 50 total CPUs
@@ -167,9 +171,9 @@ to process the image stack, then each CPU will be responsible for only
 timeseries (e.g., to ignore any NODATA buffers around the images), the
 lines are divided up in sequence. Thus, job 5 of 50 total jobs would
 work on the lines:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ job</span><span class="o">=</span>5
-<span class="nv">$ n</span><span class="o">=</span>50
-<span class="nv">$ </span>seq -s , <span class="nv">$job</span> <span class="nv">$n</span> 1000
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">job</span><span class="o">=</span>5
+$ <span class="nv">n</span><span class="o">=</span>50
+$ seq -s , <span class="nv">$job</span> <span class="nv">$n</span> 1000
 5,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
 </pre></div>
 </div>
@@ -178,10 +182,10 @@ work on the lines:</p>
 <p>In the example of the compute cluster at Boston University which
 utilizes the Sun Grid Engine scheduler, one could run an image stack as
 follows:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ njob</span><span class="o">=</span>200
-<span class="nv">$ </span><span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span>200
+$ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
     qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span>24:00:00 -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
-        yatsm line --resume -v config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
+        yatsm -v line --resume config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
   <span class="k">done</span>
 </pre></div>
 </div>
@@ -192,8 +196,8 @@ of YATSM when logging to a file (e.g., in a <code class="docutils literal"><span
 output is flushed or written immediately to the log file. Be aware that the
 constant writing to the log file may incur a penalty cost. You can run
 YATSM jobs with unbuffered output as follows in the example for <code class="docutils literal"><span class="pre">yatsm</span> <span class="pre">line</span></code>:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span>24:00:00 -N yatsm -b y <span class="se">\</span>
-    <span class="nv">PYTHONUNBUFFERED</span><span class="o">=</span><span class="m">1</span> yatsm line --resume -v config.ini <span class="m">1</span> 1
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span>24:00:00 -N yatsm -b y <span class="se">\</span>
+    <span class="nv">PYTHONUNBUFFERED</span><span class="o">=</span><span class="m">1</span> yatsm -v line --resume config.ini <span class="m">1</span> 1
 </pre></div>
 </div>
 <p>One useful tip is to optimize the use of the CPU nodes by first transforming the
@@ -205,10 +209,10 @@ many individual image files.</p>
 <p>To accomplish this approach, the <code class="docutils literal"><span class="pre">--do-not-run</span></code> flag can be combined with a
 specific request for computer nodes with fast ethernet speeds,
 <code class="docutils literal"><span class="pre">-l</span> <span class="pre">eth_speed</span> <span class="pre">10</span></code>:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ njob</span><span class="o">=</span>16
-<span class="nv">$ </span><span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span>16
+$ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
     qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span>24:00:00 -l <span class="nv">eth_speed</span><span class="o">=</span><span class="m">10</span> -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
-        yatsm line --resume --do-not-run -v config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
+        yatsm -v line --resume --do-not-run config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
   <span class="k">done</span>
 </pre></div>
 </div>
@@ -234,8 +238,8 @@ specific request for computer nodes with fast ethernet speeds,
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -257,7 +261,7 @@ specific request for computer nodes with fast ethernet speeds,
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

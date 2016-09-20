@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Mapping Changes &mdash; YATSM 0.6.0dev documentation</title>
+  <title>Mapping Changes &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../index.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/>
         <link rel="next" title="Classification" href="classification.html"/>
         <link rel="prev" title="Mapping Derived Information" href="map_static.html"/> 
 
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -86,19 +88,21 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Mapping Changes</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mapping Changes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#docs-todo">Docs TODO</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -121,7 +125,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -145,13 +149,13 @@
             
   <div class="section" id="mapping-changes">
 <span id="guide-map-changes"></span><h1>Mapping Changes<a class="headerlink" href="#mapping-changes" title="Permalink to this headline">¶</a></h1>
-<p>To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the <a class="reference internal" href="../scripts/yatsm_changemap.html#yatsm-changemap"><span>yatsm changemap</span></a>.</p>
+<p>To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the <a class="reference internal" href="../cli/yatsm_changemap.html#yatsm-changemap"><span class="std std-ref">yatsm changemap</span></a>.</p>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>For example, consider these mapping situations:</p>
 <ol class="arabic">
 <li><p class="first">For each year from 2000 to 2010, create a map of the first change detected within the year:</p>
-<div class="highlight-python"><div class="highlight"><pre>for y1 in $(seq 2000 2010); do
+<div class="highlight-default"><div class="highlight"><pre><span></span>for y1 in $(seq 2000 2010); do
     y2=$(expr $y1 + 1)
     yatsm changemap first $y1-01-01 $y2-01-01 change_$y1-$y2.gtif
 done
@@ -159,7 +163,7 @@ done
 </div>
 </li>
 <li><p class="first">Create a map of the total number of changes, per pixel, for the 2000 to 2010 decade:</p>
-<div class="highlight-python"><div class="highlight"><pre>yatsm changemap num 2000-01-01 2010-01-01 changenumber_2000-2010.gtif
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">yatsm</span> <span class="n">changemap</span> <span class="n">num</span> <span class="mi">2000</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="n">changenumber_2000</span><span class="o">-</span><span class="mf">2010.</span><span class="n">gtif</span>
 </pre></div>
 </div>
 </li>
@@ -193,8 +197,8 @@ done
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:23:26 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -216,7 +220,7 @@ done
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

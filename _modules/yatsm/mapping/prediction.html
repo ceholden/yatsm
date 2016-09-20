@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.mapping.prediction &mdash; YATSM 0.6.0dev documentation</title>
+  <title>yatsm.mapping.prediction &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -28,9 +28,11 @@
   
 
   
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
 
   
-    <link rel="top" title="YATSM 0.6.0dev documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                0.6.0dev
+                0.7.dev0
               </div>
             
           
@@ -85,15 +87,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../scripts/scripts.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
 </ul>
 
             
@@ -141,26 +145,26 @@
            <div itemprop="articleBody">
             
   <h1>Source code for yatsm.mapping.prediction</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot; Functions relevant for mapping statistical model predictions or fits</span>
+<span></span><span class="sd">&quot;&quot;&quot; Functions relevant for mapping statistical model predictions or fits</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">patsy</span>
 
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">find_result_attributes</span><span class="p">,</span> <span class="n">find_indices</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_results</span><span class="p">,</span> <span class="n">iter_records</span>
-<span class="kn">from</span> <span class="nn">..regression.transforms</span> <span class="kn">import</span> <span class="n">harm</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">find_result_attributes</span><span class="p">,</span> <span class="n">find_indices</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">find_results</span><span class="p">,</span> <span class="n">iter_records</span>
+<span class="kn">from</span> <span class="nn">..regression.transforms</span> <span class="k">import</span> <span class="n">harm</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;yatsm&#39;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_coefficients"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.prediction.html#yatsm.mapping.get_coefficients">[docs]</a><span class="k">def</span> <span class="nf">get_coefficients</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
                      <span class="n">bands</span><span class="p">,</span> <span class="n">coefs</span><span class="p">,</span>
-                     <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">amplitude</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                     <span class="n">after</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                     <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;yatsm_r*&#39;</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                     <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">amplitude</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">after</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;yatsm_r*&#39;</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Output a raster with coefficients from CCDC</span>
 
 <span class="sd">    Args:</span>
@@ -190,89 +194,89 @@
 <span class="sd">            for the output dataset</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Find results</span>
+    <span class="c1"># Find results</span>
     <span class="n">records</span> <span class="o">=</span> <span class="n">find_results</span><span class="p">(</span><span class="n">result_location</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
 
-    <span class="c"># Find result attributes to extract</span>
+    <span class="c1"># Find result attributes to extract</span>
     <span class="n">i_bands</span><span class="p">,</span> <span class="n">i_coefs</span><span class="p">,</span> <span class="n">use_rmse</span><span class="p">,</span> <span class="n">coef_names</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">find_result_attributes</span><span class="p">(</span>
         <span class="n">records</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">coefs</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
 
-    <span class="c"># Process amplitude transform for seasonality coefficients</span>
+    <span class="c1"># Process amplitude transform for seasonality coefficients</span>
     <span class="k">if</span> <span class="n">amplitude</span><span class="p">:</span>
         <span class="n">harm_coefs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">i_coefs</span><span class="p">,</span> <span class="n">coef_names</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">r&#39;harm\(x, [0-9]+\)\[0]&#39;</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;harm\(x, [0-9]+\)\[0]&#39;</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
                 <span class="n">harm_coefs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-                <span class="n">coef_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;harm(.*)\[.*&#39;</span><span class="p">,</span> <span class="s">r&#39;amplitude\1&#39;</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-        <span class="c"># Remove sin term from each harmonic pair</span>
+                <span class="n">coef_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;harm(.*)\[.*&#39;</span><span class="p">,</span> <span class="s1">r&#39;amplitude\1&#39;</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="c1"># Remove sin term from each harmonic pair</span>
         <span class="n">i_coefs</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">i_coefs</span> <span class="k">if</span> <span class="n">c</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">harm_coefs</span><span class="p">]</span>
-        <span class="n">coef_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">coef_names</span> <span class="k">if</span> <span class="s">&#39;harm&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">n</span><span class="p">]</span>
+        <span class="n">coef_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">coef_names</span> <span class="k">if</span> <span class="s1">&#39;harm&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">n</span><span class="p">]</span>
 
     <span class="n">n_bands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">i_bands</span><span class="p">)</span>
     <span class="n">n_coefs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">i_coefs</span><span class="p">)</span>
     <span class="n">n_rmse</span> <span class="o">=</span> <span class="n">n_bands</span> <span class="k">if</span> <span class="n">use_rmse</span> <span class="k">else</span> <span class="mi">0</span>
 
-    <span class="c"># Setup output band names</span>
+    <span class="c1"># Setup output band names</span>
     <span class="n">band_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">_c</span> <span class="ow">in</span> <span class="n">coef_names</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">_b</span> <span class="ow">in</span> <span class="n">i_bands</span><span class="p">:</span>
-            <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;B&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">_b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">_c</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">use_rmse</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;B&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">_b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">_c</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">use_rmse</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">_b</span> <span class="ow">in</span> <span class="n">i_bands</span><span class="p">:</span>
-            <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;B&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">_b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_RMSE&#39;</span><span class="p">)</span>
+            <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;B&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">_b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_RMSE&#39;</span><span class="p">)</span>
     <span class="n">n_qa</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
         <span class="n">n_qa</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;SegmentQAQC&#39;</span><span class="p">)</span>
+        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SegmentQAQC&#39;</span><span class="p">)</span>
     <span class="n">n_out_bands</span> <span class="o">=</span> <span class="n">n_bands</span> <span class="o">*</span> <span class="n">n_coefs</span> <span class="o">+</span> <span class="n">n_rmse</span> <span class="o">+</span> <span class="n">n_qa</span>
 
-    <span class="n">_coef</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;coef&#39;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="s">&#39;coef&#39;</span>
-    <span class="n">_rmse</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;rmse&#39;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="s">&#39;rmse&#39;</span>
+    <span class="n">_coef</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;coef&#39;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="s1">&#39;coef&#39;</span>
+    <span class="n">_rmse</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;rmse&#39;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="s1">&#39;rmse&#39;</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Allocating memory...&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Allocating memory...&#39;</span><span class="p">)</span>
     <span class="n">raster</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">n_out_bands</span><span class="p">),</span>
                      <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">*</span> <span class="n">ndv</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Processing results&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing results&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="n">warn_on_empty</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">_qa</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">find_indices</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="n">before</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">n_coefs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c"># Normalize intercept to mid-point in time segment</span>
+                <span class="c1"># Normalize intercept to mid-point in time segment</span>
                 <span class="n">rec</span><span class="p">[</span><span class="n">_coef</span><span class="p">][</span><span class="n">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+=</span> <span class="p">(</span>
-                    <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">])</span> <span class="o">/</span>
+                    <span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">])</span> <span class="o">/</span>
                     <span class="mf">2.0</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> \
                     <span class="n">rec</span><span class="p">[</span><span class="n">_coef</span><span class="p">][</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
-                <span class="c"># If we want amplitude, calculate it</span>
+                <span class="c1"># If we want amplitude, calculate it</span>
                 <span class="k">if</span> <span class="n">amplitude</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">harm_coef</span> <span class="ow">in</span> <span class="n">harm_coefs</span><span class="p">:</span>
                         <span class="n">rec</span><span class="p">[</span><span class="n">_coef</span><span class="p">][</span><span class="n">index</span><span class="p">,</span> <span class="n">harm_coef</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
                             <span class="n">rec</span><span class="p">[</span><span class="n">_coef</span><span class="p">][</span><span class="n">index</span><span class="p">,</span> <span class="n">harm_coef</span><span class="p">:</span><span class="n">harm_coef</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="p">:],</span>
                             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-                <span class="c"># Extract coefficients</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
-                       <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="p">:</span><span class="n">n_coefs</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">]</span> <span class="o">=</span>\
+                <span class="c1"># Extract coefficients</span>
+                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
+                       <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="p">:</span><span class="n">n_coefs</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">]</span> <span class="o">=</span>\
                     <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="n">_coef</span><span class="p">][</span><span class="n">index</span><span class="p">][:,</span> <span class="n">i_coefs</span><span class="p">,</span> <span class="p">:][:,</span> <span class="p">:,</span> <span class="n">i_bands</span><span class="p">],</span>
                                <span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">n_coefs</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">))</span>
 
             <span class="k">if</span> <span class="n">use_rmse</span><span class="p">:</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
+                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
                        <span class="n">n_coefs</span> <span class="o">*</span> <span class="n">n_bands</span><span class="p">:</span><span class="n">n_out_bands</span> <span class="o">-</span> <span class="n">n_qa</span><span class="p">]</span> <span class="o">=</span>\
                     <span class="n">rec</span><span class="p">[</span><span class="n">_rmse</span><span class="p">][</span><span class="n">index</span><span class="p">][:,</span> <span class="n">i_bands</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_qa</span>
+                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_qa</span>
 
     <span class="k">return</span> <span class="n">raster</span><span class="p">,</span> <span class="n">band_names</span></div>
 
 
 <div class="viewcode-block" id="get_prediction"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.prediction.html#yatsm.mapping.get_prediction">[docs]</a><span class="k">def</span> <span class="nf">get_prediction</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
-                   <span class="n">bands</span><span class="o">=</span><span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span>
-                   <span class="n">after</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                   <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&#39;yatsm_r*&#39;</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                   <span class="n">bands</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                   <span class="n">after</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">ndv</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;yatsm_r*&#39;</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Output a raster with the predictions from model fit for a given date</span>
 
 <span class="sd">    Args:</span>
@@ -298,50 +302,50 @@
 <span class="sd">            for each pixel</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Find results</span>
+    <span class="c1"># Find results</span>
     <span class="n">records</span> <span class="o">=</span> <span class="n">find_results</span><span class="p">(</span><span class="n">result_location</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
 
-    <span class="c"># Find result attributes to extract</span>
+    <span class="c1"># Find result attributes to extract</span>
     <span class="n">i_bands</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">design</span><span class="p">,</span> <span class="n">design_info</span> <span class="o">=</span> <span class="n">find_result_attributes</span><span class="p">(</span>
-        <span class="n">records</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="n">records</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
 
     <span class="n">n_bands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">i_bands</span><span class="p">)</span>
-    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Band_{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bands</span><span class="p">)]</span>
+    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Band_</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bands</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
         <span class="n">n_bands</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;SegmentQAQC&#39;</span><span class="p">)</span>
+        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SegmentQAQC&#39;</span><span class="p">)</span>
     <span class="n">n_i_bands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">i_bands</span><span class="p">)</span>
 
-    <span class="c"># Create X matrix from date -- ignoring categorical variables</span>
-    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">r&#39;.*C\(.*\).*&#39;</span><span class="p">,</span> <span class="n">design</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Categorical variable found in design matrix not used&#39;</span>
-                       <span class="s">&#39; in predicted image estimate&#39;</span><span class="p">)</span>
-    <span class="n">design</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;[\+\-][\ ]+C\(.*\)&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">design</span><span class="p">)</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">})</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    <span class="c1"># Create X matrix from date -- ignoring categorical variables</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">r&#39;.*C\(.*\).*&#39;</span><span class="p">,</span> <span class="n">design</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Categorical variable found in design matrix not used&#39;</span>
+                       <span class="s1">&#39; in predicted image estimate&#39;</span><span class="p">)</span>
+    <span class="n">design</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;[\+\-][\ ]+C\(.*\)&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">design</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">})</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 
     <span class="n">i_coef</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">design_info</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">&#39;C\(.*\)&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">design_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;C\(.*\)&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
             <span class="n">i_coef</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="n">i_coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">i_coef</span><span class="p">)</span>
+    <span class="n">i_coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">i_coef</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Allocating memory&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Allocating memory&#39;</span><span class="p">)</span>
     <span class="n">raster</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">n_bands</span><span class="p">),</span>
                      <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Processing results&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing results&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="n">warn_on_empty</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">_qa</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">find_indices</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="n">before</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="c"># Calculate prediction</span>
-            <span class="n">_coef</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span>\
+            <span class="c1"># Calculate prediction</span>
+            <span class="n">_coef</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span>\
                 <span class="n">take</span><span class="p">(</span><span class="n">i_coef</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">i_bands</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="p">:</span><span class="n">n_i_bands</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="p">:</span><span class="n">n_i_bands</span><span class="p">]</span> <span class="o">=</span> \
                 <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">_coef</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_qa</span>
+                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_qa</span>
 
     <span class="k">return</span> <span class="n">raster</span><span class="p">,</span> <span class="n">band_names</span></div>
 </pre></div>
@@ -355,8 +359,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2015, Chris Holden.
-      Last updated on Mon 21 Dec 2015 02:32:13 AM EST.
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
 
     </p>
   </div>
@@ -378,7 +382,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.6.0dev',
+            VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

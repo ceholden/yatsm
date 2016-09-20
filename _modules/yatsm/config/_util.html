@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.config._util &mdash; YATSM 0.7.dev0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.dev0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>yatsm.config._util</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/config/_util.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.config._util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Utilities for configuration file validation via jsonschema</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">jsonschema</span> <span class="k">import</span> <span class="n">Draft4Validator</span><span class="p">,</span> <span class="n">validators</span>
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">extend_with_default</span><span class="p">(</span><span class="n">validator_cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Applies default field from jsonschema</span>
+
+<span class="sd">    Copied, with modificatios, from python-jsonschema FAQ. See:</span>
+<span class="sd">    https://python-jsonschema.readthedocs.io/en/latest/faq/#why-doesn-t-my-schema-that-has-a-default-property-actually-set-the-default-on-my-instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">validate_props</span> <span class="o">=</span> <span class="n">validator_cls</span><span class="o">.</span><span class="n">VALIDATORS</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">set_defaults</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">subschema</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">properties</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;default&#39;</span> <span class="ow">in</span> <span class="n">subschema</span><span class="p">:</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">subschema</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">validate_props</span><span class="p">(</span><span class="n">validator</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">error</span>
+
+    <span class="k">return</span> <span class="n">validators</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">validator_cls</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="n">set_defaults</span><span class="p">})</span>
+
+
+<span class="c1">#: Draft4Validator: A Draft 4 validator that applies defaults to properties</span>
+<span class="c1">#                   when available</span>
+<span class="n">DefaultValidatingDraft4Validator</span> <span class="o">=</span> <span class="n">extend_with_default</span><span class="p">(</span><span class="n">Draft4Validator</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">validate_with_defaults</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Essentially, just `jsonschema.validate` called with instance of</span>
+<span class="sd">    :ref:`DefaultValidatingDraft4Validator`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict): Configuration to validate</span>
+<span class="sd">        schema (dict): Schema -- properties defining a `default` will have</span>
+<span class="sd">            this default value applied if the property is missing in `config`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: `config`, validated with default values added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DefaultValidatingDraft4Validator</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config</span>
+
+
+<div class="viewcode-block" id="expand_envvars"><a class="viewcode-back" href="../../../yatsm/yatsm.config.html#yatsm.config.expand_envvars">[docs]</a><span class="k">def</span> <span class="nf">expand_envvars</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Recursively convert lookup that look like environment vars in a dict</span>
+
+<span class="sd">    This function things that environmental variables are values that begin</span>
+<span class="sd">    with `$` and are evaluated with :func:`os.path.expandvars`. No exception</span>
+<span class="sd">    will be raised if an environment variable is not set.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d (dict): expand environment variables used in the values of this</span>
+<span class="sd">            dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: input dictionary with environment variables expanded</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">check_envvar</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Warn if value looks un-expanded &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s1">&#39;$&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Config key=value pair might still contain &#39;</span>
+                           <span class="s1">&#39;environment variables: &quot;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+    <span class="n">_d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">_d</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">_d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">expand_envvars</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">_d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">check_envvar</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">_d</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">n_v</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">_v</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">_v</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span>
+                    <span class="n">check_envvar</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">_v</span><span class="p">)</span>
+                <span class="n">n_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span>
+            <span class="n">_d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_v</span>
+    <span class="k">return</span> <span class="n">_d</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2016, Chris Holden.
+      Last updated on Sep 20, 2016, 10:02:01 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
