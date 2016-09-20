@@ -223,7 +223,9 @@ class CCDCesque(YATSM):
                 self.here += 1
 
             # Ensure all bands are fit in case we can't monitor
-            self._update_model()
+            # First check if there are enough obs to estimate model
+            if self.span_index > self.n_features:
+                self._update_model()
 
             while self.monitoring and self.can_monitor:
                 # Update model if required
