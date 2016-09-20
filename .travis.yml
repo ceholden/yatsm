@@ -43,6 +43,7 @@ after_success:
     - coverage report
     - coveralls
     # Docs
+    - source activate test
     - pip install -r docs/requirements-docs.txt
     - sphinx-apidoc -f -e -o docs/source/yatsm yatsm/
     - bash docs/scripts/deploy-to-gh-pages.sh
@@ -52,6 +53,6 @@ before_cache:
 env:
     global:
         - GITHUB_REPO: "github.com/ceholden/yatsm.git"
-        - secure: "HqfccLL7/rk+MfQsvvHOZamBYhMBNPuhhqVA/LsjgozBmRa+zoIn4NBLO2qnACiFQV18tBEqHnlLu5XiaNe7n0TyvIch0VNQriPTdplx3W3Xw4XDcMlUg+3zvI6VyDklSA4mu/aSgkHlFewQZbKB44H0cerqm+hwJa+jKm0nLEM="
+        - secure: "wUWSm7rzyESzMNdWKiQqGL3BB/BLFpktsqaK5y75ga3cB+v4jZ9c9B4lsQXTHY7QLjXZcp8oY61aXgX+3D9yw3RNcSR+aOj9mHUMqbUjjKNRcV2M0o7Vqklo8vSL2lIaZ9RKV1TOoOprOW5FgKVzRwnlcoaJY6RVMv1f8JcthKg="
 notifications:
     email: false
