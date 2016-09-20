@@ -45,7 +45,7 @@ after_success:
     # Docs
     - pip install -r docs/requirements-docs.txt
     - sphinx-apidoc -f -e -o docs/source/yatsm yatsm/
-    - bash docs/deploy-to-gh-pages.sh
+    - bash docs/scripts/deploy-to-gh-pages.sh
 before_cache:
     # Deactivate conda so we use system 'curl'
     - source deactivate
