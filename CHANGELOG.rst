@@ -14,6 +14,7 @@ Fixed
 ~~~~~
 
 - ``CCDCesque``: Fixed case in which bands not used as "test indices" would not have time series models estimated (i.e., no `coef` or `rmse`) if the time series ends immediately after training `#88 <https://github.com/ceholden/yatsm/issues/88>`_
+- ``CCDCesque``: Fixed for case when a model refit would try to take place despite n < p (`commit <https://github.com/ceholden/yatsm/commit/5c27bad3f394e35166ae94e3663692ecd7bcfe43>`__)
 - ``RLM``: Fixed divide by zero error when ``n == p`` (number of observations equals number of parameters estimated)
 
 `v0.6.0 <https://github.com/ceholden/yatsm/compare/v0.5.5...v0.6.0>`__ - 2016-04-22
