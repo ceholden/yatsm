@@ -10,32 +10,21 @@ Documentation built using [Sphinx](http://sphinx-doc.org/) and hosted on [Github
 You can build the HTML files for the YATSM documentation using Sphinx. First, make sure the dependencies for YATSM's documentation are installed by `pip` installing the `docs/requirements.txt` file:
 
 ``` bash
-pip install -r docs/requirements.txt
+pip install -r requirements.txt
 ```
 
 With Sphinx and other packages installed, use the `Makefile` to regenerate the HTML content:
 
 ``` bash
-cd docs/
 make html
 ```
-
-You can now view the documentation you build using Sphinx by launching a web server and connecting to it using a web browser. For example, we can use the [`SimpleHTTPServer`](https://docs.python.org/2/library/simplehttpserver.html) or [`http.server`](https://docs.python.org/3/library/http.server.html) modules in Python 2 or 3, respectively, to host our documentation:
-
-``` bash
-python3 -m 'http.server'
-# OR
-python2 -m 'SimpleHTTPServer'
-```
-
-By default, your content will be hosted at `localhost:8000`.
 
 ### API
 
 If you have written any code or changed the docstrings in any code, you will need to update the references to the code in the documentation. Regenerate API module information for Sphinx
 
 ``` bash
-$ sphinx-apidoc -f -e -o docs/yatsm yatsm/
+$ sphinx-apidoc -f -e -o source/yatsm ../yatsm/
 ```
 
 ### Utilities

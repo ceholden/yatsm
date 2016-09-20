@@ -1,7 +1,7 @@
-yatsm.io.stack_line_readers module
+yatsm.pipeline.tasks.change module
 ==================================
 
-.. automodule:: yatsm.io.stack_line_readers
+.. automodule:: yatsm.pipeline.tasks.change
     :members:
     :undoc-members:
     :show-inheritance:

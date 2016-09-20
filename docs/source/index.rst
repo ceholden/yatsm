@@ -54,6 +54,6 @@ Indices and tables
 References
 ----------
 
-.. bibliography:: static/index_refs.bib
+.. bibliography:: _static/index_refs.bib
    :style: unsrt
    :cited:

@@ -38,9 +38,20 @@ script:
     # See: http://stackoverflow.com/questions/26875191/analyzing-coverage-of-numba-wrapped-functions
     - NUMBA_DISABLE_JIT=1 coverage run --source yatsm -m py.test
 after_success:
+    # Report coverage
     - pip install coveralls
     - coverage report
     - coveralls
+    # Docs
+    - pip install -r docs/requirements-docs.txt
+    - sphinx-apidoc -f -e -o docs/source/yatsm yatsm/
+    - bash docs/deploy-to-gh-pages.sh
 before_cache:
     # Deactivate conda so we use system 'curl'
     - source deactivate
+env:
+    global:
+        - GITHUB_REPO: "github.com/ceholden/yatsm.git"
+        - secure: "HqfccLL7/rk+MfQsvvHOZamBYhMBNPuhhqVA/LsjgozBmRa+zoIn4NBLO2qnACiFQV18tBEqHnlLu5XiaNe7n0TyvIch0VNQriPTdplx3W3Xw4XDcMlUg+3zvI6VyDklSA4mu/aSgkHlFewQZbKB44H0cerqm+hwJa+jKm0nLEM="
+notifications:
+    email: false

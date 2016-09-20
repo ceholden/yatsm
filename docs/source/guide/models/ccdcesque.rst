@@ -9,6 +9,6 @@ A guide for the YATSM implementation of Continuous Classification and Change Det
 .. graphviz:: ccdcesque.dot
 
 
-.. bibliography:: ../../static/index_refs.bib
+.. bibliography:: ../../_static/index_refs.bib
    :style: plain
    :cited:

@@ -1,14 +1,12 @@
 yatsm.io package
 ================
 
-Submodules
-----------
+Subpackages
+-----------
 
 .. toctree::
 
-   yatsm.io.helpers
-   yatsm.io.readers
-   yatsm.io.stack_line_readers
+    yatsm.io.backends
 
 Module contents
 ---------------

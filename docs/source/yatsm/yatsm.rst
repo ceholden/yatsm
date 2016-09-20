@@ -7,11 +7,13 @@ Subpackages
 .. toctree::
 
     yatsm.algorithms
-    yatsm.classifiers
+    yatsm.classification
     yatsm.cli
+    yatsm.config
     yatsm.io
     yatsm.mapping
     yatsm.phenology
+    yatsm.pipeline
     yatsm.regression
 
 Submodules

@@ -1,7 +1,7 @@
-yatsm.classifiers.diagnostics module
+yatsm.pipeline.tasks.classify module
 ====================================
 
-.. automodule:: yatsm.classifiers.diagnostics
+.. automodule:: yatsm.pipeline.tasks.classify
     :members:
     :undoc-members:
     :show-inheritance:
