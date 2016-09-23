@@ -15,6 +15,7 @@ Subpackages
     yatsm.phenology
     yatsm.pipeline
     yatsm.regression
+    yatsm.results
 
 Submodules
 ----------
