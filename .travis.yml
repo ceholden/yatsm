@@ -29,7 +29,7 @@ install:
     - conda env create -n test -f environment.yaml
     - source activate test
     # Rest of dependencies
-    - "pip install -r requirements/dev.txt"
+    - "pip install -r tests/requirements.txt"
     # Install YATSM
     - "pip install -e ."
 script:
