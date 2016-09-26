@@ -1,4 +1,6 @@
+import numpy as np
 import tables as tb
+
 
 def dtype_to_table(dtype):
     """ Convert a NumPy dtype to a PyTables Table description
@@ -22,5 +24,5 @@ def dtype_to_table(dtype):
             tb_dtype, byteorder = tb.descr_from_dtype(np.dtype([(name, dt)]))
         _tb_dtype = tb_dtype._v_colobjects
         _tb_dtype[name]._v_pos = idx
-        desc[name] = _tb_dtype
+        desc.update(_tb_dtype)
     return desc
