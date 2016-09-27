@@ -22,5 +22,7 @@ def pixel_CCDCesque(work, require, output, **config):
                       data=arr,
                       eval_env=patsy.EvalEnvironment.capture())
 
-    work['record'][output['record'][0]] = model.fit(X, arr.values, ordinal)
+    model = model.fit(X, arr.values, ordinal)
+    work['record'][output['record'][0]] = model.record
+
     return work

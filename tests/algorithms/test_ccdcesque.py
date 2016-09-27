@@ -40,8 +40,8 @@ def model(request):
 @pytest.fixture(scope='function')
 def record(masked_ts, model):
     X, Y, ordinal = masked_ts['X'], masked_ts['Y'], masked_ts['dates']
-    record = model.fit(X, Y[:-1, :], ordinal)
-    return record
+    model = model.fit(X, Y[:-1, :], ordinal)
+    return model.record
 
 
 def test_CCDCesque_changedates(record):

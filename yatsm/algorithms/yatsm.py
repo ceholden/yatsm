@@ -184,8 +184,7 @@ class YATSM(object):
             dates (numpy.ndarray): ordinal dates for each observation in X/Y
 
         Returns:
-            numpy.ndarray: NumPy structured array containing timeseries
-                model attribute information
+            cls: Return ``self``
 
         """
         raise NotImplementedError('Subclasses should implement fit method')
