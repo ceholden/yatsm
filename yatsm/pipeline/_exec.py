@@ -44,9 +44,10 @@ def setup_pipeline(config, pipe, overwrite=True):
         try:
             func = PIPELINE_TASKS[config[task]['task']]
         except KeyError as exc:
-            logger.error('Unknown pipeline task "{}" referenced in "{}"'
-                         .format(config[task]['task'], task))
-            raise
+            msg = 'Unknown pipeline task "{}" referenced in "{}"'.format(
+                config[task]['task'], task)
+            logger.error(msg)
+            raise KeyError(msg)
 
         is_eager = getattr(func, 'is_eager', False)
         if is_eager and not halt_eager:
