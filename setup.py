@@ -91,15 +91,15 @@ install_requires = [
     'GDAL',
     'shapely',
     'xarray',
-    'pytables',
+    'tables',
     'dask',
     'click',
     'click_plugins',
     'pyyaml',
     'jsonschema',
-    'pytables',
+    'tables',
     'decorator',
-    'toposort'
+    'toposort',
     'matplotlib',
 ]
 
