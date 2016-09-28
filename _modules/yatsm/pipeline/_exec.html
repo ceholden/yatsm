@@ -191,9 +191,10 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">PIPELINE_TASKS</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="n">task</span><span class="p">][</span><span class="s1">&#39;task&#39;</span><span class="p">]]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Unknown pipeline task &quot;</span><span class="si">{}</span><span class="s1">&quot; referenced in &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span>
-                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">task</span><span class="p">][</span><span class="s1">&#39;task&#39;</span><span class="p">],</span> <span class="n">task</span><span class="p">))</span>
-            <span class="k">raise</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Unknown pipeline task &quot;</span><span class="si">{}</span><span class="s1">&quot; referenced in &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">config</span><span class="p">[</span><span class="n">task</span><span class="p">][</span><span class="s1">&#39;task&#39;</span><span class="p">],</span> <span class="n">task</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">is_eager</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;is_eager&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">is_eager</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">halt_eager</span><span class="p">:</span>
@@ -238,7 +239,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Sep 23, 2016, 8:17:10 PM.
+      Last updated on Sep 28, 2016, 2:01:11 AM.
 
     </p>
   </div>

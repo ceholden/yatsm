@@ -330,9 +330,7 @@
 <span class="sd">            dates (numpy.ndarray): ordinal dates for each observation in X/Y</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            numpy.ndarray: NumPy structured array containing timeseries</span>
-<span class="sd">                model attribute information</span>
-
+<span class="sd">            CCDCesque: Returns ``self``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;X/Y/dates must have same number of observations&#39;</span><span class="p">)</span>
@@ -400,7 +398,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitoring</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span></div>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="CCDCesque.reset"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Reset state information required for model fittings</span>
@@ -744,7 +742,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Sep 23, 2016, 8:17:10 PM.
+      Last updated on Sep 28, 2016, 2:01:11 AM.
 
     </p>
   </div>

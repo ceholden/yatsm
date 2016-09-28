@@ -169,7 +169,9 @@
                       <span class="n">data</span><span class="o">=</span><span class="n">arr</span><span class="p">,</span>
                       <span class="n">eval_env</span><span class="o">=</span><span class="n">patsy</span><span class="o">.</span><span class="n">EvalEnvironment</span><span class="o">.</span><span class="n">capture</span><span class="p">())</span>
 
-    <span class="n">work</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">ordinal</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">ordinal</span><span class="p">)</span>
+    <span class="n">work</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span>
+
     <span class="k">return</span> <span class="n">work</span></div>
 </pre></div>
 
@@ -183,7 +185,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Sep 23, 2016, 8:17:10 PM.
+      Last updated on Sep 28, 2016, 2:01:11 AM.
 
     </p>
   </div>
