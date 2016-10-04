@@ -125,13 +125,13 @@ def recresid(X, y, span=None):
     _X = X.values if isinstance(X, pandas_like) else X
     _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()
 
-    rresid = _recresid(_X, _y, span)
+    rresid = _recresid(_X, _y, span)[span:]
 
     if isinstance(y, pandas_like):
         if isinstance(y, (pd.Series, pd.DataFrame)):
-            index = y.index
+            index = y.index[span:]
         elif isinstance(y, xr.DataArray):
-            index = y.to_series().index
+            index = y.to_series().index[span:]
         rresid = pd.Series(data=rresid, index=index, name='recresid')
 
     return rresid

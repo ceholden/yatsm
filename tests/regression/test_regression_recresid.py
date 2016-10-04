@@ -77,7 +77,9 @@ def test_regression_recresid_recresid(airquality):
     X = patsy.dmatrix('1 + SolarR + Wind + Temp', data=airquality)
 
     rr = recresid(X, y)
-    np.testing.assert_allclose(rr[X.shape[1]:], strucchange_rr)
+    np.testing.assert_allclose(rr, strucchange_rr)
+
+    assert False
 
     # pd.DataFrame
     y = airquality['Ozone']
@@ -85,9 +87,9 @@ def test_regression_recresid_recresid(airquality):
                       return_type='dataframe')
 
     rr = recresid(X, y)
-    np.testing.assert_allclose(rr[X.shape[1]:], strucchange_rr)
+    np.testing.assert_allclose(rr, strucchange_rr)
 
     # xarray
     y = xr.DataArray(y.squeeze(), coords={'time': y.index}, dims=['time'])
     rr = recresid(X, y)
-    np.testing.assert_allclose(rr[X.shape[1]:], strucchange_rr)
+    np.testing.assert_allclose(rr, strucchange_rr)
