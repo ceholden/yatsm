@@ -2,6 +2,7 @@
 """
 import numpy as np
 import pandas as pd
+import patsy
 import pytest
 import xarray as xr
 
@@ -15,7 +16,7 @@ except ImportError:
 else:
     has_rpy2 = True
 
-from yatsm.regression.structural_break import cusum_OLS
+from yatsm.regression import structural_break as sb
 
 
 @pytest.fixture('module')
@@ -77,11 +78,35 @@ def test_cusum_OLS(test_data, strucchange_cusum_OLS):
     y = test_data.pop('y')
     X = test_data
     # Test sending pandas
-    result = cusum_OLS(X, y)
+    result = sb.cusum_OLS(X, y)
     assert np.allclose(result.score, strucchange_cusum_OLS[0])
     assert np.allclose(result.pvalue, strucchange_cusum_OLS[1])
 
     # And ndarray and xarray
-    result = cusum_OLS(X.values, xr.DataArray(y, dims=['time']))
+    result = sb.cusum_OLS(X.values, xr.DataArray(y, dims=['time']))
     assert np.allclose(result.score, strucchange_cusum_OLS[0])
     assert np.allclose(result.pvalue, strucchange_cusum_OLS[1])
+
+
+def test_cusum_rec_efp_sctest_pvalue(airquality):
+    y = airquality['Ozone'].values
+    X = patsy.dmatrix('1 + SolarR + Wind + Temp', data=airquality)
+
+    process = sb._cusum_rec_efp(X, y)
+    stat = sb._cusum_rec_sctest(process)
+    pvalue = sb._brownian_motion_pvalue(0.2335143, 1)
+
+    np.testing.assert_allclose(process.sum(), 1.9446869, rtol=1e-5)
+    np.testing.assert_allclose(stat, 0.2335143, rtol=1e-5)
+    np.testing.assert_allclose(pvalue, 0.9657902, rtol=1e-4)
+
+
+@pytest.mark.parametrize(('alpha', 'truth'), [
+    # pvalues are obtained from statsmodels and are estimates
+    (0.10, 0.850),
+    (0.05, 0.948),
+    (0.01, 1.143)
+])
+def test_cusum_rec_test_crit(alpha, truth):
+    test = sb._cusum_rec_test_crit(alpha)
+    np.testing.assert_allclose(truth, test, rtol=1e-3)

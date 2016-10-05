@@ -3,17 +3,24 @@
 
 TODO: extract and move Chow test from "commission test" over to here
 """
+from __future__ import division
+
 from collections import namedtuple
 import logging
 
 import numpy as np
 import pandas as pd
+from scipy.optimize import brentq
 from scipy import stats
+from scipy.stats import norm
 import xarray as xr
 
+from _recresid import _recresid
 from ..accel import try_jit
 
 logger = logging.getLogger(__name__)
+
+pnorm = norm.cdf
 
 pandas_like = (pd.DataFrame, pd.Series, xr.DataArray)
 
@@ -53,8 +60,47 @@ def _cusum_OLS(X, y):
     return process, score, idx
 
 
+def _brownian_motion_pvalue(x, k):
+    """ Return pvalue for some given test statistic """
+    if x < 0.3:
+        p = 1 - 0.1464 * x
+    else:
+        p = 2 * (1 -
+                 pnorm(3 * x) +
+                 np.exp(-4 * x ** 2) * (pnorm(x) + pnorm(5 * x) - 1) -
+                 np.exp(-16 * x ** 2) * (1 - pnorm(x)))
+    return 1 - (1 - p) ** k
+
+
+def _cusum_rec_test_crit(alpha):
+    """ Return critical test statistic value for some alpha """
+    return brentq(lambda _x: _brownian_motion_pvalue(_x, 1) -  alpha, 0, 20)
+
+
+@try_jit()
+def _cusum_rec_efp(X, y):
+    """ Equivalent to ``strucchange::efp`` for Rec-CUSUM """
+    # Run "efp"
+    n, k = X.shape
+    w = _recresid(X, y, k)[k:]
+    sigma = w.var(ddof=1) ** 0.5
+    w = np.concatenate((np.array([0]), w))
+    return np.cumsum(w) / (sigma * (n - k) ** 0.5)
+
+
+@try_jit(nopython=True, nogil=True)
+def _cusum_rec_sctest(x):
+    """ Equivalent to ``strucchange::sctest`` for Rec-CUSUM """
+    x = x[1:]
+    j = np.linspace(0, 1, x.size + 1)[1:]
+    x = x * 1 / (1 + 2 * j)
+    stat = np.abs(x).max()
+
+    return stat
+
+
 def cusum_OLS(X, y, alpha=0.05):
-    u""" CUSUM-OLS test for structural breaks
+    u""" OLS-CUSUM test for structural breaks
 
     Tested against R's ``strucchange`` package and is faster than
     the equivalent function in the ``statsmodels`` Python package when
@@ -92,3 +138,25 @@ def cusum_OLS(X, y, alpha=0.05):
 
     return CUSUMOLSResult(index=idx, score=score, cusum=cusum,
                           pvalue=pval, signif=score > crit)
+
+
+def cusum_recursive(X, y, alpha=0.05):
+    u""" Rec-CUSUM test for structural breaks
+
+    Tested against R's ``strucchange`` package.
+
+    Critical values for this test statistic are taken from:
+
+        A. Zeileis. p values and alternative boundaries for CUSUM tests.
+            Working Paper 78, SFB "Adaptive Information Systems and Modelling
+            in Economics and Management Science", December 2000b.
+    """
+    process = _cusum_rec_efp(X, y)
+    stat = _cusum_rec_sctest(process)
+    n, k = process.shape[0], 1
+    stat_pvalue = _brownian_motion_pvalue(stat, k)
+
+    pvalue_crit = _cusum_rec_test_crit(alpha)
+    if pvalue_crit < alpha:
+        boundary = (crit + (2 * crit * np.arange(0, n) / (n - 1)))
+        idx = np.where(np.abs(process) > boundary)
