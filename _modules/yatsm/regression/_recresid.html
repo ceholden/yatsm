@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.recresid &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.regression._recresid &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -32,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
     <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
@@ -130,11 +133,11 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-    <li>yatsm.regression.recresid</li>
+    <li>yatsm.regression._recresid</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/recresid.rst" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/regression/_recresid.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -144,7 +147,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for yatsm.regression.recresid</h1><div class="highlight"><pre>
+  <h1>Source code for yatsm.regression._recresid</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">u&quot;&quot;&quot; Recursive residuals computation</span>
 
@@ -206,7 +209,7 @@
     <span class="k">return</span> <span class="n">recresid</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">recvar</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="recresid"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.recresid.html#yatsm.regression.recresid">[docs]</a><span class="k">def</span> <span class="nf">recresid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">span</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="recresid"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.html#yatsm.regression.recresid">[docs]</a><span class="k">def</span> <span class="nf">recresid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">span</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return standardized recursive residuals for y ~ X</span>
 
 <span class="sd">    For a matrix :math:`X_t` of :math:`T` total observations of :math:`n`</span>
@@ -272,13 +275,13 @@
     <span class="n">_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">)</span> <span class="k">else</span> <span class="n">X</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">)</span> <span class="k">else</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
-    <span class="n">rresid</span> <span class="o">=</span> <span class="n">_recresid</span><span class="p">(</span><span class="n">_X</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">span</span><span class="p">)</span>
+    <span class="n">rresid</span> <span class="o">=</span> <span class="n">_recresid</span><span class="p">(</span><span class="n">_X</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">span</span><span class="p">)[</span><span class="n">span</span><span class="p">:]</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">index</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">span</span><span class="p">:]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">index</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">span</span><span class="p">:]</span>
         <span class="n">rresid</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">rresid</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;recresid&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">rresid</span></div>
@@ -294,7 +297,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Sep 28, 2016, 2:01:11 AM.
+      Last updated on Oct 7, 2016, 1:59:00 AM.
 
     </p>
   </div>

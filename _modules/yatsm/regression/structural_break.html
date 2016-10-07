@@ -32,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
     <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
@@ -150,17 +153,24 @@
 
 <span class="sd">TODO: extract and move Chow test from &quot;commission test&quot; over to here</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">brentq</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">norm</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
+<span class="kn">from</span> <span class="nn">_recresid</span> <span class="k">import</span> <span class="n">_recresid</span>
 <span class="kn">from</span> <span class="nn">..accel</span> <span class="k">import</span> <span class="n">try_jit</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">pnorm</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span>
 
 <span class="n">pandas_like</span> <span class="o">=</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">)</span>
 
@@ -200,8 +210,47 @@
     <span class="k">return</span> <span class="n">process</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span>
 
 
+<span class="k">def</span> <span class="nf">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return pvalue for some given test statistic &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.1464</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span>
+                 <span class="n">pnorm</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span>
+                 <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">pnorm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">pnorm</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span>
+                 <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">16</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pnorm</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="n">k</span>
+
+
+<span class="k">def</span> <span class="nf">_cusum_rec_test_crit</span><span class="p">(</span><span class="n">alpha</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return critical test statistic value for some alpha &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_x</span><span class="p">:</span> <span class="n">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span>  <span class="n">alpha</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+
+
+<span class="nd">@try_jit</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">_cusum_rec_efp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Equivalent to ``strucchange::efp`` for Rec-CUSUM &quot;&quot;&quot;</span>
+    <span class="c1"># Run &quot;efp&quot;</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">_recresid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="p">)[</span><span class="n">k</span><span class="p">:]</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]),</span> <span class="n">w</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+
+<span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_cusum_rec_sctest</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Equivalent to ``strucchange::sctest`` for Rec-CUSUM &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">stat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">stat</span>
+
+
 <div class="viewcode-block" id="cusum_OLS"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.cusum_OLS">[docs]</a><span class="k">def</span> <span class="nf">cusum_OLS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
-    <span class="sd">u&quot;&quot;&quot; CUSUM-OLS test for structural breaks</span>
+    <span class="sd">u&quot;&quot;&quot; OLS-CUSUM test for structural breaks</span>
 
 <span class="sd">    Tested against R&#39;s ``strucchange`` package and is faster than</span>
 <span class="sd">    the equivalent function in the ``statsmodels`` Python package when</span>
@@ -239,6 +288,28 @@
 
     <span class="k">return</span> <span class="n">CUSUMOLSResult</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span> <span class="n">cusum</span><span class="o">=</span><span class="n">cusum</span><span class="p">,</span>
                           <span class="n">pvalue</span><span class="o">=</span><span class="n">pval</span><span class="p">,</span> <span class="n">signif</span><span class="o">=</span><span class="n">score</span> <span class="o">&gt;</span> <span class="n">crit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cusum_recursive"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.structural_break.html#yatsm.regression.structural_break.cusum_recursive">[docs]</a><span class="k">def</span> <span class="nf">cusum_recursive</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+    <span class="sd">u&quot;&quot;&quot; Rec-CUSUM test for structural breaks</span>
+
+<span class="sd">    Tested against R&#39;s ``strucchange`` package.</span>
+
+<span class="sd">    Critical values for this test statistic are taken from:</span>
+
+<span class="sd">        A. Zeileis. p values and alternative boundaries for CUSUM tests.</span>
+<span class="sd">            Working Paper 78, SFB &quot;Adaptive Information Systems and Modelling</span>
+<span class="sd">            in Economics and Management Science&quot;, December 2000b.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">_cusum_rec_efp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">stat</span> <span class="o">=</span> <span class="n">_cusum_rec_sctest</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span>
+    <span class="n">stat_pvalue</span> <span class="o">=</span> <span class="n">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="n">pvalue_crit</span> <span class="o">=</span> <span class="n">_cusum_rec_test_crit</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pvalue_crit</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">:</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="p">(</span><span class="n">crit</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">crit</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">process</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">boundary</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -251,7 +322,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Sep 28, 2016, 2:01:11 AM.
+      Last updated on Oct 7, 2016, 1:59:00 AM.
 
     </p>
   </div>

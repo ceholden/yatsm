@@ -32,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
@@ -184,7 +187,7 @@
 <dl class="function">
 <dt id="yatsm.regression.structural_break.cusum_OLS">
 <code class="descclassname">yatsm.regression.structural_break.</code><code class="descname">cusum_OLS</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/structural_break.html#cusum_OLS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.structural_break.cusum_OLS" title="Permalink to this definition">¶</a></dt>
-<dd><p>CUSUM-OLS test for structural breaks</p>
+<dd><p>OLS-CUSUM test for structural breaks</p>
 <p>Tested against R&#8217;s <code class="docutils literal"><span class="pre">strucchange</span></code> package and is faster than
 the equivalent function in the <code class="docutils literal"><span class="pre">statsmodels</span></code> Python package when
 Numba is installed.</p>
@@ -217,6 +220,25 @@ if the CUSUM score is significant at the given <code class="docutils literal"><s
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="yatsm.regression.structural_break.cusum_recursive">
+<code class="descclassname">yatsm.regression.structural_break.</code><code class="descname">cusum_recursive</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/structural_break.html#cusum_recursive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.structural_break.cusum_recursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rec-CUSUM test for structural breaks</p>
+<p>Tested against R&#8217;s <code class="docutils literal"><span class="pre">strucchange</span></code> package.</p>
+<p>Critical values for this test statistic are taken from:</p>
+<blockquote>
+<div><ol class="upperalpha">
+<li><dl class="first docutils">
+<dt>Zeileis. p values and alternative boundaries for CUSUM tests.</dt>
+<dd><p class="first last">Working Paper 78, SFB &#8220;Adaptive Information Systems and Modelling
+in Economics and Management Science&#8221;, December 2000b.</p>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
 </div>
 
 
@@ -230,7 +252,7 @@ if the CUSUM score is significant at the given <code class="docutils literal"><s
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Sep 28, 2016, 2:01:11 AM.
+      Last updated on Oct 7, 2016, 1:59:00 AM.
 
     </p>
   </div>

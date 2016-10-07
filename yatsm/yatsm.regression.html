@@ -32,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
@@ -166,7 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.design.html">yatsm.regression.design module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.diagnostics.html">yatsm.regression.diagnostics module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.packaged.html">yatsm.regression.packaged module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.regression.recresid.html">yatsm.regression.recresid module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.robust_fit.html">yatsm.regression.robust_fit module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.structural_break.html">yatsm.regression.structural_break module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.transforms.html">yatsm.regression.transforms module</a></li>
@@ -178,7 +180,7 @@
 <dl class="class">
 <dt id="yatsm.regression.RLM">
 <em class="property">class </em><code class="descclassname">yatsm.regression.</code><code class="descname">RLM</code><span class="sig-paren">(</span><em>M=CPUDispatcher(&lt;function bisquare&gt;)</em>, <em>tune=4.685</em>, <em>scale_est=CPUDispatcher(&lt;function mad&gt;)</em>, <em>scale_constant=0.6745</em>, <em>update_scale=True</em>, <em>maxiter=50</em>, <em>tol=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#RLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.RLM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.base.BaseEstimator.html#sklearn.base.BaseEstimator" title="(in scikit-learn v0.17.1)"><code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.base.BaseEstimator.html#sklearn.base.BaseEstimator" title="(in scikit-learn v0.18)"><code class="xref py py-class docutils literal"><span class="pre">sklearn.base.BaseEstimator</span></code></a></p>
 <p>Robust Linear Model using Iterative Reweighted Least Squares (RIRLS)</p>
 <p>Perform robust fitting regression via iteratively reweighted least squares
 according to weight function and tuning parameter.</p>
@@ -324,7 +326,7 @@ available pre-packaged regressors</p>
 
 <dl class="function">
 <dt id="yatsm.regression.recresid">
-<code class="descclassname">yatsm.regression.</code><code class="descname">recresid</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>span=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/recresid.html#recresid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.recresid" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.regression.</code><code class="descname">recresid</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>span=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/_recresid.html#recresid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.recresid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return standardized recursive residuals for y ~ X</p>
 <p>For a matrix <span class="math">\(X_t\)</span> of <span class="math">\(T\)</span> total observations of <span class="math">\(n\)</span>
 variables, the <span class="math">\(t\)</span> th recursive residual is the forecast prediction
@@ -450,7 +452,7 @@ regression. If <code class="docutils literal"><span class="pre">span</span></cod
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Sep 28, 2016, 2:01:11 AM.
+      Last updated on Oct 7, 2016, 1:59:00 AM.
 
     </p>
   </div>
