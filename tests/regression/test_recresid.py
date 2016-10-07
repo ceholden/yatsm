@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 import patsy
 
-from yatsm.regression.recresid import recresid
+from yatsm.regression import recresid
 
 
 def test_regression_recresid_recresid(airquality):
@@ -78,8 +78,6 @@ def test_regression_recresid_recresid(airquality):
 
     rr = recresid(X, y)
     np.testing.assert_allclose(rr, strucchange_rr)
-
-    assert False
 
     # pd.DataFrame
     y = airquality['Ozone']
