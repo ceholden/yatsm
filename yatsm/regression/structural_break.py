@@ -62,6 +62,7 @@ def _cusum_OLS(X, y):
 
 def _brownian_motion_pvalue(x, k):
     """ Return pvalue for some given test statistic """
+    # TODO: Make generic, add "type='Brownian Motion'"?
     if x < 0.3:
         p = 1 - 0.1464 * x
     else:
@@ -157,6 +158,12 @@ def cusum_recursive(X, y, alpha=0.05):
     stat_pvalue = _brownian_motion_pvalue(stat, k)
 
     pvalue_crit = _cusum_rec_test_crit(alpha)
-    if pvalue_crit < alpha:
-        boundary = (crit + (2 * crit * np.arange(0, n) / (n - 1)))
-        idx = np.where(np.abs(process) > boundary)
+    if stat_pvalue < alpha:
+        boundary = (pvalue_crit +
+                    (2 * pvalue_crit * np.arange(0, n) / (n - 1)))
+        idx = np.where(np.abs(process) > boundary)[0]
+
+    # TODO: pandas this up
+    # TODO: cusum boundary function
+    # TODO: design and return a namedtuple
+    # TODO: think about making some functions public
