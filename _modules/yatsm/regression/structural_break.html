@@ -212,6 +212,7 @@
 
 <span class="k">def</span> <span class="nf">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return pvalue for some given test statistic &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Make generic, add &quot;type=&#39;Brownian Motion&#39;&quot;?</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">:</span>
         <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.1464</span> <span class="o">*</span> <span class="n">x</span>
     <span class="k">else</span><span class="p">:</span>
@@ -307,9 +308,15 @@
     <span class="n">stat_pvalue</span> <span class="o">=</span> <span class="n">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
     <span class="n">pvalue_crit</span> <span class="o">=</span> <span class="n">_cusum_rec_test_crit</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">pvalue_crit</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">:</span>
-        <span class="n">boundary</span> <span class="o">=</span> <span class="p">(</span><span class="n">crit</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">crit</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">process</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">boundary</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">stat_pvalue</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">:</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="p">(</span><span class="n">pvalue_crit</span> <span class="o">+</span>
+                    <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pvalue_crit</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">process</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">boundary</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="c1"># TODO: pandas this up</span>
+    <span class="c1"># TODO: cusum boundary function</span>
+    <span class="c1"># TODO: design and return a namedtuple</span>
+    <span class="c1"># TODO: think about making some functions public</span>
 </pre></div>
 
            </div>
@@ -322,7 +329,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 7, 2016, 1:59:00 AM.
+      Last updated on Oct 7, 2016, 5:50:40 AM.
 
     </p>
   </div>
