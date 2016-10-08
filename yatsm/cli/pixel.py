@@ -59,9 +59,10 @@ logger = logging.getLogger('yatsm')
 @click.option('--result_prefix', type=str, default='', show_default=True,
               multiple=True,
               help='Plot coef/rmse from refit that used this prefix')
+@click.option('--seasons', is_flag=True, help='Plot using seasonal symbology')
 @click.pass_context
 def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
-          embed, seed, algo_kw, result_prefix):
+          embed, seed, algo_kw, result_prefix, seasons):
     # Set seed
     np.random.seed(seed)
     # Convert band to index
@@ -128,7 +129,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
-                plot_TS(dt_dates, Y[band, :])
+                plot_TS(dt_dates, Y[band, :], seasons)
             elif _plot == 'DOY':
                 plot_DOY(dt_dates, Y[band, :], cmap)
             elif _plot == 'VAL':
@@ -156,7 +157,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
             for _plot in plot:
                 if _plot == 'TS':
-                    plot_TS(dt_dates, Y[band, :])
+                    plot_TS(dt_dates, Y[band, :], seasons)
                 elif _plot == 'DOY':
                     plot_DOY(dt_dates, Y[band, :], cmap)
                 elif _plot == 'VAL':
@@ -190,7 +191,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
         )
 
 
-def plot_TS(dates, y):
+def plot_TS(dates, y, seasons):
     """ Create a standard timeseries plot
 
     Args:
@@ -198,7 +199,19 @@ def plot_TS(dates, y):
         y (np.ndarray): variable to plot
     """
     # Plot data
-    plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
+    if seasons == []:
+        plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
+    else:
+        for date in dates:
+            if date.month == 11 or date.month == 12 or date.month == 1 or date.month == 2 or date.month == 3:
+                plt.plot(date, y[np.where(dates==date)],'bo', markeredgewidth=0.0, alpha=0.5)
+            elif date.month == 4 or date.month == 5:
+                plt.plot(date, y[np.where(dates==date)],'co', markeredgewidth=0.0, alpha=0.5)
+            else:
+                plt.plot(date, y[np.where(dates==date)],'yo', markeredgewidth=0.0, alpha=0.5)
+        for date in dates:
+            if date.month == 6 or date.month == 7 or date.month == 8 or date.month == 9:
+                plt.plot(date, y[np.where(dates==date)],'go', markeredgewidth=0.0)
     plt.xlabel('Date')
 
 
