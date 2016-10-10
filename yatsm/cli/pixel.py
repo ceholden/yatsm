@@ -80,6 +80,12 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
         raise click.ClickException('Cannot find specified colormap ({}) in '
                                    'matplotlib'.format(cmap))
 
+    # Define seasons by month
+    WINTER_MONTHS = (11, 12, 1, 2, 3)
+    SPRING_MONTHS = (4, 5)
+    SUMMER_MONTHS = (6, 7, 8)
+    FALL_MONTHS = (9, 10)
+
     # Parse config
     cfg = parse_config_file(config)
 
@@ -129,7 +135,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
-                plot_TS(dt_dates, Y[band, :], seasons)
+                plot_TS(dt_dates, Y[band, :], seasons, WINTER_MONTHS, SPRING_MONTHS, SUMMER_MONTHS, FALL_MONTHS)
             elif _plot == 'DOY':
                 plot_DOY(dt_dates, Y[band, :], cmap)
             elif _plot == 'VAL':
@@ -157,7 +163,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
             for _plot in plot:
                 if _plot == 'TS':
-                    plot_TS(dt_dates, Y[band, :], seasons)
+                    plot_TS(dt_dates, Y[band, :], seasons, WINTER_MONTHS, SPRING_MONTHS, SUMMER_MONTHS, FALL_MONTHS)
                 elif _plot == 'DOY':
                     plot_DOY(dt_dates, Y[band, :], cmap)
                 elif _plot == 'VAL':
@@ -191,7 +197,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
         )
 
 
-def plot_TS(dates, y, seasons):
+def plot_TS(dates, y, seasons, WINTER_MONTHS, SPRING_MONTHS, SUMMER_MONTHS, FALL_MONTHS):
     """ Create a standard timeseries plot
 
     Args:
@@ -203,14 +209,13 @@ def plot_TS(dates, y, seasons):
         plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
     else:
         for date in dates:
-            if date.month == 11 or date.month == 12 or date.month == 1 or date.month == 2 or date.month == 3:
+            if date.month in WINTER_MONTHS:
                 plt.plot(date, y[np.where(dates==date)],'bo', markeredgewidth=0.0, alpha=0.5)
-            elif date.month == 4 or date.month == 5:
+            if date.month in SPRING_MONTHS:
                 plt.plot(date, y[np.where(dates==date)],'co', markeredgewidth=0.0, alpha=0.5)
-            else:
+            if date.month in FALL_MONTHS:
                 plt.plot(date, y[np.where(dates==date)],'yo', markeredgewidth=0.0, alpha=0.5)
-        for date in dates:
-            if date.month == 6 or date.month == 7 or date.month == 8 or date.month == 9:
+            if date.month in SUMMER_MONTHS:
                 plt.plot(date, y[np.where(dates==date)],'go', markeredgewidth=0.0)
     plt.xlabel('Date')
 
