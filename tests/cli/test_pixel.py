@@ -90,6 +90,22 @@ def test_cli_pixel_pass_4(example_timeseries):
     assert result.exit_code == 0
 
 
+@mpl_skip
+def test_cli_pixel_pass_5(example_timeseries):
+    """ Correctly run for one pixel with season visualization
+    """
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ['-v', 'pixel',
+         '--band', '5',
+         '--plot', 'TS',
+         '--season',
+         '--style', 'ggplot',
+         example_timeseries['config'], '1', '3'
+         ])
+    assert result.exit_code == 0
+
 # FAILURES
 @mpl_skip
 def test_cli_pixel_fail_1(example_timeseries):
