@@ -100,7 +100,7 @@ def test_cli_pixel_pass_5(example_timeseries):
         ['-v', 'pixel',
          '--band', '5',
          '--plot', 'TS',
-         '--season',
+         '--seasons',
          '--style', 'ggplot',
          example_timeseries['config'], '1', '3'
          ])
