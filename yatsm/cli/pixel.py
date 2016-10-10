@@ -21,6 +21,13 @@ from ..regression.transforms import harm  # noqa
 
 avail_plots = ['TS', 'DOY', 'VAL']
 
+SEASONS = {
+    'winter': ((11, 12, 1, 2, 3), 'b'),
+    'spring': ((4, 5), 'c'),
+    'summer': ((6, 7, 8), 'g'),
+    'fall': ((9, 10), 'y')
+}
+
 _DEFAULT_PLOT_CMAP = 'viridis'
 PLOT_CMAP = _DEFAULT_PLOT_CMAP
 if PLOT_CMAP not in mpl.cm.cmap_d:
@@ -80,12 +87,6 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
         raise click.ClickException('Cannot find specified colormap ({}) in '
                                    'matplotlib'.format(cmap))
 
-    # Define seasons by month
-    WINTER_MONTHS = (11, 12, 1, 2, 3)
-    SPRING_MONTHS = (4, 5)
-    SUMMER_MONTHS = (6, 7, 8)
-    FALL_MONTHS = (9, 10)
-
     # Parse config
     cfg = parse_config_file(config)
 
@@ -135,7 +136,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
         for _plot in plot:
             if _plot == 'TS':
-                plot_TS(dt_dates, Y[band, :], seasons, WINTER_MONTHS, SPRING_MONTHS, SUMMER_MONTHS, FALL_MONTHS)
+                plot_TS(dt_dates, Y[band, :], seasons)
             elif _plot == 'DOY':
                 plot_DOY(dt_dates, Y[band, :], cmap)
             elif _plot == 'VAL':
@@ -163,7 +164,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     with plt.xkcd() if style == 'xkcd' else mpl.style.context(style):
             for _plot in plot:
                 if _plot == 'TS':
-                    plot_TS(dt_dates, Y[band, :], seasons, WINTER_MONTHS, SPRING_MONTHS, SUMMER_MONTHS, FALL_MONTHS)
+                    plot_TS(dt_dates, Y[band, :], seasons)
                 elif _plot == 'DOY':
                     plot_DOY(dt_dates, Y[band, :], cmap)
                 elif _plot == 'VAL':
@@ -197,26 +198,23 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
         )
 
 
-def plot_TS(dates, y, seasons, WINTER_MONTHS, SPRING_MONTHS, SUMMER_MONTHS, FALL_MONTHS):
+def plot_TS(dates, y, seasons):
     """ Create a standard timeseries plot
 
     Args:
         dates (iterable): sequence of datetime
         y (np.ndarray): variable to plot
+        seasons (bool): Plot seasonal symbology
     """
     # Plot data
-    if seasons == []:
-        plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
+    if seasons:
+        months = np.array([d.month for d in dates])
+        for season_months, color in SEASONS.values():
+            season_idx = np.in1d(months, season_months)
+            plt.plot(dates[season_idx], y[season_idx], marker='o',
+                     mec=color, mfc=color, alpha=0.5, ls='')
     else:
-        for date in dates:
-            if date.month in WINTER_MONTHS:
-                plt.plot(date, y[np.where(dates==date)],'bo', markeredgewidth=0.0, alpha=0.5)
-            if date.month in SPRING_MONTHS:
-                plt.plot(date, y[np.where(dates==date)],'co', markeredgewidth=0.0, alpha=0.5)
-            if date.month in FALL_MONTHS:
-                plt.plot(date, y[np.where(dates==date)],'yo', markeredgewidth=0.0, alpha=0.5)
-            if date.month in SUMMER_MONTHS:
-                plt.plot(date, y[np.where(dates==date)],'go', markeredgewidth=0.0)
+         plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
     plt.xlabel('Date')
 
 
