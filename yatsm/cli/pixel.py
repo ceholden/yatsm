@@ -22,10 +22,10 @@ from ..regression.transforms import harm  # noqa
 avail_plots = ['TS', 'DOY', 'VAL']
 
 SEASONS = {
-    'winter': ((11, 12, 1, 2, 3), 'b'),
-    'spring': ((4, 5), 'c'),
-    'summer': ((6, 7, 8), 'g'),
-    'fall': ((9, 10), 'y')
+    'winter': ((11, 12, 1, 2, 3), 'b', 0.5),
+    'spring': ((4, 5), 'c', 0.5),
+    'summer': ((6, 7, 8), 'g', 1.,),
+    'fall': ((9, 10), 'y', 0.5)
 }
 
 _DEFAULT_PLOT_CMAP = 'viridis'
@@ -209,10 +209,10 @@ def plot_TS(dates, y, seasons):
     # Plot data
     if seasons:
         months = np.array([d.month for d in dates])
-        for season_months, color in SEASONS.values():
+        for season_months, color, alpha in SEASONS.values():
             season_idx = np.in1d(months, season_months)
             plt.plot(dates[season_idx], y[season_idx], marker='o',
-                     mec=color, mfc=color, alpha=0.5, ls='')
+                     mec=color, mfc=color, alpha=alpha, ls='')
     else:
          plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
     plt.xlabel('Date')
