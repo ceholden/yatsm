@@ -126,19 +126,19 @@ def mkdir_permissions(request):
     """ Fixture for creating dir with specific read/write permissions """
     def make_mkdir(read=False, write=False):
         if read and write:
-            mode = 0755
+            mode = 0o755
         elif read and not write:
-            mode = 0555
+            mode = 0o555
         elif not read and write:
-            mode = 0333
+            mode = 0o333
         elif not read and not write:
-            mode = 0000
+            mode = 0o000
 
         path = mkdtemp()
         os.chmod(path, mode)
 
         def fin():
-            os.chmod(path, 0755)
+            os.chmod(path, 0o755)
             os.removedirs(path)
         request.addfinalizer(fin)
 
