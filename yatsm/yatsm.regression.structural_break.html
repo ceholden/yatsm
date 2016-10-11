@@ -150,18 +150,18 @@
 <p>TODO: extract and move Chow test from &#8220;commission test&#8221; over to here</p>
 <dl class="class">
 <dt id="yatsm.regression.structural_break.CUSUMOLSResult">
-<em class="property">class </em><code class="descclassname">yatsm.regression.structural_break.</code><code class="descname">CUSUMOLSResult</code><span class="sig-paren">(</span><em>index</em>, <em>score</em>, <em>cusum</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMOLSResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.regression.structural_break.</code><code class="descname">CUSUMOLSResult</code><span class="sig-paren">(</span><em>index</em>, <em>score</em>, <em>process</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMOLSResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a></p>
-<dl class="attribute">
-<dt id="yatsm.regression.structural_break.CUSUMOLSResult.cusum">
-<code class="descname">cusum</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMOLSResult.cusum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="yatsm.regression.structural_break.CUSUMOLSResult.index">
 <code class="descname">index</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMOLSResult.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.structural_break.CUSUMOLSResult.process">
+<code class="descname">process</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMOLSResult.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -179,6 +179,43 @@
 <dl class="attribute">
 <dt id="yatsm.regression.structural_break.CUSUMOLSResult.signif">
 <code class="descname">signif</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMOLSResult.signif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.regression.structural_break.CUSUMRecursiveResult">
+<em class="property">class </em><code class="descclassname">yatsm.regression.structural_break.</code><code class="descname">CUSUMRecursiveResult</code><span class="sig-paren">(</span><em>index</em>, <em>score</em>, <em>process</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMRecursiveResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a></p>
+<p>tuple: Recursive CUSUM results</p>
+<dl class="attribute">
+<dt id="yatsm.regression.structural_break.CUSUMRecursiveResult.index">
+<code class="descname">index</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMRecursiveResult.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.structural_break.CUSUMRecursiveResult.process">
+<code class="descname">process</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMRecursiveResult.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.structural_break.CUSUMRecursiveResult.pvalue">
+<code class="descname">pvalue</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMRecursiveResult.pvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.structural_break.CUSUMRecursiveResult.score">
+<code class="descname">score</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMRecursiveResult.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.regression.structural_break.CUSUMRecursiveResult.signif">
+<code class="descname">signif</code><a class="headerlink" href="#yatsm.regression.structural_break.CUSUMRecursiveResult.signif" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 4</p>
 </dd></dl>
 
@@ -252,7 +289,7 @@ in Economics and Management Science&#8221;, December 2000b.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 10, 2016, 6:30:40 PM.
+      Last updated on Oct 11, 2016, 4:56:15 PM.
 
     </p>
   </div>
