@@ -15,8 +15,8 @@ from scipy import stats
 from scipy.stats import norm
 import xarray as xr
 
-from _recresid import _recresid
 from ..accel import try_jit
+from ..regression._recresid import _recresid
 
 logger = logging.getLogger(__name__)
 
