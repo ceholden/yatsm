@@ -33,6 +33,16 @@ example_classify_config = 'RandomForest.yaml'
 example_classify_pickle = 'train_rf.pkl'
 
 
+@pytest.fixture(scope='function')
+def airquality(request):
+    airquality = pd.read_csv(os.path.join(here, 'data', 'airquality.csv'))
+    airquality.columns = ['Unnamed', 'Ozone', 'SolarR', 'Wind',
+                          'Temp', 'Month', 'Day']
+    airquality = airquality.dropna()
+
+    return airquality
+
+
 def make_example_classifier(filename):
     # Create a dummy RF model for train/classify testing
     rf = RandomForestClassifier()
