@@ -15,6 +15,7 @@ from scipy import stats
 from scipy.stats import norm
 import xarray as xr
 
+from ._core import pandas_like, StructuralBreakResult
 from ..accel import try_jit
 from ..regression._recresid import _recresid
 
@@ -22,14 +23,8 @@ logger = logging.getLogger(__name__)
 
 pnorm = norm.cdf
 
-pandas_like = (pd.DataFrame, pd.Series, xr.DataArray)
 
 # OLS-CUSUM
-
-# tuple: CUSUM-OLS results
-CUSUMOLSResult = namedtuple('CUSUMOLSResult', ['index', 'score', 'process',
-                                               'pvalue', 'signif'])
-
 # dict: CUSUM OLS critical values
 CUSUM_OLS_CRIT = {
     0.01: 1.63,
@@ -77,9 +72,10 @@ def cusum_OLS(X, y, alpha=0.05):
             Ploberger and Krämer (1992)
 
     Returns:
-        CUSUMOLSResult: A named tuple include the the change point (index of
-            ``y``), the test ``score`` and ``pvalue``, and a boolean testing
-            if the CUSUM score is significant at the given ``alpha``
+        StructuralBreakResult: A named tuple include the the test name,
+            change point (index of ``y``), the test ``score`` and ``pvalue``,
+            and a boolean testing if the CUSUM score is significant at the
+            given ``alpha``
     """
     _X = X.values if isinstance(X, pandas_like) else X
     _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()
@@ -98,17 +94,15 @@ def cusum_OLS(X, y, alpha=0.05):
     crit = CUSUM_OLS_CRIT[alpha]
     pval = stats.kstwobign.sf(score)
 
-    return CUSUMOLSResult(index=idx, score=score, process=process,
-                          pvalue=pval, signif=score > crit)
+    return StructuralBreakResult(method='OLS-CUSUM',
+                                 index=idx,
+                                 score=score,
+                                 process=process,
+                                 pvalue=pval,
+                                 signif=score > crit)
 
 
 # REC-CUSUM
-#: tuple: Recursive CUSUM results
-CUSUMRecursiveResult = namedtuple('CUSUMRecursiveResult',
-                                  ['index', 'score', 'process', 'pvalue',
-                                   'signif'])
-
-
 def _brownian_motion_pvalue(x, k):
     """ Return pvalue for some given test statistic """
     # TODO: Make generic, add "type='Brownian Motion'"?
@@ -193,8 +187,9 @@ def cusum_recursive(X, y, alpha=0.05):
 
     # TODO: pandas this up
     # TODO: think about making some functions public
-    return CUSUMRecursiveResult(process=process,
-                                index=idx,
-                                pvalue=stat_pvalue,
-                                score=stat,
-                                signif=stat_pvalue < pvalue_crit)
+    return StructuralBreakResult(method='REC-CUSUM',
+                                 process=process,
+                                 index=idx,
+                                 pvalue=stat_pvalue,
+                                 score=stat,
+                                 signif=stat_pvalue < pvalue_crit)

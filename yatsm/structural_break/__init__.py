@@ -1,12 +1,11 @@
 """ Tests for structural breaks
 """
-from .cusum import (CUSUMOLSResult, CUSUMRecursiveResult,
-                    cusum_OLS, cusum_recursive)
+from ._core import StructuralBreakResult
+from .cusum import cusum_OLS, cusum_recursive
 
 
 __all__ = [
-    'CUSUMOLSResult',
-    'CUSUMRecursiveResult',
+    'StructuralBreakResult',
     'cusum_OLS',
     'cusum_recursive'
 ]
