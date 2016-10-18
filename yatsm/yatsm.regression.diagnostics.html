@@ -154,6 +154,31 @@
 </ul>
 </dd>
 </dl>
+<dl class="function">
+<dt id="yatsm.regression.diagnostics.std">
+<code class="descclassname">yatsm.regression.diagnostics.</code><code class="descname">std</code><span class="sig-paren">(</span><em>x</em>, <em>ddof=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/diagnostics.html#std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.diagnostics.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>JIT-able implementation of standard deviation with degress of freedom</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.ndarray</em>) &#8211; Array of values</li>
+<li><strong>ddof</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Delta degrees of freedom. The divisor used in calculations
+is <code class="docutils literal"><span class="pre">N</span> <span class="pre">-</span> <span class="pre">ddof</span></code> where <code class="docutils literal"><span class="pre">N</span></code> is the number of elements in <code class="docutils literal"><span class="pre">x</span></code>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The standard deviation</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="yatsm.regression.diagnostics.rmse">
 <code class="descclassname">yatsm.regression.diagnostics.</code><code class="descname">rmse</code><a class="reference internal" href="../_modules/yatsm/regression/diagnostics.html#rmse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.diagnostics.rmse" title="Permalink to this definition">¶</a></dt>
@@ -191,7 +216,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 18, 2016, 11:32:55 AM.
+      Last updated on Oct 18, 2016, 4:35:28 PM.
 
     </p>
   </div>

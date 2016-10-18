@@ -148,79 +148,6 @@
 <span id="yatsm-structural-break-cusum-module"></span><h1>yatsm.structural_break.cusum module<a class="headerlink" href="#module-yatsm.structural_break.cusum" title="Permalink to this headline">¶</a></h1>
 <p>Methods for estimating structural breaks in time series regressions</p>
 <p>TODO: extract and move Chow test from &#8220;commission test&#8221; over to here</p>
-<dl class="class">
-<dt id="yatsm.structural_break.cusum.CUSUMOLSResult">
-<em class="property">class </em><code class="descclassname">yatsm.structural_break.cusum.</code><code class="descname">CUSUMOLSResult</code><span class="sig-paren">(</span><em>index</em>, <em>score</em>, <em>process</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMOLSResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a></p>
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMOLSResult.index">
-<code class="descname">index</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMOLSResult.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMOLSResult.process">
-<code class="descname">process</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMOLSResult.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMOLSResult.pvalue">
-<code class="descname">pvalue</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMOLSResult.pvalue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMOLSResult.score">
-<code class="descname">score</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMOLSResult.score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMOLSResult.signif">
-<code class="descname">signif</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMOLSResult.signif" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="yatsm.structural_break.cusum.CUSUMRecursiveResult">
-<em class="property">class </em><code class="descclassname">yatsm.structural_break.cusum.</code><code class="descname">CUSUMRecursiveResult</code><span class="sig-paren">(</span><em>index</em>, <em>score</em>, <em>process</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMRecursiveResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a></p>
-<p>tuple: Recursive CUSUM results</p>
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMRecursiveResult.index">
-<code class="descname">index</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMRecursiveResult.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMRecursiveResult.process">
-<code class="descname">process</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMRecursiveResult.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMRecursiveResult.pvalue">
-<code class="descname">pvalue</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMRecursiveResult.pvalue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMRecursiveResult.score">
-<code class="descname">score</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMRecursiveResult.score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="yatsm.structural_break.cusum.CUSUMRecursiveResult.signif">
-<code class="descname">signif</code><a class="headerlink" href="#yatsm.structural_break.cusum.CUSUMRecursiveResult.signif" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="function">
 <dt id="yatsm.structural_break.cusum.cusum_OLS">
 <code class="descclassname">yatsm.structural_break.cusum.</code><code class="descname">cusum_OLS</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/cusum.html#cusum_OLS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.cusum.cusum_OLS" title="Permalink to this definition">¶</a></dt>
@@ -242,15 +169,16 @@ Ploberger and Krämer (1992)</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>A named tuple include the the change point (index of</dt>
-<dd><p class="first last"><code class="docutils literal"><span class="pre">y</span></code>), the test <code class="docutils literal"><span class="pre">score</span></code> and <code class="docutils literal"><span class="pre">pvalue</span></code>, and a boolean testing
-if the CUSUM score is significant at the given <code class="docutils literal"><span class="pre">alpha</span></code></p>
+<dt>A named tuple include the the test name,</dt>
+<dd><p class="first last">change point (index of <code class="docutils literal"><span class="pre">y</span></code>), the test <code class="docutils literal"><span class="pre">score</span></code> and <code class="docutils literal"><span class="pre">pvalue</span></code>,
+and a boolean testing if the CUSUM score is significant at the
+given <code class="docutils literal"><span class="pre">alpha</span></code></p>
 </dd>
 </dl>
 </p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="yatsm.structural_break.html#yatsm.structural_break.CUSUMOLSResult" title="yatsm.structural_break.CUSUMOLSResult">CUSUMOLSResult</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="yatsm.structural_break.html#yatsm.structural_break.StructuralBreakResult" title="yatsm.structural_break.StructuralBreakResult">StructuralBreakResult</a></p>
 </td>
 </tr>
 </tbody>
@@ -289,7 +217,7 @@ in Economics and Management Science&#8221;, December 2000b.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 18, 2016, 11:32:55 AM.
+      Last updated on Oct 18, 2016, 4:35:28 PM.
 
     </p>
   </div>
