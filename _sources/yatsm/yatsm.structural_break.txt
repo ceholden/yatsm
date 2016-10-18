@@ -1,0 +1,18 @@
+yatsm.structural_break package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+
+   yatsm.structural_break.cusum
+   yatsm.structural_break.ewma
+
+Module contents
+---------------
+
+.. automodule:: yatsm.structural_break
+    :members:
+    :undoc-members:
+    :show-inheritance:
