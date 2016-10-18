@@ -16,7 +16,7 @@ except ImportError:
 else:
     has_rpy2 = True
 
-from yatsm.regression import structural_break as sb
+from yatsm.structural_break import cusum as cu
 
 
 @pytest.fixture('module')
@@ -35,11 +35,14 @@ def test_data():
 def rpy2_strucchange():
     if has_rpy2:
         try:
+            base = importr('base')
             utils = importr('utils')
-            utils.install_packages(
-                'strucchange',
-                repos='http://cran.revolutionanalytics.com/'
-            )
+            has_pkg = base.require('strucchange')[0]
+            if not has_pkg:
+                utils.install_packages(
+                    'strucchange',
+                    repos='http://cran.revolutionanalytics.com/'
+                )
         except Exception as exc:
             pytest.skip('Unable to install "strucchange"')
         else:
@@ -78,12 +81,12 @@ def test_cusum_OLS(test_data, strucchange_cusum_OLS):
     y = test_data.pop('y')
     X = test_data
     # Test sending pandas
-    result = sb.cusum_OLS(X, y)
+    result = cu.cusum_OLS(X, y)
     assert np.allclose(result.score, strucchange_cusum_OLS[0])
     assert np.allclose(result.pvalue, strucchange_cusum_OLS[1])
 
     # And ndarray and xarray
-    result = sb.cusum_OLS(X.values, xr.DataArray(y, dims=['time']))
+    result = cu.cusum_OLS(X.values, xr.DataArray(y, dims=['time']))
     assert np.allclose(result.score, strucchange_cusum_OLS[0])
     assert np.allclose(result.pvalue, strucchange_cusum_OLS[1])
 
@@ -92,9 +95,9 @@ def test_cusum_rec_efp_sctest_pvalue(airquality):
     y = airquality['Ozone'].values
     X = patsy.dmatrix('1 + SolarR + Wind + Temp', data=airquality)
 
-    process = sb._cusum_rec_efp(X, y)
-    stat = sb._cusum_rec_sctest(process)
-    pvalue = sb._brownian_motion_pvalue(0.2335143, 1)
+    process = cu._cusum_rec_efp(X, y)
+    stat = cu._cusum_rec_sctest(process)
+    pvalue = cu._brownian_motion_pvalue(0.2335143, 1)
 
     np.testing.assert_allclose(process.sum(), 1.9446869, rtol=1e-5)
     np.testing.assert_allclose(stat, 0.2335143, rtol=1e-5)
@@ -108,5 +111,5 @@ def test_cusum_rec_efp_sctest_pvalue(airquality):
     (0.01, 1.143)
 ])
 def test_cusum_rec_test_crit(alpha, truth):
-    test = sb._cusum_rec_test_crit(alpha)
+    test = cu._cusum_rec_test_crit(alpha)
     np.testing.assert_allclose(truth, test, rtol=1e-3)
