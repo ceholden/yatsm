@@ -43,28 +43,27 @@ def bisquare(resid, c=4.685):
 
 
 @try_jit(nopython=True)
-def mad(resid, c=0.6745):
+def mad(x, c=0.6745):
     """
-    Returns Median-Absolute-Deviation (MAD) for residuals
+    Returns Median-Absolute-Deviation (MAD) of some data
 
     Args:
-        resid (np.ndarray): residuals
+        resid (np.ndarray): Observations (e.g., residuals)
         c (float): scale factor to get to ~standard normal (default: 0.6745)
                  (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)
 
     Returns:
-        float: MAD 'robust' variance estimate
+        float: MAD 'robust' standard deivation  estimate
 
     Reference:
         http://en.wikipedia.org/wiki/Median_absolute_deviation
     """
     # Return median absolute deviation adjusted sigma
-    return numpy.median(numpy.fabs(resid)) / c
+    return numpy.median(numpy.fabs(x)) / c
 
 
 # UTILITY FUNCTIONS
-# np.any prevents nopython
-@try_jit()
+@try_jit(nopython=True)
 def _check_converge(x0, x, tol=1e-8):
     return not numpy.any(numpy.fabs(x0 - x > tol))
 
