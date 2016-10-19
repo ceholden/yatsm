@@ -1,13 +1,13 @@
 """ Tests for structural breaks
 """
 from ._core import StructuralBreakResult
-from .cusum import cusum_OLS, cusum_recursive
-from .ewma import EWMA
+from ._cusum import cusum_OLS, cusum_recursive
+from ._ewma import ewma
 
 
 __all__ = [
     'StructuralBreakResult',
     'cusum_OLS',
     'cusum_recursive',
-    'EWMA'
+    'ewma'
 ]

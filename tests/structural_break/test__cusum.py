@@ -16,7 +16,7 @@ except ImportError:
 else:
     has_rpy2 = True
 
-from yatsm.structural_break import cusum as cu
+from yatsm.structural_break import _cusum as cu
 
 
 @pytest.fixture('module')

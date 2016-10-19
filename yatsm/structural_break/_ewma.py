@@ -130,7 +130,7 @@ def _ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
     return (process, score, idx, signif)
 
 
-def EWMA(y, lambda_=0.2, crit=3.0, std_type='SD'):
+def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
     """ Exponentially Weighted Moving Average test
 
     Args:
