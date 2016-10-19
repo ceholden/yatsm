@@ -63,8 +63,6 @@ def cusum_OLS(X, y, alpha=0.05):
     the equivalent function in the ``statsmodels`` Python package when
     Numba is installed.
 
-    # TODO: same function for cusum_REC?
-
     Args:
         X (array like): 2D (n_obs x n_features) design matrix
         y (array like): 1D (n_obs) indepdent variable
@@ -73,9 +71,10 @@ def cusum_OLS(X, y, alpha=0.05):
 
     Returns:
         StructuralBreakResult: A named tuple include the the test name,
-            change point (index of ``y``), the test ``score`` and ``pvalue``,
-            and a boolean testing if the CUSUM score is significant at the
-            given ``alpha``
+        change point (index of ``y``), the test ``score`` and ``pvalue``,
+        and a boolean testing if the CUSUM score is
+        significant at the given ``alpha``
+
     """
     _X = X.values if isinstance(X, pandas_like) else X
     _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()
@@ -158,13 +157,28 @@ def cusum_recursive(X, y, alpha=0.05):
 
     Tested against R's ``strucchange`` package.
 
-    Critical values for this test statistic are taken from:
+    Critical values for this test statistic are taken from::
 
         A. Zeileis. p values and alternative boundaries for CUSUM tests.
             Working Paper 78, SFB "Adaptive Information Systems and Modelling
             in Economics and Management Science", December 2000b.
+
+    Args:
+        X (array like): 2D (n_obs x n_features) design matrix
+        y (array like): 1D (n_obs) indepdent variable
+        alpha (float): Test threshold
+
+    Returns:
+        StructuralBreakResult: A named tuple include the the test name,
+        change point (index of ``y``), the test ``score`` and ``pvalue``,
+        and a boolean testing if the CUSUM score is
+        significant at the given ``alpha``
+
     """
-    process = _cusum_rec_efp(X, y)
+    _X = X.values if isinstance(X, pandas_like) else X
+    _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()
+
+    process = _cusum_rec_efp(_X, _y)
     stat = _cusum_rec_sctest(process)
     stat_pvalue = _brownian_motion_pvalue(stat, 1)
 
@@ -184,9 +198,6 @@ def cusum_recursive(X, y, alpha=0.05):
             idx = index[idx]
         process = pd.Series(data=process, index=index, name='REC-CUSUM')
 
-
-    # TODO: pandas this up
-    # TODO: think about making some functions public
     return StructuralBreakResult(method='REC-CUSUM',
                                  process=process,
                                  index=idx,

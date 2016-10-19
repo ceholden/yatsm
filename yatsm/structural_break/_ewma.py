@@ -9,6 +9,7 @@ import xarray as xr
 
 from ._core import StructuralBreakResult, pandas_like
 from ..accel import try_jit
+from ..regression.robust_fit import mad
 
 
 def _rolling_window(a, window):
@@ -25,7 +26,6 @@ def _lgamma(n):
     """ Natural log of absolute value of gamma function (``lgamma`` in R)
     """
     return np.log(np.abs(gamma(n)))
-
 
 
 #: np.ndarray: Expected value of the sample range of ``n`` normally
@@ -112,6 +112,8 @@ def _ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
     center = np.mean(y, axis=0)
     if std_type == 'SD':
         sd = _sd_sample(y)
+    elif std_type == 'MAD':
+        sd = mad(y)
     else:
         sd = _sd_moving_range(y, k=2)
     process = _ewma_smooth(y, lambda_=lambda_, start=center)
@@ -139,8 +141,13 @@ def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
         crit (float): Critical threshold for boundary, given as a scalar
             multiplier of the standard deviation
         std_type (str): Method for calculating process standard deviation.
-            Options are ``MR`` for an estimate based on the "moving range" of
-            the scaled mean or ``SD`` for the sample standard deviation
+            Options are:
+
+                *``MR`` for an estimate based on the "moving range" of
+                  the scaled mean
+                * ``SD`` for the sample standard deviation
+                * ``MAD`` for the Median Absolute Deviation estimate of
+                  standard deviation
 
     Returns:
         StructuralBreakResult: A named tuple include the the test name,

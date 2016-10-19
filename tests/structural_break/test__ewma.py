@@ -82,3 +82,7 @@ def test_EWMA(x):
     for dt in (pd.Series, xr.DataArray):
         result = _ewma.ewma(dt(x), crit=2.7, lambda_=0.2, std_type='MR')
         assert result.signif == False
+
+    # Test MAD
+    result = _ewma.ewma(x, crit=2.7, lambda_=0.2, std_type='MAD')
+    assert result.signif == False
