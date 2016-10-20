@@ -146,32 +146,58 @@
             
   <div class="section" id="yatsm-structural-break-package">
 <h1>yatsm.structural_break package<a class="headerlink" href="#yatsm-structural-break-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.structural_break.cusum.html">yatsm.structural_break.cusum module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.structural_break.ewma.html">yatsm.structural_break.ewma module</a></li>
-</ul>
-</div>
-</div>
 <div class="section" id="module-yatsm.structural_break">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.structural_break" title="Permalink to this headline">¶</a></h2>
 <p>Tests for structural breaks</p>
-<dl class="attribute">
+<dl class="class">
 <dt id="yatsm.structural_break.StructuralBreakResult">
-<code class="descclassname">yatsm.structural_break.</code><code class="descname">StructuralBreakResult</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">StructuralBreak</span></code></p>
+<em class="property">class </em><code class="descclassname">yatsm.structural_break.</code><code class="descname">StructuralBreakResult</code><span class="sig-paren">(</span><em>method</em>, <em>index</em>, <em>score</em>, <em>process</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a></p>
+<dl class="attribute">
+<dt id="yatsm.structural_break.StructuralBreakResult.index">
+<code class="descname">index</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.structural_break.StructuralBreakResult.method">
+<code class="descname">method</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.structural_break.StructuralBreakResult.process">
+<code class="descname">process</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.structural_break.StructuralBreakResult.pvalue">
+<code class="descname">pvalue</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.pvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.structural_break.StructuralBreakResult.score">
+<code class="descname">score</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.structural_break.StructuralBreakResult.signif">
+<code class="descname">signif</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.signif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="function">
 <dt id="yatsm.structural_break.cusum_OLS">
-<code class="descclassname">yatsm.structural_break.</code><code class="descname">cusum_OLS</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/cusum.html#cusum_OLS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.cusum_OLS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.structural_break.</code><code class="descname">cusum_OLS</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/_cusum.html#cusum_OLS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.cusum_OLS" title="Permalink to this definition">¶</a></dt>
 <dd><p>OLS-CUSUM test for structural breaks</p>
 <p>Tested against R&#8217;s <code class="docutils literal"><span class="pre">strucchange</span></code> package and is faster than
 the equivalent function in the <code class="docutils literal"><span class="pre">statsmodels</span></code> Python package when
 Numba is installed.</p>
-<p># TODO: same function for cusum_REC?</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -184,14 +210,10 @@ Ploberger and Krämer (1992)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>A named tuple include the the test name,</dt>
-<dd><p class="first last">change point (index of <code class="docutils literal"><span class="pre">y</span></code>), the test <code class="docutils literal"><span class="pre">score</span></code> and <code class="docutils literal"><span class="pre">pvalue</span></code>,
-and a boolean testing if the CUSUM score is significant at the
-given <code class="docutils literal"><span class="pre">alpha</span></code></p>
-</dd>
-</dl>
-</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A named tuple include the the test name,
+change point (index of <code class="docutils literal"><span class="pre">y</span></code>), the test <code class="docutils literal"><span class="pre">score</span></code> and <code class="docutils literal"><span class="pre">pvalue</span></code>,
+and a boolean testing if the CUSUM score is
+significant at the given <code class="docutils literal"><span class="pre">alpha</span></code></p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#yatsm.structural_break.StructuralBreakResult" title="yatsm.structural_break.StructuralBreakResult">StructuralBreakResult</a></p>
@@ -203,26 +225,42 @@ given <code class="docutils literal"><span class="pre">alpha</span></code></p>
 
 <dl class="function">
 <dt id="yatsm.structural_break.cusum_recursive">
-<code class="descclassname">yatsm.structural_break.</code><code class="descname">cusum_recursive</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/cusum.html#cusum_recursive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.cusum_recursive" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.structural_break.</code><code class="descname">cusum_recursive</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/_cusum.html#cusum_recursive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.cusum_recursive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rec-CUSUM test for structural breaks</p>
 <p>Tested against R&#8217;s <code class="docutils literal"><span class="pre">strucchange</span></code> package.</p>
 <p>Critical values for this test statistic are taken from:</p>
-<blockquote>
-<div><ol class="upperalpha">
-<li><dl class="first docutils">
-<dt>Zeileis. p values and alternative boundaries for CUSUM tests.</dt>
-<dd><p class="first last">Working Paper 78, SFB &#8220;Adaptive Information Systems and Modelling
-in Economics and Management Science&#8221;, December 2000b.</p>
-</dd>
-</dl>
-</li>
-</ol>
-</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span> <span class="n">Zeileis</span><span class="o">.</span> <span class="n">p</span> <span class="n">values</span> <span class="ow">and</span> <span class="n">alternative</span> <span class="n">boundaries</span> <span class="k">for</span> <span class="n">CUSUM</span> <span class="n">tests</span><span class="o">.</span>
+    <span class="n">Working</span> <span class="n">Paper</span> <span class="mi">78</span><span class="p">,</span> <span class="n">SFB</span> <span class="s2">&quot;Adaptive Information Systems and Modelling</span>
+    <span class="ow">in</span> <span class="n">Economics</span> <span class="ow">and</span> <span class="n">Management</span> <span class="n">Science</span><span class="s2">&quot;, December 2000b.</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>array like</em>) &#8211; 2D (n_obs x n_features) design matrix</li>
+<li><strong>y</strong> (<em>array like</em>) &#8211; 1D (n_obs) indepdent variable</li>
+<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Test threshold</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A named tuple include the the test name,
+change point (index of <code class="docutils literal"><span class="pre">y</span></code>), the test <code class="docutils literal"><span class="pre">score</span></code> and <code class="docutils literal"><span class="pre">pvalue</span></code>,
+and a boolean testing if the CUSUM score is
+significant at the given <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#yatsm.structural_break.StructuralBreakResult" title="yatsm.structural_break.StructuralBreakResult">StructuralBreakResult</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.structural_break.EWMA">
-<code class="descclassname">yatsm.structural_break.</code><code class="descname">EWMA</code><span class="sig-paren">(</span><em>y</em>, <em>lambda_=0.2</em>, <em>crit=3.0</em>, <em>std_type='SD'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/ewma.html#EWMA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.EWMA" title="Permalink to this definition">¶</a></dt>
+<dt id="yatsm.structural_break.ewma">
+<code class="descclassname">yatsm.structural_break.</code><code class="descname">ewma</code><span class="sig-paren">(</span><em>y</em>, <em>lambda_=0.2</em>, <em>crit=3.0</em>, <em>std_type='SD'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/_ewma.html#ewma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.ewma" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exponentially Weighted Moving Average test</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -233,20 +271,23 @@ in Economics and Management Science&#8221;, December 2000b.</p>
 <li><strong>lambda</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; &#8220;Memory&#8221; parameter, bound [0, 1]</li>
 <li><strong>crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Critical threshold for boundary, given as a scalar
 multiplier of the standard deviation</li>
-<li><strong>std_type</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Method for calculating process standard deviation.
-Options are <code class="docutils literal"><span class="pre">MR</span></code> for an estimate based on the &#8220;moving range&#8221; of
-the scaled mean or <code class="docutils literal"><span class="pre">SD</span></code> for the sample standard deviation</li>
+<li><strong>std_type</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; <p>Method for calculating process standard deviation.
+Calculated using:</p>
+<ul>
+<li><code class="docutils literal"><span class="pre">MR</span></code> for an estimate based on the &#8220;moving range&#8221; of
+the scaled mean</li>
+<li><code class="docutils literal"><span class="pre">SD</span></code> for the sample standard deviation</li>
+<li><code class="docutils literal"><span class="pre">MAD</span></code> for the Median Absolute Deviation estimate of
+standard deviation</li>
+</ul>
+</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>A named tuple include the the test name,</dt>
-<dd><p class="first last">change point (index of <code class="docutils literal"><span class="pre">y</span></code>), the test <code class="docutils literal"><span class="pre">score</span></code>,
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A named tuple include the the test name,
+change point (index of <code class="docutils literal"><span class="pre">y</span></code>), the test <code class="docutils literal"><span class="pre">score</span></code>,
 and a boolean testing if the EWMA score is significant at the
 given <code class="docutils literal"><span class="pre">crit</span></code></p>
-</dd>
-</dl>
-</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#yatsm.structural_break.StructuralBreakResult" title="yatsm.structural_break.StructuralBreakResult">StructuralBreakResult</a></p>
@@ -270,7 +311,7 @@ given <code class="docutils literal"><span class="pre">crit</span></code></p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 18, 2016, 4:35:28 PM.
+      Last updated on Oct 20, 2016, 3:54:05 PM.
 
     </p>
   </div>

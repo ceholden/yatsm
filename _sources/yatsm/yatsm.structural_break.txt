@@ -1,14 +1,6 @@
 yatsm.structural_break package
 ==============================
 
-Submodules
-----------
-
-.. toctree::
-
-   yatsm.structural_break.cusum
-   yatsm.structural_break.ewma
-
 Module contents
 ---------------
 

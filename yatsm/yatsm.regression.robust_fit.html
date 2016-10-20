@@ -276,19 +276,19 @@ robust iteratively reweighted least squares</li>
 <dl class="attribute">
 <dt id="yatsm.regression.robust_fit.mad">
 <code class="descclassname">yatsm.regression.robust_fit.</code><code class="descname">mad</code><a class="reference internal" href="../_modules/yatsm/regression/robust_fit.html#mad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.robust_fit.mad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns Median-Absolute-Deviation (MAD) for residuals</p>
+<dd><p>Returns Median-Absolute-Deviation (MAD) of some data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>resid</strong> (<em>np.ndarray</em>) &#8211; residuals</li>
+<li><strong>resid</strong> (<em>np.ndarray</em>) &#8211; Observations (e.g., residuals)</li>
 <li><strong>c</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; scale factor to get to ~standard normal (default: 0.6745)
 (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">MAD &#8216;robust&#8217; variance estimate</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">MAD &#8216;robust&#8217; standard deivation  estimate</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)">float</a></p>
@@ -315,7 +315,7 @@ robust iteratively reweighted least squares</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 18, 2016, 4:35:28 PM.
+      Last updated on Oct 20, 2016, 3:54:05 PM.
 
     </p>
   </div>

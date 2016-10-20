@@ -1,7 +1,0 @@
-yatsm.structural_break.ewma module
-==================================
-
-.. automodule:: yatsm.structural_break.ewma
-    :members:
-    :undoc-members:
-    :show-inheritance:

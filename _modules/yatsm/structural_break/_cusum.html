@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.structural_break.cusum &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.structural_break._cusum &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -133,11 +133,11 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-    <li>yatsm.structural_break.cusum</li>
+    <li>yatsm.structural_break._cusum</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/structural_break/cusum.rst" class="fa fa-github"> Edit on GitHub</a>
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/structural_break/_cusum.rst" class="fa fa-github"> Edit on GitHub</a>
           
         
       </li>
@@ -147,7 +147,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for yatsm.structural_break.cusum</h1><div class="highlight"><pre>
+  <h1>Source code for yatsm.structural_break._cusum</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot; Methods for estimating structural breaks in time series regressions</span>
 
@@ -206,14 +206,12 @@
     <span class="k">return</span> <span class="n">process</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span>
 
 
-<div class="viewcode-block" id="cusum_OLS"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.cusum.html#yatsm.structural_break.cusum_OLS">[docs]</a><span class="k">def</span> <span class="nf">cusum_OLS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<div class="viewcode-block" id="cusum_OLS"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.cusum_OLS">[docs]</a><span class="k">def</span> <span class="nf">cusum_OLS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
     <span class="sd">u&quot;&quot;&quot; OLS-CUSUM test for structural breaks</span>
 
 <span class="sd">    Tested against R&#39;s ``strucchange`` package and is faster than</span>
 <span class="sd">    the equivalent function in the ``statsmodels`` Python package when</span>
 <span class="sd">    Numba is installed.</span>
-
-<span class="sd">    # TODO: same function for cusum_REC?</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        X (array like): 2D (n_obs x n_features) design matrix</span>
@@ -223,9 +221,10 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        StructuralBreakResult: A named tuple include the the test name,</span>
-<span class="sd">            change point (index of ``y``), the test ``score`` and ``pvalue``,</span>
-<span class="sd">            and a boolean testing if the CUSUM score is significant at the</span>
-<span class="sd">            given ``alpha``</span>
+<span class="sd">        change point (index of ``y``), the test ``score`` and ``pvalue``,</span>
+<span class="sd">        and a boolean testing if the CUSUM score is</span>
+<span class="sd">        significant at the given ``alpha``</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">)</span> <span class="k">else</span> <span class="n">X</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">)</span> <span class="k">else</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
@@ -303,18 +302,33 @@
     <span class="k">return</span> <span class="n">stat</span>
 
 
-<div class="viewcode-block" id="cusum_recursive"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.cusum.html#yatsm.structural_break.cusum_recursive">[docs]</a><span class="k">def</span> <span class="nf">cusum_recursive</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<div class="viewcode-block" id="cusum_recursive"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.cusum_recursive">[docs]</a><span class="k">def</span> <span class="nf">cusum_recursive</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
     <span class="sd">u&quot;&quot;&quot; Rec-CUSUM test for structural breaks</span>
 
 <span class="sd">    Tested against R&#39;s ``strucchange`` package.</span>
 
-<span class="sd">    Critical values for this test statistic are taken from:</span>
+<span class="sd">    Critical values for this test statistic are taken from::</span>
 
 <span class="sd">        A. Zeileis. p values and alternative boundaries for CUSUM tests.</span>
 <span class="sd">            Working Paper 78, SFB &quot;Adaptive Information Systems and Modelling</span>
 <span class="sd">            in Economics and Management Science&quot;, December 2000b.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        X (array like): 2D (n_obs x n_features) design matrix</span>
+<span class="sd">        y (array like): 1D (n_obs) indepdent variable</span>
+<span class="sd">        alpha (float): Test threshold</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        StructuralBreakResult: A named tuple include the the test name,</span>
+<span class="sd">        change point (index of ``y``), the test ``score`` and ``pvalue``,</span>
+<span class="sd">        and a boolean testing if the CUSUM score is</span>
+<span class="sd">        significant at the given ``alpha``</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">process</span> <span class="o">=</span> <span class="n">_cusum_rec_efp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">)</span> <span class="k">else</span> <span class="n">X</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">)</span> <span class="k">else</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+    <span class="n">process</span> <span class="o">=</span> <span class="n">_cusum_rec_efp</span><span class="p">(</span><span class="n">_X</span><span class="p">,</span> <span class="n">_y</span><span class="p">)</span>
     <span class="n">stat</span> <span class="o">=</span> <span class="n">_cusum_rec_sctest</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
     <span class="n">stat_pvalue</span> <span class="o">=</span> <span class="n">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -334,9 +348,6 @@
             <span class="n">idx</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">process</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">process</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;REC-CUSUM&#39;</span><span class="p">)</span>
 
-
-    <span class="c1"># TODO: pandas this up</span>
-    <span class="c1"># TODO: think about making some functions public</span>
     <span class="k">return</span> <span class="n">StructuralBreakResult</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;REC-CUSUM&#39;</span><span class="p">,</span>
                                  <span class="n">process</span><span class="o">=</span><span class="n">process</span><span class="p">,</span>
                                  <span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
@@ -355,7 +366,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 18, 2016, 4:35:28 PM.
+      Last updated on Oct 20, 2016, 3:54:05 PM.
 
     </p>
   </div>

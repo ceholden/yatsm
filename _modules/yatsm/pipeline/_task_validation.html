@@ -187,6 +187,7 @@
 <span class="sd">by providing an empty list, as demonstrated below for the `data` requirement::</span>
 
 <span class="sd">.. code-block:: python</span>
+
 <span class="sd">    @requires(data=[])</span>
 <span class="sd">    @outputs(data=[str])</span>
 <span class="sd">    def sum_all_spectral_bands(work, require, output, **config):</span>
@@ -198,6 +199,7 @@
 <span class="sd">output specifications are not optional.</span>
 
 <span class="sd">.. code-block:: python</span>
+
 <span class="sd">    @requires(data=[str, str],</span>
 <span class="sd">             record=(False, [str]))</span>
 <span class="sd">    def some_task(work, require, output, **config):</span>
@@ -321,7 +323,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 18, 2016, 4:35:28 PM.
+      Last updated on Oct 20, 2016, 3:54:05 PM.
 
     </p>
   </div>

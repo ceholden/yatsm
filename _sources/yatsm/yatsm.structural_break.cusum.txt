@@ -1,7 +1,0 @@
-yatsm.structural_break.cusum module
-===================================
-
-.. automodule:: yatsm.structural_break.cusum
-    :members:
-    :undoc-members:
-    :show-inheritance:

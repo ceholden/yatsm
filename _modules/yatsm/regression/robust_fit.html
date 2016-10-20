@@ -193,28 +193,27 @@
 
 
 <span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<div class="viewcode-block" id="mad"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.mad">[docs]</a><span class="k">def</span> <span class="nf">mad</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.6745</span><span class="p">):</span>
+<div class="viewcode-block" id="mad"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.mad">[docs]</a><span class="k">def</span> <span class="nf">mad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.6745</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns Median-Absolute-Deviation (MAD) for residuals</span>
+<span class="sd">    Returns Median-Absolute-Deviation (MAD) of some data</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        resid (np.ndarray): residuals</span>
+<span class="sd">        resid (np.ndarray): Observations (e.g., residuals)</span>
 <span class="sd">        c (float): scale factor to get to ~standard normal (default: 0.6745)</span>
 <span class="sd">                 (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        float: MAD &#39;robust&#39; variance estimate</span>
+<span class="sd">        float: MAD &#39;robust&#39; standard deivation  estimate</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        http://en.wikipedia.org/wiki/Median_absolute_deviation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Return median absolute deviation adjusted sigma</span>
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">resid</span><span class="p">))</span> <span class="o">/</span> <span class="n">c</span></div>
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">c</span></div>
 
 
 <span class="c1"># UTILITY FUNCTIONS</span>
-<span class="c1"># np.any prevents nopython</span>
-<span class="nd">@try_jit</span><span class="p">()</span>
+<span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_check_converge</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span><span class="p">):</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">))</span>
 
@@ -356,7 +355,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 18, 2016, 4:35:28 PM.
+      Last updated on Oct 20, 2016, 3:54:05 PM.
 
     </p>
   </div>
