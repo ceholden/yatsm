@@ -141,19 +141,19 @@ def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
         crit (float): Critical threshold for boundary, given as a scalar
             multiplier of the standard deviation
         std_type (str): Method for calculating process standard deviation.
-            Options are:
+            Calculated using:
 
-                *``MR`` for an estimate based on the "moving range" of
-                  the scaled mean
-                * ``SD`` for the sample standard deviation
-                * ``MAD`` for the Median Absolute Deviation estimate of
-                  standard deviation
+            * ``MR`` for an estimate based on the "moving range" of
+              the scaled mean
+            * ``SD`` for the sample standard deviation
+            * ``MAD`` for the Median Absolute Deviation estimate of
+              standard deviation
 
     Returns:
         StructuralBreakResult: A named tuple include the the test name,
-            change point (index of ``y``), the test ``score``,
-            and a boolean testing if the EWMA score is significant at the
-            given ``crit``
+        change point (index of ``y``), the test ``score``,
+        and a boolean testing if the EWMA score is significant at the
+        given ``crit``
 
     """
     _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()

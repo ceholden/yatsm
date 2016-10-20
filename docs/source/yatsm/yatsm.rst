@@ -15,6 +15,8 @@ Subpackages
     yatsm.phenology
     yatsm.pipeline
     yatsm.regression
+    yatsm.results
+    yatsm.structural_break
 
 Submodules
 ----------

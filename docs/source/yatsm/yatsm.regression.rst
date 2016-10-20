@@ -17,9 +17,7 @@ Submodules
    yatsm.regression.design
    yatsm.regression.diagnostics
    yatsm.regression.packaged
-   yatsm.regression.recresid
    yatsm.regression.robust_fit
-   yatsm.regression.structural_break
    yatsm.regression.transforms
 
 Module contents

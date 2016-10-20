@@ -37,6 +37,7 @@ Some tasks may allow a variable number of inputs. This may be accomplished
 by providing an empty list, as demonstrated below for the `data` requirement::
 
 .. code-block:: python
+
     @requires(data=[])
     @outputs(data=[str])
     def sum_all_spectral_bands(work, require, output, **config):
@@ -48,6 +49,7 @@ optional, then it may be specified as optional using the full syntax in a tuple
 output specifications are not optional.
 
 .. code-block:: python
+
     @requires(data=[str, str],
              record=(False, [str]))
     def some_task(work, require, output, **config):
