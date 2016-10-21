@@ -129,7 +129,7 @@ def _ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
         score = process[idx]
         signif = False
 
-    return (process, score, idx, signif)
+    return (process, boundary, score, idx, signif)
 
 
 def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
@@ -171,6 +171,7 @@ def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
 
     return StructuralBreakResult(method='EWMA',
                                  process=process,
+                                 boundary=boundary,
                                  index=idx,
                                  pvalue=None,
                                  score=score,

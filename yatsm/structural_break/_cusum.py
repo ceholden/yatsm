@@ -97,6 +97,7 @@ def cusum_OLS(X, y, alpha=0.05):
                                  index=idx,
                                  score=score,
                                  process=process,
+                                 boundary=crit,
                                  pvalue=pval,
                                  signif=score > crit)
 
@@ -200,6 +201,7 @@ def cusum_recursive(X, y, alpha=0.05):
 
     return StructuralBreakResult(method='REC-CUSUM',
                                  process=process,
+                                 boundary=boundary,
                                  index=idx,
                                  pvalue=stat_pvalue,
                                  score=stat,
