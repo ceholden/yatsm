@@ -107,9 +107,12 @@ def _ewma_smooth(y, start, lambda_=0.2):
     return z
 
 
-#@try_jit
-def _ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
-    center = np.mean(y, axis=0)
+@try_jit
+def _ewma(y, lambda_=0.2, crit=3.0, center=True, std_type='SD'):
+    if center:
+        _center = np.mean(y, axis=0)
+    else:
+        _center = 0.0
     if std_type == 'SD':
         sd = _sd_sample(y)
     elif std_type == 'MAD':
@@ -132,7 +135,7 @@ def _ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
     return (process, boundary, score, idx, signif)
 
 
-def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
+def ewma(y, lambda_=0.2, crit=3.0, center=True, std_type='SD'):
     """ Exponentially Weighted Moving Average test
 
     Args:
@@ -140,6 +143,7 @@ def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
         lambda_ (float): "Memory" parameter, bound [0, 1]
         crit (float): Critical threshold for boundary, given as a scalar
             multiplier of the standard deviation
+        center (bool): Center time series before calculating EWMA
         std_type (str): Method for calculating process standard deviation.
             Calculated using:
 
@@ -158,8 +162,11 @@ def ewma(y, lambda_=0.2, crit=3.0, std_type='SD'):
     """
     _y = y.values.ravel() if isinstance(y, pandas_like) else y.ravel()
 
-    process, score, idx, signif = _ewma(_y, lambda_=lambda_, crit=crit,
-                                        std_type=std_type)
+    process, boundary, score, idx, signif = _ewma(_y,
+                                                  lambda_=lambda_,
+                                                  crit=crit,
+                                                  center=center,
+                                                  std_type=std_type)
     if isinstance(y, pandas_like):
         if isinstance(y, (pd.Series, pd.DataFrame)):
             index = y.index
