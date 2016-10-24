@@ -198,6 +198,7 @@ def cusum_recursive(X, y, alpha=0.05):
             index = y.to_series().index
             idx = index[idx]
         process = pd.Series(data=process, index=index, name='REC-CUSUM')
+        boundary = pd.Series(data=boundary, index=index, name='Boundary')
 
     return StructuralBreakResult(method='REC-CUSUM',
                                  process=process,

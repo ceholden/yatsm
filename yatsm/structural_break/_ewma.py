@@ -175,6 +175,7 @@ def ewma(y, lambda_=0.2, crit=3.0, center=True, std_type='SD'):
             index = y.to_series().index
             idx = index[idx]
         process = pd.Series(data=process, index=index, name='EWMA')
+        boundary = pd.Series(data=boundary, index=index, name='Boundary')
 
     return StructuralBreakResult(method='EWMA',
                                  process=process,
