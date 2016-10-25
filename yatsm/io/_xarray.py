@@ -82,13 +82,17 @@ def merge_data(data, merge_attrs=True):
     if dropped:
         # dropped_vars = {}
         for var in dropped:
-            dims = [_ds[var].dims for _ds in datasets]
+            dims = [_ds[var].dims for _ds in datasets if var in _ds]
             if all([dims[0] == d for d in dims[1:]]):
-                dfs = [_ds.reset_coords()[var].to_series()
-                       for _ds in datasets]
-                # dropped_vars[var] = (dims[0], pd.concat(dfs).sort_index())
-                da = xr.DataArray(pd.concat(dfs).sort_index())
-                ds[var] = da
+                # Combine
+                dfs = pd.concat([_ds[var].to_series()
+                                 for _ds in datasets
+                                 if var in _ds]).sort_index()
+                # Recreate with same index as `ds`
+                idx = ds.indexes[dfs.index.name]
+                dfs = dfs[~dfs.index.duplicated()].reindex(idx)
+                # Insert
+                ds[var] = xr.DataArray(dfs)
             else:
                 logger.debug("Cannot restore dropped coord {} because "
                              "dimensions are inconsistent across datasets")
