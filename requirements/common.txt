@@ -9,7 +9,7 @@ scipy>=0.14.0
 Cython>=0.20.1
 setuptools>=0.7.2  # wicked old setuptools broken for .pyx -> .c
 # GDAL
-rasterio>=0.36.0
+rasterio>=1.0
 fiona>=1.7.0
 shapely>=1.5.16
 xarray>=0.7.0

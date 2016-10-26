@@ -114,13 +114,13 @@ class GDALTimeSeries(object):
         """
         if self.keep_open:
             if not hasattr(self, '_src_open'):
-                with rasterio.drivers():
+                with rasterio.Env():
                     self._src_open = [rasterio.open(f, 'r') for
                                       f in self.df['filename']]
             for _src in self._src_open:
                 yield _src
         else:
-            with rasterio.drivers():
+            with rasterio.Env():
                 for f in self.df['filename']:
                     yield rasterio.open(f, 'r')
 
