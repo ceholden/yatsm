@@ -257,18 +257,21 @@
     <span class="k">return</span> <span class="n">z</span>
 
 
-<span class="c1">#@try_jit</span>
-<span class="k">def</span> <span class="nf">_ewma</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">std_type</span><span class="o">=</span><span class="s1">&#39;SD&#39;</span><span class="p">):</span>
-    <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nd">@try_jit</span>
+<span class="k">def</span> <span class="nf">_ewma</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">std_type</span><span class="o">=</span><span class="s1">&#39;SD&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">center</span><span class="p">:</span>
+        <span class="n">_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_center</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="k">if</span> <span class="n">std_type</span> <span class="o">==</span> <span class="s1">&#39;SD&#39;</span><span class="p">:</span>
         <span class="n">sd</span> <span class="o">=</span> <span class="n">_sd_sample</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">std_type</span> <span class="o">==</span> <span class="s1">&#39;MAD&#39;</span><span class="p">:</span>
         <span class="n">sd</span> <span class="o">=</span> <span class="n">mad</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">sd</span> <span class="o">=</span> <span class="n">_sd_moving_range</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">process</span> <span class="o">=</span> <span class="n">_ewma_smooth</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="n">lambda_</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">center</span><span class="p">)</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">_ewma_smooth</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="n">lambda_</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">_center</span><span class="p">)</span>
     <span class="n">boundary</span> <span class="o">=</span> <span class="n">_ewma_boundary</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="n">crit</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="n">lambda_</span><span class="p">)</span>
-    <span class="n">violation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">process</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">boundary</span>
+    <span class="n">violation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">process</span> <span class="o">-</span> <span class="n">_center</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">boundary</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">violation</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
@@ -279,10 +282,10 @@
         <span class="n">score</span> <span class="o">=</span> <span class="n">process</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">signif</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">signif</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">process</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">signif</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ewma"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.ewma">[docs]</a><span class="k">def</span> <span class="nf">ewma</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">std_type</span><span class="o">=</span><span class="s1">&#39;SD&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="ewma"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.ewma">[docs]</a><span class="k">def</span> <span class="nf">ewma</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">std_type</span><span class="o">=</span><span class="s1">&#39;SD&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Exponentially Weighted Moving Average test</span>
 
 <span class="sd">    Args:</span>
@@ -290,6 +293,7 @@
 <span class="sd">        lambda_ (float): &quot;Memory&quot; parameter, bound [0, 1]</span>
 <span class="sd">        crit (float): Critical threshold for boundary, given as a scalar</span>
 <span class="sd">            multiplier of the standard deviation</span>
+<span class="sd">        center (bool): Center time series before calculating EWMA</span>
 <span class="sd">        std_type (str): Method for calculating process standard deviation.</span>
 <span class="sd">            Calculated using:</span>
 
@@ -308,8 +312,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">)</span> <span class="k">else</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
 
-    <span class="n">process</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">signif</span> <span class="o">=</span> <span class="n">_ewma</span><span class="p">(</span><span class="n">_y</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="n">lambda_</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="n">crit</span><span class="p">,</span>
-                                        <span class="n">std_type</span><span class="o">=</span><span class="n">std_type</span><span class="p">)</span>
+    <span class="n">process</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">signif</span> <span class="o">=</span> <span class="n">_ewma</span><span class="p">(</span><span class="n">_y</span><span class="p">,</span>
+                                                  <span class="n">lambda_</span><span class="o">=</span><span class="n">lambda_</span><span class="p">,</span>
+                                                  <span class="n">crit</span><span class="o">=</span><span class="n">crit</span><span class="p">,</span>
+                                                  <span class="n">center</span><span class="o">=</span><span class="n">center</span><span class="p">,</span>
+                                                  <span class="n">std_type</span><span class="o">=</span><span class="n">std_type</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pandas_like</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">index</span>
@@ -318,9 +325,11 @@
             <span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">index</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">process</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">process</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;EWMA&#39;</span><span class="p">)</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Boundary&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">StructuralBreakResult</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;EWMA&#39;</span><span class="p">,</span>
                                  <span class="n">process</span><span class="o">=</span><span class="n">process</span><span class="p">,</span>
+                                 <span class="n">boundary</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span>
                                  <span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
                                  <span class="n">pvalue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                  <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span>
@@ -337,7 +346,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 20, 2016, 3:54:05 PM.
+      Last updated on Oct 26, 2016, 1:30:28 AM.
 
     </p>
   </div>

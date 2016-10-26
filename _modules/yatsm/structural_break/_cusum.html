@@ -247,6 +247,7 @@
                                  <span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
                                  <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span>
                                  <span class="n">process</span><span class="o">=</span><span class="n">process</span><span class="p">,</span>
+                                 <span class="n">boundary</span><span class="o">=</span><span class="n">crit</span><span class="p">,</span>
                                  <span class="n">pvalue</span><span class="o">=</span><span class="n">pval</span><span class="p">,</span>
                                  <span class="n">signif</span><span class="o">=</span><span class="n">score</span> <span class="o">&gt;</span> <span class="n">crit</span><span class="p">)</span></div>
 
@@ -347,9 +348,11 @@
             <span class="n">index</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span><span class="o">.</span><span class="n">index</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">process</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">process</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;REC-CUSUM&#39;</span><span class="p">)</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Boundary&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">StructuralBreakResult</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;REC-CUSUM&#39;</span><span class="p">,</span>
                                  <span class="n">process</span><span class="o">=</span><span class="n">process</span><span class="p">,</span>
+                                 <span class="n">boundary</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span>
                                  <span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
                                  <span class="n">pvalue</span><span class="o">=</span><span class="n">stat_pvalue</span><span class="p">,</span>
                                  <span class="n">score</span><span class="o">=</span><span class="n">stat</span><span class="p">,</span>
@@ -366,7 +369,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 20, 2016, 3:54:05 PM.
+      Last updated on Oct 26, 2016, 1:30:28 AM.
 
     </p>
   </div>

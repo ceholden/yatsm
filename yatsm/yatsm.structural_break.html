@@ -151,8 +151,14 @@
 <p>Tests for structural breaks</p>
 <dl class="class">
 <dt id="yatsm.structural_break.StructuralBreakResult">
-<em class="property">class </em><code class="descclassname">yatsm.structural_break.</code><code class="descname">StructuralBreakResult</code><span class="sig-paren">(</span><em>method</em>, <em>index</em>, <em>score</em>, <em>process</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.structural_break.</code><code class="descname">StructuralBreakResult</code><span class="sig-paren">(</span><em>method</em>, <em>index</em>, <em>score</em>, <em>process</em>, <em>boundary</em>, <em>pvalue</em>, <em>signif</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></a></p>
+<dl class="attribute">
+<dt id="yatsm.structural_break.StructuralBreakResult.boundary">
+<code class="descname">boundary</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.boundary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="yatsm.structural_break.StructuralBreakResult.index">
 <code class="descname">index</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.index" title="Permalink to this definition">¶</a></dt>
@@ -174,7 +180,7 @@
 <dl class="attribute">
 <dt id="yatsm.structural_break.StructuralBreakResult.pvalue">
 <code class="descname">pvalue</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.pvalue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
+<dd><p>Alias for field number 5</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -186,7 +192,7 @@
 <dl class="attribute">
 <dt id="yatsm.structural_break.StructuralBreakResult.signif">
 <code class="descname">signif</code><a class="headerlink" href="#yatsm.structural_break.StructuralBreakResult.signif" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 5</p>
+<dd><p>Alias for field number 6</p>
 </dd></dl>
 
 </dd></dl>
@@ -260,7 +266,7 @@ significant at the given <code class="docutils literal"><span class="pre">alpha<
 
 <dl class="function">
 <dt id="yatsm.structural_break.ewma">
-<code class="descclassname">yatsm.structural_break.</code><code class="descname">ewma</code><span class="sig-paren">(</span><em>y</em>, <em>lambda_=0.2</em>, <em>crit=3.0</em>, <em>std_type='SD'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/_ewma.html#ewma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.ewma" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.structural_break.</code><code class="descname">ewma</code><span class="sig-paren">(</span><em>y</em>, <em>lambda_=0.2</em>, <em>crit=3.0</em>, <em>center=True</em>, <em>std_type='SD'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/_ewma.html#ewma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.ewma" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exponentially Weighted Moving Average test</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -271,6 +277,7 @@ significant at the given <code class="docutils literal"><span class="pre">alpha<
 <li><strong>lambda</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; &#8220;Memory&#8221; parameter, bound [0, 1]</li>
 <li><strong>crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Critical threshold for boundary, given as a scalar
 multiplier of the standard deviation</li>
+<li><strong>center</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) &#8211; Center time series before calculating EWMA</li>
 <li><strong>std_type</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; <p>Method for calculating process standard deviation.
 Calculated using:</p>
 <ul>
@@ -311,7 +318,7 @@ given <code class="docutils literal"><span class="pre">crit</span></code></p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 20, 2016, 3:54:05 PM.
+      Last updated on Oct 26, 2016, 1:30:28 AM.
 
     </p>
   </div>
