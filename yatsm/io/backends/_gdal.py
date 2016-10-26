@@ -80,12 +80,12 @@ class GDALTimeSeries(object):
         self._init_attrs_from_file(self.df['filename'][0])
 
     def _init_attrs_from_file(self, filename):
-        with rasterio.drivers():
+        with rasterio.Env():
             with rasterio.open(filename, 'r') as src:
                 #: dict: rasterio metadata of first file
                 self.md = src.meta.copy()
                 self.crs = src.crs
-                self.affine = src.affine
+                self.transform = src.transform
                 self.res = src.res
                 self.ul = src.ul(0, 0)
                 self.height = src.height
@@ -140,8 +140,8 @@ class GDALTimeSeries(object):
         """
         # Parse geographic/projected coordinates from window query
         ((row_min, row_max), (col_min, col_max)) = window
-        x_min, y_min = (col_min, row_max) * self.affine
-        x_max, y_max = (col_max, row_min) * self.affine
+        x_min, y_min = (col_min, row_max) * self.transform
+        x_max, y_max = (col_max, row_min) * self.transform
         coord_bounds = (x_min, y_min, x_max, y_max)
 
         shape = (self.length, self.count,
@@ -204,7 +204,7 @@ class GDALTimeSeries(object):
 
         da.attrs['crs'] = self.crs.to_string()
         da.attrs['crs_wkt'] = self.crs.wkt
-        da.attrs['affine'] = self.affine
+        da.attrs['transform'] = self.transform
         da.attrs['rs'] = self.res
         da.attrs['nodata'] = self.nodatavals
 
