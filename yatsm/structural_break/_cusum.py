@@ -57,11 +57,19 @@ def _cusum_OLS(X, y):
 
 
 def cusum_OLS(X, y, alpha=0.05):
-    u""" OLS-CUSUM test for structural breaks
+    ur""" OLS-CUSUM test for structural breaks
 
     Tested against R's ``strucchange`` package and is faster than
     the equivalent function in the ``statsmodels`` Python package when
     Numba is installed.
+
+    The OLS-CUSUM test statistic, based on a single OLS regression, is defined
+    as:
+
+    .. math::
+
+        W_n^0(t) = \frac{1}{\hat{\sigma}\sqrt{n}}
+                   \sum_{i=1}^{n}{\hat{\mu_i}}
 
     Args:
         X (array like): 2D (n_obs x n_features) design matrix
@@ -154,9 +162,17 @@ def _cusum_rec_sctest(x):
 
 
 def cusum_recursive(X, y, alpha=0.05):
-    u""" Rec-CUSUM test for structural breaks
+    ur""" Rec-CUSUM test for structural breaks
 
     Tested against R's ``strucchange`` package.
+
+    The REC-CUSUM test, based on the recursive residuals, is defined as:
+
+    .. math::
+
+        W_n(t) = \frac{1}{\tilde{\sigma}\sqrt{n}}
+                 \sum_{i=k+1}^{k+(n-k)}{\tilde{\mu_i}}
+
 
     Critical values for this test statistic are taken from::
 
