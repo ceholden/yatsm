@@ -50,8 +50,8 @@ def _cusum_OLS(X, y):
 
     process = _cusum(resid, p)
     _process = np.abs(process)
-    score = _process.max()
     idx = _process.argmax()
+    score = _process[idx]
 
     return process, score, idx
 
