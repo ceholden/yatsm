@@ -76,7 +76,6 @@ def config_to_deps(config, dsk=None, overwrite=True):
     dsk = defaultdict(set, dsk) if dsk else defaultdict(set)
 
     for task, spec in config.items():
-        # from IPython.core.debugger import Pdb; Pdb().set_trace()
         # Add in task requirements
         deps = format_deps(spec[REQUIRE])
         dsk[task] = dsk[task].union(deps)

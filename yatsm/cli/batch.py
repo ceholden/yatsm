@@ -36,7 +36,7 @@ def batch(ctx, configfile, job_number, total_jobs):
     # Imports inside CLI for speed
     from yatsm.config import validate_and_parse_configfile
     from yatsm.io import _api as io_api
-    from yatsm.pipeline import delay_pipeline, setup_pipeline
+    from yatsm.pipeline import Pipeline
 
     config = validate_and_parse_configfile(configfile)
 
@@ -72,16 +72,11 @@ def batch(ctx, configfile, job_number, total_jobs):
             'data': data,
             'record': {}  # TODO: read this from pre-existing results
         }
-
-        eager_pipeline, pipeline = setup_pipeline(tasks, pipe,
-                                                  overwrite=overwrite)
-        pipe = delay_pipeline(eager_pipeline, pipe).compute()
+        pipeline = Pipeline.from_config(tasks, pipe, overwrite=overwrite)
+        pipe = pipeline.run_eager(pipe)
 
         for y, x in product(data.y.values, data.x.values):
             logger.debug('Processing pixel y/x: {}/{}'.format(y, x))
             pix_pipe = sel_pix(pipe, y, x)
-            _pipeline = delay_pipeline(pipeline, pix_pipe)
-
-            # TODO: how to put this pixel's result back into full block result
-            result = _pipeline.compute()
-            from IPython.core.debugger import Pdb; Pdb().set_trace()
+            result = pipeline.run(pix_pipe)
+            # TODO: save result...
