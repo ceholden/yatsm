@@ -200,18 +200,26 @@
 
     <span class="n">process</span> <span class="o">=</span> <span class="n">_cusum</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
     <span class="n">_process</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
-    <span class="n">score</span> <span class="o">=</span> <span class="n">_process</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">_process</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">_process</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">process</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">idx</span>
 
 
 <div class="viewcode-block" id="cusum_OLS"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.cusum_OLS">[docs]</a><span class="k">def</span> <span class="nf">cusum_OLS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
-    <span class="sd">u&quot;&quot;&quot; OLS-CUSUM test for structural breaks</span>
+    <span class="sd">ur&quot;&quot;&quot; OLS-CUSUM test for structural breaks</span>
 
 <span class="sd">    Tested against R&#39;s ``strucchange`` package and is faster than</span>
 <span class="sd">    the equivalent function in the ``statsmodels`` Python package when</span>
 <span class="sd">    Numba is installed.</span>
+
+<span class="sd">    The OLS-CUSUM test statistic, based on a single OLS regression, is defined</span>
+<span class="sd">    as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        W_n^0(t) = \frac{1}{\hat{\sigma}\sqrt{n}}</span>
+<span class="sd">                   \sum_{i=1}^{n}{\hat{\mu_i}}</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        X (array like): 2D (n_obs x n_features) design matrix</span>
@@ -304,9 +312,17 @@
 
 
 <div class="viewcode-block" id="cusum_recursive"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.cusum_recursive">[docs]</a><span class="k">def</span> <span class="nf">cusum_recursive</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
-    <span class="sd">u&quot;&quot;&quot; Rec-CUSUM test for structural breaks</span>
+    <span class="sd">ur&quot;&quot;&quot; Rec-CUSUM test for structural breaks</span>
 
 <span class="sd">    Tested against R&#39;s ``strucchange`` package.</span>
+
+<span class="sd">    The REC-CUSUM test, based on the recursive residuals, is defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        W_n(t) = \frac{1}{\tilde{\sigma}\sqrt{n}}</span>
+<span class="sd">                 \sum_{i=k+1}^{k+(n-k)}{\tilde{\mu_i}}</span>
+
 
 <span class="sd">    Critical values for this test statistic are taken from::</span>
 
@@ -369,7 +385,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 26, 2016, 1:30:28 AM.
+      Last updated on Nov 1, 2016, 6:51:52 AM.
 
     </p>
   </div>

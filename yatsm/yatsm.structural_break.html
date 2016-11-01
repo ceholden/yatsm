@@ -204,6 +204,11 @@
 <p>Tested against R&#8217;s <code class="docutils literal"><span class="pre">strucchange</span></code> package and is faster than
 the equivalent function in the <code class="docutils literal"><span class="pre">statsmodels</span></code> Python package when
 Numba is installed.</p>
+<p>The OLS-CUSUM test statistic, based on a single OLS regression, is defined
+as:</p>
+<div class="math">
+\[W_n^0(t) = \frac{1}{\hat{\sigma}\sqrt{n}}
+           \sum_{i=1}^{n}{\hat{\mu_i}}\]</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -234,6 +239,10 @@ significant at the given <code class="docutils literal"><span class="pre">alpha<
 <code class="descclassname">yatsm.structural_break.</code><code class="descname">cusum_recursive</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/structural_break/_cusum.html#cusum_recursive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.structural_break.cusum_recursive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rec-CUSUM test for structural breaks</p>
 <p>Tested against R&#8217;s <code class="docutils literal"><span class="pre">strucchange</span></code> package.</p>
+<p>The REC-CUSUM test, based on the recursive residuals, is defined as:</p>
+<div class="math">
+\[W_n(t) = \frac{1}{\tilde{\sigma}\sqrt{n}}
+         \sum_{i=k+1}^{k+(n-k)}{\tilde{\mu_i}}\]</div>
 <p>Critical values for this test statistic are taken from:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span> <span class="n">Zeileis</span><span class="o">.</span> <span class="n">p</span> <span class="n">values</span> <span class="ow">and</span> <span class="n">alternative</span> <span class="n">boundaries</span> <span class="k">for</span> <span class="n">CUSUM</span> <span class="n">tests</span><span class="o">.</span>
     <span class="n">Working</span> <span class="n">Paper</span> <span class="mi">78</span><span class="p">,</span> <span class="n">SFB</span> <span class="s2">&quot;Adaptive Information Systems and Modelling</span>
@@ -318,7 +327,7 @@ given <code class="docutils literal"><span class="pre">crit</span></code></p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Oct 26, 2016, 1:30:28 AM.
+      Last updated on Nov 1, 2016, 6:51:52 AM.
 
     </p>
   </div>
