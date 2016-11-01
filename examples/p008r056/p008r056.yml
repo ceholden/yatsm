@@ -1,0 +1,124 @@
+# Example configuration file for YATSM line runner
+#
+# This configuration includes details about the dataset and to run an analysis
+# pipeline using YATSM
+
+# Version of config
+version: "0.7.0"
+
+data:
+    # Optional: Directory location for caching dataset
+    # cache_dir: "/home/ceholden/Documents/landsat_stack/p008r056/images/cache"
+    datasets:
+        Landsat:
+            # Type of reader for this dataset (GDAL | BIP)
+            # TODO: subsume GDAL stuff into a sub-object
+            reader:
+                name: GDAL
+                GDAL:
+                    # Text file containing dates and images
+                    input_file: "$ROOT/Landsat.csv"
+                    # Input date format
+                    date_format: "%Y%j"
+                    # "dtype" argument to pandas.read_csv
+                    # Allows you to specify the datatype of specific columns
+                    column_dtype:
+                        path: str
+                    # Keep references to input files open throughout process
+                    #   Can cut down on overhead of repeatedly opening files
+                    #   assuming the OS lets users keep many open
+                    keep_open: True
+            # Band names
+            band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
+            # Mask band (e.g., Fmask)
+            mask_band: fmask
+            # List of integer values to mask within the mask band
+            mask_values: [2, 3, 4, 255]
+            # Valid range of band data
+            min_values: [0, 0, 0, 0, 0, 0, -100, 0]
+            max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
+        ALOS_hh:
+            reader:
+                name: GDAL
+                GDAL:
+                    input_file: "$ROOT/ALOS_hh.csv"
+                    date_format: "%Y%m%d"
+                    column_dtype:
+                        path: str
+            band_names: [hh]
+            min_values: [-100]
+            max_values: [-0.000001]
+        ALOS_hv:
+            reader:
+                name: GDAL
+                GDAL:
+                    input_file: "$ROOT/ALOS_hv.csv"
+                    date_format: "%Y%m%d"
+                    column_dtype:
+                        path: str
+            band_names: [hv]
+            min_values: [-100]
+            max_values: [-0.000001]
+
+results:
+    # Output location
+    output: "$ROOT/TSR"
+    # Output filename pattern
+    output_prefix: "yatsm_r{line}.npz"
+
+pipeline:
+    overwrite: False
+    tasks:
+        ccdc:
+            task: pixel_CCDCesque
+            require:
+                data: [red, nir, swir1, ndvi, ndmi]
+            output:
+                record: [ccdc]
+            config:
+                init:
+                    consecutive: 5
+                    design: 1 + x + harm(x, 1)
+        ndvi:
+            task: norm_diff
+            require:
+                data: [nir, red]
+            output:
+                data: [ndvi]
+        ndmi:
+            task: norm_diff
+            require:
+                data: [nir, swir1]
+            output:
+                data: [ndmi]
+        omission:
+            task: omission_cusum_test
+            require:
+                record: [ccdc]
+            output:
+                record: [ccdc_omit]
+        commission:
+            task: commission_chow_test 
+            require:
+                record: [ccdc_omit]
+            output:
+                record: [ccdc_commit]
+
+       # refit_RLM:
+        #     task: refit
+        #     require:
+        #         data: [red, nir, swir1, ndvi, ndmi]
+        #         record: [ccdc]
+        #     output:
+        #         record: [ccdc_refit_RLM]
+        #     config:
+        #         design: 1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3) + harm(x, 0.25)
+        # classify:
+        #     task: classify_segment
+        #     require:
+        #         data: [red, nir, swir1, swir2, ndvi, ndmi]
+        #         record: [ccdc_refit_RLM]
+        #     output:
+        #         record: [classify_ccdc_RLM]
+        #     output:
+        #         record: [ccdc_fix]
