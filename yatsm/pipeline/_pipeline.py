@@ -1,5 +1,6 @@
 """ Classes representing pipeline objects
 """
+from collections import OrderedDict
 import logging
 
 from toolz import curry
@@ -14,10 +15,11 @@ logger = logging.getLogger(__name__)
 
 class Task(object):
 
-    def __init__(self, func, require, output, **config):
+    def __init__(self, name, func, require, output, **config):
+        self.name = name
         self.func = func
         self.funcname = self.func.__name__
-        if self.func in SEGMENT_TASKS.items():
+        if self.func in SEGMENT_TASKS.values():
             self.create_group = True
         else:
             self.create_group = False
@@ -26,13 +28,13 @@ class Task(object):
         self.config = config
 
     @classmethod
-    def from_config(cls, config):
+    def from_config(cls, name, config):
         task = config[TASK]
         try:
             func = PIPELINE_TASKS[task]
         except KeyError as ke:
             raise KeyError("Unknown pipeline task '{}'".format(task))
-        return cls(func, config[REQUIRE], config[OUTPUT],
+        return cls(name, func, config[REQUIRE], config[OUTPUT],
                    **config.get(CONFIG, {}))
 
     def curry(self):
@@ -41,6 +43,25 @@ class Task(object):
     @property
     def is_eager(self):
         return getattr(self.func, 'is_eager', False)
+
+    def record_dependencies(self, tasks):
+        """ Return a list of ``Task`` that this ``Task`` is dependent upon
+
+        Args:
+            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a
+                pipeline)
+
+        Returns:
+            list[Task]: Tasks with outputs that this task requires for
+            computation
+        """
+        deps = set()
+        for task in tasks:
+            if any([req in task.output_record
+                    for req in self.require_record]):
+                deps.add(task)
+                deps.update(task.record_dependencies(tasks))
+        return list(deps)
 
 # SHORTCUT GETTERS
     @property
@@ -68,17 +89,20 @@ class Task(object):
         return self.output.get('record', [])
 
     def __repr__(self):
-        return ("<{0.__class__.__name__}: {0.func}( {0.require} )-> "
-                "{0.output} >"
+        return ('<{0.__class__.__name__} "{0.name}": {0.func.__name__}'
+                '( {0.require} )-> {0.output} >'
                 .format(self))
 
 
 class Pipeline(object):
+    """ A pipeline of many tasks to be executed
+
+    Args:
+        tasks (list[Task]): A list of ``Task`` to execute
+
     """
-    """
-    def __init__(self, tasks, config):
+    def __init__(self, tasks):
         self.tasks = tasks
-        self.config = config
         self.eager_pipeline, self.pipeline = self._split_eager(self.tasks)
 
     @classmethod
@@ -95,9 +119,12 @@ class Pipeline(object):
         """
         # Get sorted order based on config and input data
         task_names = config_to_tasks(config, pipe, overwrite=overwrite)
-        tasks = [Task.from_config(config[name]) for name in task_names]
+        tasks = OrderedDict(
+            (name, Task.from_config(name, config[name]))
+            for name in task_names
+        )
 
-        return cls(tasks, config)
+        return cls(tasks)
 
     def run_eager(self, pipe):
         pipeline = delay_pipeline(self.eager_pipeline, pipe)
@@ -133,7 +160,7 @@ class Pipeline(object):
     def _split_eager(tasks):
         halt_eager = False
         eager_pipeline, pipeline = [], []
-        for task in tasks:
+        for task in tasks.values():
             if task.is_eager and not halt_eager:
                 eager_pipeline.append(task)
             else:
