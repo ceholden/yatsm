@@ -14,6 +14,9 @@ function requires two input strings (as the spectral band names in an
 decorator function, an indicator for either `data` or `record` structures,
 and a ``list`` of objects.
 
+A task may only define one `record` output, so the output type for this should
+just be ``[str]``.
+
 The validation for this task may be specified as::
 
 .. code-block:: python
@@ -46,7 +49,7 @@ by providing an empty list, as demonstrated below for the `data` requirement::
 If a task allows a requirement or output, but this requirement or output is
 optional, then it may be specified as optional using the full syntax in a tuple
 ``(bool: required, signature)``. By default, we assume that requirements and
-output specifications are not optional.
+output specifications are required.
 
 .. code-block:: python
 
@@ -56,6 +59,7 @@ output specifications are not optional.
         ...
 
 """
+from collections import Iterable
 import functools
 import inspect
 
@@ -76,13 +80,15 @@ def eager_task(func):
     return func
 
 
-def _parse_signature(signature):
+def _parse_signature(signature, req_len=None):
     """ Parse a signature for basic validity and structure
 
     Args:
-        signature (iterable): A ``list`` of objects or a ``tuple`` of ``bool``,
-            ``list`` giving the required-ness of this signature and the
-            signature
+        signature (iterable): One or more objects in a ``list``, or a
+            ``tuple`` of (``bool``, ``list``) describing if the signature
+            is required
+        req_len (int): Requirement for the length of the description in
+            ``signature``
 
     Returns:
         tuple[bool, list]: The signature
@@ -91,14 +97,16 @@ def _parse_signature(signature):
         KeyError: If ``name`` isn't a supported type of function signature
         TypeError: If ``signature`` is invalid
     """
-
     # Given as <str:name>=[<object>, ...]
     if isinstance(signature, list):
         signature = (REQUIRED_BY_DEFAULT, signature)
 
     # Given as <str:name>=(<bool:required>, [<object>, ...]])
-    elif (isinstance(signature, tuple) and len(signature) == 2 and
+    if (isinstance(signature, tuple) and len(signature) == 2 and
           isinstance(signature[0], bool) and isinstance(signature[1], list)):
+        if req_len and len(signature[1]) != req_len:
+            raise PCError("Function signature must have {n} arguments"
+                          .format(n=req_len))
         return signature
     else:
         raise PCError("Invalid signature: {sig}".format(sig=signature))
@@ -108,19 +116,19 @@ def _validate_specification(spec, signature):
     if not isinstance(spec, dict):
         raise TypeError(" should be a dictionary")
 
-    for name, (required, description) in signature.items():
+    for name, (required, desc) in signature.items():
         if required and name not in spec:
             raise KeyError("Required attribute, '{}', not passed to function"
                            .format(name))
         elif name in spec:
             value = spec[name]
             # If the specification description has a specific length requirement
-            if description and len(value) != len(description):
-                raise ValueError("Specification requires {n} elements ({desc})"
-                                 " but {n2} elements were passed"
-                                 .format(n=len(description),
-                                         desc=description,
-                                         n2=len(value)))
+            if isinstance(desc, Iterable):
+                if desc and len(value) != len(desc):
+                    raise ValueError(
+                        "Specification requires {n} elements ({desc}) but "
+                        "{n2} elements were passed"
+                        .format(n=len(desc), desc=desc, n2=len(value)))
 
 
 def check(name, **signature):
@@ -139,7 +147,17 @@ def check(name, **signature):
     #   1) Explicit "required": `check('x', data=(False, [str]))`
     #   2) Assume default (not required): `check('x', data=[str])`
     for k, sig in signature.items():
-        signature[k] = _parse_signature(sig)
+        if k not in (DATA, RECORD):
+            raise PCError(
+                'Unknown signature check for argument named "{name}"'
+                .format(name=k))
+        req_len = 1 if name == OUTPUT and k == RECORD else None
+        try:
+            signature[k] = _parse_signature(sig, req_len=req_len)
+        except PCError as pce:
+            future.utils.raise_with_traceback(PCError(
+                "'{}' signature, '{}', is invalid: {}".format(k, sig, pce)
+            ))
 
     @decorator.decorator
     def wrapper(func, *args, **kwargs):

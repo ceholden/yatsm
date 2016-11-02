@@ -86,3 +86,12 @@ def test_check_curry_1():
 def test_outputs_pass_1():
     f = requires(data=[str, str])(outputs(data=[str])(func_sig))
     f({}, {'data': ['nir', 'red']}, {'data': ['ndvi']})
+
+
+# output of record must be a str
+def test_output_record_str_type():
+    f = outputs(record=[str])(func_sig)
+    f({}, {}, {'record': ['ccdc']})
+
+    with pytest.raises(PipelineConfigurationError) as exc:
+        f = outputs(record=[str, str])(func_sig)

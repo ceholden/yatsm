@@ -56,9 +56,10 @@ class Task(object):
             computation
         """
         deps = set()
+        req = self.require_record
+        from IPython.core.debugger import Pdb; Pdb().set_trace()
         for task in tasks:
-            if any([req in task.output_record
-                    for req in self.require_record]):
+            if task.output_record and task.output_record in req:
                 deps.add(task)
                 deps.update(task.record_dependencies(tasks))
         return list(deps)
@@ -86,7 +87,7 @@ class Task(object):
 
     @property
     def output_record(self):
-        return self.output.get('record', [])
+        return self.output.get('record', [None])[0]
 
     def __repr__(self):
         return ('<{0.__class__.__name__} "{0.name}": {0.func.__name__}'
