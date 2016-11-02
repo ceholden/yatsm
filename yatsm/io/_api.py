@@ -1,5 +1,6 @@
 """ Functions, classes, etc. useful to CLI or other users
 """
+from collections import OrderedDict
 import logging
 
 import six
@@ -8,6 +9,21 @@ from ._xarray import (apply_band_mask, apply_range_mask, merge_data)
 from .backends import READERS
 
 logger = logging.getLogger(__name__)
+
+
+def get_readers(config):
+    """ Return a dict containing time series drivers described in config
+
+    Args:
+        config (dict): ``dataset`` entry in a YATSM configuration file with
+            sections for each of the ``readers``
+
+    Returns:
+        dict: Time series drivers
+    """
+    return OrderedDict((
+        (name, get_reader(**cfg['reader'])) for name, cfg in config.items()
+    ))
 
 
 def get_reader(name=None, **kwargs):
