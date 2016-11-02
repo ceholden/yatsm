@@ -14,3 +14,9 @@ PIPE = 'pipe'
 
 #: str: Name of variable containing task-specific configuration
 CONFIG = 'config'
+
+#: str: Name of raster "data" naming convention
+DATA = 'data'
+
+#: str: Name of segment "structure" or "record" database-like information
+RECORD = 'record'

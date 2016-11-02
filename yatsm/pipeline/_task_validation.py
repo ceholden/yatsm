@@ -62,8 +62,11 @@ import inspect
 import decorator
 import future.utils
 
-from .language import OUTPUT, REQUIRE
+from .language import OUTPUT, REQUIRE, DATA, RECORD
 from ..errors import PipelineConfigurationError as PCError
+
+
+REQUIRED_BY_DEFAULT = True
 
 
 def eager_task(func):
@@ -91,7 +94,8 @@ def _parse_signature(signature):
 
     # Given as <str:name>=[<object>, ...]
     if isinstance(signature, list):
-        return (True, signature)
+        signature = (REQUIRED_BY_DEFAULT, signature)
+
     # Given as <str:name>=(<bool:required>, [<object>, ...]])
     elif (isinstance(signature, tuple) and len(signature) == 2 and
           isinstance(signature[0], bool) and isinstance(signature[1], list)):
