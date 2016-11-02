@@ -150,8 +150,8 @@ def check(name, **signature):
             _validate_specification(arg, signature)
         except Exception as exc:
             future.utils.raise_with_traceback(PCError(
-                "Argument to '{}' is invalid:: {}: {}"
-                .format(name, exc.__class__.__name__, exc)))
+                "Argument '{}' to '{}' is invalid:: {}: {}"
+                .format(name, func.__name__, exc.__class__.__name__, exc)))
         return func(*args, **kwargs)
 
     return wrapper
