@@ -127,13 +127,17 @@ class GDALTimeSeries(object):
     def read(self, window=None, out=None):
         """ Read time series, usually inside of a specified window
 
+        .. todo::
+
+            Allow reading of a subset of bands (make like ``rasterio``)
+
         Args:
             window (tuple): A pair (tuple) of pairs of ints specifying
                 the start and stop indices of the window rows and columns
             out (np.ndarray): A NumPy array of pre-allocated memory to read
-                the time series into. Its shape should be:
+                the time series into. Its shape should be::
 
-                (time series length, # bands, # rows, columns)
+                (len(observations), len(bands), len(rows), len(columns))
 
         Returns:
             np.ndarray: A NumPy array containing the time series data
@@ -170,13 +174,13 @@ class GDALTimeSeries(object):
             name (str): Name of the xr.DataArray
             band_names (list[str]): Names of bands to use for xarray.DataArray
             out (np.ndarray): A NumPy array of pre-allocated memory to read
-                the time series into. Its shape should be:
+                the time series into. Its shape should be::
 
-                (time series length, # bands, # rows, columns)
+                ((len(observations), len(bands), len(rows), len(columns))
 
         Returns:
             xarray.DataArray: A DataArray containing the time series data with
-                coordinate dimenisons (time, band, y, and x)
+            coordinate dimenisons (time, band, y, and x)
 
         Raises:
             IndexError: if `band_names` is specified but is not the same length
@@ -219,7 +223,7 @@ class GDALTimeSeries(object):
 
         Returns:
             xarray.Dataset: A Dataset containing the time series metadata
-                with coordinate dimenisons (time)
+            with coordinate dimenisons (time)
 
         """
         if not items:
