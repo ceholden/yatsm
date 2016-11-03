@@ -149,6 +149,149 @@
 <div class="section" id="module-yatsm.io.backends">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.io.backends" title="Permalink to this headline">¶</a></h2>
 <p>Time series reader backends</p>
+<dl class="class">
+<dt id="yatsm.io.backends.GDALTimeSeries">
+<em class="property">class </em><code class="descclassname">yatsm.io.backends.</code><code class="descname">GDALTimeSeries</code><span class="sig-paren">(</span><em>df=None</em>, <em>input_file=''</em>, <em>date_format='%Y%m%d'</em>, <em>column_dtype=None</em>, <em>keep_open=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A time series that can be read in by GDAL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>pd.DataFrame</em>) &#8211; A Pandas dataframe describing time series. Requires
+keys &#8216;filename&#8217; and &#8216;date&#8217; be column names. Additional columns
+will be used as metadata available via <code class="docutils literal"><span class="pre">get_metadata</span></code>.</li>
+<li><strong>input_file</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; If <code class="docutils literal"><span class="pre">df</span></code> is not specified, read time series dataset
+information from this file</li>
+<li><strong>date_format</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; If <code class="docutils literal"><span class="pre">df</span></code> is not specified, parse date column in
+<code class="docutils literal"><span class="pre">input_file</span></code> with this date string format</li>
+<li><strong>column_dtype</strong> (<em>dict[str, str]</em>) &#8211; Datatype format parsing options for
+all or subset of <code class="docutils literal"><span class="pre">df</span></code> columns passed as <code class="docutils literal"><span class="pre">dtype</span></code> argument to
+<code class="docutils literal"><span class="pre">pandas.read_csv</span></code>.</li>
+<li><strong>keep_open</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) &#8211; Keep <code class="docutils literal"><span class="pre">rasterio</span></code> file descriptors open once opened?</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="yatsm.io.backends.GDALTimeSeries.get_metadata">
+<code class="descname">get_metadata</code><span class="sig-paren">(</span><em>items=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.get_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.get_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a xr.Dataset of metadata from the input image list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items</strong> (<em>iterable</em>) &#8211; Subset of metadata column names (<cite>self.extra_md</cite>)
+to return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Dataset containing the time series metadata
+with coordinate dimenisons (time)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">xarray.Dataset</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.io.backends.GDALTimeSeries.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>window=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read time series, usually inside of a specified window</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Allow reading of a subset of bands (make like <code class="docutils literal"><span class="pre">rasterio</span></code>)</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>window</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) &#8211; A pair (tuple) of pairs of ints specifying
+the start and stop indices of the window rows and columns</li>
+<li><strong>out</strong> (<em>np.ndarray</em>) &#8211; <p>A NumPy array of pre-allocated memory to read
+the time series into. Its shape should be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A NumPy array containing the time series data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.io.backends.GDALTimeSeries.read_dataarray">
+<code class="descname">read_dataarray</code><span class="sig-paren">(</span><em>window=None</em>, <em>name=None</em>, <em>band_names=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read_dataarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read time series, usually inside of a window, as xarray.DataArray</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>window</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) &#8211; A pair (tuple) of pairs of ints specifying
+the start and stop indices of the window rows and columns</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Name of the xr.DataArray</li>
+<li><strong>band_names</strong> (<em>list[str]</em>) &#8211; Names of bands to use for xarray.DataArray</li>
+<li><strong>out</strong> (<em>np.ndarray</em>) &#8211; <p>A NumPy array of pre-allocated memory to read
+the time series into. Its shape should be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A DataArray containing the time series data with
+coordinate dimenisons (time, band, y, and x)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">xarray.DataArray</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#IndexError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code></a> &#8211; if <cite>band_names</cite> is specified but is not the same length
+as the number of bands, <cite>self.count</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.io.backends.GDALTimeSeries.window_coords">
+<code class="descname">window_coords</code><span class="sig-paren">(</span><em>window</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.window_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.window_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Y/X coordinates of a raster to pass to xarray</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>window</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) &#8211; Window to read from ((ymin, ymax), (xmin, xmax)) in
+pixel space</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> &#8211; Y and X coordinates for window</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray, np.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.io.backends.GDALTimeSeries.time">
+<code class="descname">time</code><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -163,7 +306,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Nov 1, 2016, 6:51:52 AM.
+      Last updated on Nov 3, 2016, 5:14:57 AM.
 
     </p>
   </div>

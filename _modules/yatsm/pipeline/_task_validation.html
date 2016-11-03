@@ -164,6 +164,9 @@
 <span class="sd">decorator function, an indicator for either `data` or `record` structures,</span>
 <span class="sd">and a ``list`` of objects.</span>
 
+<span class="sd">A task may only define one `record` output, so the output type for this should</span>
+<span class="sd">just be ``[str]``.</span>
+
 <span class="sd">The validation for this task may be specified as::</span>
 
 <span class="sd">.. code-block:: python</span>
@@ -196,7 +199,7 @@
 <span class="sd">If a task allows a requirement or output, but this requirement or output is</span>
 <span class="sd">optional, then it may be specified as optional using the full syntax in a tuple</span>
 <span class="sd">``(bool: required, signature)``. By default, we assume that requirements and</span>
-<span class="sd">output specifications are not optional.</span>
+<span class="sd">output specifications are required.</span>
 
 <span class="sd">.. code-block:: python</span>
 
@@ -206,14 +209,18 @@
 <span class="sd">        ...</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
 <span class="kn">import</span> <span class="nn">decorator</span>
 <span class="kn">import</span> <span class="nn">future.utils</span>
 
-<span class="kn">from</span> <span class="nn">.language</span> <span class="k">import</span> <span class="n">OUTPUT</span><span class="p">,</span> <span class="n">REQUIRE</span>
+<span class="kn">from</span> <span class="nn">.language</span> <span class="k">import</span> <span class="n">OUTPUT</span><span class="p">,</span> <span class="n">REQUIRE</span><span class="p">,</span> <span class="n">DATA</span><span class="p">,</span> <span class="n">RECORD</span>
 <span class="kn">from</span> <span class="nn">..errors</span> <span class="k">import</span> <span class="n">PipelineConfigurationError</span> <span class="k">as</span> <span class="n">PCError</span>
+
+
+<span class="n">REQUIRED_BY_DEFAULT</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <div class="viewcode-block" id="eager_task"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.eager_task">[docs]</a><span class="k">def</span> <span class="nf">eager_task</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -223,13 +230,15 @@
     <span class="k">return</span> <span class="n">func</span></div>
 
 
-<span class="k">def</span> <span class="nf">_parse_signature</span><span class="p">(</span><span class="n">signature</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_parse_signature</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="n">req_len</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parse a signature for basic validity and structure</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        signature (iterable): A ``list`` of objects or a ``tuple`` of ``bool``,</span>
-<span class="sd">            ``list`` giving the required-ness of this signature and the</span>
-<span class="sd">            signature</span>
+<span class="sd">        signature (iterable): One or more objects in a ``list``, or a</span>
+<span class="sd">            ``tuple`` of (``bool``, ``list``) describing if the signature</span>
+<span class="sd">            is required</span>
+<span class="sd">        req_len (int): Requirement for the length of the description in</span>
+<span class="sd">            ``signature``</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple[bool, list]: The signature</span>
@@ -238,13 +247,16 @@
 <span class="sd">        KeyError: If ``name`` isn&#39;t a supported type of function signature</span>
 <span class="sd">        TypeError: If ``signature`` is invalid</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="c1"># Given as &lt;str:name&gt;=[&lt;object&gt;, ...]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="p">(</span><span class="n">REQUIRED_BY_DEFAULT</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
+
     <span class="c1"># Given as &lt;str:name&gt;=(&lt;bool:required&gt;, [&lt;object&gt;, ...]])</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
           <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">req_len</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="n">req_len</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Function signature must have </span><span class="si">{n}</span><span class="s2"> arguments&quot;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">req_len</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">signature</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Invalid signature: </span><span class="si">{sig}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sig</span><span class="o">=</span><span class="n">signature</span><span class="p">))</span>
@@ -254,19 +266,19 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot; should be a dictionary&quot;</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">required</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">required</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">required</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Required attribute, &#39;</span><span class="si">{}</span><span class="s2">&#39;, not passed to function&quot;</span>
                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="c1"># If the specification description has a specific length requirement</span>
-            <span class="k">if</span> <span class="n">description</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specification requires </span><span class="si">{n}</span><span class="s2"> elements (</span><span class="si">{desc}</span><span class="s2">)&quot;</span>
-                                 <span class="s2">&quot; but </span><span class="si">{n2}</span><span class="s2"> elements were passed&quot;</span>
-                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">description</span><span class="p">),</span>
-                                         <span class="n">desc</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
-                                         <span class="n">n2</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">desc</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">desc</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Specification requires </span><span class="si">{n}</span><span class="s2"> elements (</span><span class="si">{desc}</span><span class="s2">) but &quot;</span>
+                        <span class="s2">&quot;</span><span class="si">{n2}</span><span class="s2"> elements were passed&quot;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">desc</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
 
 
 <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">signature</span><span class="p">):</span>
@@ -285,7 +297,17 @@
     <span class="c1">#   1) Explicit &quot;required&quot;: `check(&#39;x&#39;, data=(False, [str]))`</span>
     <span class="c1">#   2) Assume default (not required): `check(&#39;x&#39;, data=[str])`</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">signature</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_parse_signature</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DATA</span><span class="p">,</span> <span class="n">RECORD</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span>
+                <span class="s1">&#39;Unknown signature check for argument named &quot;</span><span class="si">{name}</span><span class="s1">&quot;&#39;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">k</span><span class="p">))</span>
+        <span class="n">req_len</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">OUTPUT</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">==</span> <span class="n">RECORD</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">signature</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_parse_signature</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">req_len</span><span class="o">=</span><span class="n">req_len</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PCError</span> <span class="k">as</span> <span class="n">pce</span><span class="p">:</span>
+            <span class="n">future</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">raise_with_traceback</span><span class="p">(</span><span class="n">PCError</span><span class="p">(</span>
+                <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; signature, &#39;</span><span class="si">{}</span><span class="s2">&#39;, is invalid: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">pce</span><span class="p">)</span>
+            <span class="p">))</span>
 
     <span class="nd">@decorator</span><span class="o">.</span><span class="n">decorator</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -300,8 +322,8 @@
             <span class="n">_validate_specification</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="n">future</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">raise_with_traceback</span><span class="p">(</span><span class="n">PCError</span><span class="p">(</span>
-                <span class="s2">&quot;Argument to &#39;</span><span class="si">{}</span><span class="s2">&#39; is invalid:: </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
-                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="p">)))</span>
+                <span class="s2">&quot;Argument &#39;</span><span class="si">{}</span><span class="s2">&#39; to &#39;</span><span class="si">{}</span><span class="s2">&#39; is invalid:: </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">wrapper</span>
@@ -323,7 +345,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Nov 1, 2016, 6:51:52 AM.
+      Last updated on Nov 3, 2016, 5:14:57 AM.
 
     </p>
   </div>

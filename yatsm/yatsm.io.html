@@ -157,9 +157,9 @@
 </ul>
 </div>
 </div>
-<div class="section" id="module-yatsm.io">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.io" title="Permalink to this headline">¶</a></h2>
-<p>YATSM IO module</p>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-yatsm.io"></span><p>YATSM IO module</p>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
 <p class="last">Include result file IO abstraction (<a class="reference external" href="https://github.com/ceholden/yatsm/issues/69">GH#69</a>)</p>
@@ -188,6 +188,25 @@ than it existing already (errno 13 &#8220;EEXIST&#8221;)</td>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="yatsm.io.get_readers">
+<code class="descclassname">yatsm.io.</code><code class="descname">get_readers</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/_api.html#get_readers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.get_readers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dict containing time series drivers described in config</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) &#8211; <code class="docutils literal"><span class="pre">dataset</span></code> entry in a YATSM configuration file with
+sections for each of the <code class="docutils literal"><span class="pre">readers</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Time series drivers</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.6)">dict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
@@ -202,7 +221,7 @@ than it existing already (errno 13 &#8220;EEXIST&#8221;)</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2016, Chris Holden.
-      Last updated on Nov 1, 2016, 6:51:52 AM.
+      Last updated on Nov 3, 2016, 5:14:57 AM.
 
     </p>
   </div>
