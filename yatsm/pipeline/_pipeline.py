@@ -57,12 +57,40 @@ class Task(object):
         """
         deps = set()
         req = self.require_record
-        from IPython.core.debugger import Pdb; Pdb().set_trace()
         for task in tasks:
             if task.output_record and task.output_record in req:
                 deps.add(task)
                 deps.update(task.record_dependencies(tasks))
-        return list(deps)
+        return list(deps)[::-1]
+
+    def record_result(self, results):
+        """ Extract this task's result from a pipe of results
+        """
+        return results.get(self.output_record)
+
+    def record_result_group(self, tasks):
+        """ Define what HDF5 group this task belongs in
+
+        Args:
+            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a
+                pipeline)
+
+        Returns:
+            tuple (str, str): Return the group root (e.g., '/') and the
+            group name (e.g., 'ccdc')
+        """
+        if not self.output_record:
+            return None
+        group = [task.name for task in self.record_dependencies(tasks)
+                 if task.create_group]
+
+        where = '/'
+        if group:
+            where += '/'.join(group)
+        elif not self.create_group:
+            raise PCError("Task '{}' has no root segment and does not create "
+                          "a segment".format(self.name))
+        return where, self.name
 
 # SHORTCUT GETTERS
     @property
@@ -145,13 +173,13 @@ class Pipeline(object):
         """
         for eager_task in tasks:
             data, rec = eager_task.output_data, eager_task.output_record
-            has_rec = [output in pipe['record'] for output in rec]
             has_data = [output in pipe['data'] for output in data]
-            if not all(has_data) and all(has_rec):
-                missing = []
-                for pair in ((data, has_data), (rec, has_rec)):
-                    missing.extend([item for item, has in zip(*pair) if not
-                                    has])
+            has_rec = rec in pipe['record']
+            if not all(has_data) and not has_rec:
+                missing = [item for item, has in zip(data, has_data)
+                           if not has]
+                if not has_rec:
+                    missing.append(rec)
                 logger.warning('Eager task {t} has missing output: {m}'
                                .format(t=eager_task.funcname, m=missing))
                 return False
