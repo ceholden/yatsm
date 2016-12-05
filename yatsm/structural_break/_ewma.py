@@ -117,8 +117,11 @@ def _ewma(y, lambda_=0.2, crit=3.0, center=True, std_type='SD'):
         sd = _sd_sample(y)
     elif std_type == 'MAD':
         sd = mad(y)
+    elif isinstance(std_type, (int, float)):
+        sd = std_type
     else:
         sd = _sd_moving_range(y, k=2)
+
     process = _ewma_smooth(y, lambda_=lambda_, start=_center)
     boundary = _ewma_boundary(y, sd, crit=crit, lambda_=lambda_)
     violation = np.abs(process - _center) > boundary
