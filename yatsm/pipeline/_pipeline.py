@@ -13,6 +13,13 @@ from .tasks import PIPELINE_TASKS, SEGMENT_TASKS
 logger = logging.getLogger(__name__)
 
 
+def Pipe(data=None, record=None):
+    return {
+        'data': data or {},
+        'record': record or {}
+    }
+
+
 class Task(object):
 
     def __init__(self, name, func, require, output, **config):
