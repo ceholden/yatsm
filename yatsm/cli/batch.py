@@ -36,7 +36,7 @@ def batch(ctx, configfile, job_number, total_jobs):
     # Imports inside CLI for speed
     from yatsm.config import validate_and_parse_configfile
     from yatsm.io import _api as io_api
-    from yatsm.pipeline import Pipeline
+    from yatsm.pipeline import Pipe, Pipeline
 
     config = validate_and_parse_configfile(configfile)
 
@@ -68,10 +68,8 @@ def batch(ctx, configfile, job_number, total_jobs):
                                           readers,
                                           ((0, 10), (0, 10)),
                                           out=None)
-        pipe = {
-            'data': data,
-            'record': {}  # TODO: read this from pre-existing results
-        }
+
+        pipe = Pipe(data=data)  # TODO: read this from pre-existing results
         pipeline = Pipeline.from_config(tasks, pipe, overwrite=overwrite)
         pipe = pipeline.run_eager(pipe)
 
