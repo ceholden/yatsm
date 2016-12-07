@@ -51,3 +51,4 @@ docs/_build/
 
 # VIM
 *.swp
+*.tags
