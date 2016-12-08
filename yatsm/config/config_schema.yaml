@@ -8,6 +8,24 @@ properties:
         # TODO: pattern:
     data:
         "$ref": "#/definitions/data"
+    results:
+        type: object
+        properties:
+            output:
+                type: string
+            output_prefix:
+                type: string
+                default: 'yatsm_r{row_off:04d}_{num_rows:04d}_c{col_off:04d}_{num_cols:04d}.h5'
+            required:
+                - output
+    pipeline:
+        type: object
+        properties:
+            overwrite:
+                type: boolean
+                default: True
+            tasks:
+                "$ref": "#/definitions/tasks"
 
 definitions:
     data:
@@ -101,6 +119,9 @@ definitions:
                         "$ref": "#/definitions/readers/AGDCv2"
                 dependencies:
                     name: ['AGDCv2']
+    tasks:
+        # TODO
+        type: object
 
 types:
     array_num:
