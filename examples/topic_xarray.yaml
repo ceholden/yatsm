@@ -37,31 +37,34 @@ data:
             # Valid range of band data
             min_values: [0, 0, 0, 0, 0, 0, -100, 0]
             max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
-        ALOS:
-            # Note:
-            #   Need to convert DNs to dB: db = (dn - 1) * 0.15 - 31.0
-            #
-            # Type of reader for this dataset (GDAL | BIP)
+        ALOS_hh:
             reader:
                 name: GDAL
                 GDAL:
-                    # Text file containing dates and images
-                    input_file: "$ROOT/ALOS.csv"
-                    # Input date format
+                    input_file: "$ROOT/ALOS_hh.csv"
                     date_format: "%Y%m%d"
                     column_dtype:
-                        date: str
-            # Band names
-            band_names: [hh, hv, hh_hv_ratio]
-            # Valid range of band data
-            min_values: [1, 1, 1]
-            max_values: [255, 255, 255]
+                        path: str
+            band_names: [hh]
+            min_values: [-100]
+            max_values: [-0.000001]
+        ALOS_hv:
+            reader:
+                name: GDAL
+                GDAL:
+                    input_file: "$ROOT/ALOS_hv.csv"
+                    date_format: "%Y%m%d"
+                    column_dtype:
+                        path: str
+            band_names: [hv]
+            min_values: [-100]
+            max_values: [-0.000001]
 
 results:
     # Output location
     output: "$ROOT/TSR"
     # Output filename pattern
-    output_prefix: "yatsm_r{line}.npz"
+    output_prefix: "yatsm_r{row_off}_{num_rows}_c{col_off}_{num_cols}.h5"
 
 pipeline:
     overwrite: False
