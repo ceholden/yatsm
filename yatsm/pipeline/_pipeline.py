@@ -94,7 +94,9 @@ class Task(object):
         where = '/'
         if group:
             where += '/'.join(group)
-        elif not self.create_group:
+        elif self.create_group:
+            where += '%s' % self.name
+        else:
             raise PCError("Task '{}' has no root segment and does not create "
                           "a segment".format(self.name))
         return where, self.name
