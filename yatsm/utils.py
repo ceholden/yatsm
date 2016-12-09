@@ -61,21 +61,6 @@ def distribute_jobs(job_number, total_jobs, n, interlaced=True):
     return tasks
 
 
-def get_output_name(dataset_config, line):
-    """ Returns output name for specified config and line number
-
-    Args:
-      dataset_config (dict): configuration information about the dataset
-      line (int): line of the dataset for output
-
-    Returns:
-      filename (str): output filename
-
-    """
-    return os.path.join(dataset_config['output'],
-                        '%s%s.npz' % (dataset_config['output_prefix'], line))
-
-
 # IMAGE DATASET READING
 def csvfile_to_dataframe(input_file, date_format='%Y%j'):
     """ Return sorted filenames of images from input text file
