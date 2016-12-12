@@ -214,3 +214,21 @@ class HDF5ResultsStore(object):
     def close(self):
         if self._h5:
             self._h5.close()
+
+# DICT LIKE
+    def keys(self):
+        """ Yields HDF5 file nodes names
+        """
+        with self as s:
+            for node in s._h5.walkNodes():
+                yield node._v_pathname
+
+    def items(self):
+        """ Yields key/value pairs for groups
+        """
+        with self as s:
+            for group in s.groups():
+                yield group._v_pathname, group
+
+# TODO: add getitem/setitem and getattr
+# TODO: add __repr__
