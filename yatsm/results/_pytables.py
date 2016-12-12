@@ -141,5 +141,76 @@ def create_task_tables(h5file, tasks, results, filters=FILTERS,
 
 class HDF5ResultsStore(object):
     """ PyTables based HDF5 results storage
+
+    Args:
+        filename (str): HDF5 file
+        mode (str): File mode to open with
+        keep_open (bool): Keep file handle open after calls
+        tb_kwargs: Optional keywork arguments to :ref:`tables.open_file`
     """
-    pass
+    def __init__(self, filename, mode=None, keep_open=True,
+                 **tb_kwargs):
+        self.filename = filename
+        self.mode = mode or ('r+' if os.path.exists(self.filename) else 'w')
+        self.keep_open = keep_open
+        self.tb_kwargs = tb_kwargs
+        self._h5 = None
+
+    def __enter__(self):
+        if isinstance(self._h5, tb.file.File):
+            if getattr(self._h5, 'mode', '') == self.mode and self._h5.isopen:
+                return self  # already opened in correct form, bail
+            else:
+                self._h5.close()
+        else:
+            try:
+                os.makedirs(os.path.dirname(self.filename))
+            except OSError as er:
+                if er.errno == errno.EEXIST:
+                    pass
+                else:
+                    raise
+
+        self._h5 = tb.open_file(self.filename, mode=self.mode, title='YATSM',
+                                **self.tb_kwargs)
+
+        return self
+
+    def __exit__(self, *args):
+        if self._h5 and not self.keep_open:
+            self._h5.close()
+
+    def __del__(self):
+        self._h5.close()
+
+    @staticmethod
+    def _write_row(h5file, result, tables):
+        for task, table in tables:
+            table.append(result[task.output_record])
+            table.flush()
+
+    def write_result(self, pipeline, result, overwrite=True):
+        """ Write result to HDF5
+
+        Args:
+            result (dict): Dictionary of pipeline 'record' results
+                where key is task output and value is a structured
+                :ref:`np.ndarray`
+            overwrite (bool): Overwrite existing values
+
+        Returns:
+            HDF5ResultsStore
+
+        """
+        result = result.get('record', result)
+        with self as s:
+            tasks = list(pipeline.tasks.values())
+            tables = create_task_tables(s._h5, tasks, result,
+                                        overwrite=True)
+            s._write_row(s._h5, result, tables)
+
+        return self
+
+    def close(self):
+        if self._h5:
+            self._h5.close()
