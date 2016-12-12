@@ -1,12 +1,13 @@
 """ Command line interface for running YATSM pipelines in batch
 """
-from collections import OrderedDict
+from collections import defaultdict, OrderedDict
 import logging
 from itertools import product
 import os
 import time
 
 import click
+import numpy as np
 import six
 import toolz
 
@@ -37,6 +38,7 @@ def batch(ctx, configfile, job_number, total_jobs):
     from yatsm.config import validate_and_parse_configfile
     from yatsm.io import _api as io_api
     from yatsm.pipeline import Pipe, Pipeline
+    from yatsm.results import HDF5ResultsStore, result_filename
 
     config = validate_and_parse_configfile(configfile)
 
@@ -49,15 +51,14 @@ def batch(ctx, configfile, job_number, total_jobs):
     #       and choosing block shape (in config?)
     # TODO: Allow user to specify block shape in config (?)
     preference = next(iter(readers))
+    from IPython.core.debugger import Pdb; Pdb().set_trace()
     block_windows = readers[preference].block_windows
 
     import dask
 
     def sel_pix(pipe, y, x):
-        return {
-            'data': pipe['data'].sel(y=y, x=x),
-            'record': pipe['record']  # TODO: select pixel
-        }
+        return Pipe(data=pipe['data'].sel(y=y, x=x),
+                    record=pipe.get('record', None))
 
     overwrite = config['pipeline'].get('overwrite', True)
     tasks = config['pipeline']['tasks']
@@ -69,12 +70,31 @@ def batch(ctx, configfile, job_number, total_jobs):
                                           ((0, 10), (0, 10)),
                                           out=None)
 
-        pipe = Pipe(data=data)  # TODO: read this from pre-existing results
-        pipeline = Pipeline.from_config(tasks, pipe, overwrite=overwrite)
-        pipe = pipeline.run_eager(pipe)
+        filename = result_filename(
+            window,
+            root=config['results']['output'],
+            pattern=config['results']['output_prefix'],
+        )
+        with HDF5ResultsStore(filename) as result_store:
 
-        for y, x in product(data.y.values, data.x.values):
-            logger.debug('Processing pixel y/x: {}/{}'.format(y, x))
-            pix_pipe = sel_pix(pipe, y, x)
-            result = pipeline.run(pix_pipe)
-            # TODO: save result...
+            # TODO: read this from pre-existing results
+            pipe = Pipe(data=data)
+            pipeline = Pipeline.from_config(tasks, pipe, overwrite=overwrite)
+            pipe = pipeline.run_eager(pipe)
+
+            record_results = defaultdict(list)
+            for y, x in product(data.y.values, data.x.values):
+                logger.debug('Processing pixel y/x: {}/{}'.format(y, x))
+                pix_pipe = sel_pix(pipe, y, x)
+
+                result = pipeline.run(pix_pipe)
+
+                # TODO: figure out what to do with 'data' results
+                for k, v in result['record'].items():
+                    record_results[k].append(v)
+
+            for name, result in record_results.items():
+                record_results[name] = np.concatenate(result)
+            result_store.write_result(pipeline, record_results,
+                                      overwrite=overwrite)
+
