@@ -85,6 +85,11 @@ def arg_job_number(f):
 
 
 # CLI OPTIONS
+opt_overwrite = click.option(
+    '--overwrite', is_flag=True, default=False, show_default=True,
+    help='Overwrite existing results'
+)
+
 opt_date_format = click.option(
     '--date', 'date_frmt',
     default='%Y-%m-%d',

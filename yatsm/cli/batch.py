@@ -21,8 +21,9 @@ logger = logging.getLogger('yatsm')
 @options.arg_config_file
 @options.arg_job_number
 @options.arg_total_jobs
+@options.opt_overwrite
 @click.pass_context
-def batch(ctx, configfile, job_number, total_jobs):
+def batch(ctx, configfile, job_number, total_jobs, overwrite):
     """ Run a YATSM pipeline on a dataset in batch mode
 
     The dataset is split into a number of subsets based on the structure of the
@@ -51,7 +52,6 @@ def batch(ctx, configfile, job_number, total_jobs):
     #       and choosing block shape (in config?)
     # TODO: Allow user to specify block shape in config (?)
     preference = next(iter(readers))
-    from IPython.core.debugger import Pdb; Pdb().set_trace()
     block_windows = readers[preference].block_windows
 
     import dask
@@ -60,7 +60,7 @@ def batch(ctx, configfile, job_number, total_jobs):
         return Pipe(data=pipe['data'].sel(y=y, x=x),
                     record=pipe.get('record', None))
 
-    overwrite = config['pipeline'].get('overwrite', True)
+    overwrite = overwrite or config['pipeline'].get('overwrite', False)
     tasks = config['pipeline']['tasks']
 
     # TODO: iterate over block_windows assigned to ``job_id``
