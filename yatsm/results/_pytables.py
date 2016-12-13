@@ -97,13 +97,13 @@ def create_task_groups(h5file, tasks, filters=FILTERS, overwrite=False):
     groups = []
     for task in tasks:
         if task.output_record:
-            where, name = task.record_result_group(tasks)
-            if not _has_node(h5file, where, name=name) or overwrite:
-                # TODO: check w/ w/o createparents -- shouldn't need it
-                g = h5file.create_group(where, name, title=task.name,
+            where, tablename = task.record_result_location(tasks)
+            group, groupname = s.rsplit('/', 1)
+            if not _has_node(h5file, where, name=name):
+                g = h5file.create_group(group, groupname, title=task.name,
                                         filters=filters, createparents=False)
             else:
-                g = h5file.get_node(where, name)
+                g = h5file.get_node(group, groupname)
             groups.append((task, g))
 
     return groups
@@ -129,9 +129,9 @@ def create_task_tables(h5file, tasks, results, filters=FILTERS,
     tables = []
     for task in tasks:
         if task.output_record:
-            where, name = task.record_result_group(tasks)
+            where, tablename = task.record_result_location(tasks)
             # from IPython.core.debugger import Pdb; Pdb().set_trace()
-            t = create_table(h5file, where, name,
+            t = create_table(h5file, where, tablename,
                              results[task.output_record],
                              index=True,
                              **tb_config)
