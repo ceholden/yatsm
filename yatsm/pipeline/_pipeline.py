@@ -178,6 +178,18 @@ class Pipeline(object):
         pipeline = delay_pipeline(self.pipeline, pipe)
         return pipeline.compute()
 
+    @property
+    def task_tables(self):
+        """ dict: :ref:`Task` name (str) -> result file table location (str)
+        """
+        task_tables = {}
+        for taskname, task in self.tasks.items():
+            location = task.record_result_location(self.tasks.values())
+            if location:
+                group, tablename = location
+                task_tables[taskname] = group + '/' + tablename
+        return task_tables
+
     @staticmethod
     def _check_eager(tasks, pipe):
         """ Check if it looks like eager task results have been computed
