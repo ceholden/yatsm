@@ -154,35 +154,9 @@ class HDF5ResultsStore(object):
         self.mode = mode or ('r+' if os.path.exists(self.filename) else 'w')
         self.keep_open = keep_open
         self.tb_kwargs = tb_kwargs
-        self._h5 = None
+        self.h5file = None
 
-    def __enter__(self):
-        if isinstance(self._h5, tb.file.File):
-            if getattr(self._h5, 'mode', '') == self.mode and self._h5.isopen:
-                return self  # already opened in correct form, bail
-            else:
-                self._h5.close()
-        else:
-            try:
-                os.makedirs(os.path.dirname(self.filename))
-            except OSError as er:
-                if er.errno == errno.EEXIST:
-                    pass
-                else:
-                    raise
-
-        self._h5 = tb.open_file(self.filename, mode=self.mode, title='YATSM',
-                                **self.tb_kwargs)
-
-        return self
-
-    def __exit__(self, *args):
-        if self._h5 and not self.keep_open:
-            self._h5.close()
-
-    def __del__(self):
-        self._h5.close()
-
+# WRITING
     @staticmethod
     def _write_row(h5file, result, tables):
         for task, table in tables:
@@ -203,31 +177,61 @@ class HDF5ResultsStore(object):
 
         """
         result = result.get('record', result)
-        with self as s:
+        with self as store:
             tasks = list(pipeline.tasks.values())
-            tables = create_task_tables(s._h5, tasks, result,
+            tables = create_task_tables(self.h5file, tasks, result,
                                         overwrite=True)
-            s._write_row(s._h5, result, tables)
+            store._write_row(store.h5file, result, tables)
 
         return self
 
+
+# CONTEXT HELPERS
+    def __enter__(self):
+        if isinstance(self.h5file, tb.file.File):
+            if (getattr(self.h5file, 'mode', '') == self.mode
+                    and self.h5file.isopen):
+                return self  # already opened in correct form, bail
+            else:
+                self.h5file.close()
+        else:
+            try:
+                os.makedirs(os.path.dirname(self.filename))
+            except OSError as er:
+                if er.errno == errno.EEXIST:
+                    pass
+                else:
+                    raise
+
+        self.h5file = tb.open_file(self.filename, mode=self.mode, title='YATSM',
+                                   **self.tb_kwargs)
+
+        return self
+
+    def __exit__(self, *args):
+        if self.h5file and not self.keep_open:
+            self.h5file.close()
+
+    def __del__(self):
+        self.h5file.close()
+
     def close(self):
-        if self._h5:
-            self._h5.close()
+        if self.h5file:
+            self.h5file.close()
 
 # DICT LIKE
     def keys(self):
         """ Yields HDF5 file nodes names
         """
-        with self as s:
-            for node in s._h5.walkNodes():
+        with self as store:
+            for node in store.h5file.walk_nodes():
                 yield node._v_pathname
 
     def items(self):
         """ Yields key/value pairs for groups
         """
-        with self as s:
-            for group in s.groups():
+        with self as store:
+            for group in store.h5file.walk_groups():
                 yield group._v_pathname, group
 
 # TODO: add getitem/setitem and getattr
