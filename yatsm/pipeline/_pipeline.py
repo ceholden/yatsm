@@ -75,16 +75,16 @@ class Task(object):
         """
         return results.get(self.output_record)
 
-    def record_result_group(self, tasks):
-        """ Define what HDF5 group this task belongs in
+    def record_result_location(self, tasks):
+        """ Define what HDF5 group/table this task belongs in
 
         Args:
             tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a
                 pipeline)
 
         Returns:
-            tuple (str, str): Return the group root (e.g., '/') and the
-            group name (e.g., 'ccdc')
+            tuple (str, str): Return the group root (e.g., '/ccdc') and the
+            table name (e.g., 'ccdc')
         """
         if not self.output_record:
             return None
@@ -99,6 +99,7 @@ class Task(object):
         else:
             raise PCError("Task '{}' has no root segment and does not create "
                           "a segment".format(self.name))
+
         return where, self.name
 
 # SHORTCUT GETTERS
@@ -124,6 +125,7 @@ class Task(object):
 
     @property
     def output_record(self):
+        """ str: name of 'record' output"""
         return self.output.get('record', [None])[0]
 
     def __repr__(self):
