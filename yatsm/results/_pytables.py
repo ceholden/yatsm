@@ -234,5 +234,26 @@ class HDF5ResultsStore(object):
             for group in store.h5file.walk_groups():
                 yield group._v_pathname, group
 
-# TODO: add getitem/setitem and getattr
-# TODO: add __repr__
+    def __getitem__(self, key):
+        with self as store:
+            key = key if key.startswith('/') else '/' + key
+            if key not in store.keys():
+                raise KeyError('Cannot find node {} in HDF5 store'.format(key))
+            return store.h5file.get_node(key)
+
+    def __setitem__(self, key, value):
+        with self as store:
+            if key not in store.keys():
+                raise KeyError('Cannot find node {} in HDF5 store'.format(key))
+            group, table = key.rsplit('/', 1)
+
+            table = store[key]
+            if not isinstance(table, tb.Table):
+                raise AttributeError('Cannot set value for non-table '
+                                     '{}'.format(key))
+            else:
+                table.append(value)
+
+    def __repr__(self):
+        return ("<{0.__class__.__name__}(filename={0.filename}, mode={0.mode})>"
+                .format(self))
