@@ -6,12 +6,12 @@ from pkg_resources import iter_entry_points
 
 import numpy as np
 
-
+# Segment related
 #: list: Datatype for segment useful for NumPy structurred arrays
 SEGMENT_DTYPE = [
-    ('start', 'i4'),
-    ('end', 'i4'),
-    ('break', 'i4'),
+    ('start_day', 'i4'),
+    ('end_day', 'i4'),
+    ('break_day', 'i4'),
     ('px', 'float'),
     ('py', 'float')
 ]
