@@ -6,6 +6,7 @@ from pkg_resources import iter_entry_points
 
 import numpy as np
 
+
 # Segment related
 #: list: Datatype for segment useful for NumPy structurred arrays
 SEGMENT_DTYPE = [
@@ -19,6 +20,32 @@ SEGMENT_DTYPE = [
 
 #: list: Names of segment attributes
 SEGMENT_ATTRS = [name for name, dtype in SEGMENT_DTYPE]
+
+
+class Segment(np.ndarray):
+    """ YATSM Time Series Segment as NumPy Structured Array
+    """
+
+    @classmethod
+    def from_example(cls, **attrs):
+        """ Return a Segment from example name=value pairs
+
+        Args:
+            attrs (dict): Collection of Segment attributes to
+                use in Segment definition
+
+        Returns:
+            Segment: An empty structured :ref:`np.ndarray` with data types
+            for default segment attributes and any others listed in ``attrs``
+        """
+        dtypes = list(SEGMENT_DTYPE)
+        for name, arr in attrs.items():
+            shp = getattr(arr, 'shape', 0)
+            dtype = getattr(arr, 'dtype', 'f4')
+
+            dtypes.append((name, dtype, shp) if shp else (name, dtype))
+
+        return cls(shape=0, dtype=dtypes)
 
 
 # Entry point handling
@@ -42,5 +69,3 @@ def iep(s):
         except Exception as e:
             d[_ep.name] = functools.partial(broken_ep, _ep, e)
     return d
-
-
