@@ -6,7 +6,7 @@ import os
 import numpy as np
 import tables as tb
 
-SEGMENT_ATTRS = ['px', 'py', 'start', 'end', 'break']
+from ..algorithms import SEGMENT_ATTRS
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
 
