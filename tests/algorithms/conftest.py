@@ -5,8 +5,6 @@ import numpy as np
 import sklearn
 import pytest
 
-from yatsm.algorithms.yatsm import YATSM
-
 here = os.path.dirname(__file__)
 
 
@@ -48,8 +46,8 @@ def masked_ts(request):
 
 
 # SIMULATED DATA
-def setup_dummy_YATSM(X, Y, dates, i_breaks):
-    """ Setup a dummy YATSM model
+def setup_dummy_CCDC(X, Y, dates, i_breaks):
+    """ Setup a dummy CCDC model
 
     Args:
         X (np.ndarray): n x p features
@@ -61,10 +59,11 @@ def setup_dummy_YATSM(X, Y, dates, i_breaks):
     Returns:
         YATSM model
     """
+    from yatsm.algorithms.ccdc import CCDCesque
     n = dates.size
-    yatsm = YATSM()
+    yatsm = CCDCesque()
     yatsm.X, yatsm.Y, yatsm.dates = X, Y, dates
-    yatsm.n_coef, yatsm.n_series = X.shape[1], Y.shape[0]
+    yatsm.n_features, yatsm.n_series = X.shape[1], Y.shape[0]
     yatsm.models = np.array([sklearn.clone(yatsm.estimator)
                              for i in range(yatsm.n_series)])
     yatsm.test_indices = np.arange(yatsm.n_series)
@@ -117,7 +116,7 @@ def sim_nochange(request):
     standard normal.
     """
     X, Y, dates = _sim_no_change_data()
-    return setup_dummy_YATSM(X, Y, dates, [0])
+    return setup_dummy_CCDC(X, Y, dates, [0])
 
 
 @pytest.fixture(scope='module')
@@ -130,7 +129,7 @@ def sim_no_real_change_1(request):
     X, Y, dates = _sim_no_change_data()
     n = dates.size
     # Put a break somewhere in the middle
-    return setup_dummy_YATSM(X, Y, dates, [n // 2, 0])
+    return setup_dummy_CCDC(X, Y, dates, [n // 2, 0])
 
 
 @pytest.fixture(scope='module')
@@ -143,7 +142,7 @@ def sim_no_real_change_2(request):
     X, Y, dates = _sim_no_change_data()
     n = dates.size
     # Put two breaks somewhere in the middle
-    return setup_dummy_YATSM(X, Y, dates, [n // 4, n // 2, 0])
+    return setup_dummy_CCDC(X, Y, dates, [n // 4, n // 2, 0])
 
 
 @pytest.fixture(scope='module')
@@ -168,4 +167,4 @@ def sim_real_change(request):
     ])  # nseries x n
 
     # Put a break somewhere in the middle
-    return setup_dummy_YATSM(X, Y, dates, [n_1, 0])
+    return setup_dummy_CCDC(X, Y, dates, [n_1, 0])

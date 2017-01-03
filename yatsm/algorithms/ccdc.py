@@ -7,7 +7,6 @@ import numpy as np
 
 import sklearn.linear_model
 
-from .yatsm import YATSM
 from ..accel import try_jit
 from ..errors import TSLengthException
 from ..masking import smooth_mask, multitemp_mask
@@ -30,7 +29,7 @@ def _monitor_calc_scores(X, Y, here, scores, predictions, rmse,
             )
 
 
-class CCDCesque(YATSM):
+class CCDCesque(object):
     """Initialize a CCDC-like model for data X (spectra) and Y (dates)
 
     An unofficial and unvalidated port of the Continuous Change Detection and
@@ -89,8 +88,17 @@ class CCDCesque(YATSM):
                  remove_noise=True, green_band=1, swir1_band=4,
                  dynamic_rmse=False, slope_test=False, idx_slope=1,
                  **kwargs):
-        # Parent sets up test_indices and lm
-        super(CCDCesque, self).__init__(test_indices, estimator, **kwargs)
+        self.test_indices = np.asarray(test_indices)
+        self.estimator = sklearn.clone(estimator['object'])
+        self.estimator_fit = estimator.get('fit', {})
+        self.models = []  # leave empty, fill in during `fit`
+
+        self.n_record = 0
+        self.record = []
+
+        self.n_series, self.n_features = 0, 0
+        self.px = kwargs.get('px', 0)
+        self.py = kwargs.get('py', 0)
 
         # Store model hyperparameters
         self.consecutive = consecutive
@@ -583,3 +591,109 @@ class CCDCesque(YATSM):
             _rmse[i_b] = rmse(self.Y[b, :].take(i_doy), m.predict(_X))
 
         return _rmse
+
+# From (former) parent
+    def fit_models(self, X, Y, bands=None):
+        """ Fit timeseries models for `bands` within `Y` for a given `X`
+
+        Updates or initializes fit for ``self.models``
+
+        Args:
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
+                number of observations) observation in the X design matrix
+            bands (iterable): Subset of bands of `Y` to fit. If None are
+                provided, fit all bands in Y
+
+        """
+        if bands is None:
+            bands = np.arange(self.n_series)
+
+        for b in bands:
+            y = Y[b, :]
+
+            model = self.models[b]
+            model.fit(X, y, **self.estimator_fit)
+
+            # Add in RMSE calculation
+            model.rmse = rmse(y, model.predict(X))
+
+            # Add intercept to intercept term of design matrix
+            model.coef = model.coef_.copy()
+            model.coef[0] += model.intercept_
+
+    def __iter__(self):
+        """ Iterate over the timeseries segment records
+        """
+        for record in self.record:
+            yield record
+
+    def __len__(self):
+        """ Return the number of segments in this timeseries model
+        """
+        return len(self.record)
+
+    def setup(self, df, **config):
+        """ Setup model for input dataset and (optionally) return design matrix
+
+        Args:
+            df (pandas.DataFrame): Pandas dataframe containing dataset
+                attributes (e.g., dates, image ID, path/row, metadata, etc.)
+            config (dict): YATSM configuration dictionary from user, including
+                'dataset' and 'YATSM' sub-configurations
+
+        Returns:
+            numpy.ndarray or None: return design matrix if used by algorithm
+        """
+        X = patsy.dmatrix(config['YATSM']['design_matrix'], data=df)
+        return X
+
+    def preprocess(self, X, Y, dates,
+                   min_values=None, max_values=None,
+                   mask_band=None, mask_values=None, **kwargs):
+        """ Preprocess a unit area of data (e.g., pixel, segment, etc.)
+
+        This preprocessing step will remove all observations that either
+        fall outside of the minimum/maximum range of the data or are flagged
+        for masking in the ``mask_band`` variable in ``Y``. If ``min_values``
+        or ``max_values`` are not specified, this masking step is skipped.
+        Similarly, masking based on a QA/QC or cloud mask will not be performed
+        if ``mask_band`` or ``mask_values`` are not provided.
+
+        Args:
+            X (numpy.ndarray): design matrix (number of observations x number
+                of features)
+            Y (numpy.ndarray): independent variable matrix (number of series x
+                number of observations)
+            dates (numpy.ndarray): ordinal dates for each observation in X/Y
+            min_values (np.ndarray): Minimum possible range of values for each
+                variable in Y (optional)
+            max_values (np.ndarray): Maximum possible range of values for each
+                variable in Y (optional)
+            mask_band (int): The mask band in Y (optional)
+            mask_values (sequence): A list or np.ndarray of values in the
+                ``mask_band`` to mask (optional)
+
+        Returns:
+            tuple (np.ndarray, np.ndarray, np.ndarray): X, Y, and dates after
+                being preprocessed and masked
+
+        """
+        if min_values is None or max_values is None:
+            valid = np.ones(dates.shape[0], dtype=np.bool)
+        else:
+            # Mask range of data
+            valid = get_valid_mask(Y, min_values, max_values).astype(bool)
+
+        # Apply mask band
+        if mask_band is not None and mask_values is not None:
+            idx_mask = mask_band - 1
+            valid *= np.in1d(Y.take(idx_mask, axis=0), mask_values,
+                             invert=True).astype(np.bool)
+
+        Y = np.delete(Y, idx_mask, axis=0)[:, valid]
+        X = X[valid, :]
+        dates = dates[valid]
+
+        return X, Y, dates
