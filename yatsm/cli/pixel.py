@@ -14,7 +14,6 @@ import yaml
 
 from . import options, console
 from ..algorithms import postprocess
-from ..config_parser import convert_config, parse_config_file
 from ..utils import csvfile_to_dataframe, get_image_IDs
 from ..regression.transforms import harm  # noqa
 
