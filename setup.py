@@ -63,6 +63,7 @@ cmdclass = {
     'develop': my_develop  # called when pip install -e
 }
 
+
 # Get version
 with open('yatsm/version.py') as f:
     for line in f:
@@ -72,9 +73,11 @@ with open('yatsm/version.py') as f:
             version = version.strip("'")
             continue
 
+
 # Get README
 with open('README.rst') as f:
     readme = f.read()
+
 
 # Installation requirements
 install_requires = [
@@ -82,7 +85,6 @@ install_requires = [
     'six',
     'numpy',
     'scipy',
-    'Cython',
     'statsmodels',
     'scikit-learn',
     'pandas',
@@ -103,31 +105,6 @@ install_requires = [
     'matplotlib',
 ]
 
-# NumPy/Cython build setup
-include_dirs = []
-extra_compile_args = ['-O3']
-
-try:
-    import numpy as np
-    include_dirs.append(np.get_include())
-except ImportError:
-    log.critical('NumPy and its headers are required for YATSM. '
-                 'Please install and try again.')
-    sys.exit(1)
-
-try:
-    from Cython.Build import cythonize
-except ImportError:
-    log.critical('Cython is required for YATSM. Please install and try again')
-    sys.exit(1)
-
-ext_opts = dict(
-    include_dirs=include_dirs,
-    extra_compile_args=extra_compile_args
-)
-cy_ext_modules = cythonize([
-    Extension('yatsm._cyprep', ['yatsm/_cyprep.pyx'], **ext_opts)
-])
 
 # Pre-packaged regression algorithms included in installation
 package_data = {
@@ -177,7 +154,6 @@ setup_dict = dict(
     description=desc,
     zip_safe=False,
     long_description=readme,
-    ext_modules=cy_ext_modules,
     install_requires=install_requires,
     cmdclass=cmdclass
 )

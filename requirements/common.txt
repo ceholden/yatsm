@@ -6,7 +6,6 @@ decorator>=4.0.9
 # Base
 numpy>=1.9.0
 scipy>=0.14.0
-Cython>=0.20.1
 setuptools>=0.7.2  # wicked old setuptools broken for .pyx -> .c
 # GDAL
 rasterio>=1.0
