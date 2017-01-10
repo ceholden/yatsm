@@ -9,7 +9,7 @@ import numpy as np
 
 # Segment related
 #: list: Datatype for segment useful for NumPy structurred arrays
-SEGMENT_DTYPE = [
+SEGMENT_DTYPES = [
     ('start_day', 'i4'),
     ('end_day', 'i4'),
     ('break_day', 'i4'),
@@ -19,7 +19,7 @@ SEGMENT_DTYPE = [
 
 
 #: list: Names of segment attributes
-SEGMENT_ATTRS = [name for name, dtype in SEGMENT_DTYPE]
+SEGMENT_ATTRS = [name for name, dtype in SEGMENT_DTYPES]
 
 
 class Segment(np.ndarray):
@@ -38,14 +38,20 @@ class Segment(np.ndarray):
             Segment: An empty structured :ref:`np.ndarray` with data types
             for default segment attributes and any others listed in ``attrs``
         """
-        dtypes = list(SEGMENT_DTYPE)
+        dtypes = list(SEGMENT_DTYPES)
         for name, arr in attrs.items():
             shp = getattr(arr, 'shape', 0)
             dtype = getattr(arr, 'dtype', 'f4')
 
             dtypes.append((name, dtype, shp) if shp else (name, dtype))
 
-        return cls(shape=0, dtype=dtypes)
+        return cls(shape=1, dtype=dtypes)
+
+    @classmethod
+    def barebones(cls, **kwds):
+        """ Return a barebones, minimum required fields, Segment
+        """
+        return cls(shape=1, dtype=SEGMENT_DTYPES)
 
 
 # Entry point handling
