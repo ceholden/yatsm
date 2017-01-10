@@ -1,6 +1,7 @@
 """ Functions, classes, etc. useful to CLI or other users
 """
 from collections import OrderedDict
+import datetime as dt
 import logging
 
 import six
@@ -117,4 +118,8 @@ def read_and_preprocess(config, readers, window, out=None):
 
         datasets[name] = ds
 
-    return merge_data(datasets)
+    ds = merge_data(datasets)
+    ds['doy'] = ('time', ds['time.dayofyear'])
+    ds['ordinal'] = ('time', ds['time'].to_pandas().map(dt.datetime.toordinal))
+
+    return ds
