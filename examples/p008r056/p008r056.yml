@@ -8,7 +8,7 @@ version: "0.7.0"
 
 data:
     # Optional: Directory location for caching dataset
-    # cache_dir: "/home/ceholden/Documents/landsat_stack/p008r056/images/cache"
+    # cache_dir: "$ROOT/cache"
     datasets:
         Landsat:
             # Type of reader for this dataset (GDAL | BIP)
@@ -64,21 +64,35 @@ results:
     # Output location
     output: "$ROOT/TSR"
     # Output filename pattern
-    output_prefix: "yatsm_r{line}.npz"
+    output_prefix: "yatsm_r{row_off:04d}_{num_rows:04d}_c{col_off:04d}_{num_cols:04d}.h5"
 
 pipeline:
     overwrite: False
     tasks:
-        ccdc:
-            task: pixel_CCDCesque
+        fuse_resid:
+            task: pixel_FuseResid
             require:
-                data: [red, nir, swir1, ndvi, ndmi]
+                data: [ndmi, ndvi, hh, hv, X_optical, X_hh, X_hv]
             output:
-                record: [ccdc]
+                record: [fuse_resid]
             config:
                 init:
-                    consecutive: 5
-                    design: 1 + x + harm(x, 1)
+                    mv_method: plurality
+                    span_time: 365
+                    span_train: 1
+                    min_sigma: [0.0, 0.1, 0.1]
+                    ewma_lambda_: 0.5
+                    ewma_crit: 4.0
+                    ewma_std_type: SD
+                fit:
+                    Ys: [
+                        [ndmi, hh, hv],
+                        [ndvi, hh, hv]
+                    ]
+                    Xs: [
+                        [X_optical, X_hh, X_hv],
+                        [X_optical, X_hh, X_hv]
+                    ]
         ndvi:
             task: norm_diff
             require:
@@ -91,34 +105,28 @@ pipeline:
                 data: [nir, swir1]
             output:
                 data: [ndmi]
-        omission:
-            task: omission_cusum_test
+        X_optical:
+            task: dmatrix
             require:
-                record: [ccdc]
+                data: [ndmi, ndvi]
             output:
-                record: [ccdc_omit]
-        commission:
-            task: commission_chow_test 
+                data: [X_optical]
+            config:
+                design: '1 + ordinal + harm(ordinal, 1)'
+        X_hh:
+            task: dmatrix
             require:
-                record: [ccdc_omit]
+                data: [hh]
             output:
-                record: [ccdc_commit]
+                data: [X_hh]
+            config:
+                design: '1'
+        X_hv:
+            task: dmatrix
+            require:
+                data: [hv]
+            output:
+                data: [X_hv]
+            config:
+                design: '1'
 
-       # refit_RLM:
-        #     task: refit
-        #     require:
-        #         data: [red, nir, swir1, ndvi, ndmi]
-        #         record: [ccdc]
-        #     output:
-        #         record: [ccdc_refit_RLM]
-        #     config:
-        #         design: 1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3) + harm(x, 0.25)
-        # classify:
-        #     task: classify_segment
-        #     require:
-        #         data: [red, nir, swir1, swir2, ndvi, ndmi]
-        #         record: [ccdc_refit_RLM]
-        #     output:
-        #         record: [classify_ccdc_RLM]
-        #     output:
-        #         record: [ccdc_fix]
