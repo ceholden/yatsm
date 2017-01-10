@@ -8,7 +8,7 @@ from .._task_validation import outputs, requires
 
 @requires(data=[])
 @outputs(record=[str])
-def pixel_CCDCesque(work, require, output, **config):
+def pixel_CCDCesque(work, require, output, config=None):
     """ Run CCDCesque on a pixel
     """
     arr = work['data'][require['data']].dropna('time', how='any').to_array()

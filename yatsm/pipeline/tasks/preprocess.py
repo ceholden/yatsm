@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 @eager_task
 @requires(data=[str, str])
 @outputs(data=[str])
-def norm_diff(work, require, output, **config):
+def norm_diff(work, require, output, config=None):
     """ Calculate a normalized difference of two bands
 
     Args:
