@@ -108,7 +108,7 @@ class Task(object):
         return {
             REQUIRE: self.require,
             OUTPUT: self.output,
-            TASK: self.config
+            CONFIG: self.config
         }
 
     @property
