@@ -5,8 +5,24 @@
     Allow specification of pipeline tasks using entry points
 
 """
+import logging
+from pkg_resources import iter_entry_points
+
 from .preprocess import norm_diff
 from .change import pixel_CCDCesque
+
+logger = logging.getLogger(__name__)
+
+
+def _get_eps(ep):
+    d = {}
+    for _ep in iter_entry_points(ep):
+        try:
+            d[_ep.name] = _ep.load()
+        except Exception as e:
+            logger.exception('Could not load pipeline task: {}'
+                             .format(_ep.name), e)
+    return d
 
 
 #: dict: Tasks that generate segments, usually through
@@ -21,4 +37,8 @@ PIPELINE_TASKS = {
     # DATA MANIPULATION
     'norm_diff': norm_diff,
 }
+
+
+SEGMENT_TASKS.update(_get_eps('yatsm.pipeline.tasks.segment'))
+PIPELINE_TASKS.update(_get_eps('yatsm.pipeline.tasks.tasks'))
 PIPELINE_TASKS.update(SEGMENT_TASKS)

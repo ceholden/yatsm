@@ -134,6 +134,12 @@ entry_points = '''
 
     [yatsm.algorithms.change]
     CCDCesque=yatsm.algorithms.ccdc:CCDCesque
+
+    [yatsm.pipeline.tasks.tasks]
+    norm_diff = yatsm.pipeline.tasks.preprocess:norm_diff
+
+    [yatsm.pipeline.tasks.segment]
+    pixel_CCDCesque = yatsm.pipeline.tasks.change:pixel_CCDCesque
 '''
 
 
