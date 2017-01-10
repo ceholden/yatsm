@@ -8,7 +8,7 @@
 import logging
 from pkg_resources import iter_entry_points
 
-from .preprocess import norm_diff
+from .preprocess import dmatrix, norm_diff
 from .change import pixel_CCDCesque
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,8 @@ SEGMENT_TASKS = {
 
 PIPELINE_TASKS = {
     # DATA MANIPULATION
-    'norm_diff': norm_diff,
+    'dmatrix': dmatrix,
+    'norm_diff': norm_diff
 }
 
 

@@ -2,7 +2,12 @@
 """
 import logging
 
+import numpy as np
+import patsy
+import xarray as xr
+
 from .._task_validation import eager_task, requires, outputs
+from ...regression.transforms import harm
 
 logger = logging.getLogger(__name__)
 
@@ -29,5 +34,29 @@ def norm_diff(work, require, output, config=None):
 
     work['data'][out] = ((work['data'][one] - work['data'][two]) /
                          (work['data'][one] + work['data'][two]))
+
+    return work
+
+
+@eager_task
+@requires(data=[])
+@outputs(data=[str])
+def dmatrix(work, require, output, config=None):
+    """ Create a design matrix from Patsy/R style design strings
+    """
+    design = config['design']
+    ds = work['data']
+
+    if '~' in design:
+        X = patsy.dmatrices(design, ds)
+    elif design.strip() == '1':
+        X = np.ones((ds['time'].size, 1))
+        X = patsy.DesignMatrix(X, design_info=patsy.DesignInfo(['Intercept']))
+    else:
+        X = patsy.dmatrix(design, ds)
+
+    coords = (ds['time'], X.design_info.column_names)
+    dims = ('time', 'terms')
+    work['data'][output['data'][0]] = xr.DataArray(X, coords, dims)
 
     return work
