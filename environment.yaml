@@ -16,7 +16,7 @@ dependencies:
     - pandas>=0.16.0
     - patsy>=0.3.0
     # GDAL
-    - gdal>=2.0.0
+    - gdal=2.1.2
     # CLI
     - click>=4.0
     # Config file
