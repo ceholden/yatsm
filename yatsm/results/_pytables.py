@@ -196,7 +196,9 @@ class HDF5ResultsStore(object):
                 self.h5file.close()
         else:
             try:
-                os.makedirs(os.path.dirname(self.filename))
+                dirname = os.path.dirname(self.filename)
+                if dirname:
+                    os.makedirs(dirname)
             except OSError as er:
                 if er.errno == errno.EEXIST:
                     pass
