@@ -13,6 +13,7 @@ import toolz
 
 from . import options
 from ..errors import TSLengthException
+from ..utils import distribute_jobs
 
 logger = logging.getLogger('yatsm')
 
@@ -41,6 +42,10 @@ def batch(ctx, configfile, job_number, total_jobs, overwrite):
     from yatsm.pipeline import Pipe, Pipeline
     from yatsm.results import HDF5ResultsStore, result_filename
 
+    # TODO: remove when not debugging
+    import dask
+    dask.set_options(get=dask.async.get_sync)
+
     config = validate_and_parse_configfile(configfile)
 
     readers = OrderedDict((
@@ -53,8 +58,12 @@ def batch(ctx, configfile, job_number, total_jobs, overwrite):
     # TODO: Allow user to specify block shape in config (?)
     preference = next(iter(readers))
     block_windows = readers[preference].block_windows
+    job_idx = distribute_jobs(job_number, total_jobs, len(block_windows))
 
-    import dask
+    logger.debug('Working on {} of {} block windows'
+                 .format(len(job_idx), len(block_windows)))
+
+    block_windows = [block_windows[i] for i in job_idx]
 
     def sel_pix(pipe, y, x):
         return Pipe(data=pipe['data'].sel(y=y, x=x),
@@ -65,9 +74,10 @@ def batch(ctx, configfile, job_number, total_jobs, overwrite):
 
     # TODO: iterate over block_windows assigned to ``job_id``
     for idx, window in block_windows:
+        logger.debug('Working on window: {}'.format(window))
         data = io_api.read_and_preprocess(config['data']['datasets'],
                                           readers,
-                                          ((0, 10), (0, 10)),
+                                          window,
                                           out=None)
 
         filename = result_filename(
@@ -75,6 +85,8 @@ def batch(ctx, configfile, job_number, total_jobs, overwrite):
             root=config['results']['output'],
             pattern=config['results']['output_prefix'],
         )
+
+        # TODO: guess for number of records to store
         with HDF5ResultsStore(filename) as result_store:
 
             # TODO: read this from pre-existing results
