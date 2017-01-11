@@ -17,6 +17,7 @@ dependencies:
     # GDAL and IO
     - fiona>=1.7.0
     - rasterio>=1.0*
+    - gdal=2.1.2
     - shapely>=1.5.16
     - xarray>=0.7.1
     - pytables>=3.2.0
