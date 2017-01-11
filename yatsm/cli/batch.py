@@ -92,6 +92,13 @@ def batch(ctx, configfile, job_number, total_jobs, overwrite):
             # TODO: read this from pre-existing results
             pipe = Pipe(data=data)
             pipeline = Pipeline.from_config(tasks, pipe, overwrite=overwrite)
+
+            # TODO: finish checking for resume
+            if all([table_name in result_store.keys() for table_name in
+                    pipeline.task_tables.values()]) and not overwrite:
+                logger.info('Already completed: {}'.format(filename))
+                continue
+
             pipe = pipeline.run_eager(pipe)
 
             record_results = defaultdict(list)
@@ -107,6 +114,8 @@ def batch(ctx, configfile, job_number, total_jobs, overwrite):
 
             for name, result in record_results.items():
                 record_results[name] = np.concatenate(result)
-            result_store.write_result(pipeline, record_results,
-                                      overwrite=overwrite)
+
+            if record_results:
+                result_store.write_result(pipeline, record_results,
+                                          overwrite=overwrite)
 
