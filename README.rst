@@ -142,14 +142,14 @@ And as with ``pip``, you need to install ``YATSM``:
 .. |Coverage Status| image:: https://coveralls.io/repos/ceholden/yatsm/badge.svg?branch=master&service=github
    :target: https://coveralls.io/github/ceholden/yatsm?branch=master&q=q
 .. |RTFD| image:: https://readthedocs.org/projects/yatsm/badge/?version=latest
-   :target: http://yatsm.readthedocs.org/en/latest/?badge=latest
+   :target: https://yatsm.readthedocs.io/en/latest/
    :alt: Documentation Status
 .. |Build Status v0.6.x| image:: https://travis-ci.org/ceholden/yatsm.svg?branch=v0.6.x-maintenance
    :target: https://travis-ci.org/ceholden/yatsm
 .. |Coverage Status v0.6.x| image:: https://coveralls.io/repos/github/ceholden/yatsm/badge.svg?branch=v0.6.x-maintenance
    :target: https://coveralls.io/github/ceholden/yatsm?branch=v0.6.x-maintenance
 .. |RTFD v0.6.x| image:: https://readthedocs.org/projects/yatsm/badge/?version=v0.6.x-maintenance
-   :target: http://yatsm.readthedocs.org/en/latest/?badge=v0.6.x-maintenance
+   :target: https://yatsm.readthedocs.io/en/v0.6.x-maintenance/index.html
    :alt: Documentation Status
 .. |DOI| image:: https://zenodo.org/badge/6804/ceholden/yatsm.svg
    :target: https://zenodo.org/badge/latestdoi/6804/ceholden/yatsm
