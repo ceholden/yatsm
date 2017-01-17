@@ -28,11 +28,12 @@ SEASONS = {
     'fall': ((9, 10), 'y', 0.5)
 }
 
-_DEFAULT_PLOT_CMAP = 'viridis'
-PLOT_CMAP = _DEFAULT_PLOT_CMAP
-if PLOT_CMAP not in mpl.cm.cmap_d:
-    PLOT_CMAP = 'cubehelix'
-
+_DEFAULT_PLOT_CMAP = ('viridis', 'cubehelix', 'jet')
+PLOT_CMAP = _DEFAULT_PLOT_CMAP[-1]
+for _cmap in _DEFAULT_PLOT_CMAP:
+    if _cmap in mpl.cm.cmap_d:
+        PLOT_CMAP = _cmap
+        break
 
 plot_styles = []
 if hasattr(mpl, 'style'):
@@ -77,7 +78,7 @@ def pixel(ctx, config, px, py, band, plot, ylim, style, cmap,
     # Format result prefix
     if result_prefix:
         result_prefix = set((_pref if _pref[-1] == '_' else _pref + '_')
-                         for _pref in result_prefix)
+                            for _pref in result_prefix)
         result_prefix.add('')  # add in no prefix to show original fit
     else:
         result_prefix = ('', )
@@ -214,7 +215,7 @@ def plot_TS(dates, y, seasons):
             plt.plot(dates[season_idx], y[season_idx], marker='o',
                      mec=color, mfc=color, alpha=alpha, ls='')
     else:
-         plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
+        plt.scatter(dates, y, c='k', marker='o', edgecolors='none', s=35)
     plt.xlabel('Date')
 
 
