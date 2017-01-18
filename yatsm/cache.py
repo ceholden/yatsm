@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 
-from log_yatsm import logger
+from .log_yatsm import logger
 
 _image_ID_str = 'image_IDs'
 

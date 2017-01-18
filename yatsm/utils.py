@@ -15,7 +15,7 @@ try:
 except:
     from os import walk
 
-from log_yatsm import logger
+from .log_yatsm import logger
 
 
 # JOB SPECIFIC FUNCTIONS
