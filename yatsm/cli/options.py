@@ -4,6 +4,8 @@ import os
 
 import click
 
+from yatsm.executor import get_executor, EXECUTOR_DEFAULTS, EXECUTOR_TYPES
+
 
 # CLI VALIDATORS
 def valid_int_gt_zero(ctx, param, value):
@@ -113,6 +115,17 @@ opt_nodata = click.option(
     show_default=True, help='Output NoDataValue')
 
 
+opt_executor = click.option(
+    '--executor',
+    default=(EXECUTOR_TYPES[0], None), show_default=True,
+    type=(click.Choice(EXECUTOR_TYPES), str),
+    help='Pipeline executor (e.g., {})'.format(
+            ', '.join(['"%s %s"' % (k, v) for k, v
+            in EXECUTOR_DEFAULTS.items()
+        ])
+    ),
+    callback=get_executor
+)
 
 
 # CALLBACKS
