@@ -5,6 +5,27 @@ All notable changes will appear in this log that begins with the release of ``v0
 
 For information on the style of this change log, see `keepachangelog.com <http://keepachangelog.com/>`__.
 
+`v0.6.2 <https://github.com/ceholden/yatsm/compare/v0.6.1...v0.6.2>`__ - 2017-01-18
+-----------------------------------------------------------------------------------
+
+Version ``v0.6.x`` will be backward patched for any bug fixes (for an undetermined amount of time) as version ``v0.7.0`` will introduce backwards incompatible changes in order to enable incorporation of data from multiple sensors and to better link time series models together in a cohesive pipeline.
+
+Fixed
+~~~~~
+
+- Fix missing predictions on pixel plotter
+  (:commit:`9c07f6cbe436bc5063d930b9e9139036a437a94b`,
+  :commit:`9c07f6cbe436bc5063d930b9e9139036a437a94b`)
+- Fix issue with synthetic image predictions in `yatsm map`
+  (:commit:`c33ea1c5fbbe835c4bacd6ecea334886442d1af3`)
+- Clean up output result files of any Python objects
+  (:commit:`e2e61542689ff7626681c4dfff8da511eab46127`)
+- With :gh_user:`valpasq`, add "seasonal" symbology option to `yatsm pixel`
+  (:commit:`e594ecdb52a54b1664c5d062b362e0f05ac7bc23`)
+- ``CCDCesque``: Fixed for case when a model refit would try to take place
+  despite n < p (:commit:`5c27bad3f394e35166ae94e3663692ecd7bcfe43`)
+
+
 `v0.6.1 <https://github.com/ceholden/yatsm/compare/v0.6.0...v0.6.1>`__ - 2016-05-12
 -----------------------------------------------------------------------------------
 
@@ -14,7 +35,6 @@ Fixed
 ~~~~~
 
 - ``CCDCesque``: Fixed case in which bands not used as "test indices" would not have time series models estimated (i.e., no `coef` or `rmse`) if the time series ends immediately after training `#88 <https://github.com/ceholden/yatsm/issues/88>`_
-- ``CCDCesque``: Fixed for case when a model refit would try to take place despite n < p (`commit <https://github.com/ceholden/yatsm/commit/5c27bad3f394e35166ae94e3663692ecd7bcfe43>`__)
 - ``RLM``: Fixed divide by zero error when ``n == p`` (number of observations equals number of parameters estimated)
 
 `v0.6.0 <https://github.com/ceholden/yatsm/compare/v0.5.5...v0.6.0>`__ - 2016-04-22
