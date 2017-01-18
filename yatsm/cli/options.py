@@ -86,7 +86,8 @@ def arg_job_number(f):
 
 # CLI OPTIONS
 opt_overwrite = click.option(
-    '--overwrite', is_flag=True, default=False, show_default=True,
+    '--overwrite', is_flag=True,
+    default=False, show_default=True,
     help='Overwrite existing results'
 )
 
@@ -112,60 +113,6 @@ opt_nodata = click.option(
     show_default=True, help='Output NoDataValue')
 
 
-opt_rootdir = click.option(
-    '--root',
-    default='./',
-    metavar='<directory>',
-    help='Root timeseries directory',
-    show_default=True,
-    type=click.Path(exists=True, file_okay=False,
-                    readable=True, resolve_path=True))
-
-
-def opt_exampleimg(f):
-    def callback(ctx, param, value):
-        # Check if file qualifies alone
-        if os.path.isfile(value):
-            _value = value
-        else:
-            # Check if path relative to root qualifies
-            _value = os.path.join(ctx.params['root'], value)
-            if not os.path.isfile(_value):
-                raise click.BadParameter('Cannot find example image '
-                                         '"{f}"'.format(f=value))
-            if not os.access(_value, os.R_OK):
-                raise click.BadParameter('Found example image but cannot '
-                                         'read from "{f}"'.format(f=_value))
-        return os.path.abspath(_value)
-    return click.option('--image', '-i',
-                        default='example_img',
-                        metavar='<image>',
-                        show_default=True,
-                        help='Example timeseries image',
-                        callback=callback)(f)
-
-
-def opt_resultdir(f):
-    def callback(ctx, param, value):
-        # Check if path qualifies alone
-        if os.path.isdir(value):
-            _value = value
-        else:
-            # Check if path relative to root qualifies
-            _value = os.path.join(ctx.params['root'], value)
-            if not os.path.isdir(_value):
-                raise click.BadParameter('Cannot find result directory '
-                                         '"{d}"'.format(d=value))
-        if not os.access(_value, os.R_OK):
-            raise click.BadParameter('Found result directory but cannot '
-                                     'read from "{d}"'.format(d=_value))
-        return os.path.abspath(_value)
-    return click.option('--result', '-r',
-                        default='YATSM',
-                        metavar='<directory>',
-                        show_default=True,
-                        help='Directory of results',
-                        callback=callback)(f)
 
 
 # CALLBACKS

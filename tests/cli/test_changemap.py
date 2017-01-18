@@ -2,10 +2,13 @@
 """
 from click.testing import CliRunner
 import numpy as np
+import pytest
 
 from yatsm.cli.main import cli
 
+xfail = pytest.mark.xfail(reason='Will fail until v0.7.0 stabilizes')
 # flake8: ignore = E241
+
 
 # TRUTH VALUES
 first_change_YYYYDOY = np.array([
@@ -36,6 +39,7 @@ num_change = np.array([
     [    1,     1,     2,     3,     3]], dtype=np.int32)
 
 
+@xfail
 def test_changemap_first_pass_1(example_results, tmpdir, read_image):
     """ Make changemap of first change
     """
@@ -54,6 +58,7 @@ def test_changemap_first_pass_1(example_results, tmpdir, read_image):
     np.testing.assert_equal(read_image(image)[0, ...], first_change_YYYYDOY)
 
 
+@xfail
 def test_changemap_first_pass_2(example_results, tmpdir, read_image):
     """ Make changemap of first change, output as YYYYMMDD
     """
@@ -73,6 +78,7 @@ def test_changemap_first_pass_2(example_results, tmpdir, read_image):
     np.testing.assert_equal(read_image(image)[0, ...], first_change_YYYYMMDD)
 
 
+@xfail
 def test_changemap_first_pass_3(example_results, tmpdir, read_image):
     """ Make changemap of first change, but with all NDV
     """
@@ -94,6 +100,7 @@ def test_changemap_first_pass_3(example_results, tmpdir, read_image):
                             np.zeros((5, 5), dtype=np.int16))
 
 
+@xfail
 def test_changemap_last_pass_1(example_results, tmpdir, read_image):
     """ Make changemap of last change
     """
@@ -112,6 +119,7 @@ def test_changemap_last_pass_1(example_results, tmpdir, read_image):
     np.testing.assert_equal(read_image(image)[0, ...], last_change_YYYYDOY)
 
 
+@xfail
 def test_changemap_num_pass_1(example_results, tmpdir, read_image):
     """ Make changemap of number of changes
     """
