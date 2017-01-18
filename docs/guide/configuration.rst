@@ -5,9 +5,7 @@ Model Configuration
 ===================
 
 The issue tracker on Github is being used to track additions to this
-documentation section. Please see
-`ticket 37 <https://github.com/ceholden/yatsm/issues/37>`_.
-
+documentation section. Please see :issue:`37`.
 
 Configuration File
 ------------------
