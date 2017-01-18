@@ -2,6 +2,7 @@ from __future__ import division
 
 from datetime import datetime as dt
 import fnmatch
+import logging
 import os
 import re
 import sys
@@ -15,7 +16,7 @@ try:
 except:
     from os import walk
 
-from log_yatsm import logger
+logger = logging.getLogger(__name__)
 
 
 # JOB SPECIFIC FUNCTIONS
