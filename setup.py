@@ -9,6 +9,8 @@ from setuptools.command.develop import develop as _develop
 from setuptools import find_packages, setup
 from setuptools.extension import Extension
 
+PY2 = sys.version_info[0] == 2
+
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
@@ -80,30 +82,30 @@ with open('README.rst') as f:
 
 
 # Installation requirements
-install_requires = [
-    'future',
-    'six',
-    'numpy',
-    'scipy',
-    'statsmodels',
-    'scikit-learn',
-    'pandas',
-    'patsy',
-    'fiona',
-    'GDAL',
-    'shapely',
-    'xarray',
-    'tables',
-    'dask',
-    'click',
-    'click_plugins',
-    'pyyaml',
-    'jsonschema',
-    'tables',
-    'decorator',
-    'toposort',
-    'matplotlib',
-]
+extras_require = {
+    'core': [
+        'future', 'six',
+        'numpy', 'pandas',
+        'scipy',
+        'matplotlib',
+        'scikit-learn',
+        'statsmodels',  # TODO: reevaluate need
+        'patsy',
+        'fiona',
+        'rasterio',
+        'xarray',
+        'tables',
+        'click',
+        'click_plugins',
+        'cligj',
+        'pyyaml',
+        'jsonschema'
+    ],
+    'pipeline': ['dask', 'distributed', 'toposort']
+}
+if PY2:
+    extras_require['pipeline'].extend(['futures'])
+extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 
 
 # Pre-packaged regression algorithms included in installation
@@ -160,7 +162,8 @@ setup_dict = dict(
     description=desc,
     zip_safe=False,
     long_description=readme,
-    install_requires=install_requires,
+    install_requires=extras_require['core'],
+    extras_require=extras_require,
     cmdclass=cmdclass
 )
 setup(**setup_dict)
