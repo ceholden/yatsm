@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.pipeline._task_validation &mdash; YATSM 0.7.dev0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.dev0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">YATSM</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>yatsm.pipeline._task_validation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/pipeline/_task_validation.rst" class="fa fa-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.pipeline._task_validation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Decorators for validating task requirements and outputs</span>
+
+<span class="sd">This validation should cause errors to occur when gathering an assortment of</span>
+<span class="sd">delayed tasks, and not when executed.</span>
+
+<span class="sd">Validation of requirements and outputs may be specified in terms of the</span>
+<span class="sd">`data` and `record` information that they interact with. A normalized</span>
+<span class="sd">difference vegetation index, for example, requires two spectral bands and</span>
+<span class="sd">outputs a single index. We want to allow the user to specify the names of the</span>
+<span class="sd">input spectral bands and the name of the output transformation to make this</span>
+<span class="sd">function more generalized and usable in a pipeline. The fact that this wrapper</span>
+<span class="sd">function requires two input strings (as the spectral band names in an</span>
+<span class="sd">``xarray.Dataset``, for example) can be specified using the ``@require``</span>
+<span class="sd">decorator function, an indicator for either `data` or `record` structures,</span>
+<span class="sd">and a ``list`` of objects.</span>
+
+<span class="sd">A task may only define one `record` output, so the output type for this should</span>
+<span class="sd">just be ``[str]``.</span>
+
+<span class="sd">The validation for this task may be specified as::</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    @requires(data=[str, str])</span>
+<span class="sd">    @outputs(data=[str])</span>
+<span class="sd">    def norm_diff(work, require, output, **config):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">The objects used here were of type ``type``, but one might use ``str`` objects</span>
+<span class="sd">if the names were suggestive of a particular intended meaning::</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    @requires(data=[&#39;nir&#39;, &#39;red&#39;])</span>
+<span class="sd">    @outputs(data=[&#39;ndvi&#39;])</span>
+<span class="sd">    def ndvi(work, require, output, **config):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">Some tasks may allow a variable number of inputs. This may be accomplished</span>
+<span class="sd">by providing an empty list, as demonstrated below for the `data` requirement::</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    @requires(data=[])</span>
+<span class="sd">    @outputs(data=[str])</span>
+<span class="sd">    def sum_all_spectral_bands(work, require, output, **config):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">If a task allows a requirement or output, but this requirement or output is</span>
+<span class="sd">optional, then it may be specified as optional using the full syntax in a tuple</span>
+<span class="sd">``(bool: required, signature)``. By default, we assume that requirements and</span>
+<span class="sd">output specifications are required.</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    @requires(data=[str, str],</span>
+<span class="sd">             record=(False, [str]))</span>
+<span class="sd">    def some_task(work, require, output, **config):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="kn">import</span> <span class="nn">decorator</span>
+<span class="kn">import</span> <span class="nn">future.utils</span>
+
+<span class="kn">from</span> <span class="nn">.language</span> <span class="k">import</span> <span class="n">OUTPUT</span><span class="p">,</span> <span class="n">REQUIRE</span><span class="p">,</span> <span class="n">DATA</span><span class="p">,</span> <span class="n">RECORD</span>
+<span class="kn">from</span> <span class="nn">..errors</span> <span class="k">import</span> <span class="n">PipelineConfigurationError</span> <span class="k">as</span> <span class="n">PCError</span>
+
+
+<span class="n">REQUIRED_BY_DEFAULT</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="eager_task"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.eager_task">[docs]</a><span class="k">def</span> <span class="nf">eager_task</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A task decorator that declares it can compute all pixels at once</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">func</span><span class="o">.</span><span class="n">is_eager</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">func</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_signature</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="n">req_len</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parse a signature for basic validity and structure</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        signature (iterable): One or more objects in a ``list``, or a</span>
+<span class="sd">            ``tuple`` of (``bool``, ``list``) describing if the signature</span>
+<span class="sd">            is required</span>
+<span class="sd">        req_len (int): Requirement for the length of the description in</span>
+<span class="sd">            ``signature``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[bool, list]: The signature</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: If ``name`` isn&#39;t a supported type of function signature</span>
+<span class="sd">        TypeError: If ``signature`` is invalid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Given as &lt;str:name&gt;=[&lt;object&gt;, ...]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">signature</span> <span class="o">=</span> <span class="p">(</span><span class="n">REQUIRED_BY_DEFAULT</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
+
+    <span class="c1"># Given as &lt;str:name&gt;=(&lt;bool:required&gt;, [&lt;object&gt;, ...]])</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+          <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">req_len</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="n">req_len</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Function signature must have </span><span class="si">{n}</span><span class="s2"> arguments&quot;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">req_len</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">signature</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Invalid signature: </span><span class="si">{sig}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sig</span><span class="o">=</span><span class="n">signature</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_validate_specification</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">signature</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot; should be a dictionary&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="n">required</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">required</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Required attribute, &#39;</span><span class="si">{}</span><span class="s2">&#39;, not passed to function&quot;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="c1"># If the specification description has a specific length requirement</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">desc</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">desc</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Specification requires </span><span class="si">{n}</span><span class="s2"> elements (</span><span class="si">{desc}</span><span class="s2">) but &quot;</span>
+                        <span class="s2">&quot;</span><span class="si">{n2}</span><span class="s2"> elements were passed&quot;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">desc</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="n">n2</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">signature</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Validate inputs to argument `name`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Name of argument (this argument should expect a `dict`)</span>
+<span class="sd">        signature (dict): Keyword arguments gathered</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        PipelineConfigurationError: Raise if function use doesn&#39;t match</span>
+<span class="sd">            required signature. Note that this error is a subclass of TypeError</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Allow:</span>
+    <span class="c1">#   1) Explicit &quot;required&quot;: `check(&#39;x&#39;, data=(False, [str]))`</span>
+    <span class="c1">#   2) Assume default (not required): `check(&#39;x&#39;, data=[str])`</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">DATA</span><span class="p">,</span> <span class="n">RECORD</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span>
+                <span class="s1">&#39;Unknown signature check for argument named &quot;</span><span class="si">{name}</span><span class="s1">&quot;&#39;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">k</span><span class="p">))</span>
+        <span class="n">req_len</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">OUTPUT</span> <span class="ow">and</span> <span class="n">k</span> <span class="o">==</span> <span class="n">RECORD</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">signature</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_parse_signature</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">req_len</span><span class="o">=</span><span class="n">req_len</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">PCError</span> <span class="k">as</span> <span class="n">pce</span><span class="p">:</span>
+            <span class="n">future</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">raise_with_traceback</span><span class="p">(</span><span class="n">PCError</span><span class="p">(</span>
+                <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; signature, &#39;</span><span class="si">{}</span><span class="s2">&#39;, is invalid: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">sig</span><span class="p">,</span> <span class="n">pce</span><span class="p">)</span>
+            <span class="p">))</span>
+
+    <span class="nd">@decorator</span><span class="o">.</span><span class="n">decorator</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">arg_names</span><span class="p">,</span> <span class="n">va_args</span><span class="p">,</span> <span class="n">va_kwargs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Argument specified, &#39;</span><span class="si">{}</span><span class="s2">&#39;, does not match &quot;</span>
+                          <span class="s2">&quot;function call signature&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">arg_idx</span> <span class="o">=</span> <span class="n">arg_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="n">arg_idx</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_validate_specification</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">future</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">raise_with_traceback</span><span class="p">(</span><span class="n">PCError</span><span class="p">(</span>
+                <span class="s2">&quot;Argument &#39;</span><span class="si">{}</span><span class="s2">&#39; to &#39;</span><span class="si">{}</span><span class="s2">&#39; is invalid:: </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">exc</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="c1">#: Decorator to check inputs to `output` argument</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">check</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">)</span>
+<span class="c1">#: Decorator to check inputs to `require` argument</span>
+<span class="n">requires</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">check</span><span class="p">,</span> <span class="n">REQUIRE</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Jan 19, 2017, 1:37:39 AM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
