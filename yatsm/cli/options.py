@@ -1,8 +1,11 @@
 """ YATSM command line interface """
 from datetime import datetime as dt
+import functools
 import os
 
 import click
+import cligj
+from rasterio.rio import options as rio_options
 
 from yatsm.executor import get_executor, EXECUTOR_DEFAULTS, EXECUTOR_TYPES
 
@@ -27,7 +30,7 @@ def valid_int_gt_zero(ctx, param, value):
         return _validator(param, value)
 
 
-# CLI ARGUMENTS
+# ARGUMENTS
 arg_config_file = click.argument(
     'configfile',
     nargs=1,
@@ -86,13 +89,7 @@ def arg_job_number(f):
                           metavar='<job_number>')(f)
 
 
-# CLI OPTIONS
-opt_overwrite = click.option(
-    '--overwrite', is_flag=True,
-    default=False, show_default=True,
-    help='Overwrite existing results'
-)
-
+# OPTIONS
 opt_date_format = click.option(
     '--date', 'date_frmt',
     default='%Y-%m-%d',
@@ -102,19 +99,7 @@ opt_date_format = click.option(
     help='Input date format')
 
 
-opt_format = click.option(
-    '-f', '--format', 'gdal_frmt',
-    default='GTiff',
-    metavar='<driver>',
-    show_default=True,
-    help='Output format driver')
-
-
-opt_nodata = click.option(
-    '--ndv', metavar='<NoDataValue>', type=float, default=-9999,
-    show_default=True, help='Output NoDataValue')
-
-
+# EXECUTOR
 opt_executor = click.option(
     '--executor',
     default=(EXECUTOR_TYPES[0], None), show_default=True,
@@ -126,6 +111,7 @@ opt_executor = click.option(
     ),
     callback=get_executor
 )
+
 
 
 # CALLBACKS
