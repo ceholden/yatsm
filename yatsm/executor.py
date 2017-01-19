@@ -5,48 +5,74 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-EXECUTOR_TYPES = ['sync', 'thread', 'multiprocess', 'distributed']
+EXECUTOR_TYPES = ['sync', 'thread', 'process', 'distributed']
 
 EXECUTOR_DEFAULTS = {
     'sync': None,
     'thread': 1,
-    'multiprocess': 1,
+    'process': 1,
     'distributed': '127.0.0.1:8786'
 }
 
 
-def _parse_num_workers(value):
-    return int(value) if value else 1
+def _distributed_executor(executor, args):
+    try:
+        import distributed
+    except ImportError:
+        logger.critical('You must have "distributed" installed')
+        raise
 
 
-def get_executor(exc_type, arg):
+    class DistributedExecutor(object):
+        """ concurrent.futures-like dask.distributed executor
+        """
+        def __init__(self, executor):
+            self._executor = executor
+
+        def submit(self, func, *args, **kwargs):
+            return self._executor.submit(func, *args, **kwargs)
+
+        @staticmethod
+        def as_completed(futures):
+            return distributed.as_completed(futures)
+
+    return DistributedExecutor(distributed.Client(args))
+
+
+def _futures_executor(executor, args):
+    try:
+        from concurrent.futures import (ProcessPoolExecutor, ThreadPoolExecutor,
+                                        as_completed)
+    except ImportError as err:
+        logger.critical('You must have Python3 or "futures" package installed.')
+        raise
+
+    class FuturesExecutor(object):
+        def __init__(self, executor):
+            self._executor = executor
+
+        def submit(self, func, *args, **kwargs):
+            return self._executor.submit(func, *args, **kwargs)
+
+        @staticmethod
+        def as_completed(futures):
+            return as_completed(futures)
+
+    n = int(args) if args else 1
+    return FuturesExecutor(ProcessPoolExecutor(n) if executor == 'process' else
+                           ThreadPoolExecutor(n))
+
+
+def get_executor(executor, arg):
     """ Click callback for determining executor type
     """
-    import dask
-
-    def _get_executor(exc_type, arg):
-        if exc_type == 'thread':
-            return partial(dask.threaded.get,
-                           num_workers=_parse_num_workers(arg))
-        elif exc_type == 'multiprocess':
-            return partial(dask.multiprocessing.get,
-                           num_workers=_parse_num_workers(arg))
-        elif exc_type == 'distributed':
-            import distributed
-            client = distributed.Client(arg)
-            return client.get
-        elif exc_type == 'sync':
-            return dask.async.get_sync
-        else:
-            raise KeyError('Unknown executor type "{}"'.format(exc_type))
     try:
-        exc = _get_executor(exc_type, arg)
+        exc = (_distributed_executor(executor, arg) if executor == 'distributed'
+               else _futures_executor(executor, arg))
     except Exception as err:
         logger.exception('Could not setup an executor of type "{}" '
                          'with args "{}": "{}"'
-                         .format(exc_type, arg, err))
+                         .format(executor, arg, err))
         raise
     else:
         return exc
-
-

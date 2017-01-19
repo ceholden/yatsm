@@ -109,7 +109,7 @@ opt_executor = click.option(
             in EXECUTOR_DEFAULTS.items()
         ])
     ),
-    callback=get_executor
+    callback=lambda ctx, param, value: get_executor(*value)
 )
 
 
