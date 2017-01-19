@@ -36,7 +36,7 @@ def _distributed_executor(executor, args):
         def as_completed(futures):
             return distributed.as_completed(futures)
 
-    return DistributedExecutor(distributed.Client(args))
+    return DistributedExecutor(distributed.Client(str(args)))
 
 
 def _futures_executor(executor, args):
