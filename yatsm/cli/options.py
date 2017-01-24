@@ -31,40 +31,32 @@ def valid_int_gt_zero(ctx, param, value):
 
 
 # ARGUMENTS
-arg_config_file = click.argument(
-    'configfile',
-    nargs=1,
-    type=click.Path(exists=True, readable=True,
-                    dir_okay=False, resolve_path=True))
+def _callback_arg_config(ctx, param, value):
+    from ..config import validate_and_parse_configfile
+    try:
+        config = validate_and_parse_configfile(value)
+    except Exception as exc:
+        raise_from(click.BadParameter('Cannot parse config file {}'
+                                      .format(value)), exc)
+    else:
+        return config
 
 
-arg_output = click.argument(
-    'output',
-    type=click.Path(writable=True, dir_okay=False,
-                    resolve_path=True))
-
-
-arg_total_jobs = click.argument(
-    'total_jobs',
-    nargs=1,
-    type=click.INT)
-
-
-def arg_date(var='date', date_frmt_key='date_frmt'):
+def _arg_date(name, date_format_key='date_format', **kwds):
     def _arg_date(f):
         def callback(ctx, param, value):
             try:
-                value = dt.strptime(value, ctx.params[date_frmt_key])
+                value = dt.strptime(value, ctx.params[date_format_key])
             except KeyError:
                 raise click.ClickException(
                     'Need to use `date_format_opt` when using `date_arg`')
             except ValueError:
                 raise click.BadParameter(
                     'Cannot parse {v} to date with format {f}'.format(
-                        v=value, f=ctx.params['date_frmt']))
+                        v=value, f=ctx.params['date_format']))
             else:
                 return value
-        return click.argument(var, callback=callback)(f)
+        return click.argument(name, callback=callback, **kwds)(f)
     return _arg_date
 
 
@@ -85,10 +77,35 @@ def arg_job_number(f):
     return click.argument('job_number', nargs=1, callback=callback)(f)
 
 
+arg_config = click.argument(
+    'config',
+    nargs=1,
+    type=click.Path(exists=True, readable=True,
+                    dir_okay=False, resolve_path=True),
+    callback=_callback_arg_config)
+
+
+arg_output = click.argument(
+    'output',
+    type=click.Path(writable=True, dir_okay=False,
+                    resolve_path=True))
+
+
+arg_total_jobs = click.argument(
+    'total_jobs',
+    nargs=1,
+    type=click.INT)
+
+
+arg_date = _arg_date('date', date_format_key='date_format')
+arg_start_date = _arg_date('start_date', date_format_key='date_format')
+arg_end_date = _arg_date('end_date', date_format_key='date_format')
+
+
 # OPTIONS
 
 opt_date_format = click.option(
-    '--dformat', 'date_frmt',
+    '--date_format', '--dformat', 'date_format',
     default='%Y-%m-%d',
     show_default=True,
     is_eager=True,
@@ -120,7 +137,7 @@ opt_force_overwrite = click.option(
 
 opt_nodata = click.option(
     '--nodata', callback=rio_options.nodata_handler,
-	default=-9999, show_default=True,
+	default='-9999', show_default=True,
     metavar='NUMBER|nan', help="Set a Nodata value.")
 
 

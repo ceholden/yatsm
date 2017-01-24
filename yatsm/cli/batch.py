@@ -17,13 +17,13 @@ logger = logging.getLogger('yatsm')
 
 
 @click.command(short_help='Run a YATSM pipeline on a dataset in batch mode')
-@options.arg_config_file
+@options.arg_config
 @options.arg_job_number
 @options.arg_total_jobs
 @options.opt_executor
 @rio_options.force_overwrite_opt
 @click.pass_context
-def batch(ctx, configfile, job_number, total_jobs, executor, force_overwrite):
+def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
     """ Run a YATSM pipeline on a dataset in batch mode
 
     The dataset is split into a number of subsets based on the structure of the
@@ -36,7 +36,6 @@ def batch(ctx, configfile, job_number, total_jobs, executor, force_overwrite):
           options.
     """
     # Imports inside CLI for speed
-    from yatsm.config import validate_and_parse_configfile
     from yatsm.io import _api as io_api
     from yatsm.utils import distribute_jobs
     from yatsm.pipeline import Pipe, Pipeline
@@ -44,8 +43,6 @@ def batch(ctx, configfile, job_number, total_jobs, executor, force_overwrite):
     # TODO: remove when not debugging
     import dask
     dask.set_options(get=dask.async.get_sync)
-
-    config = validate_and_parse_configfile(configfile)
 
     readers = OrderedDict((
         (name, io_api.get_reader(**cfg['reader']))
