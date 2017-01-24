@@ -1,8 +1,11 @@
 """ Tests for ``yatsm.executor``
 """
 import inspect
+import math
+import operator
 
 import click
+from concurrent.futures import Future
 import dask
 HAS_DISTRIBUTED = True
 try:
@@ -11,28 +14,45 @@ except ImportError:
     HAS_DISTRIBUTED = False
 import pytest
 
-from yatsm.executor import get_executor
+from yatsm import executor
 
 req_distributed = pytest.mark.skipif(not HAS_DISTRIBUTED,
                                      reason="Requires dask.distributed")
 
+maths = {
+    'q': (math.sin, 2.0 * math.pi / 180.0 * 45.0, ),
+    'a': 1.0
+}
+
 
 def test_get_executor_sync():
-    result = get_executor('sync', None)
-    assert result is dask.async.get_sync
+    result = executor.get_executor('sync', None)
+    assert isinstance(result, executor.SyncExecutor)
+    future = result.submit(*maths['q'])
+    assert isinstance(future, Future)
+    assert future.result() == maths['a']
+
+
+def test_get_executor_thread():
+    result = executor.get_executor('thread', 1)
+    assert isinstance(result, executor.ConcurrentExecutor)
+
+
+def test_get_executor_process():
+    result = executor.get_executor('process', 1)
+    assert isinstance(result, executor.ConcurrentExecutor)
 
 
 @req_distributed
 def test_get_executor_distributed(cluster):
-    result = get_executor('distributed', cluster.scheduler_address)
-    assert get_owner_class(result) is distributed.Client
-    assert result.__name__ == 'get'
+    result = executor.get_executor('distributed', cluster.scheduler_address)
+    assert isinstance(result, executor.DistributedExecutor)
 
 
 @req_distributed
 def test_get_executor_unknown(cluster):
-    with pytest.raises(KeyError, message="Gave unknown executor type") as err:
-        result = get_executor('asdf', None)
+    with pytest.raises(KeyError, message="Unknown executor") as err:
+        result = executor.get_executor('asdf', None)
     assert 'Unknown executor' in str(err.value)
 
 
@@ -44,11 +64,3 @@ def cluster(request):
         return None
     else:
         return LocalCluster()
-
-
-def get_owner_class(meth):
-    mod = inspect.getmodule(meth)
-    name = (getattr(meth, '__qualname__',
-                    getattr(meth, 'im_class', '').__name__)
-            .rsplit('.', 1)[0])
-    return getattr(mod, name)
