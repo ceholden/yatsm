@@ -33,12 +33,12 @@ def valid_int_gt_zero(ctx, param, value):
 
 # ARGUMENTS
 def _callback_arg_config(ctx, param, value):
-    from ..config import validate_and_parse_configfile
+    from .. import Config
     try:
-        config = validate_and_parse_configfile(value)
+        config = Config.from_file(value)
     except Exception as exc:
-        raise_from(click.BadParameter('Cannot parse config file {}'
-                                      .format(value)), exc)
+        click.BadParameter('Cannot parse config file %s' % value)
+        raise
     else:
         return config
 

@@ -1,5 +1,7 @@
 """ Command line interface for running YATSM pipelines in batch
 """
+from __future__ import division
+
 from collections import defaultdict, OrderedDict
 import logging
 from itertools import product
@@ -36,7 +38,7 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
           options.
     """
     # Imports inside CLI for speed
-    from yatsm.io import _api as io_api
+    from yatsm import io
     from yatsm.utils import distribute_jobs
     from yatsm.pipeline import Pipe, Pipeline
 
@@ -44,18 +46,11 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
     import dask
     dask.set_options(get=dask.async.get_sync)
 
-    readers = OrderedDict((
-        (name, io_api.get_reader(**cfg['reader']))
-        for name, cfg in config['data']['datasets'].items()
-    ))
-
-    from IPython.core.debugger import Pdb; Pdb().set_trace()
 
     # TODO: Better define how authoritative reader when using multiple datasets
     #       and choosing block shape (in config?)
     # TODO: Allow user to specify block shape in config (?)
-    preference = next(iter(readers))
-    block_windows = readers[preference].block_windows
+    block_windows = config.primary_reader.block_windows
     job_idx = distribute_jobs(job_number, total_jobs, len(block_windows))
 
     logger.debug('Working on {} of {} block windows'
@@ -65,32 +60,31 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
 
     force_overwrite = (force_overwrite or
                        config['pipeline'].get('overwrite', False))
-    tasks = config['pipeline']['tasks']
 
     # TODO: iterate over block_windows assigned to ``job_id``
     futures = {}
-    from IPython.core.debugger import Pdb; Pdb().set_trace()
     for idx, window in block_windows:
         future = executor.submit(batch_block,
                                  config=config,
-                                 readers=readers,
+                                 readers=config.readers,
                                  window=window,
                                  overwrite=force_overwrite)
         futures[future] = window
 
-    for result in executor.as_completed(futures):
-        window = futures[result]
-        print(result.result())
-        from IPython.core.debugger import Pdb; Pdb().set_trace()
-#        try:
-#            pass  # TODO
-#        except:
-#            pass  # TODO
-#
+    for future in executor.as_completed(futures):
+        window = futures[future]
+        try:
+            result = future.result()
+            if isinstance(result, str):
+                logger.info("Wrote to: %s" % result)
+        except Exception as exc:
+            raise
+
+    logger.info('Done!')
 
 
 def batch_block(config, readers, window, overwrite=False):
-    from yatsm.io import _api as io_api
+    from yatsm import io
     from yatsm.results import HDF5ResultsStore, result_filename
     from yatsm.pipeline import Pipe, Pipeline
 
@@ -99,10 +93,10 @@ def batch_block(config, readers, window, overwrite=False):
                     record=pipe.get('record', None))
 
     logger.debug('Working on window: {}'.format(window))
-    data = io_api.read_and_preprocess(config['data']['datasets'],
-                                      readers,
-                                      window,
-                                      out=None)
+    data = io.read_and_preprocess(config['data']['datasets'],
+                                  readers,
+                                  window,
+                                  out=None)
 
     filename = result_filename(
         window,
@@ -114,22 +108,22 @@ def batch_block(config, readers, window, overwrite=False):
     with HDF5ResultsStore(filename) as result_store:
         # TODO: read this from pre-existing results
         pipe = Pipe(data=data)
-        pipeline = Pipeline.from_config(config['pipeline']['tasks'], pipe,
-                                        overwrite=overwrite)
+        pipeline = config.get_pipeline(pipe, overwrite=overwrite)
 
         # TODO: finish checking for resume
+        # TODO: encapsulate?
         if all([table_name in result_store.keys() for table_name in
                 pipeline.task_tables.values()]) and not overwrite:
             logger.info('Already completed: {}'.format(filename))
             return
-            # continue
-
 
         pipe = pipeline.run_eager(pipe)
 
         record_results = defaultdict(list)
-        for y, x in product(data.y.values, data.x.values):
-            logger.debug('Processing pixel y/x: {}/{}'.format(y, x))
+        n = data.y.shape[0] * data.x.shape[0]
+        for i, (y, x) in enumerate(product(data.y.values, data.x.values)):
+            logger.debug('Processing pixel {pct:>4.2f}%: y/x {y}/{x}'
+                         .format(pct=i / n * 100, y=y, x=x))
             pix_pipe = sel_pix(pipe, y, x)
 
             result = pipeline.run(pix_pipe)
@@ -144,5 +138,6 @@ def batch_block(config, readers, window, overwrite=False):
         if record_results:
             result_store.write_result(pipeline, record_results,
                                       overwrite=overwrite)
-
         # TODO: write out cached data
+        return filename
+
