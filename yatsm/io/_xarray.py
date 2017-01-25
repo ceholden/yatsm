@@ -1,3 +1,5 @@
+""" Helper functions for :ref:`xarray.Dataset` and `xarray.DataArray` objects
+"""
 import logging
 
 import numpy as np

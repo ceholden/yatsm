@@ -67,7 +67,8 @@ def get_reader(name=None, **kwargs):
     if not reader_cls:
         raise KeyError('Unknown time series reader "{}"'.format(name))
 
-    return reader_cls(**kwargs)
+    if hasattr(reader_cls, 'from_config'):
+        return reader_cls.from_config(**kwargs)
 
 
 def read_and_preprocess(config, readers, window, out=None):

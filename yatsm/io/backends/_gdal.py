@@ -49,35 +49,45 @@ class GDALTimeSeries(object):
         df (pd.DataFrame): A Pandas dataframe describing time series. Requires
             keys 'filename' and 'date' be column names. Additional columns
             will be used as metadata available via ``get_metadata``.
-        input_file (str): If ``df`` is not specified, read time series dataset
-            information from this file
-        date_format (str): If ``df`` is not specified, parse date column in
-            ``input_file`` with this date string format
-        column_dtype (dict[str, str]): Datatype format parsing options for
-            all or subset of ``df`` columns passed as ``dtype`` argument to
-            ``pandas.read_csv``.
         keep_open (bool): Keep ``rasterio`` file descriptors open once opened?
 
+    Raises:
+        TypeError: If the ``df`` is not a :ref:`pd.DataFrame`
+        KeyError: If the ``df`` does not contain "date" and "filename" keys
     """
-    def __init__(self, df=None, input_file='', date_format='%Y%m%d',
-                 column_dtype=None,
-                 keep_open=False, **kwargs):
-        if isinstance(df, pd.DataFrame):
-            if not all([k in df.keys() for k in ('date', 'filename')]):
-                raise KeyError('pd.DataFrame passed should contain "date" and '
+    def __init__(self, df, keep_open=False):
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError('Must provide a pandas.DataFrame')
+        if not all([k in df.keys() for k in ('date', 'filename')]):
+            raise KeyError('pd.DataFrame passed should contain "date" and '
                                '"filename" keys')
-            self.df = df
-        elif input_file and date_format:
-            self.df = parse_dataset_file(input_file, date_format, column_dtype)
-        else:
-            raise ValueError('Must specify either a pd.DataFrame or both'
-                             '"input_file" and "date_format" arguments')
+        self.df = df
         self.keep_open = keep_open
 
         # Determine if input file has extra metadata
         self.extra_md = self.df.columns.difference(['date', 'filename'])
-
         self._init_attrs_from_file(self.df['filename'][0])
+
+    @classmethod
+    def from_config(cls, input_file, date_format='%Y%m%d', column_dtype=None,
+                  **kwds):
+        """ Init time series dataset from file, as used by config
+
+        Args:
+            input_file (str): Filename of file containing time series information
+                to parse using :ref:`pandas.read_csv`
+            date_format (str): If ``df`` is not specified, parse date column in
+                ``input_file`` with this date string format
+            column_dtype (dict[str, str]): Datatype format parsing options for
+                all or subset of ``df`` columns passed as ``dtype`` argument to
+                ``pandas.read_csv``.
+            **kwds (dict): Options to pass to ``__init__``
+
+        """
+        df = parse_dataset_file(input_file,
+                                date_format=date_format,
+                                column_dtype=column_dtype)
+        return cls(df, **kwds)
 
     def _init_attrs_from_file(self, filename):
         with rasterio.Env():
