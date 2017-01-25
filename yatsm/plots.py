@@ -7,7 +7,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
-logger = logging.getLogger('yatsm')
+logger = logging.getLogger(__name__)
 
 
 def plot_crossvalidation_scores(kfold_scores, test_labels):

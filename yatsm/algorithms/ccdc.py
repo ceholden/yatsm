@@ -13,7 +13,7 @@ from ..masking import smooth_mask, multitemp_mask
 from ..regression.diagnostics import rmse
 
 # Setup
-logger = logging.getLogger('yatsm_algo')
+logger = logging.getLogger('yatsm.algo')
 
 
 @try_jit(nopython=True)
