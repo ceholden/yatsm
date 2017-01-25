@@ -6,6 +6,7 @@ import os
 import numpy as np
 import tables as tb
 
+from .utils import result_filename, RESULT_TEMPLATE
 from ..algorithms import SEGMENT_ATTRS
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
@@ -155,6 +156,14 @@ class HDF5ResultsStore(object):
         self.keep_open = keep_open
         self.tb_kwds = tb_kwds
         self.h5file = None
+
+# CREATION
+    @classmethod
+    def from_window(cls, window, root='.', pattern=RESULT_TEMPLATE, **open_kwds):
+        """ Return instance of class for a given window
+        """
+        filename = reuslt_filename(window, root=root, pattern=pattern)
+        return cls(filename, **open_kwds)
 
 # WRITING
     @staticmethod
