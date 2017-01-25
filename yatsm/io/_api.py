@@ -97,7 +97,7 @@ def read_and_preprocess(config, readers, window, out=None):
         drivers for the requested ``window``
     """
     datasets = {}
-    for name, cfg in six.iteritems(config):
+    for name, cfg in config.items():
         reader = readers[name]
         arr = reader.read_dataarray(window=window,
                                     band_names=cfg['band_names'],

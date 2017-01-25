@@ -5,6 +5,7 @@ import os
 
 import click
 import cligj
+from future.utils import raise_with_traceback
 from rasterio.rio import options as rio_options
 
 from yatsm.executor import get_executor, EXECUTOR_DEFAULTS, EXECUTOR_TYPES
@@ -123,7 +124,7 @@ opt_creation_options = click.option(
     metavar='NAME=VALUE',
     multiple=True,
     callback=rio_options._cb_key_val,
-	show_default=True,
+    show_default=True,
     help="Driver specific creation options."
          "See the documentation for the selected output driver for "
          "more information.")
@@ -137,7 +138,7 @@ opt_force_overwrite = click.option(
 
 opt_nodata = click.option(
     '--nodata', callback=rio_options.nodata_handler,
-	default='-9999', show_default=True,
+    default='-9999', show_default=True,
     metavar='NUMBER|nan', help="Set a Nodata value.")
 
 
