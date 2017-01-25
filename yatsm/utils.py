@@ -2,6 +2,7 @@ from __future__ import division
 
 from datetime import datetime as dt
 import fnmatch
+from functools import wraps
 import logging
 import os
 import re
@@ -221,7 +222,7 @@ def iter_records(records, warn_on_empty=False, yield_filename=False):
 
 
 # MISC UTILITIES
-def date2index(dates, d):
+def date2index(dates, d):  # TODO: delete now we use Pandas
     """ Returns index of sorted array `dates` containing the date `d`
 
     Args:
@@ -255,3 +256,17 @@ def copy_dict_filter_key(d, regex):
             else:
                 out[k] = v
     return out
+
+
+def cached_property(prop):
+    """ Cache a class property (e.g., that requires a lookup)
+    """
+    prop_name = '_{}'.format(prop.__name__)
+
+    @wraps(prop)
+    def wrapper(self):
+        if not hasattr(self, prop_name):
+            setattr(self, prop_name, prop(self))
+        return getattr(self, prop_name)
+
+    return property(wrapper)
