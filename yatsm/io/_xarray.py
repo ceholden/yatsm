@@ -1,6 +1,7 @@
 """ Helper functions for :ref:`xarray.Dataset` and `xarray.DataArray` objects
 """
 import logging
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -52,7 +53,10 @@ def apply_range_mask(arr, min_values, max_values):
     mins = xr.DataArray(np.asarray(min_values, dtype=arr.dtype),
                         dims=['band'], coords=[arr.coords['band']])
 
-    return _where_with_attrs(arr, ((arr >= mins) & (arr <= maxs)))
+    # Silence gt/lt/ge/le/eq with nan. See: http://stackoverflow.com/q/41130138
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', RuntimeWarning)
+        return _where_with_attrs(arr, ((arr >= mins) & (arr <= maxs)))
 
 
 def merge_data(data, merge_attrs=True):
