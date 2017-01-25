@@ -11,9 +11,9 @@ from ..algorithms import SEGMENT_ATTRS
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
 
 
-def _has_node(h5, node, **kwargs):
+def _has_node(h5, node, **kwds):
     try:
-        h5.get_node(node, **kwargs)
+        h5.get_node(node, **kwds)
     except tb.NoSuchNodeError:
         return False
     else:
@@ -146,14 +146,14 @@ class HDF5ResultsStore(object):
         filename (str): HDF5 file
         mode (str): File mode to open with
         keep_open (bool): Keep file handle open after calls
-        tb_kwargs: Optional keywork arguments to :ref:`tables.open_file`
+        tb_kwds: Optional keywork arguments to :ref:`tables.open_file`
     """
     def __init__(self, filename, mode=None, keep_open=True,
-                 **tb_kwargs):
+                 **tb_kwds):
         self.filename = filename
         self.mode = mode or ('r+' if os.path.exists(self.filename) else 'w')
         self.keep_open = keep_open
-        self.tb_kwargs = tb_kwargs
+        self.tb_kwds = tb_kwds
         self.h5file = None
 
 # WRITING
@@ -206,7 +206,7 @@ class HDF5ResultsStore(object):
                     raise
 
         self.h5file = tb.open_file(self.filename, mode=self.mode, title='YATSM',
-                                   **self.tb_kwargs)
+                                   **self.tb_kwds)
 
         return self
 
