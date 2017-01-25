@@ -162,7 +162,7 @@ class HDF5ResultsStore(object):
     def from_window(cls, window, root='.', pattern=RESULT_TEMPLATE, **open_kwds):
         """ Return instance of class for a given window
         """
-        filename = reuslt_filename(window, root=root, pattern=pattern)
+        filename = result_filename(window, root=root, pattern=pattern)
         return cls(filename, **open_kwds)
 
 # WRITING

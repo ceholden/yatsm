@@ -34,6 +34,8 @@ definitions:
             cache_dir:
                 type: string
                 default: ''
+            primary:
+                type: string
             datasets:
                 type: object
                 minProperties: 1
@@ -43,6 +45,7 @@ definitions:
                         "$ref": "#/definitions/datasets"
         required:
             - datasets
+            - primary
         additionalProperties: False
     datasets:
         type: object
