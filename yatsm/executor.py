@@ -33,10 +33,16 @@ EXECUTOR_DEFAULTS = {
 
 class SyncExecutor(object):
 
-    def submit(self, func, *args, **kwargs):
+    def submit(self, func, *args, **kwds):
         future = Future()
+        future._spec = (func, args, kwds)
+        return future
+
+    @staticmethod
+    def _result(future):
+        func, args, kwds = future._spec
         try:
-            result = func(*args, **kwargs)
+            result = func(*args, **kwds)
         except Exception as e:
             future.set_exception(e)
         else:
@@ -45,15 +51,16 @@ class SyncExecutor(object):
 
     @staticmethod
     def as_completed(futures):
-        return as_completed(futures)
+        for future in futures:
+            yield SyncExecutor._result(future)
 
 
 class ConcurrentExecutor(object):
     def __init__(self, executor):
         self._executor = executor
 
-    def submit(self, func, *args, **kwargs):
-        return self._executor.submit(func, *args, **kwargs)
+    def submit(self, func, *args, **kwds):
+        return self._executor.submit(func, *args, **kwds)
 
     @staticmethod
     def as_completed(futures):
@@ -66,8 +73,8 @@ class DistributedExecutor(object):
     def __init__(self, executor):
         self._executor = executor
 
-    def submit(self, func, *args, **kwargs):
-        return self._executor.submit(func, *args, **kwargs)
+    def submit(self, func, *args, **kwds):
+        return self._executor.submit(func, *args, **kwds)
 
     @staticmethod
     def as_completed(futures):
