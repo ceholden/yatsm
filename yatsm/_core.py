@@ -53,6 +53,9 @@ class Config(object):  # TODO: rename?
     def find_results(self, output=None, output_prefix=None, **kwds):
         """ A list of :ref:`HDF5ResultsStore` results
         """
+        output = output or self.results['output']
+        output_prefix = output_prefix or self.results['output_prefix']
+
         pattern = pattern_to_regex(output_prefix or
                                    self.results.get('output_prefix'))
         results = find(output, pattern, regex=True)

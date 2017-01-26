@@ -101,6 +101,7 @@ class GDALTimeSeries(object):
                 self.ul = src.ul(0, 0)
                 self.height = src.height
                 self.width = src.width
+                self.shape = src.shape
                 self.count = src.count
                 self.length = len(self.df)
                 self.block_windows = list(src.block_windows())
