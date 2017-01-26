@@ -4,10 +4,14 @@ import errno
 import os
 
 import numpy as np
+from rasterio.crs import CRS
+from rasterio.coords import BoundingBox
+import six
 import tables as tb
 
-from .utils import result_filename, RESULT_TEMPLATE
-from ..algorithms import SEGMENT_ATTRS
+from yatsm.algorithms import SEGMENT_ATTRS
+from yatsm.geoutils import bounds_to_polygon
+from yatsm.results.utils import result_filename, RESULT_TEMPLATE
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
 
@@ -65,7 +69,6 @@ def create_table(h5file, where, name, result, index=True,
         table.table.Table: HDF5 table
     """
     table_desc = dtype_to_table(result.dtype)
-
     if _has_node(h5file, where, name=name):
         table = h5file.get_node(where, name=name)
     else:
@@ -149,21 +152,45 @@ class HDF5ResultsStore(object):
         keep_open (bool): Keep file handle open after calls
         tb_kwds: Optional keywork arguments to :ref:`tables.open_file`
     """
-    def __init__(self, filename, mode=None, keep_open=True,
-                 **tb_kwds):
+    def __init__(self, filename, crs=None, bounds=None,
+                 mode=None, keep_open=True, **tb_kwds):
         self.filename = filename
-        self.mode = mode or ('r+' if os.path.exists(self.filename) else 'w')
+        if os.path.exists(self.filename):
+            self.mode = mode or 'r+'
+            self._crs = None
+            self._bounds = None
+        else:
+            if (not isinstance(crs, six.string_types) or
+                not isinstance(bounds, six.string_types)):
+               raise TypeError('`crs` and `bounds` must be given as `str` '
+                               'when creating new file')
+            self.mode = mode or 'w'
+            self._crs = crs
+            self._bounds = bounds
+
         self.keep_open = keep_open
         self.tb_kwds = tb_kwds
         self.h5file = None
 
 # CREATION
     @classmethod
-    def from_window(cls, window, root='.', pattern=RESULT_TEMPLATE, **open_kwds):
+    def from_window(cls, window, crs=None, bounds=None, reader=None,
+                    root='.', pattern=RESULT_TEMPLATE,
+                    **open_kwds):
         """ Return instance of class for a given window
+
+        When creating a file, specify the ``crs`` and ``bounds`` of the results
+        you're about to store. You can either do this directly by specifying
+        ``crs`` and ``bounds``, or indirectly by providing the ``reader``
+        used as the grid point of reference
         """
         filename = result_filename(window, root=root, pattern=pattern)
-        return cls(filename, **open_kwds)
+
+        if reader:
+            crs = reader.crs.to_string()
+            bounds = bounds_to_polygon(reader.window_bounds(window)).wkt
+
+        return cls(filename, crs=crs, bounds=bounds, **open_kwds)
 
 # WRITING
     @staticmethod
@@ -176,10 +203,13 @@ class HDF5ResultsStore(object):
         """ Write result to HDF5
 
         Args:
+            pipeline (yatsm.pipeline.Pipeline): YATSM pipeline of tasks
             result (dict): Dictionary of pipeline 'record' results
                 where key is task output and value is a structured
                 :ref:`np.ndarray`
             overwrite (bool): Overwrite existing values
+            attrs (dict): KEY=VALUE items to put in to each table's
+                ``attr``
 
         Returns:
             HDF5ResultsStore
@@ -187,13 +217,52 @@ class HDF5ResultsStore(object):
         """
         result = result.get('record', result)
         with self as store:
-            tasks = list(pipeline.tasks.values())
+            tasks = pipeline.tasks.values()
             tables = create_task_tables(self.h5file, tasks, result,
                                         overwrite=True)
             store._write_row(store.h5file, result, tables)
 
+            # TODO: each task should have some description from func
+            #       to write for metadata
+
         return self
 
+# METADATA
+    @property
+    def _attrs(self):
+        with self as store:
+            return self.h5file.root._v_attrs
+
+    @property
+    def attrs(self):
+        return dict([(key, self._attrs[key]) for key
+                     in self._attrs._v_attrnames])
+
+    def set_attr(self, key, value):
+        assert isinstance(value, six.string_types)
+        self._attrs[key] = value
+
+    def set_attrs(self, **attrs):
+        for key, value in attrs.items():
+            self.set_attr(key, value)
+
+    @property
+    def crs(self):
+        _crs = getattr(self._attrs, 'crs', '')
+        if not _crs:
+            raise AttributeError("Not initialized yet")
+        return CRS.from_string(_crs)
+
+    @property
+    def bounds(self):
+        return BoundingBox(*self.bounding_box.bounds)
+
+    @property
+    def bounding_box(self):
+        _bounds = getattr(self._attrs, 'bounds', '')
+        if not _bounds:
+            raise AttributeError("Not initialized yet")
+        return shapely.wkt.loads(self._attrs['bounds'])
 
 # CONTEXT HELPERS
     def __enter__(self):
@@ -216,6 +285,11 @@ class HDF5ResultsStore(object):
 
         self.h5file = tb.open_file(self.filename, mode=self.mode, title='YATSM',
                                    **self.tb_kwds)
+
+        if (self._crs is not None and self._bounds is not None and
+                self.mode == 'w'):
+            self.set_attr('crs', self._crs)
+            self.set_attr('bounds', self._bounds)
 
         return self
 

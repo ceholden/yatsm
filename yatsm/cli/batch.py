@@ -78,6 +78,7 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
             if isinstance(result, str):
                 logger.info("Wrote to: %s" % result)
         except Exception as exc:
+            logger.exception("Exception for window: {}".format(window))
             raise
 
     logger.info('Done!')
@@ -98,23 +99,25 @@ def batch_block(config, readers, window, overwrite=False):
                                   window,
                                   out=None)
 
-    filename = result_filename(
-        window,
-        root=config['results']['output'],
-        pattern=config['results']['output_prefix'],
-    )
+    store_kwds = {
+        'window': window,
+        'reader': config.primary_reader,
+        'root': config['results']['output'],
+        'pattern': config['results']['output_prefix'],
+    }
 
     # TODO: guess for number of records to store
-    with HDF5ResultsStore(filename) as result_store:
+    from IPython.core.debugger import Pdb; Pdb().set_trace()
+    with HDF5ResultsStore.from_window(**store_kwds) as store:
         # TODO: read this from pre-existing results
         pipe = Pipe(data=data)
         pipeline = config.get_pipeline(pipe, overwrite=overwrite)
 
         # TODO: finish checking for resume
         # TODO: encapsulate?
-        if all([table_name in result_store.keys() for table_name in
+        if all([table_name in store.keys() for table_name in
                 pipeline.task_tables.values()]) and not overwrite:
-            logger.info('Already completed: {}'.format(filename))
+            logger.info('Already completed: {}'.format(store.filename))
             return
 
         pipe = pipeline.run_eager(pipe)
@@ -136,8 +139,8 @@ def batch_block(config, readers, window, overwrite=False):
             record_results[name] = np.concatenate(result)
 
         if record_results:
-            result_store.write_result(pipeline, record_results,
-                                      overwrite=overwrite)
+            store.write_result(pipeline, record_results,
+                               overwrite=overwrite)
         # TODO: write out cached data
-        return filename
+        return store.filename
 
