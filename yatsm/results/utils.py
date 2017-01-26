@@ -2,6 +2,7 @@
 """
 import logging
 import os
+import re
 
 import rasterio.windows
 
@@ -47,3 +48,16 @@ def result_filename(window, root='.', pattern=RESULT_TEMPLATE):
         raise
     else:
         return out
+
+
+def pattern_to_regex(pattern):
+    """ Invert a result filename pattern and return regex search expression
+    """
+    def _repl(match):
+        s = match.group()
+        if s[-2] == 'd':
+            return '[0-9]*'
+        else:
+            return '*'
+    search = re.sub('{.*?}', _repl, pattern)
+    return search

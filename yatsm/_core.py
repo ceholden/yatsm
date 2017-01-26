@@ -2,8 +2,9 @@
 """
 import copy
 
-from .config import validate_and_parse_configfile
-from .utils import cached_property
+from yatsm.config import validate_and_parse_configfile
+from yatsm.utils import cached_property, find
+from yatsm.results.utils import pattern_to_regex
 
 
 class Config(object):  # TODO: rename?
@@ -51,8 +52,10 @@ class Config(object):  # TODO: rename?
     def find_results(self, output=None, output_prefix=None, **kwds):
         """ A list of :ref:`HDF5ResultsStore` results
         """
-        from yatsm.results.utils import pattern_to_regex
-        s = pattern_to_regex(output_prefix or self.results.get('output_prefix'))
+        pattern = pattern_to_regex(output_prefix or
+                                   self.results.get('output_prefix'))
+        results = find(output, pattern, regex=True)
+        return results
 
     # PROPERTY ACCESS
     @property

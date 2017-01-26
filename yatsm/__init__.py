@@ -2,7 +2,8 @@
 """
 import logging
 
-from .version import __version__
+from yatsm._core import Config
+from yatsm.version import __version__
 
 __all__ = [
     'algorithms',
