@@ -96,6 +96,7 @@ class GDALTimeSeries(object):
                 self.md = src.meta.copy()
                 self.crs = src.crs
                 self.transform = src.transform
+                self.bounds = src.bounds
                 self.res = src.res
                 self.ul = src.ul(0, 0)
                 self.height = src.height
@@ -244,8 +245,7 @@ class GDALTimeSeries(object):
         """ Return Y/X coordinates of a raster to pass to xarray
 
         Args:
-            window (tuple): Window to read from ((ymin, ymax), (xmin, xmax)) in
-                pixel space
+            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space
 
         Returns:
             tuple (np.ndarray, np.ndarray): Y and X coordinates for window
@@ -254,3 +254,14 @@ class GDALTimeSeries(object):
         coord_x = self.ul[1] + self.res[1] * np.arange(*window[1])
 
         return (coord_y, coord_x)
+
+    def window_bounds(self, window):
+        """ Return coordinate bounds of a given window
+
+        Args:
+            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space
+
+        Returns:
+            tuple: x_min, y_min, x_max, y_max
+        """
+        return rasterio.windows.bounds(window, self.transform)
