@@ -2,6 +2,9 @@
 """
 from functools import partial
 import logging
+import sys
+
+PY2 = sys.version_info[0] == 2
 
 HAS_CONCURRENT = True
 HAS_DISTRIBUTED = True
@@ -44,7 +47,11 @@ class SyncExecutor(object):
         try:
             result = func(*args, **kwds)
         except Exception as e:
-            future.set_exception(e)
+            if PY2:
+                tb = sys.exc_info()
+                future.set_exception_info(e, tb[2])
+            else:
+                future.set_exception(e)
         else:
             future.set_result(result)
         return future
