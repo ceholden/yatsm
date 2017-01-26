@@ -7,10 +7,11 @@ import numpy as np
 from rasterio.crs import CRS
 from rasterio.coords import BoundingBox
 import six
+import shapely.wkt
 import tables as tb
 
 from yatsm.algorithms import SEGMENT_ATTRS
-from yatsm.geoutils import bounds_to_polygon
+from yatsm.gis import bounds_to_polygon
 from yatsm.results.utils import result_filename, RESULT_TEMPLATE
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
@@ -154,20 +155,19 @@ class HDF5ResultsStore(object):
     """
     def __init__(self, filename, crs=None, bounds=None,
                  mode=None, keep_open=True, **tb_kwds):
+        _exists = os.path.exists(filename)
+        if crs and not isinstance(crs, six.string_types):
+            raise TypeError('`crs` must be given as `str`')
+        if bounds and not isinstance(bounds, six.string_types):
+            raise TypeError('`bounds` must be given as `str`')
+        if not _exists and not crs and not bounds:
+            raise TypeError('Must specify `crs` and `bounds` when creating '
+                            'new file')
         self.filename = filename
-        if os.path.exists(self.filename):
-            self.mode = mode or 'r+'
-            self._crs = None
-            self._bounds = None
-        else:
-            if (not isinstance(crs, six.string_types) or
-                not isinstance(bounds, six.string_types)):
-               raise TypeError('`crs` and `bounds` must be given as `str` '
-                               'when creating new file')
-            self.mode = mode or 'w'
-            self._crs = crs
-            self._bounds = bounds
-
+        self.mode = mode or 'r+' if _exists else 'w'
+        self.mode = mode or 'w'
+        self._crs = crs
+        self._bounds = bounds
         self.keep_open = keep_open
         self.tb_kwds = tb_kwds
         self.h5file = None
@@ -229,6 +229,10 @@ class HDF5ResultsStore(object):
 
 # METADATA
     @property
+    def basename(self):
+        return os.path.basename(self.filename)
+
+    @property
     def _attrs(self):
         with self as store:
             return self.h5file.root._v_attrs
@@ -250,7 +254,7 @@ class HDF5ResultsStore(object):
     def crs(self):
         _crs = getattr(self._attrs, 'crs', '')
         if not _crs:
-            raise AttributeError("Not initialized yet")
+            raise AttributeError("Can't find 'crs' in result file")
         return CRS.from_string(_crs)
 
     @property
@@ -261,8 +265,17 @@ class HDF5ResultsStore(object):
     def bounding_box(self):
         _bounds = getattr(self._attrs, 'bounds', '')
         if not _bounds:
-            raise AttributeError("Not initialized yet")
+            raise AttributeError("Can't find 'bounds' in result file")
         return shapely.wkt.loads(self._attrs['bounds'])
+
+    @staticmethod
+    def reader_attrs(reader, window):
+        crs = reader.crs.to_string()
+        bounds = bounds_to_polygon(reader.window_bounds(window)).wkt
+        return dict(crs=crs, bounds=bounds)
+
+    def set_reader_attrs(self, reader, window):
+        self.set_attrs(**self.reader_attrs(reader, window))
 
 # CONTEXT HELPERS
     def __enter__(self):
@@ -286,8 +299,7 @@ class HDF5ResultsStore(object):
         self.h5file = tb.open_file(self.filename, mode=self.mode, title='YATSM',
                                    **self.tb_kwds)
 
-        if (self._crs is not None and self._bounds is not None and
-                self.mode == 'w'):
+        if (self._crs is not None and self._bounds is not None):
             self.set_attr('crs', self._crs)
             self.set_attr('bounds', self._bounds)
 
