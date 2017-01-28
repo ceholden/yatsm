@@ -61,6 +61,9 @@ class SyncExecutor(object):
         for future in futures:
             yield SyncExecutor._result(future)
 
+    def shutdown(self, timeout=10, futures=None):
+        return
+
 
 class ConcurrentExecutor(object):
     def __init__(self, executor):
@@ -72,6 +75,9 @@ class ConcurrentExecutor(object):
     @staticmethod
     def as_completed(futures):
         return as_completed(futures)
+
+    def shutdown(self, timeout=10, futures=None):
+        self._executor.shutdown(wait=timeout > 0)
 
 
 class DistributedExecutor(object):
@@ -87,6 +93,8 @@ class DistributedExecutor(object):
     def as_completed(futures):
         return distributed.as_completed(futures)
 
+    def shutdown(self, timeout=10, futures=None):
+        self._executor.cancel(futures)
 
 
 def _sync_executor(executor, arg):
