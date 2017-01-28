@@ -7,17 +7,73 @@ from toolz import curry
 
 from ._exec import delay_pipeline
 from ._topology import config_to_tasks
-from .language import CONFIG, OUTPUT, PIPE, REQUIRE, TASK
+from .language import CONFIG, TASK, REQUIRE, OUTPUT, PIPE, PIPE_CONTENTS
 from .tasks import PIPELINE_TASKS, SEGMENT_TASKS
 
 logger = logging.getLogger(__name__)
 
 
-def Pipe(data=None, record=None):
-    return {
-        'data': data or {},
-        'record': record or {}
-    }
+class Pipe(object):
+    """ A Bunch for pipeline communication
+    """
+
+    #: list: List of attributes stored in :class:`Pipe`
+    __slots__ = PIPE_CONTENTS + ('contents', )
+
+    def __init__(self, **kwds):
+        for item in self.__slots__:
+            value = kwds.get(item, dict())
+            logger.debug('setattr(self, %s, %s)' % (item, value))
+            setattr(self, item, value)
+        self.contents = self.__slots__[:-1]
+
+    # Limit possible attributes
+    # TODO: reconsider? could be useful for metadata
+    def __setattr__(self, key, value):
+        if key not in self.__slots__:
+            raise AttributeError('{0.__class__.__name__} cannot store '
+                                 'attributes other than: "{1}"'
+                                 .format(self, '", "'.join(PIPE_CONTENTS)))
+        else:
+            object.__setattr__(self, key, value)
+
+# DICT-LIKE
+    def __len__(self):
+        return len(self.contents)
+
+    def __iter__(self):
+        for item in self.contents:
+            yield item
+
+    def __getitem__(self, key):
+        if key in self.contents:
+            return getattr(self, key)
+        else:
+            raise KeyError('{0.__class__.__name__} does not store '
+                           'attributes other than: "{1}"'
+                           .format(self, '", "'.join(PIPE_CONTENTS)))
+
+    def items(self):
+        for key in self:
+            value = self[key]
+            yield key, value
+
+    def keys(self):
+        for key in self:
+            yield key
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+    def __repr__(self):
+        return "<{0.__class__.__name__} at {1}> storing:{2}".format(
+            self,
+            hex(id(self)),
+            '\n'.join(self.contents)
+        )
 
 
 class Task(object):
