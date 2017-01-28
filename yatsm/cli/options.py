@@ -6,7 +6,6 @@ import os
 import click
 import cligj
 from future.utils import raise_with_traceback
-from rasterio.rio import options as rio_options
 
 from yatsm.executor import get_executor, EXECUTOR_DEFAULTS, EXECUTOR_TYPES
 
@@ -31,9 +30,41 @@ def valid_int_gt_zero(ctx, param, value):
         return _validator(param, value)
 
 
+# CALLBACKS
+def callback_dict(ctx, param, value):
+    """ Call back for dict style arguments (e.g., KEY=VALUE)
+    """
+    if not value:
+        return {}
+    else:
+        d = {}
+        for val in value:
+            if '=' not in val:
+                raise click.BadParameter(
+                    'Must specify {p} as KEY=VALUE ({v} given)'.format(
+                        p=param, v=value))
+            else:
+                k, v = val.split('=', 1)
+                d[k] = v
+        return d
+
+
+def callback_nodata(ctx, param, value):
+    """ Nodata handling
+    """
+    if not value or value.lower() in ('none', 'null', 'no', 'na', 'nan'):
+        return None
+    else:
+        try:
+            return float(value)
+        except:
+            raise click.BadParameter('{!r} is not a number'.format(value),
+                                      param=param, param_hint='nodata')
+
+
 # ARGUMENTS
 def _callback_arg_config(ctx, param, value):
-    from .. import Config
+    from .._core import Config
     try:
         config = Config.from_file(value)
     except Exception as exc:
@@ -104,7 +135,6 @@ arg_end_date = _arg_date('end_date', date_format_key='date_format')
 
 
 # OPTIONS
-
 opt_date_format = click.option(
     '--date_format', '--dformat', 'date_format',
     default='%Y-%m-%d',
@@ -123,7 +153,7 @@ opt_creation_options = click.option(
     '--co', '--profile', 'creation_options',
     metavar='NAME=VALUE',
     multiple=True,
-    callback=rio_options._cb_key_val,
+    callback=callback_dict,
     show_default=True,
     help="Driver specific creation options."
          "See the documentation for the selected output driver for "
@@ -137,7 +167,7 @@ opt_force_overwrite = click.option(
 
 
 opt_nodata = click.option(
-    '--nodata', callback=rio_options.nodata_handler,
+    '--nodata', callback=callback_nodata,
     default='-9999', show_default=True,
     metavar='NUMBER|nan', help="Set a Nodata value.")
 
@@ -190,7 +220,6 @@ opt_qa_band = click.option('--qa', is_flag=True,
                            help='Add QA band identifying segment type')
 
 
-
 # EXECUTOR
 opt_executor = click.option(
     '--executor',
@@ -204,22 +233,3 @@ opt_executor = click.option(
     callback=lambda ctx, param, value: get_executor(*value)
 )
 
-
-
-# CALLBACKS
-def callback_dict(ctx, param, value):
-    """ Call back for dict style arguments (e.g., KEY=VALUE)
-    """
-    if not value:
-        return {}
-    else:
-        d = {}
-        for val in value:
-            if '=' not in val:
-                raise click.BadParameter(
-                    'Must specify {p} as KEY=VALUE ({v} given)'.format(
-                        p=param, v=value))
-            else:
-                k, v = val.split('=', 1)
-                d[k] = v
-        return d

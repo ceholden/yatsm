@@ -16,6 +16,7 @@ import cligj
 
 logger = logging.getLogger('yatsm')
 
+
 # NumPy/etc linear algebra multithreading related variables
 NP_THREAD_VARS = [
     'OPENBLAS_NUM_THREADS',

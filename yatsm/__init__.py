@@ -2,26 +2,15 @@
 """
 import logging
 
-from yatsm._core import Config
 from yatsm.version import __version__
-
-__all__ = [
-    'algorithms',
-    'classifiers',
-    'config',
-    'io',
-    'mapping',
-    'regression',
-    'phenology'
-]
 
 
 # See: http://docs.python-guide.org/en/latest/writing/logging/
 import logging
 try:  # Python 2.7+
-    from logging import NullHandler
+    from logging import NullHandler as _NullHandler
 except ImportError:
-    class NullHandler(logging.Handler):
+    class _NullHandler(logging.Handler):
         def emit(self, record):
             pass
-logging.getLogger(__name__).addHandler(NullHandler())
+logging.getLogger(__name__).addHandler(_NullHandler())

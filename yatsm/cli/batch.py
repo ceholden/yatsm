@@ -9,9 +9,6 @@ import os
 import time
 
 import click
-import numpy as np
-from rasterio.rio import options as rio_options
-import six
 
 from . import options
 
@@ -23,7 +20,7 @@ logger = logging.getLogger('yatsm')
 @options.arg_job_number
 @options.arg_total_jobs
 @options.opt_executor
-@rio_options.force_overwrite_opt
+@options.opt_force_overwrite
 @click.pass_context
 def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
     """ Run a YATSM pipeline on a dataset in batch mode

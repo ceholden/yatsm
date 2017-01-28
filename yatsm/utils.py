@@ -1,15 +1,13 @@
+""" Utility functions
+"""
 from __future__ import division
 
-from datetime import datetime as dt
 import fnmatch
 from functools import wraps
 import logging
 import os
 import re
-import sys
 
-import numpy as np
-import pandas as pd
 import six
 
 try:
@@ -39,6 +37,7 @@ def distribute_jobs(job_number, total_jobs, n, interlaced=True):
             `total_jobs` are both 1)
 
     """
+    import numpy as np
     if interlaced:
         assigned = 0
         tasks = []
