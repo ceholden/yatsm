@@ -144,7 +144,7 @@ def batch_block(config, readers, window, overwrite=False):
                          .format(pct=i / n * 100, y=y, x=x))
             pix_pipe = sel_pix(pipe, y, x)
 
-            result = pipeline.run(pix_pipe)
+            result = pipeline.run(pix_pipe, check_eager=False)
 
             # TODO: figure out what to do with 'data' results
             for k, v in result['record'].items():
