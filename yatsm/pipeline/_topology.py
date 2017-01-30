@@ -6,13 +6,13 @@ import logging
 import six
 import toposort
 
-from .language import OUTPUT, REQUIRE, PIPE
+from .language import DATA, RECORD, OUTPUT, REQUIRE, PIPE
 
 logger = logging.getLogger(__name__)
 
 
 def format_deps(d):
-    """ Return formatted list of dependencies from 'requires'/'provides'
+    """ Return formatted list of dependencies from REQUIRE or OUTPUT
 
     Transform as follows:
 
@@ -21,12 +21,13 @@ def format_deps(d):
         >>> d = {
             'data': ['red', 'nir', 'ndvi'],
             'record': ['ccdc'],
-        }
+        }  # example :ref:`REQUIRE`
         >>> format_deps(d)
         ['data-red', 'data-nir', 'data-ndvi', 'record-ccdc']
 
     Args:
-        d (dict): Task specification, requirements or provisions
+        d (dict): Task specification, requirements or outputs (under sections
+            :ref:`REQUIRE` or :ref:`OUTPUT`)
 
     Returns:
         list: Formatted names of task dependencies
@@ -51,8 +52,8 @@ def pipe_deps(pipe):
     """
     dsk = {PIPE: set()}
     deps = {
-        'data': pipe['data'].keys(),
-        'record': pipe['record'].keys()
+        DATA: pipe[DATA].keys(),
+        RECORD: pipe[RECORD].keys()
     }
     _deps = format_deps(deps)
     for _dep in _deps:

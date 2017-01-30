@@ -1,9 +1,10 @@
 """ Classes representing pipeline objects
 """
 from collections import OrderedDict
+from functools import partial
 import logging
 
-from toolz import curry
+# from toolz import curry  # TODO: evaluate
 
 from ._exec import delay_pipeline
 from ._topology import config_to_tasks
@@ -101,7 +102,7 @@ class Task(object):
                    **config.get(CONFIG, {}))
 
     def curry(self):
-        return curry(self.func, **self.spec)
+        return partial(self.func, **self.spec)
 
     @property
     def is_eager(self):
@@ -222,6 +223,8 @@ class Pipeline(object):
 
         return cls(tasks)
 
+    # TODO: test without using dask.delayed, just function wrapping
+    #       ... curious about the dask overhead
     def run_eager(self, pipe):
         pipeline = delay_pipeline(self.eager_pipeline, pipe)
         return pipeline.compute()
