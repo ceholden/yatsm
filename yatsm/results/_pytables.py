@@ -1,6 +1,7 @@
 """ Results storage in HDF5 datasets using PyTables
 """
 import errno
+import logging
 import os
 
 import numpy as np
@@ -13,6 +14,8 @@ import tables as tb
 from yatsm.algorithms import SEGMENT_ATTRS
 from yatsm.gis import bounds_to_polygon
 from yatsm.results.utils import result_filename, RESULT_TEMPLATE
+
+logger = logging.getLogger(__name__)
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
 
@@ -71,8 +74,10 @@ def create_table(h5file, where, name, result, index=True,
     """
     table_desc = dtype_to_table(result.dtype)
     if _has_node(h5file, where, name=name):
+        logger.debug('Returning existing table %s/%s' % (where, name))
         table = h5file.get_node(where, name=name)
     else:
+        logger.debug('Creating new table %s/%s' % (where, name))
         table = h5file.create_table(where, name,
                                     description=table_desc,
                                     expectedrows=expectedrows,
@@ -135,7 +140,6 @@ def create_task_tables(h5file, tasks, results, filters=FILTERS,
     for task in tasks:
         if task.output_record:
             where, tablename = task.record_result_location(tasks)
-            # from IPython.core.debugger import Pdb; Pdb().set_trace()
             t = create_table(h5file, where, tablename,
                              results[task.output_record],
                              index=True,
@@ -164,13 +168,14 @@ class HDF5ResultsStore(object):
             raise TypeError('Must specify `crs` and `bounds` when creating '
                             'new file')
         self.filename = filename
-        self.mode = mode or 'r+' if _exists else 'w'
-        self.mode = mode or 'w'
         self._crs = crs
         self._bounds = bounds
+        self.mode = mode or 'r+' if _exists else 'w'
         self.keep_open = keep_open
         self.tb_kwds = tb_kwds
         self.h5file = None
+
+        logger.debug('Opening %s in mode %s' % (self.filename, self.mode))
 
 # CREATION
     @classmethod
@@ -250,6 +255,7 @@ class HDF5ResultsStore(object):
         for key, value in attrs.items():
             self.set_attr(key, value)
 
+# GIS METADATA
     @property
     def crs(self):
         _crs = getattr(self._attrs, 'crs', '')
@@ -270,12 +276,11 @@ class HDF5ResultsStore(object):
 
     @staticmethod
     def reader_attrs(reader, window):
+        """ Extract reader attributes relevant to HDF5ResultsStore
+        """
         crs = reader.crs.to_string()
         bounds = bounds_to_polygon(reader.window_bounds(window)).wkt
         return dict(crs=crs, bounds=bounds)
-
-    def set_reader_attrs(self, reader, window):
-        self.set_attrs(**self.reader_attrs(reader, window))
 
 # CONTEXT HELPERS
     def __enter__(self):
