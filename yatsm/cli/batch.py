@@ -68,29 +68,47 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
                                  overwrite=force_overwrite)
         futures[future] = window
 
+    n_good, n_skip, n_bad = 0, 0, 0
     for future in executor.as_completed(futures):
         window = futures[future]
         try:
             result = future.result()
             if isinstance(result, str):
                 logger.info("Wrote to: %s" % result)
+                n_good += 1
+            else:
+                n_skip += 1
+            time.sleep(1)
+        except KeyboardInterrupt as ke:
+            logger.critical('Interrupting and shutting down')
+            executor.shutdown()
+            raise click.Abort()
         except Exception as exc:
             logger.exception("Exception for window: {}".format(window))
-            raise
+            n_bad += 1
+            raise  # TODO: remove and log?
 
-    logger.info('Done!')
+    logger.info('Complete: %s' % n_good)
+    logger.info('Skipped: %s' % n_skip)
+    logger.info('Failed: %s' % n_fail)
 
 
 def batch_block(config, readers, window, overwrite=False):
+    import logging
+
+    import numpy as np
+
     from yatsm import io
     from yatsm.results import HDF5ResultsStore, result_filename
     from yatsm.pipeline import Pipe, Pipeline
+
+    logger = logging.getLogger('yatsm')
 
     def sel_pix(pipe, y, x):
         return Pipe(data=pipe['data'].sel(y=y, x=x),
                     record=pipe.get('record', None))
 
-    logger.debug('Working on window: {}'.format(window))
+    logger.info('Working on window: {}'.format(window))
     data = io.read_and_preprocess(config['data']['datasets'],
                                   readers,
                                   window,
@@ -104,7 +122,7 @@ def batch_block(config, readers, window, overwrite=False):
     }
 
     # TODO: guess for number of records to store
-    from IPython.core.debugger import Pdb; Pdb().set_trace()
+    # from IPython.core.debugger import Pdb; Pdb().set_trace()
     with HDF5ResultsStore.from_window(**store_kwds) as store:
         # TODO: read this from pre-existing results
         pipe = Pipe(data=data)
