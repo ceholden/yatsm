@@ -43,6 +43,7 @@ after_success:
     - pip install coveralls
     - coverage report
     - coveralls
+after_script:
     # Docs
     - source activate test
     - pip install -r docs/requirements-docs.txt
