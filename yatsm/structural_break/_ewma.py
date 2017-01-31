@@ -58,7 +58,8 @@ def _sd_moving_range(y, k=2):
 def _c4(n):
     """ Bias correction factor for normal distribution
 
-    See: https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation#Results_for_the_normal_distribution
+    See:
+    https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation#Results_for_the_normal_distribution
     """
     return ((2 / (n - 1)) ** 0.5 *
             np.exp(_lgamma(n / 2) - _lgamma((n - 1) / 2)))

@@ -8,8 +8,8 @@ try:
 except ImportError:
     from yaml import SafeLoader
 
-from ._util import expand_envvars, validate_with_defaults
-from ..errors import InvalidConfigurationException
+from yatsm.config._util import expand_envvars, validate_with_defaults
+from yatsm.errors import InvalidConfigurationException
 
 
 PARSERS = []
@@ -38,7 +38,7 @@ def validate_and_parse_configfile(path, parsers=None):
         dict: Configuration data
     Raises:
         InvalidConfigurationException: Raise if configuration file does not
-            validate against an expected schema
+        validate against an expected schema
     """
     if not parsers:
         parsers = PARSERS

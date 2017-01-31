@@ -5,7 +5,6 @@ TODO: extract and move Chow test from "commission test" over to here
 """
 from __future__ import division
 
-from collections import namedtuple
 import logging
 
 import numpy as np
@@ -31,6 +30,7 @@ CUSUM_OLS_CRIT = {
     0.05: 1.36,
     0.10: 1.22
 }
+
 
 @try_jit(nopython=True, nogil=True)
 def _cusum(resid, ddof):
@@ -126,7 +126,7 @@ def _brownian_motion_pvalue(x, k):
 
 def _cusum_rec_test_crit(alpha):
     """ Return critical test statistic value for some alpha """
-    return brentq(lambda _x: _brownian_motion_pvalue(_x, 1) -  alpha, 0, 20)
+    return brentq(lambda _x: _brownian_motion_pvalue(_x, 1) - alpha, 0, 20)
 
 
 @try_jit(nopython=True, nogil=True)

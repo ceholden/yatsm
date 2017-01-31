@@ -12,7 +12,7 @@ def mkdir_p(d):
 
     Raises:
         OSError: Raise OSError if cannot create directory for reasons other
-            than it existing already (errno 13 "EEXIST")
+        than it existing already (errno 13 "EEXIST")
     """
     try:
         os.makedirs(d)

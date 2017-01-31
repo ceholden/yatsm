@@ -25,10 +25,12 @@ def parse_dataset_file(input_file, date_format, column_dtype=None):
     Returns:
         pd.DataFrame: Dataset information
     """
-    dt_parser = lambda x: pd.datetime.strptime(x, date_format)
+    def _parser(x):
+        return pd.datetime.strptime(x, date_format)
 
     df = pd.read_csv(input_file,
-                     parse_dates=['date'], date_parser=dt_parser,
+                     parse_dates=['date'],
+                     date_parser=_parser,
                      dtype=column_dtype)
     df.set_index('date', inplace=True, drop=False)
     df.index.name = 'time'
@@ -60,7 +62,7 @@ class GDALTimeSeries(object):
             raise TypeError('Must provide a pandas.DataFrame')
         if not all([k in df.keys() for k in ('date', 'filename')]):
             raise KeyError('pd.DataFrame passed should contain "date" and '
-                               '"filename" keys')
+                           '"filename" keys')
         self.df = df
         self.keep_open = keep_open
 
@@ -70,12 +72,12 @@ class GDALTimeSeries(object):
 
     @classmethod
     def from_config(cls, input_file, date_format='%Y%m%d', column_dtype=None,
-                  **kwds):
+                    **kwds):
         """ Init time series dataset from file, as used by config
 
         Args:
-            input_file (str): Filename of file containing time series information
-                to parse using :ref:`pandas.read_csv`
+            input_file (str): Filename of file containing time series
+                information to parse using :ref:`pandas.read_csv`
             date_format (str): If ``df`` is not specified, parse date column in
                 ``input_file`` with this date string format
             column_dtype (dict[str, str]): Datatype format parsing options for
@@ -126,13 +128,13 @@ class GDALTimeSeries(object):
         """
         if self.keep_open:
             if not hasattr(self, '_src_open'):
-                with rasterio.Env():
+                with rasterio.Env():  # TODO: pass options
                     self._src_open = [rasterio.open(f, 'r') for
                                       f in self.df['filename']]
             for _src in self._src_open:
                 yield _src
         else:
-            with rasterio.Env():
+            with rasterio.Env():  # TODO: pass options
                 for f in self.df['filename']:
                     yield rasterio.open(f, 'r')
 
@@ -196,7 +198,7 @@ class GDALTimeSeries(object):
 
         Raises:
             IndexError: if `band_names` is specified but is not the same length
-                as the number of bands, `self.count`
+            as the number of bands, `self.count`
         """
         if not band_names:
             pad = len(str(self.count))
