@@ -175,8 +175,6 @@ class HDF5ResultsStore(object):
         self.tb_kwds = tb_kwds
         self.h5file = None
 
-        logger.debug('Opening %s in mode %s' % (self.filename, self.mode))
-
 # CREATION
     @classmethod
     def from_window(cls, window, crs=None, bounds=None, reader=None,
@@ -301,6 +299,7 @@ class HDF5ResultsStore(object):
                 else:
                     raise
 
+        logger.debug('Opening %s in mode %s' % (self.filename, self.mode))
         self.h5file = tb.open_file(self.filename, mode=self.mode, title='YATSM',
                                    **self.tb_kwds)
 
@@ -312,10 +311,16 @@ class HDF5ResultsStore(object):
 
     def __exit__(self, *args):
         if self.h5file and not self.keep_open:
-            self.h5file.close()
+            try:
+                self.h5file.close()
+            except AttributeError as ae:
+                logger.debug('Would have caused error when closing %s' %
+                             self.filename)
+                pass
 
     def __del__(self):
-        self.h5file.close()
+        if self.h5file:
+            self.h5file.close()
 
     def close(self):
         if self.h5file:
