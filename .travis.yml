@@ -29,8 +29,8 @@ install:
     - sed -i "s/- python/- python=${TRAVIS_PYTHON_VERSION}/g" environment.yaml
     # Create conda matching requirements
     - conda env create -n test -f environment.yaml
-    - pip install rpy2  # temp fix for broken ICU with conda-forge & r channels
     - source activate test
+    - pip install rpy2  # temp fix for broken ICU with conda-forge & r channels
     # Rest of dependencies
     - "pip install -r tests/requirements.txt"
     # Install YATSM
