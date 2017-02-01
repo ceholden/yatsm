@@ -28,6 +28,14 @@ class Pipe(object):
             setattr(self, item, value)
         self.contents = self.__slots__[:-1]
 
+    def pixel(self, y, x):
+        """ Subset ``Pipe`` to one pixel
+        """
+        return Pipe(
+            data=self.data.sel(y=y, x=x),
+            record=self.record
+        )
+
     # Limit possible attributes
     # TODO: reconsider? could be useful for metadata
     def __setattr__(self, key, value):
@@ -78,7 +86,8 @@ class Pipe(object):
 
 
 class Task(object):
-
+    """
+    """
     def __init__(self, name, func, require, output, **config):
         self.name = name
         self.func = func
@@ -276,6 +285,23 @@ class Pipeline(object):
         pipeline = self.delayed(self.pipeline, pipe)
         return pipeline.compute(**compute_kwds)
 
+    def visualize(self, pipe, filename=None, rankdir='LR', **visualize_kwds):
+        """ Show the Dask task graph as a Graphviz plot
+
+        Args:
+            pipe (Pipe): Pipeline data
+            filename (str):The name (without an extension) of the file to write
+                to disk. By default, no file is written (``filename=None``)
+            rankdir (str): Layout direction of graph
+            **visualize_kwds (dict): Options passed to :func:`dask.visualize`
+                (see :func:`dask.dot.to_graphviz`)
+
+        Returns:
+            IPython.core.display.Image: Pipeline visualized using
+            Graphviz, or ``None`` if :mod:`IPython` is not installed.
+        """
+        pl = self.delayed(self.eager_pipeline + self.pipeline, pipe)
+        return pl.visualize(rankdir=rankdir, **visualize_kwds)
 
 # HELPERS
     @property

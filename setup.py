@@ -101,7 +101,7 @@ extras_require = {
         'pyyaml',
         'jsonschema'
     ],
-    'pipeline': ['dask', 'distributed', 'toposort']
+    'pipeline': ['dask', 'distributed', 'toposort', 'graphviz']
 }
 if PY2:
     extras_require['pipeline'].extend(['futures'])
