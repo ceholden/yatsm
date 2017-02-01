@@ -11,6 +11,7 @@ addons:
         packages:
             - gfortran
 before_install:
+    # Install conda
     - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
           wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
       else
@@ -33,6 +34,8 @@ install:
     - "pip install -r tests/requirements.txt"
     # Install YATSM
     - "pip install -e ."
+    # Info
+    - conda env export
 script:
     - py.test -ra tests/
     # Disable numba JIT for coverage to correctly identify JIT-ed lines
