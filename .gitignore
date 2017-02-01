@@ -2,6 +2,9 @@
 yatsm/regression/pickles/*.pkl
 yatsm/regression/pickles/*.json
 
+# Travis.CI deploy key
+.deploy_key
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
