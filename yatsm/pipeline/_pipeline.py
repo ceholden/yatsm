@@ -4,9 +4,9 @@ from collections import OrderedDict
 from functools import partial
 import logging
 
+from dask import delayed
 # from toolz import curry  # TODO: evaluate
 
-from ._exec import delay_pipeline
 from ._topology import config_to_tasks
 from .language import CONFIG, TASK, REQUIRE, OUTPUT, PIPE, PIPE_CONTENTS
 from .tasks import PIPELINE_TASKS, SEGMENT_TASKS
@@ -198,6 +198,7 @@ class Pipeline(object):
         tasks (list[Task]): A list of ``Task`` to execute
 
     """
+
     def __init__(self, tasks):
         self.tasks = tasks
         self.eager_pipeline, self.pipeline = self._split_eager(self.tasks)
@@ -223,20 +224,60 @@ class Pipeline(object):
 
         return cls(tasks)
 
+# EXECUTION
+    @staticmethod
+    def delayed(tasks, pipe):
+        """ Return a :class:`dask.delayed.Delayed` pipeline from tasks
+
+        Args:
+            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a
+                pipeline)
+            pipe (Pipe): Pipeline data
+        Returns:
+            dask.delayed.Delayed: A delayed pipeline ready to be executed
+
+        """
+        pl = delayed(tasks[0].curry(), name=tasks[0].name)(
+            pipe,
+            dask_key_name=tasks[0].name
+        )
+
+        for task in tasks[1:]:
+            pl = delayed(task.curry(), name=task.name)(
+                pl,
+                dask_key_name=task.name
+            )
+
+        return pl
+
     # TODO: test without using dask.delayed, just function wrapping
     #       ... curious about the dask overhead
-    def run_eager(self, pipe):
-        pipeline = delay_pipeline(self.eager_pipeline, pipe)
-        return pipeline.compute()
+    def run_eager(self, pipe, **compute_kwds):
+        """ Run eager steps
 
-    def run(self, pipe, check_eager=True):
+        Args:
+            pipe (Pipe): Pipeline data
+
+        """
+        pipeline = self.delayed(self.eager_pipeline, pipe)
+        return pipeline.compute(**compute_kwds)
+
+    def run(self, pipe, check_eager=True, **compute_kwds):
+        """ Run all steps
+
+        Args:
+            pipe (Pipe): Pipeline data
+
+        """
         # Check if pipe contains "eager" pipeline outputs
         if check_eager and not self._check_eager(self.eager_pipeline, pipe):
             logger.warning('Triggering eager compute')
             pipe = self.run_eager(pipe)
-        pipeline = delay_pipeline(self.pipeline, pipe)
-        return pipeline.compute()
+        pipeline = self.delayed(self.pipeline, pipe)
+        return pipeline.compute(**compute_kwds)
 
+
+# HELPERS
     @property
     def task_tables(self):
         """ dict: :ref:`Task` name (str) -> result file table location (str)
