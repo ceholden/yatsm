@@ -154,6 +154,8 @@
 <span class="sd">https://github.com/mapbox/rasterio/blob/master/rasterio/rio/main.py</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="k">import</span> <span class="n">iter_entry_points</span>
@@ -161,20 +163,26 @@
 
 <span class="kn">import</span> <span class="nn">click</span>
 <span class="kn">import</span> <span class="nn">click_plugins</span>
+<span class="kn">import</span> <span class="nn">cligj</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
-<span class="n">logger_algo</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm_algo&#39;</span><span class="p">)</span>
-
-<span class="c1"># NumPy linear algebra multithreading related variables</span>
-<span class="n">NP_THREAD_VARS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;OPENBLAS_NUM_THREADS&#39;</span><span class="p">,</span> <span class="s1">&#39;MKL_NUM_THREADS&#39;</span><span class="p">,</span> <span class="s1">&#39;OPM_NUM_THREADS&#39;</span><span class="p">]</span>
 
 
+<span class="c1"># NumPy/etc linear algebra multithreading related variables</span>
+<span class="n">NP_THREAD_VARS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;OPENBLAS_NUM_THREADS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MKL_NUM_THREADS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OPM_NUM_THREADS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NUMEXPR_NUM_THREADS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NUMBA_NUM_THREADS&#39;</span>
+<span class="p">]</span>
 <div class="viewcode-block" id="set_np_thread_vars"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.main.html#yatsm.cli.main.set_np_thread_vars">[docs]</a><span class="k">def</span> <span class="nf">set_np_thread_vars</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">envvar</span> <span class="ow">in</span> <span class="n">NP_THREAD_VARS</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">envvar</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Overriding </span><span class="si">%s</span><span class="s1"> with --num_threads=</span><span class="si">%i</span><span class="s1">&#39;</span>
                            <span class="o">%</span> <span class="p">(</span><span class="n">envvar</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">envvar</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
+
 
 <span class="c1"># If --num_threads set, parse it before click CLI interface so envvars are</span>
 <span class="c1"># set BEFORE numpy is imported</span>
@@ -192,16 +200,18 @@
     <span class="c1"># Default to 1</span>
     <span class="n">set_np_thread_vars</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
+
 <span class="c1"># Resume YATSM imports after NumPy has been configured</span>
 <span class="kn">import</span> <span class="nn">yatsm</span>  <span class="c1"># flake8: noqa</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">options</span>  <span class="c1"># flake8: noqa</span>
+<span class="kn">from</span> <span class="nn">.logger</span> <span class="k">import</span> <span class="n">config_logging</span>
+
 
 <span class="c1"># YATSM CLI group</span>
 <span class="n">_context</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="n">token_normalize_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
     <span class="n">help_option_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="s1">&#39;-h&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-
 
 <span class="nd">@click_plugins</span><span class="o">.</span><span class="n">with_plugins</span><span class="p">(</span><span class="n">ep</span> <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span>
                             <span class="n">iter_entry_points</span><span class="p">(</span><span class="s1">&#39;yatsm.cli&#39;</span><span class="p">))</span>
@@ -210,20 +220,16 @@
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--num_threads&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;threads&gt;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
               <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">valid_int_gt_zero</span><span class="p">,</span>
               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of threads for OPENBLAS/MKL/OMP used in NumPy&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--verbose&#39;</span><span class="p">,</span> <span class="s1">&#39;-v&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Be verbose&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--verbose-yatsm&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Show verbose debugging messages in YATSM algorithm&#39;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Be quiet&#39;</span><span class="p">)</span>
+<span class="nd">@cligj</span><span class="o">.</span><span class="n">verbose_opt</span>
+<span class="nd">@cligj</span><span class="o">.</span><span class="n">quiet_opt</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
-<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">num_threads</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">verbose_yatsm</span><span class="p">,</span> <span class="n">quiet</span><span class="p">):</span>
-    <span class="c1"># Logging config</span>
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">verbose_yatsm</span><span class="p">:</span>
-        <span class="n">logger_algo</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
-        <span class="n">logger_algo</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">num_threads</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">quiet</span><span class="p">):</span>
+    <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbose</span> <span class="o">-</span> <span class="n">quiet</span>
+    <span class="n">level</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">verbosity</span><span class="p">)</span>
+    <span class="n">config_logging</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># TODO: dictConfig file arg</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;verbosity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">verbosity</span>
+
 </pre></div>
 
            </div>
@@ -236,7 +242,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

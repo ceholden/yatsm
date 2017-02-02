@@ -193,19 +193,19 @@
     <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">packaged_regressions</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot load unknown packaged regressor </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
 
-    <span class="n">path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s1">&#39;pickles&#39;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;pickles&#39;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Checking data files in </span><span class="si">%s</span><span class="s1"> for packaged regressors&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s1">&#39;pickles&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;pickles&#39;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Cannot find packaged regressors in </span><span class="si">%s</span><span class="s1">. Did you install &#39;</span>
                       <span class="s1">&#39;YATSM via setuptools?&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
 
     <span class="n">resource</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;pickles&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_exists</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">resource</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Cannot find packaged regression method </span><span class="si">%s</span><span class="s1">, but package &#39;</span>
                       <span class="s1">&#39;directory exists. Check the contents of </span><span class="si">%s</span><span class="s1"> if possible&#39;</span>
                       <span class="o">%</span> <span class="p">(</span><span class="n">resource</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_filename</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">resource</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -218,7 +218,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

@@ -164,13 +164,13 @@ folds form the training set.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; Labeled features</li>
-<li><strong>row</strong> (<em>np.ndarray</em>) &#8211; Row (y) pixel location for each <cite>y</cite></li>
-<li><strong>col</strong> (<em>np.ndarray</em>) &#8211; Column (x) pixel location for each <cite>x</cite></li>
-<li><strong>n_folds</strong> (<em>int, optional</em>) &#8211; Number of folds (default: 3)</li>
-<li><strong>shuffle</strong> (<em>bool, optional</em>) &#8211; Shuffle the unique training data regions before
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold.params.y"></span><strong>y</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold.params.y">¶</a> &#8211; Labeled features</li>
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold.params.row"></span><strong>row</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold.params.row">¶</a> &#8211; Row (y) pixel location for each <cite>y</cite></li>
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold.params.col"></span><strong>col</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold.params.col">¶</a> &#8211; Column (x) pixel location for each <cite>x</cite></li>
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold.params.n_folds"></span><strong>n_folds</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold.params.n_folds">¶</a> &#8211; Number of folds (default: 3)</li>
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold.params.shuffle"></span><strong>shuffle</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold.params.shuffle">¶</a> &#8211; Shuffle the unique training data regions before
 splitting into batches (default: False)</li>
-<li><strong>random_state</strong> (<em>None, int, or np.random.RandomState</em>) &#8211; Pseudo-random number
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold.params.random_state"></span><strong>random_state</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold.params.random_state">¶</a> &#8211; Pseudo-random number
 generator to use for random sampling. If None, default to numpy RNG
 for shuffling</li>
 </ul>
@@ -203,14 +203,14 @@ folds form the training set.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>roi</strong> (<em>np.ndarray</em>) &#8211; &#8220;Region of interest&#8221; matrix providing training data
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold_ROI.params.roi"></span><strong>roi</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold_ROI.params.roi">¶</a> &#8211; &#8220;Region of interest&#8221; matrix providing training data
 samples of some class</li>
-<li><strong>n_folds</strong> (<em>int, optional</em>) &#8211; Number of folds (default: 3)</li>
-<li><strong>mask_values</strong> (<em>int, list, tuple, or np.ndarray, optional</em>) &#8211; one or more
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold_ROI.params.n_folds"></span><strong>n_folds</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold_ROI.params.n_folds">¶</a> &#8211; Number of folds (default: 3)</li>
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold_ROI.params.mask_values"></span><strong>mask_values</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold_ROI.params.mask_values">¶</a> &#8211; one or more
 values within roi to ignore from sampling (default: [0])</li>
-<li><strong>shuffle</strong> (<em>bool, optional</em>) &#8211; Shuffle the unique training data regions before
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold_ROI.params.shuffle"></span><strong>shuffle</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold_ROI.params.shuffle">¶</a> &#8211; Shuffle the unique training data regions before
 splitting into batches (default: False)</li>
-<li><strong>random_state</strong> (<em>None, int, or np.random.RandomState</em>) &#8211; Pseudo-random number
+<li><span class="target" id="yatsm.classification.diagnostics.SpatialKFold_ROI.params.random_state"></span><strong>random_state</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.SpatialKFold_ROI.params.random_state">¶</a> &#8211; Pseudo-random number
 generator to use for random sampling. If None, default to numpy RNG
 for shuffling</li>
 </ul>
@@ -234,10 +234,10 @@ for shuffling</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<em>np.ndarray</em>) &#8211; X feature input used in classification</li>
-<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; y labeled examples</li>
-<li><strong>algo</strong> (<em>sklean classifier</em>) &#8211; classifier used from scikit-learn</li>
-<li><strong>kf_generator</strong> (<em>sklearn crossvalidation generator</em>) &#8211; generator for indices
+<li><span class="target" id="yatsm.classification.diagnostics.kfold_scores.params.X"></span><strong>X</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.kfold_scores.params.X">¶</a> &#8211; X feature input used in classification</li>
+<li><span class="target" id="yatsm.classification.diagnostics.kfold_scores.params.y"></span><strong>y</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.kfold_scores.params.y">¶</a> &#8211; y labeled examples</li>
+<li><span class="target" id="yatsm.classification.diagnostics.kfold_scores.params.algo"></span><strong>algo</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.kfold_scores.params.algo">¶</a> &#8211; classifier used from scikit-learn</li>
+<li><span class="target" id="yatsm.classification.diagnostics.kfold_scores.params.kf_generator"></span><strong>kf_generator</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.diagnostics.kfold_scores.params.kf_generator">¶</a> &#8211; generator for indices
 used in crossvalidation</li>
 </ul>
 </td>
@@ -245,7 +245,7 @@ used in crossvalidation</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mean and standard deviation of crossvalidation scores</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(mean, std)</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(mean, <a class="reference internal" href="yatsm.regression.diagnostics.html#yatsm.regression.diagnostics.std" title="yatsm.regression.diagnostics.std">std</a>)</p>
 </td>
 </tr>
 </tbody>
@@ -265,7 +265,7 @@ used in crossvalidation</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

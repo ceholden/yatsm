@@ -155,7 +155,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -169,7 +168,7 @@
 <span class="kn">from</span> <span class="nn">..accel</span> <span class="k">import</span> <span class="n">try_jit</span>
 <span class="kn">from</span> <span class="nn">..regression._recresid</span> <span class="k">import</span> <span class="n">_recresid</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">pnorm</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">cdf</span>
 
@@ -181,6 +180,7 @@
     <span class="mf">0.05</span><span class="p">:</span> <span class="mf">1.36</span><span class="p">,</span>
     <span class="mf">0.10</span><span class="p">:</span> <span class="mf">1.22</span>
 <span class="p">}</span>
+
 
 <span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">_cusum</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">ddof</span><span class="p">):</span>
@@ -207,7 +207,7 @@
 
 
 <div class="viewcode-block" id="cusum_OLS"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.cusum_OLS">[docs]</a><span class="k">def</span> <span class="nf">cusum_OLS</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
-    <span class="sd">ur&quot;&quot;&quot; OLS-CUSUM test for structural breaks</span>
+    <span class="sa">ur</span><span class="sd">&quot;&quot;&quot; OLS-CUSUM test for structural breaks</span>
 
 <span class="sd">    Tested against R&#39;s ``strucchange`` package and is faster than</span>
 <span class="sd">    the equivalent function in the ``statsmodels`` Python package when</span>
@@ -276,7 +276,7 @@
 
 <span class="k">def</span> <span class="nf">_cusum_rec_test_crit</span><span class="p">(</span><span class="n">alpha</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return critical test statistic value for some alpha &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_x</span><span class="p">:</span> <span class="n">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span>  <span class="n">alpha</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_x</span><span class="p">:</span> <span class="n">_brownian_motion_pvalue</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
 
 
 <span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nogil</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -312,7 +312,7 @@
 
 
 <div class="viewcode-block" id="cusum_recursive"><a class="viewcode-back" href="../../../yatsm/yatsm.structural_break.html#yatsm.structural_break.cusum_recursive">[docs]</a><span class="k">def</span> <span class="nf">cusum_recursive</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
-    <span class="sd">ur&quot;&quot;&quot; Rec-CUSUM test for structural breaks</span>
+    <span class="sa">ur</span><span class="sd">&quot;&quot;&quot; Rec-CUSUM test for structural breaks</span>
 
 <span class="sd">    Tested against R&#39;s ``strucchange`` package.</span>
 
@@ -385,7 +385,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

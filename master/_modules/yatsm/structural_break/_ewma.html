@@ -208,7 +208,8 @@
 <span class="k">def</span> <span class="nf">_c4</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Bias correction factor for normal distribution</span>
 
-<span class="sd">    See: https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation#Results_for_the_normal_distribution</span>
+<span class="sd">    See:</span>
+<span class="sd">    https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation#Results_for_the_normal_distribution</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">((</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">*</span>
             <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_lgamma</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">_lgamma</span><span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
@@ -349,7 +350,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

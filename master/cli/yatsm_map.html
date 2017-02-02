@@ -167,14 +167,14 @@ Usage: yatsm map <span class="o">[</span>OPTIONS<span class="o">]</span> &lt;map
   Examples:
   &gt; yatsm map --coef intercept --coef slope
   ... --band <span class="m">3</span> --band <span class="m">4</span> --band <span class="m">5</span> --ndv -9999
-  ... coef 2000-01-01 coef_map.gtif
+  ... coef <span class="m">2000</span>-01-01 coef_map.gtif
 
   &gt; yatsm map -c intercept -c slope -b <span class="m">3</span> -b <span class="m">4</span> -b <span class="m">5</span> --ndv -9999
-  ... coef 2000-01-01 coef_map.gtif
+  ... coef <span class="m">2000</span>-01-01 coef_map.gtif
 
-  &gt; yatsm map --date <span class="s2">&quot;%Y-%j&quot;</span> predict 2000-001 prediction.gtif
+  &gt; yatsm map --date <span class="s2">&quot;%Y-%j&quot;</span> predict <span class="m">2000</span>-001 prediction.gtif
 
-  &gt; yatsm map --result <span class="s2">&quot;YATSM_new&quot;</span> --after class 2000-01-01 LCmap.gtif
+  &gt; yatsm map --result <span class="s2">&quot;YATSM_new&quot;</span> --after class <span class="m">2000</span>-01-01 LCmap.gtif
 
   Notes:
       - Image predictions will not use categorical information in timeseries
@@ -198,7 +198,7 @@ Options:
   --amplitude               Export amplitude of sin/cosine pairs instead of
                             individual coefficient estimates
   --predict-proba           Include prediction probability band <span class="o">(</span>scaled by
-                            10,000<span class="o">)</span>
+                            <span class="m">10</span>,000<span class="o">)</span>
   --help                    Show this message and exit.
 </pre></div>
 </div>
@@ -224,7 +224,7 @@ Options:
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

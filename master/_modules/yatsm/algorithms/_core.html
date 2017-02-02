@@ -177,7 +177,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Segment.from_example"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.html#yatsm.algorithms.Segment.from_example">[docs]</a>    <span class="k">def</span> <span class="nf">from_example</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
+<div class="viewcode-block" id="Segment.from_example"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.html#yatsm.algorithms.Segment.from_example">[docs]</a>    <span class="k">def</span> <span class="nf">from_example</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">attrs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a Segment from example name=value pairs</span>
 
 <span class="sd">        Args:</span>
@@ -195,13 +195,13 @@
 
             <span class="n">dtypes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">shp</span><span class="p">)</span> <span class="k">if</span> <span class="n">shp</span> <span class="k">else</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dtype</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtypes</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtypes</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Segment.barebones"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.html#yatsm.algorithms.Segment.barebones">[docs]</a>    <span class="k">def</span> <span class="nf">barebones</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<div class="viewcode-block" id="Segment.barebones"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.html#yatsm.algorithms.Segment.barebones">[docs]</a>    <span class="k">def</span> <span class="nf">barebones</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a barebones, minimum required fields, Segment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">SEGMENT_DTYPES</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">SEGMENT_DTYPES</span><span class="p">)</span></div></div>
 
 
 <span class="c1"># Entry point handling</span>
@@ -237,7 +237,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

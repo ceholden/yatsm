@@ -144,108 +144,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.mapping.changes">
-<span id="yatsm-mapping-changes-module"></span><h1>yatsm.mapping.changes module<a class="headerlink" href="#module-yatsm.mapping.changes" title="Permalink to this headline">¶</a></h1>
-<p>Functions relevant for mapping abrupt changes</p>
-<dl class="function">
-<dt id="yatsm.mapping.changes.get_change_date">
-<code class="descclassname">yatsm.mapping.changes.</code><code class="descname">get_change_date</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>result_location</em>, <em>image_ds</em>, <em>first=False</em>, <em>out_format='%Y%j'</em>, <em>magnitude=False</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/changes.html#get_change_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.changes.get_change_date" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output raster with changemap</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Ordinal date for start of map records</li>
-<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Ordinal date for end of map records</li>
-<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Location of results</li>
-<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
-<li><strong>first</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; Use first change instead of last</li>
-<li><strong>out_format</strong> (<em>str, optional</em>) &#8211; Output date format</li>
-<li><strong>magnitude</strong> (<em>bool, optional</em>) &#8211; output magnitude of each change?</li>
-<li><strong>ndv</strong> (<em>int, optional</em>) &#8211; NoDataValue</li>
-<li><strong>pattern</strong> (<em>str, optional</em>) &#8211; filename pattern of saved record results</li>
-<li><strong>warn_on_empty</strong> (<em>bool, optional</em>) &#8211; Log warning if result contained no
-result records (default: False)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>A 2D np.ndarray array containing the changes between the</dt>
-<dd><p class="first last">start and end date. Also includes, if specified, a 3D np.ndarray of
-the magnitude of each change plus the indices of these magnitudes</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.mapping.changes.get_change_num">
-<code class="descclassname">yatsm.mapping.changes.</code><code class="descname">get_change_num</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>result_location</em>, <em>image_ds</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/changes.html#get_change_num"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.changes.get_change_num" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output raster with changemap</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Ordinal date for start of map records</li>
-<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Ordinal date for end of map records</li>
-<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Location of results</li>
-<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
-<li><strong>ndv</strong> (<em>int, optional</em>) &#8211; NoDataValue</li>
-<li><strong>pattern</strong> (<em>str, optional</em>) &#8211; filename pattern of saved record results</li>
-<li><strong>warn_on_empty</strong> (<em>bool, optional</em>) &#8211; Log warning if result contained no
-result records (default: False)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>2D numpy array containing the number of changes</dt>
-<dd><p class="first last">between the start and end date; list containing band names</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.mapping.changes.get_magnitude_indices">
-<code class="descclassname">yatsm.mapping.changes.</code><code class="descname">get_magnitude_indices</code><span class="sig-paren">(</span><em>results</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/changes.html#get_magnitude_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.changes.get_magnitude_indices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds indices of result containing magnitude of change information</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>results</strong> (<em>iterable</em>) &#8211; list of result files to check within</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
-<dt>indices containing magnitude change information from the</dt>
-<dd>tested indices</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> &#8211; Raise KeyError when a required result output is missing
-from the saved record structure</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="yatsm-mapping-changes-module">
+<h1>yatsm.mapping.changes module<a class="headerlink" href="#yatsm-mapping-changes-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -259,7 +159,7 @@ from the saved record structure</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

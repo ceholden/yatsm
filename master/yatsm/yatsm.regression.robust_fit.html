@@ -171,18 +171,18 @@ the scikit-learn __init__/fit/predict paradigm.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>scale_est</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) &#8211; function for scaling residuals</li>
-<li><strong>tune</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; tuning constant for scale estimate</li>
-<li><strong>maxiter</strong> (<em>int, optional</em>) &#8211; maximum number of iterations (default: 50)</li>
-<li><strong>tol</strong> (<em>float, optional</em>) &#8211; convergence tolerance of estimate
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.scale_est"></span><strong>scale_est</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.scale_est">¶</a> &#8211; function for scaling residuals</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.tune"></span><strong>tune</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.tune">¶</a> &#8211; tuning constant for scale estimate</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.maxiter"></span><strong>maxiter</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.maxiter">¶</a> &#8211; maximum number of iterations (default: 50)</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.tol"></span><strong>tol</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.tol">¶</a> &#8211; convergence tolerance of estimate
 (default: 1e-8)</li>
-<li><strong>scale_est</strong> &#8211; estimate used to scale the weights
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.scale_est"></span><strong>scale_est</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.scale_est">¶</a> &#8211; estimate used to scale the weights
 (default: <cite>mad</cite> for median absolute deviation)</li>
-<li><strong>scale_constant</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; normalization constant (default: 0.6745)</li>
-<li><strong>update_scale</strong> (<em>bool, optional</em>) &#8211; update scale estimate for weights
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.scale_constant"></span><strong>scale_constant</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.scale_constant">¶</a> &#8211; normalization constant (default: 0.6745)</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.update_scale"></span><strong>update_scale</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.update_scale">¶</a> &#8211; update scale estimate for weights
 across iterations (default: True)</li>
-<li><strong>M</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) &#8211; function for scaling residuals</li>
-<li><strong>tune</strong> &#8211; tuning constant for scale estimate</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.M"></span><strong>M</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.M">¶</a> &#8211; function for scaling residuals</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.params.tune"></span><strong>tune</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.params.tune">¶</a> &#8211; tuning constant for scale estimate</li>
 </ul>
 </td>
 </tr>
@@ -205,8 +205,8 @@ robust iteratively reweighted least squares</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<em>np.ndarray</em>) &#8211; 2D (n_obs x n_features) design matrix</li>
-<li><strong>y</strong> (<em>np.ndarray</em>) &#8211; 1D independent variable</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.fit.params.X"></span><strong>X</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.fit.params.X">¶</a> &#8211; 2D (n_obs x n_features) design matrix</li>
+<li><span class="target" id="yatsm.regression.robust_fit.RLM.fit.params.y"></span><strong>y</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.fit.params.y">¶</a> &#8211; 1D independent variable</li>
 </ul>
 </td>
 </tr>
@@ -233,7 +233,7 @@ robust iteratively reweighted least squares</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>np.ndarray</em>) &#8211; 2D (n_obs x n_features) design matrix</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.regression.robust_fit.RLM.predict.params.X"></span><strong>X</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.robust_fit.RLM.predict.params.X">¶</a> &#8211; 2D (n_obs x n_features) design matrix</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">1D yhat prediction</td>
 </tr>
@@ -259,10 +259,10 @@ robust iteratively reweighted least squares</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>weight</strong> &#8211; weights for residuals</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">weights for residuals</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">weight (ndarray)</p>
 </td>
 </tr>
 </tbody>
@@ -315,7 +315,7 @@ robust iteratively reweighted least squares</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

@@ -1,0 +1,7 @@
+yatsm.cli.logger module
+=======================
+
+.. automodule:: yatsm.cli.logger
+    :members:
+    :undoc-members:
+    :show-inheritance:

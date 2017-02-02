@@ -148,16 +148,16 @@
            <div itemprop="articleBody">
             
   <h1>Source code for yatsm.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span></span><span class="sd">&quot;&quot;&quot; Utility functions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">six</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -165,7 +165,7 @@
 <span class="k">except</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">walk</span>
 
-<span class="kn">from</span> <span class="nn">log_yatsm</span> <span class="k">import</span> <span class="n">logger</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="c1"># JOB SPECIFIC FUNCTIONS</span>
@@ -187,6 +187,7 @@
 <span class="sd">            `total_jobs` are both 1)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="k">if</span> <span class="n">interlaced</span><span class="p">:</span>
         <span class="n">assigned</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
@@ -211,188 +212,32 @@
     <span class="k">return</span> <span class="n">tasks</span></div>
 
 
-<span class="c1"># IMAGE DATASET READING</span>
-<div class="viewcode-block" id="csvfile_to_dataframe"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.csvfile_to_dataframe">[docs]</a><span class="k">def</span> <span class="nf">csvfile_to_dataframe</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Return sorted filenames of images from input text file</span>
+<div class="viewcode-block" id="find"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.find">[docs]</a><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return a sorted list of files matching pattern</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      input_file (str): text file of dates and files</span>
-<span class="sd">      date_format (str): format of dates in file</span>
+<span class="sd">        location (str): Directory location to search</span>
+<span class="sd">        pattern (str): Search pattern for files</span>
+<span class="sd">        regex (bool): True if ``pattern`` is a regular expression</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      pd.DataFrame: pd.DataFrame of dates, sensor IDs, and filenames</span>
+<span class="sd">        list: List of file paths for files found</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">regex</span><span class="p">:</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
 
-    <span class="c1"># Guess and convert date field</span>
-    <span class="n">date_col</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;date&#39;</span> <span class="ow">in</span> <span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">date_col</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Could not find date column in input file&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Multiple date columns found in input CSV file. &#39;</span>
-                       <span class="s1">&#39;Using </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">date_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-    <span class="n">date_col</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">date_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-
-    <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="n">date_format</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">toordinal</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">df</span></div>
-
-
-<div class="viewcode-block" id="get_image_IDs"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.get_image_IDs">[docs]</a><span class="k">def</span> <span class="nf">get_image_IDs</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns image IDs for each filename (basename of dirname of file)</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      filenames (iterable): filenames to return image IDs for</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      list: image IDs for each file in `filenames`</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span></div>
-
-
-<span class="c1"># MAPPING UTILITIES</span>
-<div class="viewcode-block" id="write_output"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.write_output">[docs]</a><span class="k">def</span> <span class="nf">write_output</span><span class="p">(</span><span class="n">raster</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span> <span class="n">gdal_frmt</span><span class="p">,</span> <span class="n">ndv</span><span class="p">,</span> <span class="n">band_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Write raster to output file &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">gdal</span><span class="p">,</span> <span class="n">gdal_array</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Writing output to disk&#39;</span><span class="p">)</span>
-
-    <span class="n">driver</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">GetDriverByName</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">gdal_frmt</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">nband</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">nband</span> <span class="o">=</span> <span class="mi">1</span>
-
-    <span class="n">ds</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span>
-        <span class="n">output</span><span class="p">,</span>
-        <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">nband</span><span class="p">,</span>
-        <span class="n">gdal_array</span><span class="o">.</span><span class="n">NumericTypeCodeToGDALTypeCode</span><span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
-    <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">band_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nband</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Did not get enough names for all bands&#39;</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">raster</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nband</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;    writing band </span><span class="si">{b}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">raster</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">b</span><span class="p">])</span>
-            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetNoDataValue</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">band_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetDescription</span><span class="p">(</span><span class="n">band_names</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
-                <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetMetadata</span><span class="p">({</span>
-                    <span class="s1">&#39;band_</span><span class="si">{i}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="n">band_names</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
-                <span class="p">})</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;    writing band&#39;</span><span class="p">)</span>
-        <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">WriteArray</span><span class="p">(</span><span class="n">raster</span><span class="p">)</span>
-        <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetNoDataValue</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">band_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetDescription</span><span class="p">(</span><span class="n">band_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">ds</span><span class="o">.</span><span class="n">GetRasterBand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">SetMetadata</span><span class="p">({</span><span class="s1">&#39;band_1&#39;</span><span class="p">:</span> <span class="n">band_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
-
-    <span class="n">ds</span><span class="o">.</span><span class="n">SetProjection</span><span class="p">(</span><span class="n">image_ds</span><span class="o">.</span><span class="n">GetProjection</span><span class="p">())</span>
-    <span class="n">ds</span><span class="o">.</span><span class="n">SetGeoTransform</span><span class="p">(</span><span class="n">image_ds</span><span class="o">.</span><span class="n">GetGeoTransform</span><span class="p">())</span>
-
-    <span class="n">ds</span> <span class="o">=</span> <span class="kc">None</span></div>
-
-
-<span class="c1"># RESULT UTILITIES</span>
-<div class="viewcode-block" id="find_results"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.find_results">[docs]</a><span class="k">def</span> <span class="nf">find_results</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Create list of result files and return sorted</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      location (str): directory location to search</span>
-<span class="sd">      pattern (str): glob style search pattern for results</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      results (list): list of file paths for results found</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Note: already checked for location existence in main()</span>
-    <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">(</span><span class="n">location</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
-            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Could not find results in: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">location</span><span class="p">)</span>
-
-    <span class="n">records</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">records</span></div>
-
-
-<div class="viewcode-block" id="iter_records"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.iter_records">[docs]</a><span class="k">def</span> <span class="nf">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">yield_filename</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Iterates over records, returning result NumPy array</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      records (list): List containing filenames of results</span>
-<span class="sd">      warn_on_empty (bool, optional): Log warning if result contained no</span>
-<span class="sd">        result records (default: False)</span>
-<span class="sd">      yield_filename (bool, optional): Yield the filename and the record</span>
-
-<span class="sd">    Yields:</span>
-<span class="sd">      np.ndarray or tuple: Result saved in record and the filename, if desired</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_records</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">records</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">_i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
-        <span class="c1"># Verbose progress</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">_i</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:.1f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_i</span> <span class="o">/</span> <span class="n">n_records</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
-        <span class="c1"># Open output</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">rec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">r</span><span class="p">)[</span><span class="s1">&#39;record&#39;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Error reading a result file (may be corrupted) &#39;</span>
-                           <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">): </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
-            <span class="k">continue</span>
-
-        <span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># No values in this file</span>
-            <span class="k">if</span> <span class="n">warn_on_empty</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Could not find results in </span><span class="si">{f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">r</span><span class="p">))</span>
-            <span class="k">continue</span>
-
-        <span class="k">if</span> <span class="n">yield_filename</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">rec</span><span class="p">,</span> <span class="n">r</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">rec</span></div>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)</span></div>
 
 
 <span class="c1"># MISC UTILITIES</span>
-<div class="viewcode-block" id="date2index"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.date2index">[docs]</a><span class="k">def</span> <span class="nf">date2index</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns index of sorted array `dates` containing the date `d`</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      dates (np.ndarray): array of dates (or numbers really) in sorted order</span>
-<span class="sd">      d (int, float): number to search for</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">      int: index of `dates` containing value `d`</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="is_integer"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.is_integer">[docs]</a><span class="k">def</span> <span class="nf">is_integer</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns True if `s` is an integer &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
-
-
 <div class="viewcode-block" id="copy_dict_filter_key"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.copy_dict_filter_key">[docs]</a><span class="k">def</span> <span class="nf">copy_dict_filter_key</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Copy a dict recursively, but only if key doesn&#39;t match regex pattern</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -404,6 +249,20 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
     <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="cached_property"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.cached_property">[docs]</a><span class="k">def</span> <span class="nf">cached_property</span><span class="p">(</span><span class="n">prop</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Cache a class property (e.g., that requires a lookup)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prop_name</span> <span class="o">=</span> <span class="s1">&#39;_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prop</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -416,7 +275,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

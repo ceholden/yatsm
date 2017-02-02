@@ -214,7 +214,7 @@
 
 <span class="c1"># UTILITY FUNCTIONS</span>
 <span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_check_converge</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_check_converge</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">))</span>
 
 
@@ -280,7 +280,7 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">bisquare</span><span class="p">,</span> <span class="n">tune</span><span class="o">=</span><span class="mf">4.685</span><span class="p">,</span>
                  <span class="n">scale_est</span><span class="o">=</span><span class="n">mad</span><span class="p">,</span> <span class="n">scale_constant</span><span class="o">=</span><span class="mf">0.6745</span><span class="p">,</span>
-                 <span class="n">update_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span><span class="p">):</span>
+                 <span class="n">update_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">M</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tune</span> <span class="o">=</span> <span class="n">tune</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span> <span class="o">=</span> <span class="n">scale_est</span>
@@ -340,7 +340,7 @@
         <span class="k">return</span> <span class="p">((</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
                  <span class="s2">&quot; * Coefficients: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span>
                  <span class="s2">&quot; * Intercept = </span><span class="si">%.5f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                  <span class="n">numpy</span><span class="o">.</span><span class="n">array_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
                  <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span><span class="p">))</span></div>
 </pre></div>
@@ -355,7 +355,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

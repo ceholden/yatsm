@@ -158,38 +158,38 @@ Classification (CCDC) algorithm by Zhu and Woodcock, 2014.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>test_indices</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; Test for changes with these
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.test_indices"></span><strong>test_indices</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.test_indices">¶</a> &#8211; Test for changes with these
 indices of <code class="docutils literal"><span class="pre">Y</span></code>. If not provided, all series in <code class="docutils literal"><span class="pre">Y</span></code> will be used
 as test indices</li>
-<li><strong>estimator</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) &#8211; dictionary containing estimation model from
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.estimator"></span><strong>estimator</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.estimator">¶</a> &#8211; dictionary containing estimation model from
 <code class="docutils literal"><span class="pre">scikit-learn</span></code> used to fit and predict timeseries and,
 optionally, a dict of options for the estimation model <code class="docutils literal"><span class="pre">fit</span></code>
 method (default: <code class="docutils literal"><span class="pre">{'object':</span> <span class="pre">Lasso(alpha=20),</span> <span class="pre">'fit':</span> <span class="pre">{}}</span></code>)</li>
-<li><strong>consecutive</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Consecutive observations to trigger change</li>
-<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Test statistic threshold for change</li>
-<li><strong>min_obs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Minimum observations in model</li>
-<li><strong>min_rmse</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Minimum RMSE for models during testing</li>
-<li><strong>retrain_time</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; Number of days between model fit updates during
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.consecutive"></span><strong>consecutive</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.consecutive">¶</a> &#8211; Consecutive observations to trigger change</li>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.threshold"></span><strong>threshold</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.threshold">¶</a> &#8211; Test statistic threshold for change</li>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.min_obs"></span><strong>min_obs</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.min_obs">¶</a> &#8211; Minimum observations in model</li>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.min_rmse"></span><strong>min_rmse</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.min_rmse">¶</a> &#8211; Minimum RMSE for models during testing</li>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.retrain_time"></span><strong>retrain_time</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.retrain_time">¶</a> &#8211; Number of days between model fit updates during
 monitoring period</li>
-<li><strong>screening</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Style of prescreening of the timeseries for noise.
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.screening"></span><strong>screening</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.screening">¶</a> &#8211; Style of prescreening of the timeseries for noise.
 Options are &#8216;RLM&#8217; or &#8216;LOWESS&#8217; (default: RLM)</li>
-<li><strong>screening_crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) &#8211; critical value for multitemporal
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.screening_crit"></span><strong>screening_crit</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.screening_crit">¶</a> &#8211; critical value for multitemporal
 noise screening (default: 400.0)</li>
-<li><strong>remove_noise</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; Remove observation if change is not
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.remove_noise"></span><strong>remove_noise</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.remove_noise">¶</a> &#8211; Remove observation if change is not
 detected but first observation is above threshold (if it looks like
 noise) (default: True)</li>
-<li><strong>green_band</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Index of green band in <code class="docutils literal"><span class="pre">Y</span></code> for
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.green_band"></span><strong>green_band</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.green_band">¶</a> &#8211; Index of green band in <code class="docutils literal"><span class="pre">Y</span></code> for
 multitemporal masking (default: 1)</li>
-<li><strong>swir1_band</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Index of first SWIR band in <code class="docutils literal"><span class="pre">Y</span></code> for
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.swir1_band"></span><strong>swir1_band</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.swir1_band">¶</a> &#8211; Index of first SWIR band in <code class="docutils literal"><span class="pre">Y</span></code> for
 multitemporal masking (default: 4)</li>
-<li><strong>dynamic_rmse</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; Vary RMSE as a function of day of year
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.dynamic_rmse"></span><strong>dynamic_rmse</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.dynamic_rmse">¶</a> &#8211; Vary RMSE as a function of day of year
 (default: False)</li>
-<li><strong>slope_test</strong> (<em>float or bool</em>) &#8211; Use an additional slope test to
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.slope_test"></span><strong>slope_test</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.slope_test">¶</a> &#8211; Use an additional slope test to
 assess the suitability of the training period. A value of True
 enables the test and uses the <cite>threshold</cite> parameter as the test
 criterion. False turns off the test or a float value enables the
 test but overrides the test criterion threshold. (default: False)</li>
-<li><strong>idx_slope</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; if <code class="docutils literal"><span class="pre">slope_test</span></code> is enabled, provide index of <code class="docutils literal"><span class="pre">X</span></code>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.params.idx_slope"></span><strong>idx_slope</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.params.idx_slope">¶</a> &#8211; if <code class="docutils literal"><span class="pre">slope_test</span></code> is enabled, provide index of <code class="docutils literal"><span class="pre">X</span></code>
 containing slope term (default: 1)</li>
 </ul>
 </td>
@@ -242,11 +242,11 @@ the signal) while decreasing omission during stable times of year.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; design matrix (number of observations x number
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.fit.params.X"></span><strong>X</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.fit.params.X">¶</a> &#8211; design matrix (number of observations x number
 of features)</li>
-<li><strong>Y</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; independent variable matrix (number of series x
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.fit.params.Y"></span><strong>Y</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.fit.params.Y">¶</a> &#8211; independent variable matrix (number of series x
 number of observations)</li>
-<li><strong>dates</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; ordinal dates for each observation in X/Y</li>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.fit.params.dates"></span><strong>dates</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.fit.params.dates">¶</a> &#8211; ordinal dates for each observation in X/Y</li>
 </ul>
 </td>
 </tr>
@@ -270,11 +270,11 @@ number of observations)</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>X</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; design matrix (number of observations x number
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.fit_models.params.X"></span><strong>X</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.fit_models.params.X">¶</a> &#8211; design matrix (number of observations x number
 of features)</li>
-<li><strong>Y</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; independent variable matrix (number of series x
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.fit_models.params.Y"></span><strong>Y</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.fit_models.params.Y">¶</a> &#8211; independent variable matrix (number of series x
 number of observations) observation in the X design matrix</li>
-<li><strong>bands</strong> (<em>iterable</em>) &#8211; Subset of bands of <cite>Y</cite> to fit. If None are
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.fit_models.params.bands"></span><strong>bands</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.fit_models.params.bands">¶</a> &#8211; Subset of bands of <cite>Y</cite> to fit. If None are
 provided, fit all bands in Y</li>
 </ul>
 </td>
@@ -360,23 +360,22 @@ if <code class="docutils literal"><span class="pre">mask_band</span></code> or <
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; design matrix (number of observations x number
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.preprocess.params.X"></span><strong>X</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.preprocess.params.X">¶</a> &#8211; design matrix (number of observations x number
 of features)</li>
-<li><strong>Y</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; independent variable matrix (number of series x
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.preprocess.params.Y"></span><strong>Y</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.preprocess.params.Y">¶</a> &#8211; independent variable matrix (number of series x
 number of observations)</li>
-<li><strong>dates</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><em>numpy.ndarray</em></a>) &#8211; ordinal dates for each observation in X/Y</li>
-<li><strong>min_values</strong> (<em>np.ndarray</em>) &#8211; Minimum possible range of values for each
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.preprocess.params.dates"></span><strong>dates</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.preprocess.params.dates">¶</a> &#8211; ordinal dates for each observation in X/Y</li>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.preprocess.params.min_values"></span><strong>min_values</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.preprocess.params.min_values">¶</a> &#8211; Minimum possible range of values for each
 variable in Y (optional)</li>
-<li><strong>max_values</strong> (<em>np.ndarray</em>) &#8211; Maximum possible range of values for each
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.preprocess.params.max_values"></span><strong>max_values</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.preprocess.params.max_values">¶</a> &#8211; Maximum possible range of values for each
 variable in Y (optional)</li>
-<li><strong>mask_band</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; The mask band in Y (optional)</li>
-<li><strong>mask_values</strong> (<em>sequence</em>) &#8211; A list or np.ndarray of values in the
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.preprocess.params.mask_band"></span><strong>mask_band</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.preprocess.params.mask_band">¶</a> &#8211; The mask band in Y (optional)</li>
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.preprocess.params.mask_values"></span><strong>mask_values</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.preprocess.params.mask_values">¶</a> &#8211; A list or np.ndarray of values in the
 <code class="docutils literal"><span class="pre">mask_band</span></code> to mask (optional)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>tuple</strong> &#8211;</p>
-<dl class="docutils">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
 <dt>X, Y, and dates after</dt>
 <dd><p class="first last">being preprocessed and masked</p>
 </dd>
@@ -384,7 +383,7 @@ variable in Y (optional)</li>
 </p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray, np.ndarray, np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a> (np.ndarray, np.ndarray, np.ndarray)</p>
 </td>
 </tr>
 </tbody>
@@ -406,9 +405,9 @@ variable in Y (optional)</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.19.2)"><em>pandas.DataFrame</em></a>) &#8211; Pandas dataframe containing dataset
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.setup.params.df"></span><strong>df</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.setup.params.df">¶</a> &#8211; Pandas dataframe containing dataset
 attributes (e.g., dates, image ID, path/row, metadata, etc.)</li>
-<li><strong>config</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) &#8211; YATSM configuration dictionary from user, including
+<li><span class="target" id="yatsm.algorithms.ccdc.CCDCesque.setup.params.config"></span><strong>config</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.ccdc.CCDCesque.setup.params.config">¶</a> &#8211; YATSM configuration dictionary from user, including
 &#8216;dataset&#8217; and &#8216;YATSM&#8217; sub-configurations</li>
 </ul>
 </td>
@@ -416,7 +415,7 @@ attributes (e.g., dates, image ID, path/row, metadata, etc.)</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">return design matrix if used by algorithm</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">numpy.ndarray or None</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)">numpy.ndarray</a> or <a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.7)">None</a></p>
 </td>
 </tr>
 </tbody>
@@ -518,7 +517,7 @@ Otherwise <cite>px</cite> and <cite>py</cite> coordinates will default to 0.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

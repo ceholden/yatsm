@@ -174,10 +174,10 @@ to process the image stack, then each CPU will be responsible for only
 timeseries (e.g., to ignore any NODATA buffers around the images), the
 lines are divided up in sequence. Thus, job 5 of 50 total jobs would
 work on the lines:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">job</span><span class="o">=</span>5
-$ <span class="nv">n</span><span class="o">=</span>50
-$ seq -s , <span class="nv">$job</span> <span class="nv">$n</span> 1000
-5,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">job</span><span class="o">=</span><span class="m">5</span>
+$ <span class="nv">n</span><span class="o">=</span><span class="m">50</span>
+$ seq -s , <span class="nv">$job</span> <span class="nv">$n</span> <span class="m">1000</span>
+<span class="m">5</span>,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
 </pre></div>
 </div>
 <div class="section" id="sun-grid-engine">
@@ -185,9 +185,9 @@ $ seq -s , <span class="nv">$job</span> <span class="nv">$n</span> 1000
 <p>In the example of the compute cluster at Boston University which
 utilizes the Sun Grid Engine scheduler, one could run an image stack as
 follows:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span>200
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span><span class="m">200</span>
 $ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
-    qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span>24:00:00 -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
+    qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span><span class="m">24</span>:00:00 -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
         yatsm -v line --resume config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
   <span class="k">done</span>
 </pre></div>
@@ -199,8 +199,8 @@ of YATSM when logging to a file (e.g., in a <code class="docutils literal"><span
 output is flushed or written immediately to the log file. Be aware that the
 constant writing to the log file may incur a penalty cost. You can run
 YATSM jobs with unbuffered output as follows in the example for <code class="docutils literal"><span class="pre">yatsm</span> <span class="pre">line</span></code>:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span>24:00:00 -N yatsm -b y <span class="se">\</span>
-    <span class="nv">PYTHONUNBUFFERED</span><span class="o">=</span><span class="m">1</span> yatsm -v line --resume config.ini <span class="m">1</span> 1
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span><span class="m">24</span>:00:00 -N yatsm -b y <span class="se">\</span>
+    <span class="nv">PYTHONUNBUFFERED</span><span class="o">=</span><span class="m">1</span> yatsm -v line --resume config.ini <span class="m">1</span> <span class="m">1</span>
 </pre></div>
 </div>
 <p>One useful tip is to optimize the use of the CPU nodes by first transforming the
@@ -212,9 +212,9 @@ many individual image files.</p>
 <p>To accomplish this approach, the <code class="docutils literal"><span class="pre">--do-not-run</span></code> flag can be combined with a
 specific request for computer nodes with fast ethernet speeds,
 <code class="docutils literal"><span class="pre">-l</span> <span class="pre">eth_speed</span> <span class="pre">10</span></code>:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span>16
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span><span class="m">16</span>
 $ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
-    qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span>24:00:00 -l <span class="nv">eth_speed</span><span class="o">=</span><span class="m">10</span> -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
+    qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span><span class="m">24</span>:00:00 -l <span class="nv">eth_speed</span><span class="o">=</span><span class="m">10</span> -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
         yatsm -v line --resume --do-not-run config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
   <span class="k">done</span>
 </pre></div>
@@ -242,7 +242,7 @@ $ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m"
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

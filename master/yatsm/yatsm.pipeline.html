@@ -176,6 +176,54 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.pipeline" title="Permalink to this headline">¶</a></h2>
 <p>Run sequence of time series algorithms or computations in a pipeline</p>
 <dl class="class">
+<dt id="yatsm.pipeline.Pipe">
+<em class="property">class </em><code class="descclassname">yatsm.pipeline.</code><code class="descname">Pipe</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A Bunch for pipeline communication</p>
+<dl class="method">
+<dt id="yatsm.pipeline.Pipe.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipe.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipe.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="yatsm.pipeline.Pipe.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipe.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipe.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="yatsm.pipeline.Pipe.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipe.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipe.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="yatsm.pipeline.Pipe.pixel">
+<code class="descname">pixel</code><span class="sig-paren">(</span><em>y</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipe.pixel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipe.pixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subset <code class="docutils literal"><span class="pre">Pipe</span></code> to one pixel</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.pipeline.Pipe.cache">
+<code class="descname">cache</code><a class="headerlink" href="#yatsm.pipeline.Pipe.cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.pipeline.Pipe.contents">
+<code class="descname">contents</code><a class="headerlink" href="#yatsm.pipeline.Pipe.contents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.pipeline.Pipe.data">
+<code class="descname">data</code><a class="headerlink" href="#yatsm.pipeline.Pipe.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.pipeline.Pipe.record">
+<code class="descname">record</code><a class="headerlink" href="#yatsm.pipeline.Pipe.record" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="yatsm.pipeline.Task">
 <em class="property">class </em><code class="descclassname">yatsm.pipeline.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>name</em>, <em>func</em>, <em>require</em>, <em>output</em>, <em>**config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
@@ -197,13 +245,13 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tasks</strong> (<em>list[Task]</em>) &#8211; List of <code class="docutils literal"><span class="pre">Task</span></code> in chain of tasks (e.g., a
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.pipeline.Task.record_dependencies.params.tasks"></span><strong>tasks</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Task.record_dependencies.params.tasks">¶</a> &#8211; List of <code class="docutils literal"><span class="pre">Task</span></code> in chain of tasks (e.g., a
 pipeline)</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Tasks with outputs that this task requires for
 computation</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list[Task]</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)">list</a>[<a class="reference internal" href="#yatsm.pipeline.Task" title="yatsm.pipeline.Task">Task</a>]</td>
 </tr>
 </tbody>
 </table>
@@ -223,13 +271,13 @@ computation</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tasks</strong> (<em>list[Task]</em>) &#8211; List of <code class="docutils literal"><span class="pre">Task</span></code> in chain of tasks (e.g., a
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.pipeline.Task.record_result_location.params.tasks"></span><strong>tasks</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Task.record_result_location.params.tasks">¶</a> &#8211; List of <code class="docutils literal"><span class="pre">Task</span></code> in chain of tasks (e.g., a
 pipeline)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> &#8211; Return the group root (e.g., &#8216;/ccdc&#8217;) and the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Return the group root (e.g., &#8216;/ccdc&#8217;) and the
 table name (e.g., &#8216;ccdc&#8217;)</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str, str</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)">str</a>, <a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)">str</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -277,10 +325,35 @@ table name (e.g., &#8216;ccdc&#8217;)</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tasks</strong> (<em>list[Task]</em>) &#8211; A list of <code class="docutils literal"><span class="pre">Task</span></code> to execute</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.pipeline.Pipeline.params.tasks"></span><strong>tasks</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.params.tasks">¶</a> &#8211; A list of <code class="docutils literal"><span class="pre">Task</span></code> to execute</td>
 </tr>
 </tbody>
 </table>
+<dl class="staticmethod">
+<dt id="yatsm.pipeline.Pipeline.delayed">
+<em class="property">static </em><code class="descname">delayed</code><span class="sig-paren">(</span><em>tasks</em>, <em>pipe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipeline.delayed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipeline.delayed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <code class="xref py py-class docutils literal"><span class="pre">dask.delayed.Delayed</span></code> pipeline from tasks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.pipeline.Pipeline.delayed.params.tasks"></span><strong>tasks</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.delayed.params.tasks">¶</a> &#8211; List of <code class="docutils literal"><span class="pre">Task</span></code> in chain of tasks (e.g., a
+pipeline)</li>
+<li><span class="target" id="yatsm.pipeline.Pipeline.delayed.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.delayed.params.pipe">¶</a> &#8211; Pipeline data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A delayed pipeline ready to be executed</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dask.delayed.Delayed</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="yatsm.pipeline.Pipeline.from_config">
 <em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>config</em>, <em>pipe</em>, <em>overwrite=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipeline.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipeline.from_config" title="Permalink to this definition">¶</a></dt>
@@ -290,9 +363,9 @@ table name (e.g., &#8216;ccdc&#8217;)</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>config</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) &#8211; Pipeline configuration</li>
-<li><strong>pipe</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) &#8211; &#8220;record&#8221; and &#8220;data&#8221; datasets</li>
-<li><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; Overwrite pre-existing results</li>
+<li><span class="target" id="yatsm.pipeline.Pipeline.from_config.params.config"></span><strong>config</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.from_config.params.config">¶</a> &#8211; Pipeline configuration</li>
+<li><span class="target" id="yatsm.pipeline.Pipeline.from_config.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.from_config.params.pipe">¶</a> &#8211; &#8220;record&#8221; and &#8220;data&#8221; datasets</li>
+<li><span class="target" id="yatsm.pipeline.Pipeline.from_config.params.overwrite"></span><strong>overwrite</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.from_config.params.overwrite">¶</a> &#8211; Overwrite pre-existing results</li>
 </ul>
 </td>
 </tr>
@@ -308,13 +381,60 @@ table name (e.g., &#8216;ccdc&#8217;)</td>
 
 <dl class="method">
 <dt id="yatsm.pipeline.Pipeline.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>pipe</em>, <em>check_eager=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipeline.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipeline.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">run</code><span class="sig-paren">(</span><em>pipe</em>, <em>check_eager=True</em>, <em>**compute_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipeline.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipeline.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run all steps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.pipeline.Pipeline.run.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.run.params.pipe">¶</a> &#8211; Pipeline data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="yatsm.pipeline.Pipeline.run_eager">
-<code class="descname">run_eager</code><span class="sig-paren">(</span><em>pipe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipeline.run_eager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipeline.run_eager" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">run_eager</code><span class="sig-paren">(</span><em>pipe</em>, <em>**compute_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipeline.run_eager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipeline.run_eager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run eager steps</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.pipeline.Pipeline.run_eager.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.run_eager.params.pipe">¶</a> &#8211; Pipeline data</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.pipeline.Pipeline.visualize">
+<code class="descname">visualize</code><span class="sig-paren">(</span><em>pipe</em>, <em>filename=None</em>, <em>rankdir='LR'</em>, <em>**visualize_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipeline.visualize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipeline.visualize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the Dask task graph as a Graphviz plot</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.pipeline.Pipeline.visualize.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.visualize.params.pipe">¶</a> &#8211; Pipeline data</li>
+<li><span class="target" id="yatsm.pipeline.Pipeline.visualize.params.filename"></span><strong>filename</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.visualize.params.filename">¶</a> &#8211; The name (without an extension) of the file to write
+to disk. By default, no file is written (<code class="docutils literal"><span class="pre">filename=None</span></code>)</li>
+<li><span class="target" id="yatsm.pipeline.Pipeline.visualize.params.rankdir"></span><strong>rankdir</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.visualize.params.rankdir">¶</a> &#8211; Layout direction of graph</li>
+<li><span class="target" id="yatsm.pipeline.Pipeline.visualize.params.**visualize_kwds"></span><strong>**visualize_kwds</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.Pipeline.visualize.params.**visualize_kwds">¶</a> &#8211; Options passed to <code class="xref py py-func docutils literal"><span class="pre">dask.visualize()</span></code>
+(see <code class="xref py py-func docutils literal"><span class="pre">dask.dot.to_graphviz()</span></code>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Pipeline visualized using
+Graphviz, or <code class="docutils literal"><span class="pre">None</span></code> if <code class="xref py py-mod docutils literal"><span class="pre">IPython</span></code> is not installed.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">IPython.core.display.Image</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="yatsm.pipeline.Pipeline.task_tables">
@@ -323,11 +443,6 @@ table name (e.g., &#8216;ccdc&#8217;)</td>
 </dd></dl>
 
 </dd></dl>
-
-<dl class="function">
-<dt id="yatsm.pipeline.Pipe">
-<code class="descclassname">yatsm.pipeline.</code><code class="descname">Pipe</code><span class="sig-paren">(</span><em>data=None</em>, <em>record=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/_pipeline.html#Pipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.Pipe" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="function">
 <dt id="yatsm.pipeline.eager_task">
@@ -349,7 +464,7 @@ table name (e.g., &#8216;ccdc&#8217;)</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

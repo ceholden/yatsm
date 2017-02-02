@@ -151,31 +151,97 @@
 <span></span><span class="sd">&quot;&quot;&quot; Classes representing pipeline objects</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">toolz</span> <span class="k">import</span> <span class="n">curry</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="k">import</span> <span class="n">delayed</span>
+<span class="c1"># from toolz import curry  # TODO: evaluate</span>
 
-<span class="kn">from</span> <span class="nn">._exec</span> <span class="k">import</span> <span class="n">delay_pipeline</span>
 <span class="kn">from</span> <span class="nn">._topology</span> <span class="k">import</span> <span class="n">config_to_tasks</span>
-<span class="kn">from</span> <span class="nn">.language</span> <span class="k">import</span> <span class="n">CONFIG</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">REQUIRE</span><span class="p">,</span> <span class="n">TASK</span>
+<span class="kn">from</span> <span class="nn">.language</span> <span class="k">import</span> <span class="n">CONFIG</span><span class="p">,</span> <span class="n">TASK</span><span class="p">,</span> <span class="n">REQUIRE</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">PIPE_CONTENTS</span>
 <span class="kn">from</span> <span class="nn">.tasks</span> <span class="k">import</span> <span class="n">PIPELINE_TASKS</span><span class="p">,</span> <span class="n">SEGMENT_TASKS</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Pipe"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe">[docs]</a><span class="k">def</span> <span class="nf">Pipe</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span> <span class="ow">or</span> <span class="p">{},</span>
-        <span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="n">record</span> <span class="ow">or</span> <span class="p">{}</span>
-    <span class="p">}</span></div>
+<div class="viewcode-block" id="Pipe"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe">[docs]</a><span class="k">class</span> <span class="nc">Pipe</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Bunch for pipeline communication</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#: list: List of attributes stored in :class:`Pipe`</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="n">PIPE_CONTENTS</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;contents&#39;</span><span class="p">,</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;setattr(self, </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Pipe.pixel"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe.pixel">[docs]</a>    <span class="k">def</span> <span class="nf">pixel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Subset ``Pipe`` to one pixel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Pipe</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">),</span>
+            <span class="n">record</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span>
+        <span class="p">)</span></div>
+
+    <span class="c1"># Limit possible attributes</span>
+    <span class="c1"># TODO: reconsider? could be useful for metadata</span>
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0.__class__.__name__}</span><span class="s1"> cannot store &#39;</span>
+                                 <span class="s1">&#39;attributes other than: &quot;</span><span class="si">{1}</span><span class="s1">&quot;&#39;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;&quot;, &quot;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PIPE_CONTENTS</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="c1"># DICT-LIKE</span>
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">item</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0.__class__.__name__}</span><span class="s1"> does not store &#39;</span>
+                           <span class="s1">&#39;attributes other than: &quot;</span><span class="si">{1}</span><span class="s1">&quot;&#39;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;&quot;, &quot;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PIPE_CONTENTS</span><span class="p">)))</span>
+
+<div class="viewcode-block" id="Pipe.items"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="Pipe.keys"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">key</span></div>
+
+<div class="viewcode-block" id="Pipe.get"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">{0.__class__.__name__}</span><span class="s2"> at </span><span class="si">{1}</span><span class="s2">&gt; storing:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Task"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task">[docs]</a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">funcname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">funcname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="ow">in</span> <span class="n">SEGMENT_TASKS</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -185,17 +251,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Task.from_config"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task.from_config">[docs]</a>    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+<div class="viewcode-block" id="Task.from_config"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task.from_config">[docs]</a>    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
         <span class="n">task</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">TASK</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">PIPELINE_TASKS</span><span class="p">[</span><span class="n">task</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ke</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Unknown pipeline task &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="n">REQUIRE</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="n">OUTPUT</span><span class="p">],</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="n">REQUIRE</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="n">OUTPUT</span><span class="p">],</span>
                    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">,</span> <span class="p">{}))</span></div>
 
 <div class="viewcode-block" id="Task.curry"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task.curry">[docs]</a>    <span class="k">def</span> <span class="nf">curry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">curry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_eager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -291,12 +357,13 @@
 <span class="sd">        tasks (list[Task]): A list of ``Task`` to execute</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span> <span class="o">=</span> <span class="n">tasks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eager_pipeline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_eager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Pipeline.from_config"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.from_config">[docs]</a>    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Pipeline.from_config"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.from_config">[docs]</a>    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize a pipeline from a configuration and some data</span>
 
 <span class="sd">        Args:</span>
@@ -314,20 +381,79 @@
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">task_names</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Pipeline.run_eager"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.run_eager">[docs]</a>    <span class="k">def</span> <span class="nf">run_eager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipe</span><span class="p">):</span>
-        <span class="n">pipeline</span> <span class="o">=</span> <span class="n">delay_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eager_pipeline</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span></div>
+<span class="c1"># EXECUTION</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Pipeline.delayed"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.delayed">[docs]</a>    <span class="k">def</span> <span class="nf">delayed</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">pipe</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a :class:`dask.delayed.Delayed` pipeline from tasks</span>
 
-<div class="viewcode-block" id="Pipeline.run"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">check_eager</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="sd">        Args:</span>
+<span class="sd">            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a</span>
+<span class="sd">                pipeline)</span>
+<span class="sd">            pipe (Pipe): Pipeline data</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dask.delayed.Delayed: A delayed pipeline ready to be executed</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curry</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)(</span>
+            <span class="n">pipe</span><span class="p">,</span>
+            <span class="n">dask_key_name</span><span class="o">=</span><span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">pl</span> <span class="o">=</span> <span class="n">delayed</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">curry</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">)(</span>
+                <span class="n">pl</span><span class="p">,</span>
+                <span class="n">dask_key_name</span><span class="o">=</span><span class="n">task</span><span class="o">.</span><span class="n">name</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pl</span></div>
+
+    <span class="c1"># TODO: test without using dask.delayed, just function wrapping</span>
+    <span class="c1">#       ... curious about the dask overhead</span>
+<div class="viewcode-block" id="Pipeline.run_eager"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.run_eager">[docs]</a>    <span class="k">def</span> <span class="nf">run_eager</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="o">**</span><span class="n">compute_kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run eager steps</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pipe (Pipe): Pipeline data</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eager_pipeline</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">compute_kwds</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pipeline.run"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">check_eager</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">compute_kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run all steps</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pipe (Pipe): Pipeline data</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check if pipe contains &quot;eager&quot; pipeline outputs</span>
         <span class="k">if</span> <span class="n">check_eager</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_eager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eager_pipeline</span><span class="p">,</span> <span class="n">pipe</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Triggering eager compute&#39;</span><span class="p">)</span>
             <span class="n">pipe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_eager</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
-        <span class="n">pipeline</span> <span class="o">=</span> <span class="n">delay_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span></div>
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">compute_kwds</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="Pipeline.visualize"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.visualize">[docs]</a>    <span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rankdir</span><span class="o">=</span><span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">visualize_kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Show the Dask task graph as a Graphviz plot</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pipe (Pipe): Pipeline data</span>
+<span class="sd">            filename (str):The name (without an extension) of the file to write</span>
+<span class="sd">                to disk. By default, no file is written (``filename=None``)</span>
+<span class="sd">            rankdir (str): Layout direction of graph</span>
+<span class="sd">            **visualize_kwds (dict): Options passed to :func:`dask.visualize`</span>
+<span class="sd">                (see :func:`dask.dot.to_graphviz`)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            IPython.core.display.Image: Pipeline visualized using</span>
+<span class="sd">            Graphviz, or ``None`` if :mod:`IPython` is not installed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eager_pipeline</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span><span class="n">rankdir</span><span class="o">=</span><span class="n">rankdir</span><span class="p">,</span> <span class="o">**</span><span class="n">visualize_kwds</span><span class="p">)</span></div>
+
+<span class="c1"># HELPERS</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">task_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; dict: :ref:`Task` name (str) -&gt; result file table location (str)</span>
@@ -386,7 +512,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

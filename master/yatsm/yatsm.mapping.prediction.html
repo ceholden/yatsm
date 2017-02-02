@@ -144,99 +144,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.mapping.prediction">
-<span id="yatsm-mapping-prediction-module"></span><h1>yatsm.mapping.prediction module<a class="headerlink" href="#module-yatsm.mapping.prediction" title="Permalink to this headline">¶</a></h1>
-<p>Functions relevant for mapping statistical model predictions or fits</p>
-<dl class="function">
-<dt id="yatsm.mapping.prediction.get_coefficients">
-<code class="descclassname">yatsm.mapping.prediction.</code><code class="descname">get_coefficients</code><span class="sig-paren">(</span><em>date</em>, <em>result_location</em>, <em>image_ds</em>, <em>bands</em>, <em>coefs</em>, <em>prefix=''</em>, <em>amplitude=False</em>, <em>after=False</em>, <em>before=False</em>, <em>qa=False</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/prediction.html#get_coefficients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.prediction.get_coefficients" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output a raster with coefficients from CCDC</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Ordinal date for prediction image</li>
-<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Location of the results</li>
-<li><strong>bands</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) &#8211; Bands to predict</li>
-<li><strong>coefs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) &#8211; List of coefficients to output</li>
-<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
-<li><strong>prefix</strong> (<em>str, optional</em>) &#8211; Use coef/rmse with refit prefix (default: &#8216;&#8217;)</li>
-<li><strong>amplitude</strong> (<em>bool, optional</em>) &#8211; Map amplitude of seasonality instead of
-individual coefficient estimates for sin/cosine pair
-(default: False)</li>
-<li><strong>after</strong> (<em>bool, optional</em>) &#8211; If date intersects a disturbed period, use next
-available time segment (default: False)</li>
-<li><strong>before</strong> (<em>bool, optional</em>) &#8211; If date does not intersect a model, use
-previous non-disturbed time segment (default: False)</li>
-<li><strong>qa</strong> (<em>bool, optional</em>) &#8211; Add QA flag specifying segment type (intersect,
-after, or before) (default: False)</li>
-<li><strong>ndv</strong> (<em>int, optional</em>) &#8211; NoDataValue (default: -9999)</li>
-<li><strong>pattern</strong> (<em>str, optional</em>) &#8211; filename pattern of saved record results</li>
-<li><strong>warn_on_empty</strong> (<em>bool, optional</em>) &#8211; Log warning if result contained no
-result records (default: False)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>A tuple (np.ndarray, list) containing the 3D numpy.ndarray of</dt>
-<dd><p class="first last">the coefficients (coefficient x band x pixel), and the band names
-for the output dataset</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.mapping.prediction.get_prediction">
-<code class="descclassname">yatsm.mapping.prediction.</code><code class="descname">get_prediction</code><span class="sig-paren">(</span><em>date</em>, <em>result_location</em>, <em>image_ds</em>, <em>bands='all'</em>, <em>prefix=''</em>, <em>after=False</em>, <em>before=False</em>, <em>qa=False</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/prediction.html#get_prediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.prediction.get_prediction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output a raster with the predictions from model fit for a given date</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) &#8211; Ordinal date for prediction image</li>
-<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Location of the results</li>
-<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) &#8211; Example dataset</li>
-<li><strong>bands</strong> (<em>str, list</em>) &#8211; Bands to predict - &#8216;all&#8217; for every band, or specify
-a list of bands</li>
-<li><strong>prefix</strong> (<em>str, optional</em>) &#8211; Use coef/rmse with refit prefix (default: &#8216;&#8217;)</li>
-<li><strong>after</strong> (<em>bool, optional</em>) &#8211; If date intersects a disturbed period, use next
-available time segment</li>
-<li><strong>before</strong> (<em>bool, optional</em>) &#8211; If date does not intersect a model, use
-previous non-disturbed time segment</li>
-<li><strong>qa</strong> (<em>bool, optional</em>) &#8211; Add QA flag specifying segment type (intersect,
-after, or before)</li>
-<li><strong>ndv</strong> (<em>int, optional</em>) &#8211; NoDataValue</li>
-<li><strong>pattern</strong> (<em>str, optional</em>) &#8211; filename pattern of saved record results</li>
-<li><strong>warn_on_empty</strong> (<em>bool, optional</em>) &#8211; Log warning if result contained no
-result records (default: False)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>A 3D numpy.ndarray containing the prediction for each band,</dt>
-<dd><p class="first last">for each pixel</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="yatsm-mapping-prediction-module">
+<h1>yatsm.mapping.prediction module<a class="headerlink" href="#yatsm-mapping-prediction-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -250,7 +159,7 @@ result records (default: False)</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

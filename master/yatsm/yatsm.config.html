@@ -158,8 +158,8 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Filename</li>
-<li><strong>parsers</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) &#8211; A list of functions to apply over a configuration
+<li><span class="target" id="yatsm.config.validate_and_parse_configfile.params.path"></span><strong>path</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.validate_and_parse_configfile.params.path">¶</a> &#8211; Filename</li>
+<li><span class="target" id="yatsm.config.validate_and_parse_configfile.params.parsers"></span><strong>parsers</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.validate_and_parse_configfile.params.parsers">¶</a> &#8211; A list of functions to apply over a configuration
 (<code class="docutils literal"><span class="pre">dict</span></code>) before returning</li>
 </ul>
 </td>
@@ -170,8 +170,10 @@
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">InvalidConfigurationException</span></code> &#8211; Raise if configuration file does not
-validate against an expected schema</p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">InvalidConfigurationException</span></code> &#8211; Raise if configuration file does not</li>
+<li>validate against an expected schema</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -189,7 +191,7 @@ will be raised if an environment variable is not set.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) &#8211; expand environment variables used in the values of this
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.config.expand_envvars.params.d"></span><strong>d</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.expand_envvars.params.d">¶</a> &#8211; expand environment variables used in the values of this
 dictionary</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">input dictionary with environment variables expanded</td>
@@ -214,7 +216,7 @@ dictionary</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

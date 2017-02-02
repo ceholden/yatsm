@@ -156,20 +156,19 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>raster</strong> (<em>rasterio.RasterReader</em>) &#8211; The <code class="docutils literal"><span class="pre">rasterio</span></code> dataset used to
+<li><span class="target" id="yatsm.classification.roi.extract_roi.params.raster"></span><strong>raster</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.roi.extract_roi.params.raster">¶</a> &#8211; The <code class="docutils literal"><span class="pre">rasterio</span></code> dataset used to
 extract training data values from</li>
-<li><strong>vector</strong> (<em>list[dict]</em>) &#8211; A list of features from a polygon vector file as
+<li><span class="target" id="yatsm.classification.roi.extract_roi.params.vector"></span><strong>vector</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.roi.extract_roi.params.vector">¶</a> &#8211; A list of features from a polygon vector file as
 GeoJSON-like</li>
-<li><strong>feature_prop</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; The name of the attribute from <code class="docutils literal"><span class="pre">features</span></code>
+<li><span class="target" id="yatsm.classification.roi.extract_roi.params.feature_prop"></span><strong>feature_prop</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.roi.extract_roi.params.feature_prop">¶</a> &#8211; The name of the attribute from <code class="docutils literal"><span class="pre">features</span></code>
 containing the ROI labels</li>
-<li><strong>all_touched</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; Rasterization option that decides if all pixels
+<li><span class="target" id="yatsm.classification.roi.extract_roi.params.all_touched"></span><strong>all_touched</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.roi.extract_roi.params.all_touched">¶</a> &#8211; Rasterization option that decides if all pixels
 touching the ROI should be included, or just pixels from within
 the ROI</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>tuple</strong> &#8211;</p>
-<dl class="docutils">
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
 <dt>A tuple</dt>
 <dd><p class="first last">containing an array of ROI data from <code class="docutils literal"><span class="pre">src</span></code> (<code class="docutils literal"><span class="pre">band</span> <span class="pre">x</span> <span class="pre">n</span></code>), the
 ROI data label (<code class="docutils literal"><span class="pre">n</span></code>), and the X and Y coordinates of each data
@@ -179,7 +178,7 @@ point (<code class="docutils literal"><span class="pre">n</span></code> and <cod
 </p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray, np.ndarray, np.ndarray, np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a> (np.ndarray, np.ndarray, np.ndarray, np.ndarray)</p>
 </td>
 </tr>
 </tbody>
@@ -199,7 +198,7 @@ point (<code class="docutils literal"><span class="pre">n</span></code> and <cod
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

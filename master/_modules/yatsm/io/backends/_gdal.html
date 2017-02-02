@@ -159,7 +159,7 @@
 <span class="kn">import</span> <span class="nn">rasterio</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">parse_dataset_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="p">,</span> <span class="n">column_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -175,10 +175,12 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.DataFrame: Dataset information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dt_parser</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">date_format</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_parser</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">date_format</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
-                     <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">date_parser</span><span class="o">=</span><span class="n">dt_parser</span><span class="p">,</span>
+                     <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span>
+                     <span class="n">date_parser</span><span class="o">=</span><span class="n">_parser</span><span class="p">,</span>
                      <span class="n">dtype</span><span class="o">=</span><span class="n">column_dtype</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span>
@@ -199,35 +201,45 @@
 <span class="sd">        df (pd.DataFrame): A Pandas dataframe describing time series. Requires</span>
 <span class="sd">            keys &#39;filename&#39; and &#39;date&#39; be column names. Additional columns</span>
 <span class="sd">            will be used as metadata available via ``get_metadata``.</span>
-<span class="sd">        input_file (str): If ``df`` is not specified, read time series dataset</span>
-<span class="sd">            information from this file</span>
-<span class="sd">        date_format (str): If ``df`` is not specified, parse date column in</span>
-<span class="sd">            ``input_file`` with this date string format</span>
-<span class="sd">        column_dtype (dict[str, str]): Datatype format parsing options for</span>
-<span class="sd">            all or subset of ``df`` columns passed as ``dtype`` argument to</span>
-<span class="sd">            ``pandas.read_csv``.</span>
 <span class="sd">        keep_open (bool): Keep ``rasterio`` file descriptors open once opened?</span>
 
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: If the ``df`` is not a :ref:`pd.DataFrame`</span>
+<span class="sd">        KeyError: If the ``df`` does not contain &quot;date&quot; and &quot;filename&quot; keys</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_file</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
-                 <span class="n">column_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">keep_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">)]):</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;pd.DataFrame passed should contain &quot;date&quot; and &#39;</span>
-                               <span class="s1">&#39;&quot;filename&quot; keys&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
-        <span class="k">elif</span> <span class="n">input_file</span> <span class="ow">and</span> <span class="n">date_format</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">parse_dataset_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="p">,</span> <span class="n">column_dtype</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must specify either a pd.DataFrame or both&#39;</span>
-                             <span class="s1">&#39;&quot;input_file&quot; and &quot;date_format&quot; arguments&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">keep_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must provide a pandas.DataFrame&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">)]):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;pd.DataFrame passed should contain &quot;date&quot; and &#39;</span>
+                           <span class="s1">&#39;&quot;filename&quot; keys&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span> <span class="o">=</span> <span class="n">keep_open</span>
 
         <span class="c1"># Determine if input file has extra metadata</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extra_md</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">difference</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">])</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_attrs_from_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GDALTimeSeries.from_config"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.from_config">[docs]</a>    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">column_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Init time series dataset from file, as used by config</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_file (str): Filename of file containing time series</span>
+<span class="sd">                information to parse using :ref:`pandas.read_csv`</span>
+<span class="sd">            date_format (str): If ``df`` is not specified, parse date column in</span>
+<span class="sd">                ``input_file`` with this date string format</span>
+<span class="sd">            column_dtype (dict[str, str]): Datatype format parsing options for</span>
+<span class="sd">                all or subset of ``df`` columns passed as ``dtype`` argument to</span>
+<span class="sd">                ``pandas.read_csv``.</span>
+<span class="sd">            **kwds (dict): Options to pass to ``__init__``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">parse_dataset_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                                <span class="n">date_format</span><span class="o">=</span><span class="n">date_format</span><span class="p">,</span>
+                                <span class="n">column_dtype</span><span class="o">=</span><span class="n">column_dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_init_attrs_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>
@@ -236,10 +248,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">md</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">crs</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">bounds</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">res</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ul</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">ul</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">height</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">width</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">shape</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">count</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">block_windows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">block_windows</span><span class="p">())</span>
@@ -264,13 +278,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_src_open&#39;</span><span class="p">):</span>
-                <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>
+                <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>  <span class="c1"># TODO: pass options</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_src_open</span> <span class="o">=</span> <span class="p">[</span><span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">for</span>
                                       <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]]</span>
             <span class="k">for</span> <span class="n">_src</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_open</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">_src</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>
+            <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>  <span class="c1"># TODO: pass options</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]:</span>
                     <span class="k">yield</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
 
@@ -334,7 +348,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            IndexError: if `band_names` is specified but is not the same length</span>
-<span class="sd">                as the number of bands, `self.count`</span>
+<span class="sd">            as the number of bands, `self.count`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">band_names</span><span class="p">:</span>
             <span class="n">pad</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">))</span>
@@ -384,8 +398,7 @@
         <span class="sd">&quot;&quot;&quot; Return Y/X coordinates of a raster to pass to xarray</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            window (tuple): Window to read from ((ymin, ymax), (xmin, xmax)) in</span>
-<span class="sd">                pixel space</span>
+<span class="sd">            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple (np.ndarray, np.ndarray): Y and X coordinates for window</span>
@@ -393,7 +406,18 @@
         <span class="n">coord_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">coord_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ul</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">coord_y</span><span class="p">,</span> <span class="n">coord_x</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">coord_y</span><span class="p">,</span> <span class="n">coord_x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GDALTimeSeries.window_bounds"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.window_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">window_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return coordinate bounds of a given window</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: x_min, y_min, x_max, y_max</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
@@ -406,7 +430,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

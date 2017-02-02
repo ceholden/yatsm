@@ -159,7 +159,7 @@
 <span class="kn">from</span> <span class="nn">._xarray</span> <span class="k">import</span> <span class="p">(</span><span class="n">apply_band_mask</span><span class="p">,</span> <span class="n">apply_range_mask</span><span class="p">,</span> <span class="n">merge_data</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.backends</span> <span class="k">import</span> <span class="n">READERS</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_readers"><a class="viewcode-back" href="../../../yatsm/yatsm.io.html#yatsm.io.get_readers">[docs]</a><span class="k">def</span> <span class="nf">get_readers</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
@@ -217,7 +217,8 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">reader_cls</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Unknown time series reader &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">reader_cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">reader_cls</span><span class="p">,</span> <span class="s1">&#39;from_config&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">reader_cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">read_and_preprocess</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">readers</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -246,7 +247,7 @@
 <span class="sd">        drivers for the requested ``window``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">datasets</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">readers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_dataarray</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span>
                                     <span class="n">band_names</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;band_names&#39;</span><span class="p">],</span>
@@ -285,7 +286,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>

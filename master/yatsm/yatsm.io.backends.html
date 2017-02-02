@@ -151,30 +151,53 @@
 <p>Time series reader backends</p>
 <dl class="class">
 <dt id="yatsm.io.backends.GDALTimeSeries">
-<em class="property">class </em><code class="descclassname">yatsm.io.backends.</code><code class="descname">GDALTimeSeries</code><span class="sig-paren">(</span><em>df=None</em>, <em>input_file=''</em>, <em>date_format='%Y%m%d'</em>, <em>column_dtype=None</em>, <em>keep_open=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.io.backends.</code><code class="descname">GDALTimeSeries</code><span class="sig-paren">(</span><em>df</em>, <em>keep_open=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>A time series that can be read in by GDAL</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>df</strong> (<em>pd.DataFrame</em>) &#8211; A Pandas dataframe describing time series. Requires
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.params.df"></span><strong>df</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.params.df">¶</a> &#8211; A Pandas dataframe describing time series. Requires
 keys &#8216;filename&#8217; and &#8216;date&#8217; be column names. Additional columns
 will be used as metadata available via <code class="docutils literal"><span class="pre">get_metadata</span></code>.</li>
-<li><strong>input_file</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; If <code class="docutils literal"><span class="pre">df</span></code> is not specified, read time series dataset
-information from this file</li>
-<li><strong>date_format</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; If <code class="docutils literal"><span class="pre">df</span></code> is not specified, parse date column in
-<code class="docutils literal"><span class="pre">input_file</span></code> with this date string format</li>
-<li><strong>column_dtype</strong> (<em>dict[str, str]</em>) &#8211; Datatype format parsing options for
-all or subset of <code class="docutils literal"><span class="pre">df</span></code> columns passed as <code class="docutils literal"><span class="pre">dtype</span></code> argument to
-<code class="docutils literal"><span class="pre">pandas.read_csv</span></code>.</li>
-<li><strong>keep_open</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) &#8211; Keep <code class="docutils literal"><span class="pre">rasterio</span></code> file descriptors open once opened?</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.params.keep_open"></span><strong>keep_open</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.params.keep_open">¶</a> &#8211; Keep <code class="docutils literal"><span class="pre">rasterio</span></code> file descriptors open once opened?</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#TypeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> &#8211; If the <code class="docutils literal"><span class="pre">df</span></code> is not a <span class="xref std std-ref">pd.DataFrame</span></li>
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> &#8211; If the <code class="docutils literal"><span class="pre">df</span></code> does not contain &#8220;date&#8221; and &#8220;filename&#8221; keys</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
+<dl class="classmethod">
+<dt id="yatsm.io.backends.GDALTimeSeries.from_config">
+<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>input_file</em>, <em>date_format='%Y%m%d'</em>, <em>column_dtype=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init time series dataset from file, as used by config</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.input_file"></span><strong>input_file</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.input_file">¶</a> &#8211; Filename of file containing time series
+information to parse using <span class="xref std std-ref">pandas.read_csv</span></li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.date_format"></span><strong>date_format</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.date_format">¶</a> &#8211; If <code class="docutils literal"><span class="pre">df</span></code> is not specified, parse date column in
+<code class="docutils literal"><span class="pre">input_file</span></code> with this date string format</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.column_dtype"></span><strong>column_dtype</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.column_dtype">¶</a> &#8211; Datatype format parsing options for
+all or subset of <code class="docutils literal"><span class="pre">df</span></code> columns passed as <code class="docutils literal"><span class="pre">dtype</span></code> argument to
+<code class="docutils literal"><span class="pre">pandas.read_csv</span></code>.</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.**kwds"></span><strong>**kwds</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.**kwds">¶</a> &#8211; Options to pass to <code class="docutils literal"><span class="pre">__init__</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="yatsm.io.backends.GDALTimeSeries.get_metadata">
 <code class="descname">get_metadata</code><span class="sig-paren">(</span><em>items=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.get_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.get_metadata" title="Permalink to this definition">¶</a></dt>
@@ -183,7 +206,7 @@ all or subset of <code class="docutils literal"><span class="pre">df</span></cod
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items</strong> (<em>iterable</em>) &#8211; Subset of metadata column names (<cite>self.extra_md</cite>)
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.io.backends.GDALTimeSeries.get_metadata.params.items"></span><strong>items</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.get_metadata.params.items">¶</a> &#8211; Subset of metadata column names (<cite>self.extra_md</cite>)
 to return</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A Dataset containing the time series metadata
@@ -208,9 +231,9 @@ with coordinate dimenisons (time)</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>window</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) &#8211; A pair (tuple) of pairs of ints specifying
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.window">¶</a> &#8211; A pair (tuple) of pairs of ints specifying
 the start and stop indices of the window rows and columns</li>
-<li><strong>out</strong> (<em>np.ndarray</em>) &#8211; <p>A NumPy array of pre-allocated memory to read
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.out"></span><strong>out</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.out">¶</a> &#8211; <p>A NumPy array of pre-allocated memory to read
 the time series into. Its shape should be:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
 </pre></div>
@@ -238,11 +261,11 @@ the time series into. Its shape should be:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>window</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) &#8211; A pair (tuple) of pairs of ints specifying
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window">¶</a> &#8211; A pair (tuple) of pairs of ints specifying
 the start and stop indices of the window rows and columns</li>
-<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) &#8211; Name of the xr.DataArray</li>
-<li><strong>band_names</strong> (<em>list[str]</em>) &#8211; Names of bands to use for xarray.DataArray</li>
-<li><strong>out</strong> (<em>np.ndarray</em>) &#8211; <p>A NumPy array of pre-allocated memory to read
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.name"></span><strong>name</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.name">¶</a> &#8211; Name of the xr.DataArray</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.band_names"></span><strong>band_names</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.band_names">¶</a> &#8211; Names of bands to use for xarray.DataArray</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.out"></span><strong>out</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.out">¶</a> &#8211; <p>A NumPy array of pre-allocated memory to read
 the time series into. Its shape should be:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
 </pre></div>
@@ -258,9 +281,29 @@ coordinate dimenisons (time, band, y, and x)</p>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">xarray.DataArray</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#IndexError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code></a> &#8211; if <cite>band_names</cite> is specified but is not the same length
-as the number of bands, <cite>self.count</cite></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#IndexError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code></a> &#8211; if <cite>band_names</cite> is specified but is not the same length</li>
+<li>as the number of bands, <cite>self.count</cite></li>
+</ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.io.backends.GDALTimeSeries.window_bounds">
+<code class="descname">window_bounds</code><span class="sig-paren">(</span><em>window</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.window_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.window_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return coordinate bounds of a given window</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.io.backends.GDALTimeSeries.window_bounds.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.window_bounds.params.window">¶</a> &#8211; Window ((ymin, ymax), (xmin, xmax)) in pixel space</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">x_min, y_min, x_max, y_max</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
 </tr>
 </tbody>
 </table>
@@ -274,12 +317,11 @@ as the number of bands, <cite>self.count</cite></p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>window</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) &#8211; Window to read from ((ymin, ymax), (xmin, xmax)) in
-pixel space</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.io.backends.GDALTimeSeries.window_coords.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.window_coords.params.window">¶</a> &#8211; Window ((ymin, ymax), (xmin, xmax)) in pixel space</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>tuple</strong> &#8211; Y and X coordinates for window</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Y and X coordinates for window</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray, np.ndarray</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a> (np.ndarray, np.ndarray)</td>
 </tr>
 </tbody>
 </table>
@@ -306,7 +348,7 @@ pixel space</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Feb 2, 2017, 7:11:17 PM.
 
     </p>
   </div>
