@@ -108,8 +108,8 @@ def create_task_groups(h5file, tasks, filters=FILTERS, overwrite=False):
     for task in tasks:
         if task.output_record:
             where, tablename = task.record_result_location(tasks)
-            group, groupname = s.rsplit('/', 1)
-            if not _has_node(h5file, where, name=name):
+            group, groupname = where.rsplit('/', 1)
+            if not _has_node(h5file, where, name=groupname):
                 g = h5file.create_group(group, groupname, title=task.name,
                                         filters=filters, createparents=False)
             else:
@@ -155,6 +155,7 @@ class HDF5ResultsStore(object):
         filename (str): HDF5 file
         mode (str): File mode to open with
         keep_open (bool): Keep file handle open after calls
+        overwrite (bool): Overwrite file attributes or data
         tb_kwds: Optional keywork arguments to :ref:`tables.open_file`
     """
     def __init__(self, filename, crs=None, bounds=None,
@@ -172,6 +173,7 @@ class HDF5ResultsStore(object):
         self._bounds = bounds
         self.mode = mode or 'r+' if _exists else 'w'
         self.keep_open = keep_open
+        self.overwrite = overwrite
         self.tb_kwds = tb_kwds
         self.h5file = None
 
@@ -202,7 +204,7 @@ class HDF5ResultsStore(object):
             table.append(result[task.output_record])
             table.flush()
 
-    def write_result(self, pipeline, result, overwrite=True):
+    def write_result(self, pipeline, result, overwrite=None):
         """ Write result to HDF5
 
         Args:
@@ -210,19 +212,19 @@ class HDF5ResultsStore(object):
             result (dict): Dictionary of pipeline 'record' results
                 where key is task output and value is a structured
                 :ref:`np.ndarray`
-            overwrite (bool): Overwrite existing values
-            attrs (dict): KEY=VALUE items to put in to each table's
-                ``attr``
+            overwrite (bool): Overwrite existing values, overriding
+                even the class preference (:ref:`HDF5ResultsStore.overwrite`).
+                Defaults to behavior chosen during initialization
 
         Returns:
             HDF5ResultsStore
-
         """
         result = result.get('record', result)
+        do_overwrite = self.overwrite if overwrite is None else overwrite
         with self as store:
             tasks = pipeline.tasks.values()
             tables = create_task_tables(self.h5file, tasks, result,
-                                        overwrite=True)
+                                        overwrite=do_overwrite)
             store._write_row(store.h5file, result, tables)
 
             # TODO: each task should have some description from func
@@ -362,5 +364,6 @@ class HDF5ResultsStore(object):
                 table.append(value)
 
     def __repr__(self):
-        return ("<{0.__class__.__name__}(filename={0.filename}, mode={0.mode})>"
+        return ("<{0.__class__.__name__}"
+                "(filename={0.filename}, mode={0.mode})>"
                 .format(self))
