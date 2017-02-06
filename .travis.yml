@@ -50,6 +50,7 @@ after_success:
 after_script:
     # Docs
     - source activate test
+    - conda install python-graphviz
     - pip install -r docs/requirements-docs.txt
     - sphinx-apidoc -f -e -o docs/source/yatsm yatsm/
     - bash docs/scripts/deploy-to-gh-pages.sh
