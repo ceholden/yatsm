@@ -24,7 +24,6 @@ class Pipe(object):
     def __init__(self, **kwds):
         for item in self.__slots__:
             value = kwds.get(item, dict())
-            logger.debug('setattr(self, %s, %s)' % (item, value))
             setattr(self, item, value)
         self.contents = self.__slots__[:-1]
 

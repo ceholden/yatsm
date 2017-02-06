@@ -102,8 +102,15 @@ def _parse_signature(signature, req_len=None):
         signature = (REQUIRED_BY_DEFAULT, signature)
 
     # Given as <str:name>=(<bool:required>, [<object>, ...]])
-    if (isinstance(signature, tuple) and len(signature) == 2 and
-          isinstance(signature[0], bool) and isinstance(signature[1], list)):
+    def _check(l):
+        check = (
+            isinstance(l, tuple) and
+            len(l) == 2 and
+            isinstance(l[0], bool) and
+            isinstance(l[1], list)
+        )
+        return check
+    if _check(signature):
         if req_len and len(signature[1]) != req_len:
             raise PCError("Function signature must have {n} arguments"
                           .format(n=req_len))
@@ -122,7 +129,8 @@ def _validate_specification(spec, signature):
                            .format(name))
         elif name in spec:
             value = spec[name]
-            # If the specification description has a specific length requirement
+            # If the specification description has a specific length
+            # requirement
             if isinstance(desc, Iterable):
                 if desc and len(value) != len(desc):
                     raise ValueError(
