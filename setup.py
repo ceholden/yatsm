@@ -7,7 +7,6 @@ from distutils.command.clean import clean as _clean
 from setuptools.command.install import install as _install
 from setuptools.command.develop import develop as _develop
 from setuptools import find_packages, setup
-from setuptools.extension import Extension
 
 PY2 = sys.version_info[0] == 2
 
@@ -91,8 +90,9 @@ extras_require = {
         'scikit-learn',
         'statsmodels',  # TODO: reevaluate need
         'patsy',
-        'fiona',
         'rasterio',
+        'fiona',
+        'shapely',
         'xarray',
         'tables',
         'click',

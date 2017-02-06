@@ -5,19 +5,19 @@ import logging
 import os
 
 import numpy as np
-from rasterio.crs import CRS
-from rasterio.coords import BoundingBox
 import six
-import shapely.wkt
 import tables as tb
 
 from yatsm.algorithms import SEGMENT_ATTRS
-from yatsm.gis import bounds_to_polygon
+from yatsm.gis import (Affine, BoundingBox, CRS, Polygon,
+                       GIS_TO_STR, STR_TO_GIS, bounds_to_polygon)
 from yatsm.results.utils import result_filename, RESULT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
+
+GEO_TAGS = ('crs', 'bounds', 'transform', 'bbox', )
 
 
 def _has_node(h5, node, **kwds):
@@ -148,54 +148,132 @@ def create_task_tables(h5file, tasks, results, filters=FILTERS,
     return tables
 
 
+def georeference(h5file, **tags):
+    """ Georeference a :class:`tables.File`
+
+    Args:
+        h5file (tables.File): Open HDF5 file
+        **tags (dict): Georeferencing tags
+
+    Returns:
+        tables.File: Georeferenced HDF5 file
+    """
+    for tag in GEO_TAGS:
+        value = tags.get(tag, None)
+        if value:
+            value = GIS_TO_STR[tag](value)
+            logger.debug('Setting %s to %s' % (tag, value))
+            h5file.root._v_attrs[tag] = value
+    return h5file
+
+
+def get_georeference(h5file, tag):
+    """ Get georeferencing information for a tag
+
+    Args:
+        h5file (tables.File): Open HDF5 file
+        tag (str): Georeferencing attribute
+
+    Returns:
+        object: Georeferencing information requested
+
+    Raises:
+        KeyError: Raise if tag is missing
+    """
+    if tag not in h5file.root._v_attrs._v_attrnames:
+        raise KeyError('No such tag "%s" in %s' % (tag, h5file.filename))
+    value = h5file.root._v_attrs[tag]
+    return STR_TO_GIS[tag](value)
+
+
 class HDF5ResultsStore(object):
     """ PyTables based HDF5 results storage
 
     Args:
         filename (str): HDF5 file
-        mode (str): File mode to open with
+        crs (str or :class:`rasterio.crs.CRS`): Coordinate reference system
+        bounds (BoundingBox): Bounding box of data stored
+        transform (affine.Affine): Affine transform of data stored
+        bbox (shapely.geometry.Polygon): Bounding box polygon
+        mode (str): File mode to open with. By default, opens in read mode or
+            write mode if file doesn't exist
+        title (str): Title of HDF5 file
         keep_open (bool): Keep file handle open after calls
         overwrite (bool): Overwrite file attributes or data
         tb_kwds: Optional keywork arguments to :ref:`tables.open_file`
     """
-    def __init__(self, filename, crs=None, bounds=None,
-                 mode=None, keep_open=True, **tb_kwds):
+
+    def __init__(self, filename,
+                 crs=None, bounds=None, transform=None, bbox=None,
+                 mode=None, title='YATSM',
+                 keep_open=True, overwrite=False, **tb_kwds):
         _exists = os.path.exists(filename)
-        if crs and not isinstance(crs, six.string_types):
-            raise TypeError('`crs` must be given as `str`')
-        if bounds and not isinstance(bounds, six.string_types):
-            raise TypeError('`bounds` must be given as `str`')
-        if not _exists and not crs and not bounds:
-            raise TypeError('Must specify `crs` and `bounds` when creating '
-                            'new file')
+
         self.filename = filename
         self._crs = crs
         self._bounds = bounds
-        self.mode = mode or 'r+' if _exists else 'w'
+        self._transform = transform
+        self._bbox = bbox
+        self.mode = mode or 'r' if _exists else 'w'
+        self.title = title
         self.keep_open = keep_open
         self.overwrite = overwrite
         self.tb_kwds = tb_kwds
+
         self.h5file = None
+        if not _exists:
+            if not isinstance(self._crs, CRS):
+                raise TypeError('Must specify ``crs`` as ``CRS`` when '
+                                'creating a file')
+            if not isinstance(self._bounds, BoundingBox):
+                raise TypeError('Must specify ``bounds`` as ``BoundingBox`` '
+                                'when creating a new file')
+            if not isinstance(self._transform, Affine):
+                raise TypeError('Must specify ``transform`` as '
+                                '``affine.Affine``when creating a new file')
+            if not isinstance(self._bbox, Polygon):
+                self._bbox = bounds_to_polygon(self._bounds)
 
 # CREATION
     @classmethod
-    def from_window(cls, window, crs=None, bounds=None, reader=None,
+    def from_window(cls, window,
+                    crs=None, bounds=None, transform=None, bbox=None,
+                    reader=None,
                     root='.', pattern=RESULT_TEMPLATE,
                     **open_kwds):
         """ Return instance of class for a given window
 
-        When creating a file, specify the ``crs`` and ``bounds`` of the results
-        you're about to store. You can either do this directly by specifying
-        ``crs`` and ``bounds``, or indirectly by providing the ``reader``
-        used as the grid point of reference
+        When creating a file, the following attributes must be specified in
+        one of two ways:
+
+            - ``crs``
+            - ``bounds``
+            - ``transform``
+            - ``bbox``
+
+        They may either be explicitly passed, or retrieved from a reader
+        instance from ``reader``
+
+        Args:
+            window (tuple): x_min, y_min, x_max, y_max for the given window
+            root (str): Root directory to save file
+            pattern (str): Filename pattern to use, usually derived in part
+                from attributes of ``window``
+
+        Returns:
+            cls: HDF5ResultsStore
         """
         filename = result_filename(window, root=root, pattern=pattern)
 
         if reader:
-            crs = reader.crs.to_string()
-            bounds = bounds_to_polygon(reader.window_bounds(window)).wkt
+            crs = reader.crs
+            bounds = reader.window_bounds(window)
+            transform = reader.transform
+            bbox = bounds_to_polygon(bounds)
 
-        return cls(filename, crs=crs, bounds=bounds, **open_kwds)
+        return cls(filename,
+                   crs=crs, bounds=bounds, transform=transform, bbox=bbox,
+                   **open_kwds)
 
 # WRITING
     @staticmethod
@@ -238,49 +316,49 @@ class HDF5ResultsStore(object):
         return os.path.basename(self.filename)
 
     @property
-    def _attrs(self):
-        with self as store:
+    def _tags(self):
+        """ Alias of self.h5file.root._v_attrs
+        """
+        if self.h5file.isopen:
             return self.h5file.root._v_attrs
 
     @property
-    def attrs(self):
-        return dict([(key, self._attrs[key]) for key
-                     in self._attrs._v_attrnames])
+    def tags(self):
+        return dict([(key, self._tags[key]) for key
+                     in self._tags._v_attrnames])
 
-    def set_attr(self, key, value):
+    def update_tag(self, key, value):
         assert isinstance(value, six.string_types)
-        self._attrs[key] = value
+        self.tags[key] = value
 
-    def set_attrs(self, **attrs):
-        for key, value in attrs.items():
-            self.set_attr(key, value)
+    def update_tags(self, **tags):
+        for key, value in tags.items():
+            self.update_tag(key, value)
 
 # GIS METADATA
     @property
     def crs(self):
-        _crs = getattr(self._attrs, 'crs', '')
-        if not _crs:
-            raise AttributeError("Can't find 'crs' in result file")
-        return CRS.from_string(_crs)
+        """ rasterio.crs.CRS: Coordinate reference system
+        """
+        return get_georeference(self.h5file, 'crs')
 
     @property
     def bounds(self):
-        return BoundingBox(*self.bounding_box.bounds)
+        """ BoundingBox: Bounding box of data in file
+        """
+        return get_georeference(self.h5file, 'bounds')
 
     @property
-    def bounding_box(self):
-        _bounds = getattr(self._attrs, 'bounds', '')
-        if not _bounds:
-            raise AttributeError("Can't find 'bounds' in result file")
-        return shapely.wkt.loads(self._attrs['bounds'])
-
-    @staticmethod
-    def reader_attrs(reader, window):
-        """ Extract reader attributes relevant to HDF5ResultsStore
+    def transform(self):
+        """ affine.Affine: Affine transform
         """
-        crs = reader.crs.to_string()
-        bounds = bounds_to_polygon(reader.window_bounds(window)).wkt
-        return dict(crs=crs, bounds=bounds)
+        return get_georeference(self.h5file, 'transform')
+
+    @property
+    def bbox(self):
+        """ shapely.geometry.Polygon: Bounding box as polygon
+        """
+        return get_georeference(self.h5file, 'bbox')
 
 # CONTEXT HELPERS
     def __enter__(self):
@@ -302,13 +380,17 @@ class HDF5ResultsStore(object):
                     raise
 
         logger.debug('Opening %s in mode %s' % (self.filename, self.mode))
-        self.h5file = tb.open_file(self.filename, mode=self.mode, title='YATSM',
+        self.h5file = tb.open_file(self.filename, mode=self.mode,
+                                   title=self.title,
                                    **self.tb_kwds)
 
-        if (self._crs is not None and self._bounds is not None):
-            self.set_attr('crs', self._crs)
-            self.set_attr('bounds', self._bounds)
-
+        # Set GIS related tags on write/overwrite
+        if self.mode == 'w' or self.overwrite:
+            self.h5file = georeference(
+                self.h5file,
+                **dict((attr, getattr(self, '_' + attr, None))
+                       for attr in GEO_TAGS)
+            )
         return self
 
     def __exit__(self, *args):
