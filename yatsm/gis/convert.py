@@ -5,6 +5,8 @@ import re
 from affine import Affine
 from rasterio.coords import BoundingBox
 from rasterio.crs import CRS
+import shapely.geometry
+import shapely.wkt
 
 from yatsm.utils import to_number
 
@@ -43,15 +45,25 @@ def str_to_transform(string):
     return Affine(*map(float, numbers))
 
 
+def bbox_to_str(bbox):
+    return bbox.to_wkt()
+
+
+def str_to_bbox(string):
+    return shapely.wkt.loads(string)
+
+
 GIS_TO_STR = {
     'crs': lambda crs: CRS(crs).to_string(),
     'bounds': bounds_to_str,
     'transform': transform_to_str,
+    'bbox': bbox_to_str
 }
 
 
 STR_TO_GIS = {
     'crs': lambda s: CRS.from_string(s),
     'bounds': str_to_bounds,
-    'transform': str_to_transform
+    'transform': str_to_transform,
+    'bbox': str_to_bbox
 }
