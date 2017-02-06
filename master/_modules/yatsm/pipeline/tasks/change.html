@@ -150,32 +150,46 @@
   <h1>Source code for yatsm.pipeline.tasks.change</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Functional wrappers around change detection algorithms</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">patsy</span>
-
 <span class="kn">from</span> <span class="nn">yatsm.algorithms</span> <span class="k">import</span> <span class="n">CCDCesque</span>
 <span class="kn">from</span> <span class="nn">.._task_validation</span> <span class="k">import</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">requires</span>
 
 
 <span class="nd">@requires</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[])</span>
 <span class="nd">@outputs</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span>
-<div class="viewcode-block" id="pixel_CCDCesque"><a class="viewcode-back" href="../../../../yatsm/yatsm.pipeline.tasks.change.html#yatsm.pipeline.tasks.change.pixel_CCDCesque">[docs]</a><span class="k">def</span> <span class="nf">pixel_CCDCesque</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Run CCDCesque on a pixel</span>
+<div class="viewcode-block" id="pixel_CCDCesque"><a class="viewcode-back" href="../../../../yatsm/yatsm.pipeline.tasks.change.html#yatsm.pipeline.tasks.change.pixel_CCDCesque">[docs]</a><span class="k">def</span> <span class="nf">pixel_CCDCesque</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Run :class:`yatsm.algorithms.CCDCesque` on a pixel</span>
+
+<span class="sd">    Users should pass to ``require`` both ``X`` and ``Y`` arguments, which</span>
+<span class="sd">    are interpreted as:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        X, Y = require[0], require[1:]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pipe (yatsm.pipeline.Pipe): Piped data to operate on</span>
+<span class="sd">        require (dict[str, list[str]]): Labels for the requirements of this</span>
+<span class="sd">            calculation</span>
+<span class="sd">        output (dict[str, list[str]]): Label for the result of this</span>
+<span class="sd">            calculation</span>
+<span class="sd">        config (dict): Configuration to pass to :class:`CCDCesque`. Should</span>
+<span class="sd">            contain `init` sections</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        yatsm.pipeline.Pipe: Piped output</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">require</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
+    <span class="n">XY</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">require</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">XY</span><span class="p">[</span><span class="n">require</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">XY</span><span class="p">[</span><span class="n">require</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:]]</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">CCDCesque</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">,</span> <span class="p">{}))</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">py</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">px</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">py</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">px</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span><span class="n">x</span>
 
-    <span class="n">ordinal</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">indexes</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">toordinal</span><span class="p">())</span>
-    <span class="n">design</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fit&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;design&#39;</span><span class="p">,</span> <span class="s1">&#39;1 + ordinal&#39;</span><span class="p">)</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">design</span><span class="p">,</span>
-                      <span class="n">data</span><span class="o">=</span><span class="n">arr</span><span class="p">,</span>
-                      <span class="n">eval_env</span><span class="o">=</span><span class="n">patsy</span><span class="o">.</span><span class="n">EvalEnvironment</span><span class="o">.</span><span class="n">capture</span><span class="p">())</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">XY</span><span class="p">[</span><span class="s1">&#39;ordinal&#39;</span><span class="p">])</span>
+    <span class="n">pipe</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span>
 
-    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">ordinal</span><span class="p">)</span>
-    <span class="n">work</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;record&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span>
-
-    <span class="k">return</span> <span class="n">work</span></div>
+    <span class="k">return</span> <span class="n">pipe</span></div>
 </pre></div>
 
            </div>
@@ -188,7 +202,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 2, 2017, 7:11:17 PM.
+      Last updated on Feb 6, 2017, 9:35:07 PM.
 
     </p>
   </div>

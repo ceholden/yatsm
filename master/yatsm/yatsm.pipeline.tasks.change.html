@@ -149,8 +149,36 @@
 <p>Functional wrappers around change detection algorithms</p>
 <dl class="function">
 <dt id="yatsm.pipeline.tasks.change.pixel_CCDCesque">
-<code class="descclassname">yatsm.pipeline.tasks.change.</code><code class="descname">pixel_CCDCesque</code><span class="sig-paren">(</span><em>work</em>, <em>require</em>, <em>output</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/tasks/change.html#pixel_CCDCesque"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.tasks.change.pixel_CCDCesque" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run CCDCesque on a pixel</p>
+<code class="descclassname">yatsm.pipeline.tasks.change.</code><code class="descname">pixel_CCDCesque</code><span class="sig-paren">(</span><em>pipe</em>, <em>require</em>, <em>output</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/pipeline/tasks/change.html#pixel_CCDCesque"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.tasks.change.pixel_CCDCesque" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <code class="xref py py-class docutils literal"><span class="pre">yatsm.algorithms.CCDCesque</span></code> on a pixel</p>
+<p>Users should pass to <code class="docutils literal"><span class="pre">require</span></code> both <code class="docutils literal"><span class="pre">X</span></code> and <code class="docutils literal"><span class="pre">Y</span></code> arguments, which
+are interpreted as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">require</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">require</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.pipeline.tasks.change.pixel_CCDCesque.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.change.pixel_CCDCesque.params.pipe">¶</a> &#8211; Piped data to operate on</li>
+<li><span class="target" id="yatsm.pipeline.tasks.change.pixel_CCDCesque.params.require"></span><strong>require</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.change.pixel_CCDCesque.params.require">¶</a> &#8211; Labels for the requirements of this
+calculation</li>
+<li><span class="target" id="yatsm.pipeline.tasks.change.pixel_CCDCesque.params.output"></span><strong>output</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.change.pixel_CCDCesque.params.output">¶</a> &#8211; Label for the result of this
+calculation</li>
+<li><span class="target" id="yatsm.pipeline.tasks.change.pixel_CCDCesque.params.config"></span><strong>config</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.change.pixel_CCDCesque.params.config">¶</a> &#8211; Configuration to pass to <code class="xref py py-class docutils literal"><span class="pre">CCDCesque</span></code>. Should
+contain <cite>init</cite> sections</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Piped output</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="yatsm.pipeline.html#yatsm.pipeline.Pipe" title="yatsm.pipeline.Pipe">yatsm.pipeline.Pipe</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -166,7 +194,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 2, 2017, 7:11:17 PM.
+      Last updated on Feb 6, 2017, 9:35:07 PM.
 
     </p>
   </div>

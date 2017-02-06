@@ -252,8 +252,15 @@
         <span class="n">signature</span> <span class="o">=</span> <span class="p">(</span><span class="n">REQUIRED_BY_DEFAULT</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
 
     <span class="c1"># Given as &lt;str:name&gt;=(&lt;bool:required&gt;, [&lt;object&gt;, ...]])</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
-          <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">)):</span>
+    <span class="k">def</span> <span class="nf">_check</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">check</span>
+    <span class="k">if</span> <span class="n">_check</span><span class="p">(</span><span class="n">signature</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">req_len</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">signature</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="n">req_len</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Function signature must have </span><span class="si">{n}</span><span class="s2"> arguments&quot;</span>
                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">req_len</span><span class="p">))</span>
@@ -272,7 +279,8 @@
                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="c1"># If the specification description has a specific length requirement</span>
+            <span class="c1"># If the specification description has a specific length</span>
+            <span class="c1"># requirement</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">desc</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">desc</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -345,7 +353,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 2, 2017, 7:11:17 PM.
+      Last updated on Feb 6, 2017, 9:35:07 PM.
 
     </p>
   </div>

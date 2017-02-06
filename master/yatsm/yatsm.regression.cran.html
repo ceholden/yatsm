@@ -144,8 +144,49 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="yatsm-regression-cran-module">
-<h1>yatsm.regression.cran module<a class="headerlink" href="#yatsm-regression-cran-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-yatsm.regression.cran">
+<span id="yatsm-regression-cran-module"></span><h1>yatsm.regression.cran module<a class="headerlink" href="#module-yatsm.regression.cran" title="Permalink to this headline">¶</a></h1>
+<p>Regression or prediction methods from R</p>
+<dl class="function">
+<dt id="yatsm.regression.cran.CRAN_spline">
+<code class="descclassname">yatsm.regression.cran.</code><code class="descname">CRAN_spline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>spar=0.55</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/cran.html#CRAN_spline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.cran.CRAN_spline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a prediction function for a smoothing spline from R</p>
+<p>Use <cite>rpy2</cite> package to fit a smoothing spline using &#8220;smooth.spline&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.regression.cran.CRAN_spline.params.x"></span><strong>x</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.cran.CRAN_spline.params.x">¶</a> &#8211; independent variable</li>
+<li><span class="target" id="yatsm.regression.cran.CRAN_spline.params.y"></span><strong>y</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.cran.CRAN_spline.params.y">¶</a> &#8211; dependent variable</li>
+<li><span class="target" id="yatsm.regression.cran.CRAN_spline.params.spar"></span><strong>spar</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.cran.CRAN_spline.params.spar">¶</a> &#8211; smoothing parameter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>prediction function of smoothing spline that provides</dt>
+<dd><p class="first last">smoothed estimates of the dependent variable given an input
+independent variable array</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#callable" title="(in Python v3.7)">callable</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>Fit a smoothing spline for y ~ x and predict for days in year:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pred_spl</span> <span class="o">=</span> <span class="n">CRAN_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">y_smooth</span> <span class="o">=</span> <span class="n">pred_spl</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">366</span><span class="p">))</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
 </div>
 
 
@@ -159,7 +200,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 2, 2017, 7:11:17 PM.
+      Last updated on Feb 6, 2017, 9:35:07 PM.
 
     </p>
   </div>

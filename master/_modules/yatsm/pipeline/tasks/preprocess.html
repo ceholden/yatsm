@@ -156,8 +156,8 @@
 <span class="kn">import</span> <span class="nn">patsy</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
-<span class="kn">from</span> <span class="nn">.._task_validation</span> <span class="k">import</span> <span class="n">eager_task</span><span class="p">,</span> <span class="n">requires</span><span class="p">,</span> <span class="n">outputs</span>
-<span class="kn">from</span> <span class="nn">...regression.transforms</span> <span class="k">import</span> <span class="n">harm</span>
+<span class="kn">from</span> <span class="nn">yatsm.pipeline._task_validation</span> <span class="k">import</span> <span class="n">eager_task</span><span class="p">,</span> <span class="n">requires</span><span class="p">,</span> <span class="n">outputs</span>
+<span class="kn">from</span> <span class="nn">yatsm.regression.transforms</span> <span class="k">import</span> <span class="n">harm</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -165,37 +165,47 @@
 <span class="nd">@eager_task</span>
 <span class="nd">@requires</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
 <span class="nd">@outputs</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span>
-<div class="viewcode-block" id="norm_diff"><a class="viewcode-back" href="../../../../yatsm/yatsm.pipeline.tasks.preprocess.html#yatsm.pipeline.tasks.preprocess.norm_diff">[docs]</a><span class="k">def</span> <span class="nf">norm_diff</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="norm_diff"><a class="viewcode-back" href="../../../../yatsm/yatsm.pipeline.tasks.preprocess.html#yatsm.pipeline.tasks.preprocess.norm_diff">[docs]</a><span class="k">def</span> <span class="nf">norm_diff</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Calculate a normalized difference of two bands</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        work: Dataset to operate on</span>
+<span class="sd">        pipe (yatsm.pipeline.Pipe): Piped data to operate on</span>
 <span class="sd">        require (dict[str, list[str]]): Labels for the requirements of this</span>
 <span class="sd">            calculation</span>
-<span class="sd">        output (dict[str, list[str]]): Labels for the result of this</span>
+<span class="sd">        output (dict[str, list[str]]): Label for the result of this</span>
 <span class="sd">            calculation</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: Input ``work`` dictionary with the calculation added according</span>
-<span class="sd">            to user specification of ``output``</span>
+<span class="sd">        yatsm.pipeline.Pipe: Piped output</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">one</span><span class="p">,</span> <span class="n">two</span> <span class="o">=</span> <span class="n">require</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">out</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">one</span><span class="p">]</span> <span class="o">-</span> <span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">two</span><span class="p">])</span> <span class="o">/</span>
-                         <span class="p">(</span><span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">one</span><span class="p">]</span> <span class="o">+</span> <span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">two</span><span class="p">]))</span>
+    <span class="n">pipe</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">out</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">pipe</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">one</span><span class="p">]</span> <span class="o">-</span> <span class="n">pipe</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">two</span><span class="p">])</span> <span class="o">/</span>
+                      <span class="p">(</span><span class="n">pipe</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">one</span><span class="p">]</span> <span class="o">+</span> <span class="n">pipe</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">two</span><span class="p">]))</span>
 
-    <span class="k">return</span> <span class="n">work</span></div>
+    <span class="k">return</span> <span class="n">pipe</span></div>
 
 
 <span class="nd">@eager_task</span>
 <span class="nd">@requires</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[])</span>
 <span class="nd">@outputs</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span>
-<div class="viewcode-block" id="dmatrix"><a class="viewcode-back" href="../../../../yatsm/yatsm.pipeline.tasks.preprocess.html#yatsm.pipeline.tasks.preprocess.dmatrix">[docs]</a><span class="k">def</span> <span class="nf">dmatrix</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="dmatrix"><a class="viewcode-back" href="../../../../yatsm/yatsm.pipeline.tasks.preprocess.html#yatsm.pipeline.tasks.preprocess.dmatrix">[docs]</a><span class="k">def</span> <span class="nf">dmatrix</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Create a design matrix from Patsy/R style design strings</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pipe (yatsm.pipeline.Pipe): Piped data to operate on</span>
+<span class="sd">        require (dict[str, list[str]]): Labels for the requirements of this</span>
+<span class="sd">            calculation</span>
+<span class="sd">        output (dict[str, list[str]]): Label for the result of this</span>
+<span class="sd">            calculation</span>
+<span class="sd">        config</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        yatsm.pipeline.Pipe: Piped output</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">design</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;design&#39;</span><span class="p">]</span>
-    <span class="n">ds</span> <span class="o">=</span> <span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">data</span>
 
     <span class="k">if</span> <span class="s1">&#39;~&#39;</span> <span class="ow">in</span> <span class="n">design</span><span class="p">:</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrices</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">ds</span><span class="p">)</span>
@@ -207,9 +217,9 @@
 
     <span class="n">coords</span> <span class="o">=</span> <span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">X</span><span class="o">.</span><span class="n">design_info</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span>
     <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;terms&#39;</span><span class="p">)</span>
-    <span class="n">work</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span>
+    <span class="n">pipe</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">work</span></div>
+    <span class="k">return</span> <span class="n">pipe</span></div>
 </pre></div>
 
            </div>
@@ -222,7 +232,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 2, 2017, 7:11:17 PM.
+      Last updated on Feb 6, 2017, 9:35:07 PM.
 
     </p>
   </div>
