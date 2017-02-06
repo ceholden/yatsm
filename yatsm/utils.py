@@ -18,6 +18,16 @@ except:
 logger = logging.getLogger(__name__)
 
 
+def to_number(string):
+    """ Convert string to most appropriate number
+    """
+    try:
+        n = int(string)
+    except ValueError:
+        n = float(string)
+    return n
+
+
 # JOB SPECIFIC FUNCTIONS
 def distribute_jobs(job_number, total_jobs, n, interlaced=True):
     """ Assign `job_number` out of `total_jobs` a subset of `n` tasks
