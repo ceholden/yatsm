@@ -1,68 +1,13 @@
 import logging
 import os
-import shutil
 import sys
 
-from distutils.command.clean import clean as _clean
-from setuptools.command.install import install as _install
-from setuptools.command.develop import develop as _develop
 from setuptools import find_packages, setup
 
 PY2 = sys.version_info[0] == 2
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
-
-
-def _build_pickles():
-    # Build pickles
-    here = os.path.dirname(__file__)
-    sys.path.append(os.path.join(here, 'yatsm', 'regression', 'pickles'))
-    from yatsm.regression.pickles import serialize as serialize_pickles  # noqa
-    serialize_pickles.make_pickles()
-
-
-# Extra cleaning with MyClean
-class my_clean(_clean):
-    description = 'Remove files generated during build process'
-
-    def run(self):
-        _clean.run(self)
-        if os.path.exists('build'):
-            shutil.rmtree('build')
-        for dirpath, dirnames, filenames in os.walk('yatsm'):
-            for filename in filenames:
-                if any(filename.endswith(suffix) for suffix in
-                       ('.c', '.so', '.pyd', '.pyc')):
-                    os.unlink(os.path.join(dirpath, filename))
-                    continue
-                if (any(filename.endswith(suffix) for suffix in
-                        ('.pkl', '.json')) and
-                        os.path.basename(dirpath) == 'pickles'):
-                    os.unlink(os.path.join(dirpath, filename))
-            for dirname in dirnames:
-                if dirname == '__pycache__':
-                    shutil.rmtree(os.path.join(dirpath, dirname))
-
-
-# Create pickles when building
-class my_install(_install):
-    def run(self):
-        self.execute(_build_pickles, [], msg='Building estimator pickles')
-        _install.run(self)
-
-
-class my_develop(_develop):
-    def run(self):
-        self.execute(_build_pickles, [], msg='Building estimator pickles')
-        _develop.run(self)
-
-
-cmdclass = {
-    'clean': my_clean,  # python setup.py clean
-    'install': my_install,  # call when pip install
-    'develop': my_develop  # called when pip install -e
-}
 
 
 # Get version
@@ -111,14 +56,12 @@ extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
 # Pre-packaged regression algorithms included in installation
 package_data = {
     'yatsm': [
-        os.path.join('regression', 'pickles', 'pickles.json'),
-        os.path.join('regression', 'pickles', '*.pkl'),
         os.path.join('config', 'config_schema.yaml')
     ]
 }
 
 # Setup
-packages = find_packages(exclude=['tests', 'yatsm.regression.pickles'])
+packages = find_packages(exclude=['tests'])
 packages.sort()
 
 entry_points = '''
@@ -164,6 +107,5 @@ setup_dict = dict(
     long_description=readme,
     install_requires=extras_require['core'],
     extras_require=extras_require,
-    cmdclass=cmdclass
 )
 setup(**setup_dict)
