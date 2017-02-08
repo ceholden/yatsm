@@ -4,6 +4,10 @@
 
 set -o errexit -o nounset
 
+DOCS=$(dirname $(readlink -f $0))/../
+
+APIDOC="$DOCS/source/"
+
 KEY_FILE=.deploy_key
 SOURCE=_build
 
@@ -38,10 +42,10 @@ ssh-add ${KEY_FILE}
 git config --global user.email $COMMIT_AUTHOR_EMAIL
 git config --global user.name $COMMIT_AUTHOR_NAME
 
-# Find and clean
-docs=$(dirname $(readlink -f $0))/../
-cd $docs
+# START
+cd $DOCS/
 
+# Clean
 rm -rf build
 
 # Create branch directory and grab Git repo
@@ -49,6 +53,8 @@ git clone $SSH_REPO $SOURCE/
 cd $SOURCE/
 git checkout $DST_BRANCH || git checkout --orphan $DST_BRANCH
 cd $docs
+
+sphinx-apidoc -f -e -o $APIDOC ../yatsm/
 
 make html
 mkdir -p $SOURCE/$SRC_BRANCH/
