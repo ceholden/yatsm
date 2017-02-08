@@ -3,7 +3,6 @@
 from collections import defaultdict
 import logging
 
-import six
 import toposort
 
 from .language import DATA, RECORD, OUTPUT, REQUIRE, PIPE
@@ -11,8 +10,8 @@ from .language import DATA, RECORD, OUTPUT, REQUIRE, PIPE
 logger = logging.getLogger(__name__)
 
 
-def format_deps(d):
-    """ Return formatted list of dependencies from REQUIRE or OUTPUT
+def _format_deps(d):
+    """ Return formatted list of task OUTPUT or REQUIRE
 
     Transform as follows:
 
@@ -26,26 +25,25 @@ def format_deps(d):
         ['data-red', 'data-nir', 'data-ndvi', 'record-ccdc']
 
     Args:
-        d (dict): Task specification, requirements or outputs (under sections
-            :ref:`REQUIRE` or :ref:`OUTPUT`)
+        d (dict): Task specification (e.g., requirements or outputs) for
+            a given type (the key) and the specification (a list of str)
 
     Returns:
-        list: Formatted names of task dependencies
+        list[str]: Formatted names of task dependencies
     """
     out = []
-    for _type, names in six.iteritems(d):
+    for _type, names in d.items():
         out.extend(['%s-%s' % (_type, name) for name in names])
     return out
 
 
-def pipe_deps(pipe):
+def _pipe_deps(pipe):
     """ Format data and record in a `pipe`
 
     Provides references to dataset bands and record information in `pipe`.
 
     Args:
-        pipe (dict): A "pipeline" object containing `data` and `record` as
-            keys.
+        pipe (yatsm.pipeline.Pipe): Pipeline data
 
     Returns:
         dict: Dependency graph for data or results inside of `pipe`
@@ -61,7 +59,7 @@ def pipe_deps(pipe):
     return dsk
 
 
-def config_to_deps(config, dsk=None, overwrite=True):
+def _config_to_deps(config, dsk=None, overwrite=True):
     """ Convert a pipeline specification into list of tasks
 
     Args:
@@ -78,11 +76,11 @@ def config_to_deps(config, dsk=None, overwrite=True):
 
     for task, spec in config.items():
         # Add in task requirements
-        deps = format_deps(spec[REQUIRE])
+        deps = _format_deps(spec[REQUIRE])
         dsk[task] = dsk[task].union(deps)
 
-        # Add in data/record provided by task
-        prov = format_deps(spec[OUTPUT])
+        # Add in items provided by task
+        prov = _format_deps(spec[OUTPUT])
         task_needed = False
         for _prov in prov:
             if overwrite or _prov not in dsk:
@@ -120,10 +118,8 @@ def validate_dependencies(tasks, dsk):
         check = [dep in dsk for dep in deps]
         if not all(check):
             missing = [dep for dep, ok in zip(deps, check) if not ok]
-            missing_str = ', '.join(['%i) "%s"' % (i + 1, m) for i, m in
-                                     enumerate(missing)])
-            raise KeyError('Task "{}" has unmet dependencies: {}'
-                           .format(task, missing_str))
+            raise KeyError('Task "{0}" has {1} unmet dependencies: {2}'
+                           .format(task, len(missing), ', '.join(missing)))
     return tasks
 
 
@@ -132,7 +128,7 @@ def config_to_tasks(config, pipe, overwrite=True):
 
     Args:
         config (dict): Pipeline specification
-        pipe (dict): Container storing `data` and `record` keys
+        pipe (yatsm.pipeline.Pipe): Container storing `data` and `record` keys
         overwrite (bool): Allow tasks to overwrite values that have already
             been computed
 
@@ -140,8 +136,7 @@ def config_to_tasks(config, pipe, overwrite=True):
         list: Tasks to run from the pipeline specification, given in the
             order required to fullfill all dependencies
     """
-    _dsk = pipe_deps(pipe)
-    dsk = config_to_deps(config, dsk=_dsk, overwrite=overwrite)
+    dsk = _config_to_deps(config, dsk=_pipe_deps(pipe), overwrite=overwrite)
 
     tasks = [task for task in toposort.toposort_flatten(dsk)
              if task in config.keys()]
