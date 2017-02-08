@@ -21,9 +21,9 @@ DATA = 'data'
 #: str: Name of segment "structure" or "record" database-like information
 RECORD = 'record'
 
-#: str: Name of cached Python objects (e.g., functions or classes, perhaps
+#: str: Name of stashed Python objects (e.g., functions or classes, perhaps
 #       returned from a task that serializes/deserializes them)
-CACHE = 'cache'
+STASH = 'stash'
 
 #: tuple: Pipe contents
-PIPE_CONTENTS = (DATA, RECORD, CACHE, )
+PIPE_CONTENTS = (DATA, RECORD, STASH, )

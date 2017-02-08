@@ -67,7 +67,7 @@ import logging
 import decorator
 import six
 
-from .language import OUTPUT, REQUIRE, DATA, RECORD
+from .language import PIPE_CONTENTS, REQUIRE, OUTPUT, STASH
 from ..errors import PipelineConfigurationError as PCError
 
 logger = logging.getLogger(__name__)
@@ -208,3 +208,5 @@ def check(name, **signature):
 outputs = functools.partial(check, OUTPUT)
 #: Decorator to check inputs to `require` argument
 requires = functools.partial(check, REQUIRE)
+#: Decorator to check inputs to `stash` argument
+stash = functools.partial(check, STASH)

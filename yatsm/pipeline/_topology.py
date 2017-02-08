@@ -1,11 +1,33 @@
-""" Build pipeline dependency graph from requirements
+""" Build pipeline dependency graph from requirement configuration
+
+Requirement configurations for a task are organized into a set of
+"requires" and "outputs". These commponents are further categorized into
+groups based on the type of object, either raster "data", table-like "record",
+and generic Python "cache" objects.
+
+For example, a classifier task using the NIR and Red bands, described in
+YAML format:
+
+.. code-block:: yaml
+
+    require:
+        data: [nir, red]
+        cache: [classifier]
+    output:
+        data: [labels]
+
 """
 from collections import defaultdict
 import logging
 
 import toposort
 
-from .language import DATA, RECORD, OUTPUT, REQUIRE, PIPE
+from .language import (
+    PIPE_CONTENTS,
+    OUTPUT,
+    REQUIRE,
+    PIPE
+)
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +42,10 @@ def _format_deps(d):
         >>> d = {
             'data': ['red', 'nir', 'ndvi'],
             'record': ['ccdc'],
+            'cache': ['rf']
         }  # example :ref:`REQUIRE`
-        >>> format_deps(d)
-        ['data-red', 'data-nir', 'data-ndvi', 'record-ccdc']
+        >>> _format_deps(d)
+        ['data-red', 'data-nir', 'data-ndvi', 'record-ccdc', 'cache-rf']
 
     Args:
         d (dict): Task specification (e.g., requirements or outputs) for
@@ -48,14 +71,11 @@ def _pipe_deps(pipe):
     Returns:
         dict: Dependency graph for data or results inside of `pipe`
     """
-    dsk = {PIPE: set()}
-    deps = {
-        DATA: pipe[DATA].keys(),
-        RECORD: pipe[RECORD].keys()
-    }
-    _deps = format_deps(deps)
-    for _dep in _deps:
-        dsk[_dep] = set([PIPE])
+    dsk = {PIPE: set()}  # no dependencies for pipe item
+    deps = _format_deps(dict((item, pipe[item].keys())
+                             for item in PIPE_CONTENTS))
+    for dep in deps:
+        dsk[dep] = set([PIPE])
     return dsk
 
 
