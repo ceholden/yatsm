@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pandas as pd
 import rasterio
+from rasterio.coords import BoundingBox
 import xarray as xr
 
 logger = logging.getLogger(__name__)
@@ -265,6 +266,7 @@ class GDALTimeSeries(object):
             window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space
 
         Returns:
-            tuple: x_min, y_min, x_max, y_max
+            BoundingBox: Window left, bottom, right, top (x_min, y_min, x_max,
+            y_max)
         """
-        return rasterio.windows.bounds(window, self.transform)
+        return BoundingBox(*rasterio.windows.bounds(window, self.transform))
