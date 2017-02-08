@@ -191,30 +191,30 @@ class HDF5ResultsStore(object):
 
     Args:
         filename (str): HDF5 file
+        mode (str): File mode to open with. By default, opens in read mode or
+            write mode if file doesn't exist
         crs (str or :class:`rasterio.crs.CRS`): Coordinate reference system
         bounds (BoundingBox): Bounding box of data stored
         transform (affine.Affine): Affine transform of data stored
         bbox (shapely.geometry.Polygon): Bounding box polygon
-        mode (str): File mode to open with. By default, opens in read mode or
-            write mode if file doesn't exist
         title (str): Title of HDF5 file
         keep_open (bool): Keep file handle open after calls
         overwrite (bool): Overwrite file attributes or data
         tb_kwds: Optional keywork arguments to :ref:`tables.open_file`
     """
 
-    def __init__(self, filename,
+    def __init__(self, filename, mode=None,
                  crs=None, bounds=None, transform=None, bbox=None,
-                 mode=None, title='YATSM',
+                 title='YATSM',
                  keep_open=True, overwrite=False, **tb_kwds):
         _exists = os.path.exists(filename)
 
         self.filename = filename
+        self.mode = mode or 'r' if _exists else 'w'
         self._crs = crs
         self._bounds = bounds
         self._transform = transform
         self._bbox = bbox
-        self.mode = mode or 'r' if _exists else 'w'
         self.title = title
         self.keep_open = keep_open
         self.overwrite = overwrite
