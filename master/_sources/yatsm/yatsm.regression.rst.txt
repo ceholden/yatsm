@@ -1,13 +1,6 @@
 yatsm.regression package
 ========================
 
-Subpackages
------------
-
-.. toctree::
-
-    yatsm.regression.pickles
-
 Submodules
 ----------
 
