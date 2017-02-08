@@ -324,8 +324,9 @@ class HDF5ResultsStore(object):
 
     @property
     def tags(self):
-        return dict([(key, self._tags[key]) for key
-                     in self._tags._v_attrnames])
+        with self as store:
+            return dict([(key, store._tags[key]) for key
+                         in store._tags._v_attrnames])
 
     def update_tag(self, key, value):
         assert isinstance(value, six.string_types)
@@ -446,6 +447,7 @@ class HDF5ResultsStore(object):
                 table.append(value)
 
     def __repr__(self):
-        return ("<{0.__class__.__name__}"
-                "(filename={0.filename}, mode={0.mode})>"
-                .format(self))
+        opened = self.h5file and self.h5file.isopen
+        return ("{0} <{1.__class__.__name__}"
+                "(filename={1.filename}, mode={1.mode})>"
+                .format('Open' if opened else 'Closed', self))
