@@ -329,7 +329,7 @@ class HDF5ResultsStore(object):
 
     def update_tag(self, key, value):
         assert isinstance(value, six.string_types)
-        self.tags[key] = value
+        self._tags[key] = value
 
     def update_tags(self, **tags):
         for key, value in tags.items():
