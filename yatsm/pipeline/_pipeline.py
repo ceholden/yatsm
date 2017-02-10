@@ -5,11 +5,12 @@ from functools import partial
 import logging
 
 from dask import delayed
-# from toolz import curry  # TODO: evaluate
 
-from ._topology import config_to_tasks
-from .language import CONFIG, TASK, REQUIRE, OUTPUT, PIPE, PIPE_CONTENTS
-from .tasks import PIPELINE_TASKS, SEGMENT_TASKS
+from yatsm.errors import PipelineConfigurationError as PCError
+from yatsm.pipeline._topology import config_to_tasks
+from yatsm.pipeline.language import (CONFIG, TASK, REQUIRE, OUTPUT,
+                                     PIPE_CONTENTS)
+from yatsm.pipeline.tasks import PIPELINE_TASKS, SEGMENT_TASKS
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +86,7 @@ class Pipe(object):
 
 
 class Task(object):
-    """
+    """ A :class:`Pipeline` task
     """
     def __init__(self, name, func, require, output, **config):
         self.name = name
@@ -105,15 +106,19 @@ class Task(object):
         try:
             func = PIPELINE_TASKS[task]
         except KeyError as ke:
-            raise KeyError("Unknown pipeline task '{}'".format(task))
+            logger.exception("Unknown pipeline task '{}'".format(task), ke)
+            raise
         return cls(name, func, config[REQUIRE], config[OUTPUT],
                    **config.get(CONFIG, {}))
 
     def curry(self):
         return partial(self.func, **self.spec)
 
+    # TODO: maybe there is eager in time, eager in space?
     @property
     def is_eager(self):
+        """ Can this task be executed on all pixels (x/y) at once?
+        """
         return getattr(self.func, 'is_eager', False)
 
     def record_dependencies(self, tasks):

@@ -1,9 +1,10 @@
 """ Functional wrappers around change detection algorithms
 """
 from yatsm.algorithms import CCDCesque
-from .._task_validation import outputs, requires
+from yatsm.pipeline.tasks._validation import outputs, requires, version
 
 
+@version(CCDCesque.__algorithm__)
 @requires(data=[])
 @outputs(record=[str])
 def pixel_CCDCesque(pipe, require, output, config=None):
@@ -23,7 +24,7 @@ def pixel_CCDCesque(pipe, require, output, config=None):
         output (dict[str, list[str]]): Label for the result of this
             calculation
         config (dict): Configuration to pass to :class:`CCDCesque`. Should
-            contain `init` sections
+            contain `init` section
 
     Returns:
         yatsm.pipeline.Pipe: Piped output

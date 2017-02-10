@@ -6,12 +6,14 @@ import numpy as np
 import patsy
 import xarray as xr
 
-from yatsm.pipeline._task_validation import eager_task, requires, outputs
-from yatsm.regression.transforms import harm
+from yatsm.pipeline.tasks._validation import (eager_task, requires, outputs,
+                                              version)
+from yatsm.regression.transforms import harm  # NOQA
 
 logger = logging.getLogger(__name__)
 
 
+@version('norm_diff:1.0.0')
 @eager_task
 @requires(data=[str, str])
 @outputs(data=[str])
@@ -37,6 +39,7 @@ def norm_diff(pipe, require, output, config=None):
     return pipe
 
 
+@version('dmatrix:1.0.0')
 @eager_task
 @requires(data=[])
 @outputs(data=[str])

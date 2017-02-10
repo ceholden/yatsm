@@ -22,7 +22,7 @@ import logging
 
 import toposort
 
-from .language import (
+from yatsm.pipeline.language import (
     PIPE_CONTENTS,
     OUTPUT,
     REQUIRE,

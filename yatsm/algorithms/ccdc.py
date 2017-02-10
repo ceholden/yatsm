@@ -77,6 +77,10 @@ class CCDCesque(object):
 
     """
 
+    __version__ = '1.0.0'
+    __name = 'yatsm-ccdcesque'
+    __algorithm__ = ':'.join([__name, __version__])
+
     ndays = 365.25
 
     def __init__(self,

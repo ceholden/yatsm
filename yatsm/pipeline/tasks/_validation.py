@@ -67,8 +67,8 @@ import logging
 import decorator
 import six
 
-from .language import PIPE_CONTENTS, REQUIRE, OUTPUT, STASH
-from ..errors import PipelineConfigurationError as PCError
+from yatsm.pipeline.language import PIPE_CONTENTS, REQUIRE, OUTPUT, STASH
+from yatsm.errors import PipelineConfigurationError as PCError
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +80,13 @@ def eager_task(func):
     """
     func.is_eager = True
     return func
+
+
+def version(version_str):
+    def decorator(func):
+        func.version = version_str
+        return func
+    return decorator
 
 
 def _parse_signature(signature, req_len=None):

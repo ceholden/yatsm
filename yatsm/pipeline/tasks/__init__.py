@@ -8,6 +8,7 @@
 import logging
 from pkg_resources import iter_entry_points
 
+from ._validation import eager_task, outputs, requires, version
 from .preprocess import dmatrix, norm_diff
 from .change import pixel_CCDCesque
 
@@ -43,3 +44,11 @@ PIPELINE_TASKS = {
 SEGMENT_TASKS.update(_get_eps('yatsm.pipeline.tasks.segment'))
 PIPELINE_TASKS.update(_get_eps('yatsm.pipeline.tasks.tasks'))
 PIPELINE_TASKS.update(SEGMENT_TASKS)
+
+
+__all__ = [
+    'eager_task',
+    'outputs',
+    'requires',
+    'version'
+]
