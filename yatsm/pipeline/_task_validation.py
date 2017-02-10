@@ -107,6 +107,9 @@ def _parse_signature(signature, req_len=None):
         KeyError: If ``name`` isn't a supported type of function signature
         TypeError: If ``signature`` is invalid
     """
+    def _has_required(l):
+        return l and isinstance(l[0], bool)
+
     def _check(l):
         return (
             isinstance(l, (tuple, list, )) and
@@ -117,7 +120,7 @@ def _parse_signature(signature, req_len=None):
 
     if isinstance(signature, (tuple, list, )):
         # Given as <str:name>=[<object>, ...]
-        if not isinstance(signature[0], bool):
+        if not _has_required(signature):
             signature = (REQUIRED_BY_DEFAULT, signature)
         # Given as <str:name>=(<bool:required>, [<object>, ...]])
         try:
