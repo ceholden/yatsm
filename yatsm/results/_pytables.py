@@ -257,6 +257,35 @@ class HDF5ResultsStore(object):
 
         return self
 
+    def completed(self, pipeline, min_rows=1000):
+        """ Return True if all tables from pipeline have been written
+
+        Args:
+            pipeline (yatsm.pipeline.Pipeline): Pipeline of tasks
+            min_rows (int): Minimum number of rows to qualify as
+                having been completed
+
+        Returns:
+            bool: True if it looks like the data have been written
+        """
+        with self as store:
+            for (where, name) in pipeline.task_tables.values():
+                if where and name:
+                    try:
+                        table = store.h5file.get_node(where, name)
+                    except tb.NoSuchNodeError:
+                        return False
+                    else:
+                        if not isinstance(table, tb.Table):
+                            logger.debug('Node named "%s" is not a table' %
+                                         name)
+                            return False
+                        if table.shape[0] < min_rows:
+                            logger.debug('Table "%s" has fewer than %i rows' %
+                                         (name, min_rows))
+                            return False
+        return True
+
 # METADATA
     @property
     def basename(self):

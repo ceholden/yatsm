@@ -2,10 +2,9 @@
 """
 from __future__ import division
 
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 import logging
 from itertools import product
-import os
 import time
 
 import click
@@ -35,9 +34,7 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
           options.
     """
     # Imports inside CLI for speed
-    from yatsm import io
     from yatsm.utils import distribute_jobs
-    from yatsm.pipeline import Pipe, Pipeline
 
     # TODO: remove when not debugging
     import dask
@@ -68,7 +65,7 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
                                  overwrite=force_overwrite)
         futures[future] = window
 
-    n_good, n_skip, n_bad = 0, 0, 0
+    n_good, n_skip, n_fail = 0, 0, 0
     for future in executor.as_completed(futures):
         window = futures[future]
         try:
@@ -79,13 +76,13 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
             else:
                 n_skip += 1
             time.sleep(1)
-        except KeyboardInterrupt as ke:
+        except KeyboardInterrupt:
             logger.critical('Interrupting and shutting down')
             executor.shutdown()
             raise click.Abort()
-        except Exception as exc:
+        except Exception:
             logger.exception("Exception for window: {}".format(window))
-            n_bad += 1
+            n_fail += 1
             raise  # TODO: remove and log?
 
     logger.info('Complete: %s' % n_good)
@@ -99,8 +96,8 @@ def batch_block(config, readers, window, overwrite=False):
     import numpy as np
 
     from yatsm import io
-    from yatsm.results import HDF5ResultsStore, result_filename
-    from yatsm.pipeline import Pipe, Pipeline
+    from yatsm.results import HDF5ResultsStore
+    from yatsm.pipeline import Pipe
 
     logger = logging.getLogger('yatsm')
 
@@ -127,11 +124,10 @@ def batch_block(config, readers, window, overwrite=False):
         # TODO: read this from pre-existing results
         pipe = Pipe(data=data)
         pipeline = config.get_pipeline(pipe, overwrite=overwrite)
+        from IPython.core.debugger import Pdb; Pdb().set_trace()
 
         # TODO: finish checking for resume
-        # TODO: encapsulate?
-        if all([table_name in store.keys() for table_name in
-                pipeline.task_tables.values()]) and not overwrite:
+        if store.completed(pipeline) and not overwrite:
             logger.info('Already completed: {}'.format(store.filename))
             return
 
