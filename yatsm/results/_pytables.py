@@ -9,14 +9,16 @@ import six
 import tables as tb
 
 from yatsm.algorithms import SEGMENT_ATTRS
-from yatsm.gis import (Affine, BoundingBox, CRS, Polygon,
-                       GIS_TO_STR, STR_TO_GIS, bounds_to_polygon)
+from yatsm.gis import (Affine, BoundingBox, CRS, Polygon, GIS_TO_STR,
+                       STR_TO_GIS, bounds_to_polygon)
 from yatsm.results.utils import result_filename, RESULT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
 
+# TODO: maybe somehow make these CF-ish, or readable via xarray?
+#       https://github.com/shoyer/h5netcdf/blob/master/h5netcdf/core.py#L48
 GEO_TAGS = ('crs', 'bounds', 'transform', 'bbox', )
 
 
@@ -55,8 +57,9 @@ def dtype_to_table(dtype):
     return desc
 
 
-def create_table(h5file, where, name, result, index=True,
-                 expectedrows=10000, **table_config):
+def create_table(h5file, where, name, result, attrs=None,
+                 index=True, expectedrows=10000,
+                 **table_config):
     """ Create table to store results
 
     Args:
@@ -64,6 +67,7 @@ def create_table(h5file, where, name, result, index=True,
         where (str or tables.group.Group): Parent group to place table
         name (str): Name of new table
         result (np.ndarray): Results as a NumPy structured array
+        attrs (dict): Metadata to store as ``table.attrs``
         index (bool): Create index on :ref:`SEGMENT_ATTRS`
         expectedrows (int): Expected number of rows to store in table
         table_config (dict): Additional keyword arguments to be passed
@@ -73,6 +77,7 @@ def create_table(h5file, where, name, result, index=True,
         table.table.Table: HDF5 table
     """
     table_desc = dtype_to_table(result.dtype)
+
     if _has_node(h5file, where, name=name):
         logger.debug('Returning existing table %s/%s' % (where, name))
         table = h5file.get_node(where, name=name)
@@ -87,65 +92,9 @@ def create_table(h5file, where, name, result, index=True,
             for attr in SEGMENT_ATTRS:
                 getattr(table.cols, attr).create_index()
 
+        table.attrs.update(**(attrs or {}))
+
     return table
-
-
-def create_task_groups(h5file, tasks, filters=FILTERS, overwrite=False):
-    """ Create groups for tasks
-
-    Args:
-        h5file (tables.file.File): PyTables HDF5 file
-        tasks (list[Task]): A list of ``Task`` to create nodes
-            from
-        filters (table.Filter): PyTables filter
-        overwrite (bool): Allow overwriting of existing table
-
-    Returns:
-        tuple (Task, tables.group.Group): Each task that creates a group and
-        the group it created
-    """
-    groups = []
-    for task in tasks:
-        if task.output_record:
-            where, tablename = task.record_result_location(tasks)
-            group, groupname = where.rsplit('/', 1)
-            if not _has_node(h5file, where, name=groupname):
-                g = h5file.create_group(group, groupname, title=task.name,
-                                        filters=filters, createparents=False)
-            else:
-                g = h5file.get_node(group, groupname)
-            groups.append((task, g))
-
-    return groups
-
-
-def create_task_tables(h5file, tasks, results, filters=FILTERS,
-                       overwrite=False, **tb_config):
-    """ Create groups for tasks
-
-    Args:
-        h5file (tables.file.File): PyTables HDF5 file
-        tasks (list[Task]): A list of ``Task`` to create nodes
-            from
-        results (dict): Result :ref:`np.ndarray` structure arrays organized by
-            name in a dict
-        filters (table.Filter): PyTables filter
-        overwrite (bool): Allow overwriting of existing table
-
-    Returns:
-        list[tuple (Task, tables.Table)]: Each task that creates a group and
-        the group it created
-    """
-    tables = []
-    for task in tasks:
-        if task.output_record:
-            where, tablename = task.record_result_location(tasks)
-            t = create_table(h5file, where, tablename,
-                             results[task.output_record],
-                             index=True,
-                             **tb_config)
-            tables.append((task, t))
-    return tables
 
 
 def georeference(h5file, **tags):
@@ -275,14 +224,9 @@ class HDF5ResultsStore(object):
                    crs=crs, bounds=bounds, transform=transform, bbox=bbox,
                    **open_kwds)
 
-# WRITING
-    @staticmethod
-    def _write_row(h5file, result, tables):
-        for task, table in tables:
-            table.append(result[task.output_record])
-            table.flush()
 
-    def write_result(self, pipeline, result, overwrite=None):
+# WRITING
+    def write_result(self, pipeline, result, overwrite=None, **kwds):
         """ Write result to HDF5
 
         Args:
@@ -300,13 +244,16 @@ class HDF5ResultsStore(object):
         result = result.get('record', result)
         do_overwrite = self.overwrite if overwrite is None else overwrite
         with self as store:
-            tasks = pipeline.tasks.values()
-            tables = create_task_tables(self.h5file, tasks, result,
-                                        overwrite=do_overwrite)
-            store._write_row(store.h5file, result, tables)
-
-            # TODO: each task should have some description from func
-            #       to write for metadata
+            for task, (where, name) in pipeline.task_tables.items():
+                table = create_table(store.h5file,
+                                     where,
+                                     name,
+                                     result,
+                                     attrs=task.metadata,
+                                     overwrite=do_overwrite,
+                                     **kwds)
+                table.append(result[task.output_record])
+                table.flush()
 
         return self
 

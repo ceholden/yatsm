@@ -133,9 +133,8 @@ class Task(object):
             computation
         """
         deps = set()
-        req = self.require_record
         for task in tasks:
-            if task.output_record and task.output_record in req:
+            if task.output_record in self.require_record:
                 deps.add(task)
                 deps.update(task.record_dependencies(tasks))
         return list(deps)[::-1]
@@ -145,32 +144,14 @@ class Task(object):
         """
         return results.get(self.output_record)
 
-    def record_result_location(self, tasks):
-        """ Define what HDF5 group/table this task belongs in
-
-        Args:
-            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a
-                pipeline)
-
-        Returns:
-            tuple (str, str): Return the group root (e.g., '/ccdc') and the
-            table name (e.g., 'ccdc')
+    @property
+    def metadata(self):
+        """ dict: Attributes to store as metadata
         """
-        if not self.output_record:
-            return None
-        group = [task.name for task in self.record_dependencies(tasks)
-                 if task.create_group]
-
-        where = '/'
-        if group:
-            where += '/'.join(group)
-        elif self.create_group:
-            where += '%s' % self.name
-        else:
-            raise PCError("Task '{}' has no root segment and does not create "
-                          "a segment".format(self.name))
-
-        return where, self.name
+        return dict(
+            config=self.spec,
+            version=self.task.version
+        )
 
 # SHORTCUT GETTERS
     @property
@@ -307,19 +288,45 @@ class Pipeline(object):
         pl = self.delayed(self.eager_pipeline + self.pipeline, pipe)
         return pl.visualize(rankdir=rankdir, **visualize_kwds)
 
-# HELPERS
+# TASK STORAGE
+    def task_table(self, task):
+        """ Define what HDF5 group/table this task belongs in
+
+        Args:
+            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a
+                pipeline)
+
+        Returns:
+            tuple (str, str): Return the group root (e.g., '/ccdc') and the
+            table name (e.g., 'ccdc') if the task outputs a table, otherwise
+            (None, None)
+        """
+        if not task.output_record:
+            return (None, None)
+
+        group = [_task.name for _task in
+                 task.record_dependencies(self.tasks.values())
+                 if task.create_group]
+
+        where = '/'
+        if group:
+            where += '/'.join(group)
+        elif task.create_group:
+            where += '%s' % task.name
+        else:
+            raise PCError("Task '{}' has no root segment and does not create "
+                          "a segment".format(task.name))
+
+        return (where, task.name)
+
     @property
     def task_tables(self):
-        """ dict: :ref:`Task` name (str) -> result file table location (str)
+        """ dict: :ref:`Task` -> result file table location (str)
         """
-        task_tables = {}
-        for taskname, task in self.tasks.items():
-            location = task.record_result_location(self.tasks.values())
-            if location:
-                group, tablename = location
-                task_tables[taskname] = group + '/' + tablename
-        return task_tables
+        return dict((task, self.task_table(task)) for task in
+                    self.tasks.values())
 
+# HELPERS
     @staticmethod
     def _check_eager(tasks, pipe):
         """ Check if it looks like eager task results have been computed
