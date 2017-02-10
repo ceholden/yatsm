@@ -9,8 +9,9 @@ import logging
 from pkg_resources import iter_entry_points
 
 from ._validation import eager_task, outputs, requires, version
-from .preprocess import dmatrix, norm_diff
 from .change import pixel_CCDCesque
+from .preprocess import dmatrix, norm_diff
+from .stash import sklearn_dump, sklearn_load
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,9 @@ SEGMENT_TASKS = {
 
 
 PIPELINE_TASKS = {
+    # STASH
+    'sklearn_load': sklearn_load,
+    'sklearn_dump': sklearn_dump,
     # DATA MANIPULATION
     'dmatrix': dmatrix,
     'norm_diff': norm_diff
