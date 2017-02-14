@@ -10,6 +10,7 @@ addons:
     apt:
         packages:
             - gfortran
+            - r-base-dev
 before_install:
     - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
           wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -22,6 +23,7 @@ before_install:
     - conda config --add channels conda-forge
     - conda update -q conda
     - conda info -a
+    - conda install conda-env  # no longer installed by default?
 install:
     # Edit in the correct Python version into environment.yaml
     - sed -i "s/- python/- python=${TRAVIS_PYTHON_VERSION}/g" environment.yaml
@@ -38,9 +40,21 @@ script:
     # See: http://stackoverflow.com/questions/26875191/analyzing-coverage-of-numba-wrapped-functions
     - NUMBA_DISABLE_JIT=1 coverage run --source yatsm -m py.test
 after_success:
+    # Report coverage
     - pip install coveralls
     - coverage report
     - coveralls
+    # Docs
+    - source activate test
+    - pip install -r docs/requirements-docs.txt
+    - sphinx-apidoc -f -e -o docs/source/yatsm yatsm/
+    - bash docs/scripts/deploy-to-gh-pages.sh
 before_cache:
     # Deactivate conda so we use system 'curl'
     - source deactivate
+env:
+    global:
+        - GITHUB_REPO: "github.com/ceholden/yatsm.git"
+        - secure: "eTgBeEOlCAD6z68ARQQV352xYZGzxl29QolGh/j3pycsNbGD1eduGBYWH8BRu6rvqNLMR0TOe2wqX3UWjZEYdeZYwbv3foebKEeGM7QUI2mrAElXBySNFoDdmm1ykVvb3JhCUrc+DFhIHO3MG7LFd0lAeTa46gnQpBCZVJKNtBQ="
+notifications:
+    email: false
