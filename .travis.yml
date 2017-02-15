@@ -30,6 +30,8 @@ install:
     # Create conda matching requirements
     - conda env create -n test -f environment.yaml
     - source activate test
+    # Temporary fix for rpy2
+    - CFLAGS="-I${CONDA_PREFIX}/include ${CFLAGS}" pip install rpy2
     # Rest of dependencies
     - "pip install -r requirements/dev.txt"
     # Install YATSM

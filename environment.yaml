@@ -25,7 +25,7 @@ dependencies:
     # Accelerated functions w/ numba (OPTIONAL)
     - numba>=0.22.0
     # Python interface to R (OPTIONAL)
-    # - rpy2>=2.5.6
+    # - rpy2  # waiting on conda-forge version
     - r-base
     - pip:
         # GLMNET (OPTIONAL)
@@ -33,4 +33,3 @@ dependencies:
         # Required but missing from conda
         - palettable>=2.0.0
         - click_plugins>=1.0
-        - rpy2
