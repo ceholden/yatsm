@@ -376,9 +376,8 @@ class HDF5ResultsStore(object):
             try:
                 self.h5file.close()
             except AttributeError as ae:
-                logger.debug('Would have caused error when closing %s' %
-                             self.filename)
-                pass
+                logger.debug('Would have caused an error when closing {0}'
+                             .format(self.filename), ae)
 
     def __del__(self):
         if self.h5file:

@@ -134,10 +134,10 @@ def batch_block(config, readers, window, overwrite=False):
         pipe = pipeline.run_eager(pipe)
 
         record_results = defaultdict(list)
-        n = data.y.shape[0] * data.x.shape[0]
+        n_ = data.y.shape[0] * data.x.shape[0]
         for i, (y, x) in enumerate(product(data.y.values, data.x.values)):
             logger.debug('Processing pixel {pct:>4.2f}%: y/x {y}/{x}'
-                         .format(pct=i / n * 100, y=y, x=x))
+                         .format(pct=i / n_ * 100, y=y, x=x))
             pix_pipe = sel_pix(pipe, y, x)
 
             result = pipeline.run(pix_pipe, check_eager=False)

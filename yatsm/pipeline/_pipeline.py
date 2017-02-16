@@ -150,7 +150,7 @@ class Task(object):
         """
         return dict(
             config=self.spec,
-            version=self.task.version
+            version=self.func.version
         )
 
 # SHORTCUT GETTERS
