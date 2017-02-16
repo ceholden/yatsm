@@ -241,10 +241,11 @@ class HDF5ResultsStore(object):
         Returns:
             HDF5ResultsStore
         """
-        result = result.get('record', result)
         do_overwrite = self.overwrite if overwrite is None else overwrite
         with self as store:
             for task, (where, name) in pipeline.task_tables.items():
+                if not where or not name:
+                    continue
                 table = create_table(store.h5file,
                                      where,
                                      name,

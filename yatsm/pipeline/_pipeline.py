@@ -324,7 +324,7 @@ class Pipeline(object):
         """ dict: :ref:`Task` -> result file table location (str)
         """
         return dict((task, self.task_table(task)) for task in
-                    self.tasks.values())
+                    self.tasks.values() if task.output_record)
 
 # HELPERS
     @staticmethod
