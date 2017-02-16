@@ -400,18 +400,45 @@ class HDF5ResultsStore(object):
                 yield node._v_pathname
 
     def items(self):
-        """ Yields key/value pairs for groups
+        """ Yields key/value pairs for nodes
         """
         with self as store:
-            for group in store.h5file.walk_groups():
-                yield group._v_pathname, group
+            for node in store.h5file.walk_nodes():
+                yield node._v_pathname, node
 
-    def __getitem__(self, key):
+    def groups(self):
+        """ Yields key/value pairs for :ref:`tables.Group` stored
+        """
+        for name, node in self.items():
+            if isinstance(node, tb.Group):
+                yield name, node
+
+    def tables(self):
+        """ Yields key/value pairs for :ref:`tables.Table` stored
+        """
         with self as store:
+            for node in store.h5file.walk_nodes(classname='Table'):
+                yield node._v_pathname, node
+
+    def __getitem__(self, key, col=None):
+        """ Allow table/group access as str, or tuple that also gives Column
+        """
+        with self as store:
+            if isinstance(key, tuple):
+                key, col = key
             key = key if key.startswith('/') else '/' + key
+
             if key not in store.keys():
                 raise KeyError('Cannot find node {} in HDF5 store'.format(key))
-            return store.h5file.get_node(key)
+
+            node = store.h5file.get_node(key)
+            if col:
+                if col not in node.cols._v_colnames:
+                    raise KeyError('Cannot find Column {} in node {}'
+                                   .format(col, node))
+                return store.h5file.get_node(key).cols
+            else:
+                return node
 
     def __setitem__(self, key, value):
         with self as store:
