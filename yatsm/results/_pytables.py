@@ -318,25 +318,29 @@ class HDF5ResultsStore(object):
     def crs(self):
         """ rasterio.crs.CRS: Coordinate reference system
         """
-        return get_georeference(self.h5file, 'crs')
+        with self as store:
+            return get_georeference(store.h5file, 'crs')
 
     @property
     def bounds(self):
         """ BoundingBox: Bounding box of data in file
         """
-        return get_georeference(self.h5file, 'bounds')
+        with self as store:
+            return get_georeference(store.h5file, 'bounds')
 
     @property
     def transform(self):
         """ affine.Affine: Affine transform
         """
-        return get_georeference(self.h5file, 'transform')
+        with self as store:
+            return get_georeference(store.h5file, 'transform')
 
     @property
     def bbox(self):
         """ shapely.geometry.Polygon: Bounding box as polygon
         """
-        return get_georeference(self.h5file, 'bbox')
+        with self as store:
+            return get_georeference(store.h5file, 'bbox')
 
 # CONTEXT HELPERS
     def __enter__(self):
