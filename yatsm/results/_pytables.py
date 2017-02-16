@@ -1,8 +1,11 @@
 """ Results storage in HDF5 datasets using PyTables
 """
+import datetime as dt
 import errno
+import fnmatch
 import logging
 import os
+import re
 
 import numpy as np
 import six
@@ -46,19 +49,42 @@ def dtype_to_table(dtype):
     desc = {}
 
     for idx, name in enumerate(dtype.names):
-        dt, _ = dtype.fields[name]
-        if issubclass(dt.type, np.datetime64):
+        _dt, _ = dtype.fields[name]
+        if issubclass(_dt.type, np.datetime64):
             tb_dtype = tb.Description({name: tb.Time64Col(pos=idx)})
         else:
-            tb_dtype, byteorder = tb.descr_from_dtype(np.dtype([(name, dt)]))
+            tb_dtype, byteorder = tb.descr_from_dtype(np.dtype([(name, _dt)]))
         _tb_dtype = tb_dtype._v_colobjects
         _tb_dtype[name]._v_pos = idx
         desc.update(_tb_dtype)
     return desc
 
 
+def read_where(table, condition, fields, **where_kwds):
+    """ A better version of `table.read_where` that accepts multiple fields
+
+    Args:
+        table (tb.Table): Table
+        condition (str): Search condition
+        fields (list[str]): Fields to return
+        where_kwds (dict): Keyword options to pass to :ref:`tables.Table.where`
+            and other similar functions
+
+    Returns:
+        np.ndarray: Structured array of results
+    """
+    idx = table.get_where_list(condition, **where_kwds)
+
+    out = np.empty(idx.size, dtype=[(col, table.coldtypes[col])
+                                    for col in fields])
+
+    for col in fields:
+        out[col] = table.read_coordinates(idx, field=col)
+    return out
+
+
 def create_table(h5file, where, name, result, attrs=None,
-                 index=True, expectedrows=10000,
+                 index=True, expectedrows=10000, overwrite=False,
                  **table_config):
     """ Create table to store results
 
@@ -70,6 +96,7 @@ def create_table(h5file, where, name, result, attrs=None,
         attrs (dict): Metadata to store as ``table.attrs``
         index (bool): Create index on :ref:`SEGMENT_ATTRS`
         expectedrows (int): Expected number of rows to store in table
+        overwrite (bool): Overwrite existing table
         table_config (dict): Additional keyword arguments to be passed
             to ``h5file.create_table``
 
@@ -78,7 +105,7 @@ def create_table(h5file, where, name, result, attrs=None,
     """
     table_desc = dtype_to_table(result.dtype)
 
-    if _has_node(h5file, where, name=name):
+    if _has_node(h5file, where, name=name) and not overwrite:
         logger.debug('Returning existing table %s/%s' % (where, name))
         table = h5file.get_node(where, name=name)
     else:
@@ -92,7 +119,8 @@ def create_table(h5file, where, name, result, attrs=None,
             for attr in SEGMENT_ATTRS:
                 getattr(table.cols, attr).create_index()
 
-        table.attrs.update(**(attrs or {}))
+        for key, value in attrs.items():
+            table.attrs[key] = attrs[key]
 
     return table
 
@@ -224,6 +252,86 @@ class HDF5ResultsStore(object):
                    crs=crs, bounds=bounds, transform=transform, bbox=bbox,
                    **open_kwds)
 
+# READING
+    def find_column(self, pattern, where='/', regex=False):
+        """ Return :ref:`tb.Column` matching pattern
+        """
+        pattern = pattern if regex else fnmatch.translate(pattern)
+
+        with self as store:
+            for node in store.h5file.walk_nodes(where=where,
+                                                classname='Table'):
+                colnames = [c for c in node.cols._v_colnames
+                            if re.match(pattern, c)]
+                for colname in colnames:
+                    yield colname
+
+    def query(self, name, columns=(),
+              px=None, py=None, d_start=None, d_end=None, d_break=None,
+              *query_terms):
+        """ Yield table results from a search query
+
+        For arguments where `slice` are possible arguments (coordinates and
+        dates), passing a single value will construct a query using the
+        following sign conventions:
+
+            * px ==
+            * py ==
+            * d_start <
+            * d_end >
+            * d_break >
+
+        Args:
+            name (str): Name of table containg segment results
+            column (str, or iterable): One or more columns to include in
+                returned results
+            px (float, or slice): One X coordinate, or a range of X coordinates
+            px (float, or slice): One Y coordinate, or a range of Y coordinates
+            d_start (datetime, or slice): One date, or a range of dates
+            d_end (datetime, or slice): One date, or a range of dates
+            d_break (datetime, or slice): One date, or a range of dates
+            *query_terms: Additional search terms to send to ``Table.where``
+
+        """
+        # TODO: deal when we have a table join vs inside table
+        # TODO: look into "condavars" argument
+        if isinstance(columns, six.string_types):
+            columns = (columns, )
+
+        table = self[name]
+
+        def _build_dt(name, sign, d):
+            if isinstance(d, dt.datetime):
+                # TODO: have attr on self to decide time storage convention
+                return '(%s %s %d)' % (name, sign, d.toordinal())
+            elif isinstance(d, slice):
+                return ' & '.join([_build_dt(name, s, i) for (s, i) in
+                                   (('start', d.start), ('stop', d.stop))])
+
+        def _build_coord(name, sign, coord):
+            if isinstance(coord, (float, int)):
+                return '%s %s %d' % (name, sign, coord)
+            elif isinstance(coord, slice):
+                return ' & '.join([_build_coord(name, s, i) for (s, i) in
+                                   (('start', coord.start),
+                                    ('stop', coord.stop))])
+
+        px = _build_coord('px', '==', px)
+        py = _build_coord('py', '==', py)
+        d_start = _build_dt('start_day', '>', d_start)
+        d_end = _build_dt('end_day', '>', d_end)
+        d_break = _build_dt('break_day', '>', d_break)
+
+        query = ' & '.join([item for item in
+                            (px, py, d_start, d_end, d_break, ) + query_terms
+                            if item])
+
+        logger.debug('Searching: %s' % query)
+        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
+        if columns:
+            return read_where(table, query, columns)
+        else:
+            return table.read_where(table, query)
 
 # WRITING
     def write_result(self, pipeline, result, overwrite=None, **kwds):
@@ -249,7 +357,7 @@ class HDF5ResultsStore(object):
                 table = create_table(store.h5file,
                                      where,
                                      name,
-                                     result,
+                                     result[task.output_record],
                                      attrs=task.metadata,
                                      overwrite=do_overwrite,
                                      **kwds)
