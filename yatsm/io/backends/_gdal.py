@@ -123,17 +123,21 @@ class GDALTimeSeries(object):
     def time(self):
         return self.df['date']
 
-    @property
-    def _src(self):
+    def _src(self, time=None):
         """ An optionally memoized generator on time series datasets
         """
+        KEY = '_src'
+
         if self.keep_open:
-            if not hasattr(self, '_src_open'):
-                with rasterio.Env():  # TODO: pass options
-                    self._src_open = [rasterio.open(f, 'r') for
-                                      f in self.df['filename']]
-            for _src in self._src_open:
-                yield _src
+            if KEY not in self.df:
+                self.df[KEY] = None
+            with rasterio.Env():  # TODO: pass options
+                null = (self.df[KEY] if time is None else
+                        self.df.loc[time, KEY]).isnull()
+                self.df.loc[null, KEY] = [rasterio.open(f, 'r') for f in
+                                          self.df.loc[null, 'filename']]
+            for ds in self.df[KEY] if time is None else self.df.loc[time, KEY]:
+                yield ds
         else:
             with rasterio.Env():  # TODO: pass options
                 for f in self.df['filename']:
