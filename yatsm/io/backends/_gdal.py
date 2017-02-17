@@ -101,7 +101,7 @@ class GDALTimeSeries(object):
                 self.transform = src.transform
                 self.bounds = src.bounds
                 self.res = src.res
-                self.ul = src.ul(0, 0)
+                self.ul = src.xy(0, 0, offset='ul')
                 self.height = src.height
                 self.width = src.width
                 self.shape = src.shape
@@ -143,7 +143,7 @@ class GDALTimeSeries(object):
                 for f in self.df['filename']:
                     yield rasterio.open(f, 'r')
 
-    def read(self, window=None, out=None):
+    def read(self, indexes=None, out=None, window=None, time=None):
         """ Read time series, usually inside of a specified window
 
         .. todo::
@@ -151,40 +151,53 @@ class GDALTimeSeries(object):
             Allow reading of a subset of bands (make like ``rasterio``)
 
         Args:
-            window (tuple): A pair (tuple) of pairs of ints specifying
-                the start and stop indices of the window rows and columns
+            indexes (list[int] or int): One or more band numbers to retrieve.
+                If a `list`, returns a 3D array; otherwise a 2D
             out (np.ndarray): A NumPy array of pre-allocated memory to read
                 the time series into. Its shape should be::
 
                 (len(observations), len(bands), len(rows), len(columns))
 
+            window (tuple): A pair (tuple) of pairs of ints specifying
+                the start and stop indices of the window rows and columns
+            time (slice): Time period slice
+
         Returns:
             np.ndarray: A NumPy array containing the time series data
         """
-        # Parse geographic/projected coordinates from window query
-        ((row_min, row_max), (col_min, col_max)) = window
-        x_min, y_min = (col_min, row_max) * self.transform
-        x_max, y_max = (col_max, row_min) * self.transform
-        coord_bounds = (x_min, y_min, x_max, y_max)
+        if window:
+            # Parse geographic/projected coordinates from window query
+            ((row_min, row_max), (col_min, col_max)) = window
+            x_min, y_min = (col_min, row_max) * self.transform
+            x_max, y_max = (col_max, row_min) * self.transform
+            coord_bounds = (x_min, y_min, x_max, y_max)
 
-        shape = (self.length, self.count,
-                 window[0][1] - window[0][0],
-                 window[1][1] - window[1][0])
+            shape = (self.length, self.count,
+                     window[0][1] - window[0][0],
+                     window[1][1] - window[1][0])
+        else:
+            from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
+            shape = (self.length, self.count, ) + self.shape
+            coord_bounds = self.bounds
+
         if not isinstance(out, np.ndarray):
             # TODO: check `out` is compatible if provided by user
             logger.debug('Allocating memory to read data of shape {}'
                          .format(shape))
             out = np.empty((shape), dtype=self.dtype)
 
-        for idx, src in enumerate(self._src):
+        for idx, src in enumerate(self._src(time=time)):
             _window = src.window(*coord_bounds, boundless=True)
-            src.read(window=_window, out=out[idx, ...], boundless=True)
+            src.read(indexes=indexes,
+                     out=out[idx, ...],
+                     window=_window,
+                     masked=True,
+                     boundless=True)
 
         return out
 
-    def read_dataarray(self, window=None,
-                       name=None, band_names=None,
-                       out=None):
+    def read_dataarray(self, indexes=None, out=None, window=None, time=None,
+                       name=None, band_names=None):
         """ Read time series, usually inside of a window, as xarray.DataArray
 
         Args:
@@ -205,24 +218,31 @@ class GDALTimeSeries(object):
             IndexError: if `band_names` is specified but is not the same length
             as the number of bands, `self.count`
         """
+        n_band = len(indexes) if indexes else self.count
+
         if not band_names:
             pad = len(str(self.count))
             band_names = ['Band_' + str(b).zfill(pad) for b in
-                          range(1, self.count + 1)]
-
-        if band_names and len(band_names) != self.count:
+                          range(1, n_band + 1)]
+        if len(band_names) != n_band:
+            raise IndexError('Provided {0} band names but asked for {1} bands'
+                             .format(len(band_names), n_band))
+        elif len(band_names) > self.count:
             raise IndexError('{0.__class__.__name__} has {0.count} bands but '
-                             '`band_names` provided has {1} names'
-                             .format(self, len(band_names)))
+                             'you asked for {1}'
+                             .format(self, n_band))
 
-        values = self.read(window=window, out=out)
+        dates = (self.df.loc[time, 'date'] if time is not None
+                 else self.df['date'])
+
+        values = self.read(indexes=indexes, out=out, window=window, time=time)
         coords_y, coords_x = self.window_coords(window)
 
         da = xr.DataArray(
             values,
             name=name,
             dims=['time', 'band', 'y', 'x'],
-            coords=[self.df['date'], band_names, coords_y, coords_x]
+            coords=[dates, band_names, coords_y, coords_x]
         )
 
         da.attrs['crs'] = self.crs.to_string()
