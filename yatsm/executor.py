@@ -1,6 +1,5 @@
 """ Handler for execution using dask or dask.distributed
 """
-from functools import partial
 import logging
 import sys
 
@@ -10,8 +9,7 @@ HAS_CONCURRENT = True
 HAS_DISTRIBUTED = True
 
 try:
-    from concurrent.futures import (Executor,
-                                    Future,
+    from concurrent.futures import (Future,
                                     ProcessPoolExecutor,
                                     ThreadPoolExecutor,
                                     as_completed)
@@ -34,7 +32,26 @@ EXECUTOR_DEFAULTS = {
 }
 
 
-class SyncExecutor(object):
+class _Executor(object):
+
+    def submit(self, func, *args, **kwds):
+        raise NotImplementedError('Subclass should do this')
+
+    @staticmethod
+    def _result(future):
+        raise NotImplementedError('Subclass should do this')
+
+    @staticmethod
+    def as_completed(futures):
+        raise NotImplementedError('Subclass should do this')
+
+    def shutdown(self, timeout=10, futures=None):
+        raise NotImplementedError('Subclass should do this')
+
+
+class SyncExecutor(_Executor):
+    """ :mod:`concurrent.futures` executor wrapper
+    """
 
     def submit(self, func, *args, **kwds):
         future = Future()
@@ -65,7 +82,9 @@ class SyncExecutor(object):
         return
 
 
-class ConcurrentExecutor(object):
+class ConcurrentExecutor(_Executor):
+    """ :mod:`concurrent.futures` executor wrapper
+    """
     def __init__(self, executor):
         self._executor = executor
 
@@ -80,8 +99,8 @@ class ConcurrentExecutor(object):
         self._executor.shutdown(wait=timeout > 0)
 
 
-class DistributedExecutor(object):
-    """ concurrent.futures-like dask.distributed executor
+class DistributedExecutor(_Executor):
+    """ :mod:`concurrent.futures`-like dask.distributed executor
     """
     def __init__(self, executor):
         self._executor = executor
