@@ -1,13 +1,13 @@
 """ YATSM command line interface """
 from datetime import datetime as dt
 import functools
-import os
+import logging
 
 import click
-import cligj
-from future.utils import raise_with_traceback
 
 from yatsm.executor import get_executor, EXECUTOR_DEFAULTS, EXECUTOR_TYPES
+
+logger = logging.getLogger(__name__)
 
 
 # CLI VALIDATORS
@@ -59,15 +59,16 @@ def callback_nodata(ctx, param, value):
             return float(value)
         except:
             raise click.BadParameter('{!r} is not a number'.format(value),
-                                      param=param, param_hint='nodata')
+                                     param=param, param_hint='nodata')
 
 
 # ARGUMENTS
 def _callback_arg_config(ctx, param, value):
-    from .._core import Config
+    from yatsm.api import Config
     try:
         config = Config.from_file(value)
-    except Exception as exc:
+    except Exception as err:
+        logger.exception('Cannot parse config file %s' % value, err)
         click.BadParameter('Cannot parse config file %s' % value)
         raise
     else:
@@ -207,12 +208,12 @@ mapping_decorations = functools.partial(_combined_decorations,
 
 # Use segment after DATE
 opt_after = click.option('--after', is_flag=True,
-                         help='Use time segment after DATE if needed for map')
+                         help='Use time segment after DATE if needed')
 
 
 # Use segment before DATE
 opt_before = click.option('--before', is_flag=True,
-                          help='Use time segment before DATE if needed for map')
+                          help='Use time segment before DATE if needed')
 
 
 # Output QA/QC band?
@@ -225,11 +226,8 @@ opt_executor = click.option(
     '--executor',
     default=(EXECUTOR_TYPES[0], None), show_default=True,
     type=(click.Choice(EXECUTOR_TYPES), str),
-    help='Pipeline executor (e.g., {})'.format(
-            ', '.join(['"%s %s"' % (k, v) for k, v
-            in EXECUTOR_DEFAULTS.items()
-        ])
-    ),
+    help='Pipeline executor (e.g., {})'
+         .format(', '.join(['"%s %s"' % (k, v) for k, v
+                 in EXECUTOR_DEFAULTS.items()])),
     callback=lambda ctx, param, value: get_executor(*value)
 )
-
