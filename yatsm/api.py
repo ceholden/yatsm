@@ -3,9 +3,11 @@
 import copy
 
 from yatsm.config import validate_and_parse_configfile
-from yatsm.utils import cached_property, find
+from yatsm.utils import cached_property as _cached_property, find as _find
+from yatsm.io import get_readers
 from yatsm.results import HDF5ResultsStore
-from yatsm.results.utils import pattern_to_regex
+from yatsm.results.utils import pattern_to_regex as _pattern_to_regex
+from yatsm.pipeline import Pipe, Pipeline
 
 
 class Config(object):  # TODO: rename?
@@ -23,9 +25,8 @@ class Config(object):  # TODO: rename?
         return cls(c)
 
     # READERS
-    @cached_property
+    @_cached_property
     def readers(self):
-        from yatsm.io import get_readers
         return get_readers(self._config['data']['datasets'])
 
     @property
@@ -45,7 +46,6 @@ class Config(object):  # TODO: rename?
         Returns:
             yatsm.pipeline.Pipeline: YATSM pipeline
         """
-        from yatsm.pipeline import Pipe, Pipeline
         pipe = pipe or Pipe()
         return Pipeline.from_config(self.tasks, pipe, overwrite=overwrite)
 
@@ -56,9 +56,9 @@ class Config(object):  # TODO: rename?
         output = output or self.results['output']
         output_prefix = output_prefix or self.results['output_prefix']
 
-        pattern = pattern_to_regex(output_prefix or
-                                   self.results.get('output_prefix'))
-        results = find(output, pattern, regex=True)
+        pattern = _pattern_to_regex(output_prefix or
+                                    self.results.get('output_prefix'))
+        results = _find(output, pattern, regex=True)
         for result in results:
             yield HDF5ResultsStore(result, **kwds)
 
