@@ -319,7 +319,7 @@ class HDF5ResultsStore(object):
         px = _build_coord('px', '==', px)
         py = _build_coord('py', '==', py)
         d_start = _build_dt('start_day', '>', d_start)
-        d_end = _build_dt('end_day', '>', d_end)
+        d_end = _build_dt('end_day', '<', d_end)
         d_break = _build_dt('break_day', '>', d_break)
 
         query = ' & '.join([item for item in
