@@ -16,9 +16,9 @@ from ..utils import (distribute_jobs, get_output_name, get_image_IDs,
 from ..algorithms import postprocess
 try:
     from ..phenology import longtermmean as pheno
-except ImportError as e:
+except ImportError as err:
     pheno = None
-    pheno_exception = e.message
+    pheno_exception = str(err)
 from ..version import __version__
 
 logger = logging.getLogger('yatsm')
