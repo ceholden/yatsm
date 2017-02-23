@@ -3,8 +3,8 @@
 import pytest
 import toolz
 
-from yatsm.pipeline._task_validation import (check, requires, outputs,
-                                             REQUIRE, OUTPUT)
+from yatsm.pipeline._validation import (check, requires, outputs,
+                                        REQUIRE, OUTPUT)
 from yatsm.errors import PipelineConfigurationError
 
 
