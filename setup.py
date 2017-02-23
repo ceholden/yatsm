@@ -28,7 +28,7 @@ with open('README.rst') as f:
 # Installation requirements
 extras_require = {
     'core': [
-        'future', 'six',
+        'six',
         'numpy', 'pandas',
         'scipy',
         'matplotlib',
@@ -70,12 +70,8 @@ entry_points = '''
 
     [yatsm.cli]
     batch=yatsm.cli.batch:batch
-    cache=yatsm.cli.cache:cache
-    pixel=yatsm.cli.pixel:pixel
-    train=yatsm.cli.train:train
-    classify=yatsm.cli.classify:classify
-    map=yatsm.cli.map:map
     changemap=yatsm.cli.changemap:changemap
+    map=yatsm.cli.map:map
 
     [yatsm.algorithms.change]
     CCDCesque=yatsm.algorithms.ccdc:CCDCesque
