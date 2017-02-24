@@ -11,9 +11,19 @@ import scipy.stats
 import statsmodels.api as sm
 
 from ..regression.diagnostics import rmse
-from ..utils import date2index
 
 logger = logging.getLogger('yatsm')
+
+
+def date2index(dates, d):
+    """ Returns index of sorted array `dates` containing the date `d`
+    Args:
+      dates (np.ndarray): array of dates (or numbers really) in sorted order
+      d (int, float): number to search for
+    Returns:
+      int: index of `dates` containing value `d`
+    """
+    return np.searchsorted(dates, d, side='right')
 
 
 # POST-PROCESSING
