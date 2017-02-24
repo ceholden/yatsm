@@ -60,7 +60,7 @@ def dtype_to_table(dtype):
     return desc
 
 
-def read_where(table, condition, fields, **where_kwds):
+def read_where(table, condition, fields, out=None, **where_kwds):
     """ A better version of `table.read_where` that accepts multiple fields
 
     Args:
@@ -75,8 +75,16 @@ def read_where(table, condition, fields, **where_kwds):
     """
     idx = table.get_where_list(condition, **where_kwds)
 
-    out = np.empty(idx.size, dtype=[(col, table.coldtypes[col])
-                                    for col in fields])
+    _dtype = np.dtype([(col, table.coldtypes[col]) for col in fields])
+    if out is None:
+        out = np.empty(idx.size, dtype=_dtype)
+    else:
+        for _descr in _dtype.descr:
+            if _descr not in out.dtype.descr:
+                raise TypeError('Provided workspace array "out" is '
+                                'incompatible with required datatypes: {}'
+                                .format(_dtype.descr))
+        logger.debug('Using provided `out` workspace array. TODO check compat')
 
     for col in fields:
         out[col] = table.read_coordinates(idx, field=col)
@@ -327,7 +335,6 @@ class HDF5ResultsStore(object):
                             if item])
 
         logger.debug('Searching: %s' % query)
-        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
         if columns:
             return read_where(table, query, columns)
         else:
