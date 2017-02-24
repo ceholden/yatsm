@@ -2,6 +2,7 @@
 """
 from yatsm.algorithms import CCDCesque
 from yatsm.pipeline.tasks._validation import outputs, requires, version
+from yatsm.pipeline.language import RECORD
 
 
 @version(CCDCesque.__algorithm__)
@@ -38,6 +39,6 @@ def pixel_CCDCesque(pipe, require, output, config=None):
     model.py, model.px = Y.y, Y.x
 
     model = model.fit(X, Y.values, XY['ordinal'])
-    pipe.record[output['record'][0]] = model.record
+    pipe.record[output[RECORD][0]] = model.record
 
     return pipe
