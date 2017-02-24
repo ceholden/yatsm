@@ -54,7 +54,7 @@ else:
 # Resume YATSM imports after NumPy has been configured
 import yatsm  # flake8: noqa
 from . import options  # flake8: noqa
-from .logger import config_logging
+from ._logger import config_logging
 
 
 # YATSM CLI group

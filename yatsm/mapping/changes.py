@@ -5,62 +5,12 @@ import logging
 
 import numpy as np
 
-from ..utils import find_results, iter_records
-
-logger = logging.getLogger('yatsm')
+logger = logging.getLogger(__name__)
 
 
-def get_magnitude_indices(results):
-    """ Finds indices of result containing magnitude of change information
-
-    Args:
-      results (iterable): list of result files to check within
-
-    Returns:
-      np.ndarray: indices containing magnitude change information from the
-        tested indices
-
-    Raises:
-        KeyError: Raise KeyError when a required result output is missing
-            from the saved record structure
-
-    """
-    for result in results:
-        try:
-            rec = np.load(result)
-        except (ValueError, AssertionError) as e:
-            logger.warning('Error reading %s. May be corrupted: %s' %
-                           (result, e.message))
-            continue
-
-        # First search for record of `test_indices`
-        if 'test_indices' in rec.files:
-            logger.debug('Using `test_indices` information for magnitude')
-            return rec['test_indices']
-
-        # Fall back to using non-zero elements of 'record' record array
-        rec_array = rec['record']
-        if rec_array.dtype.names is None:
-            # Empty record -- skip
-            continue
-
-        if 'magnitude' not in rec_array.dtype.names:
-            logger.error('Cannot map magnitude of change')
-            logger.error('Version of result file: {v}'.format(
-                v=rec['version'] if 'version' in rec.files else 'Unknown'))
-            raise KeyError('Magnitude information not present in file %s -- '
-                           'has it been calculated?' % result)
-
-        changed = np.where(rec_array['break'] != 0)[0]
-        if changed.size == 0:
-            continue
-
-        logger.debug('Using non-zero elements of "magnitude" field in '
-                     'changed records for magnitude indices')
-        return np.nonzero(np.any(rec_array[changed]['magnitude'] != 0))[0]
+# TODO: make these into 'transforms' sorts of functions
 
 
-# MAPPING FUNCTIONS
 def get_change_date(start, end, result_location, image_ds,
                     first=False,
                     out_format='%Y%j',
