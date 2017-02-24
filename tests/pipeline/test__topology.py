@@ -11,7 +11,7 @@ import yatsm.pipeline._topology as topo
     ({'record': ['asdf', 'fdsa']}, ['record-asdf', 'record-fdsa'])
 ])
 def test_format_deps(arg, answer):
-    assert sorted(answer) == sorted(topo.format_deps(arg))
+    assert sorted(answer) == sorted(topo._format_deps(arg))
 
 
 @pytest.mark.parametrize(('arg', 'answer'), [
@@ -33,12 +33,12 @@ def test_format_deps(arg, answer):
      })
 ])
 def test_pipe_deps(arg, answer):
-    deps = topo.pipe_deps(arg)
+    deps = topo._pipe_deps(arg)
     assert sorted(deps) == sorted(answer)
 
 
 def test_config_to_deps_1(config_1):
-    dsk = topo.config_to_deps(config_1)
+    dsk = topo._config_to_deps(config_1)
     for lhs, rhs in dsk.items():
         assert (lhs.startswith('data-') or lhs.startswith('record-') or
                 lhs in config_1)
@@ -50,7 +50,7 @@ def test_config_to_deps_1_dsk(config_1):
         'data-red': set(['pipe']),
         'data-nir': set(['pipe'])
     }
-    dsk = topo.config_to_deps(config_1, dsk)
+    dsk = topo._config_to_deps(config_1, dsk)
 
     assert 'pipe' in dsk
     for lhs, rsh in dsk.items():
@@ -61,16 +61,16 @@ def test_config_to_deps_1_dsk(config_1):
 
 def test_validate_dependencies_1(config_1, pipe_defn):
     tasks = ['merged']
-    dsk = topo.pipe_deps(pipe_defn)
-    dsk = topo.config_to_deps(config_1, dsk)
+    dsk = topo._pipe_deps(pipe_defn)
+    dsk = topo._config_to_deps(config_1, dsk)
 
     topo.validate_dependencies(tasks, dsk)
 
 
 def test_validate_dependencies_fail(config_3, pipe_defn):
     tasks = ['ccdc']
-    dsk = topo.pipe_deps(pipe_defn)
-    dsk = topo.config_to_deps(config_3, dsk)
+    dsk = topo._pipe_deps(pipe_defn)
+    dsk = topo._config_to_deps(config_3, dsk)
     # This one should fail -- missing NDMI calculation
     with pytest.raises(KeyError) as exc:
         topo.validate_dependencies(tasks, dsk)

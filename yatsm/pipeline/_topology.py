@@ -72,7 +72,7 @@ def _pipe_deps(pipe):
         dict: Dependency graph for data or results inside of `pipe`
     """
     dsk = {PIPE: set()}  # no dependencies for pipe item
-    deps = _format_deps(dict((item, pipe[item].keys())
+    deps = _format_deps(dict((item, pipe.get(item, {}).keys())
                              for item in PIPE_CONTENTS))
     for dep in deps:
         dsk[dep] = set([PIPE])

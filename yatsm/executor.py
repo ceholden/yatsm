@@ -54,13 +54,11 @@ class SyncExecutor(_Executor):
     """
 
     def submit(self, func, *args, **kwds):
-        future = Future()
-        future._spec = (func, args, kwds)
+        future = self._result(Future(), func, *args, **kwds)
         return future
 
     @staticmethod
-    def _result(future):
-        func, args, kwds = future._spec
+    def _result(future, func, *args, **kwds):
         try:
             result = func(*args, **kwds)
         except Exception as e:
@@ -76,7 +74,7 @@ class SyncExecutor(_Executor):
     @staticmethod
     def as_completed(futures):
         for future in futures:
-            yield SyncExecutor._result(future)
+            yield future
 
     def shutdown(self, timeout=10, futures=None):
         return

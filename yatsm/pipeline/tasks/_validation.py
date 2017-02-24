@@ -143,7 +143,7 @@ def _parse_signature(signature, req_len=None):
 
 def _validate_specification(spec, signature):
     if not isinstance(spec, dict):
-        raise TypeError(" should be a dictionary")
+        raise TypeError("Specification should be a dictionary")
 
     for name, (required, desc) in signature.items():
         if required and name not in spec:
@@ -197,7 +197,7 @@ def check(name, **signature):
     def wrapper(func, *args, **kwargs):
         arg_names, va_args, va_kwargs, _ = inspect.getargspec(func)
         if name not in arg_names:
-            raise PCError("Arg specified, '{0}', does not match "
+            raise PCError("Argument specified, '{0}', does not match "
                           "function call signature".format(name))
         arg_idx = arg_names.index(name)
         arg = args[arg_idx]
@@ -205,10 +205,10 @@ def check(name, **signature):
         try:
             _validate_specification(arg, signature)
         except Exception as exc:
-            logger.exception('Arg "{0}" to "{1.__name__}" is invalid'
-                             .format(name, func), exc)
-            six.raise_from(PCError('Arg "{0}" to "{1.__name__}" is invalid'
-                                   .format(name, func)), exc)
+            msg = ('Arg "{0}" to "{1.__name__}" is invalid: {3}({2})'
+                   .format(name, func, type(exc), exc))
+            logger.exception(msg, exc)
+            six.reraise(PCError, msg)
         return func(*args, **kwargs)
 
     return wrapper

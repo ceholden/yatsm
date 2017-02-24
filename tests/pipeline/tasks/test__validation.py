@@ -3,13 +3,13 @@
 import pytest
 import toolz
 
-from yatsm.pipeline._validation import (check, requires, outputs,
-                                        REQUIRE, OUTPUT)
+from yatsm.pipeline.tasks._validation import (check, requires, outputs,
+                                              REQUIRE, OUTPUT)
 from yatsm.errors import PipelineConfigurationError
 
 
-def func_sig(work, require, output, **config):
-    return work
+def func_sig(pipe, require, output, **config):
+    return pipe
 
 
 def test_check_pass_1():
@@ -94,4 +94,4 @@ def test_output_record_str_type():
     f({}, {}, {'record': ['ccdc']})
 
     with pytest.raises(PipelineConfigurationError) as exc:
-        f = outputs(record=[str, str])(func_sig)
+        f({}, {}, {'record': ['ccdc', 'asdf']})(func_sig)
