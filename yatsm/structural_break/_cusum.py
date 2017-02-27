@@ -57,7 +57,7 @@ def _cusum_OLS(X, y):
 
 
 def cusum_OLS(X, y, alpha=0.05):
-    ur""" OLS-CUSUM test for structural breaks
+    r""" OLS-CUSUM test for structural breaks
 
     Tested against R's ``strucchange`` package and is faster than
     the equivalent function in the ``statsmodels`` Python package when
@@ -162,7 +162,7 @@ def _cusum_rec_sctest(x):
 
 
 def cusum_recursive(X, y, alpha=0.05):
-    ur""" Rec-CUSUM test for structural breaks
+    r""" Rec-CUSUM test for structural breaks
 
     Tested against R's ``strucchange`` package.
 
