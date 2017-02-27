@@ -55,7 +55,7 @@ def get_reader(name=None, **kwargs):
         KeyError: when asking for a reader that doesn't exist
     """
     if isinstance(name, six.string_types) and isinstance(kwargs, dict):
-        if kwargs.keys() == [name]:
+        if name in kwargs.keys():
             kwargs = kwargs[name]
     elif name is None and kwargs:
         name, kwargs = kwargs.popitem()
@@ -69,6 +69,8 @@ def get_reader(name=None, **kwargs):
 
     if hasattr(reader_cls, 'from_config'):
         return reader_cls.from_config(**kwargs)
+    else:
+        return reader_cls(**kwargs)
 
 
 def read_and_preprocess(config, readers, window, out=None):

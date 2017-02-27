@@ -1,13 +1,15 @@
 """ Helper class for dealing with configuration files
 """
 import copy
+import functools
 
 from yatsm.config import validate_and_parse_configfile
-from yatsm.utils import cached_property as _cached_property, find as _find
+from yatsm.errors import PipelineConfigurationNotFound
 from yatsm.io import get_readers
+from yatsm.pipeline import Pipe, Pipeline
 from yatsm.results import HDF5ResultsStore
 from yatsm.results.utils import pattern_to_regex as _pattern_to_regex
-from yatsm.pipeline import Pipe, Pipeline
+from yatsm.utils import cached_property as _cached_property, find as _find
 
 
 class Config(object):  # TODO: rename?
