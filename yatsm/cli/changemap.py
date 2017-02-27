@@ -34,9 +34,11 @@ def changemap(ctx):
 @options.arg_end_date
 @options.arg_output
 @opt_table
+@options.opt_bounds
 @options.mapping_decorations
 @options.opt_date_format
-def first(ctx, config, start_date, end_date, output, table,
+def first(ctx, config, start_date, end_date, output,
+          table, bounds,
           driver, nodata, creation_options, force_overwrite, date_format):
     """ Date of first change
     """

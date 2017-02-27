@@ -4,6 +4,7 @@ import functools
 import logging
 
 import click
+from rasterio.rio.options import bounds_opt as opt_bounds  # NOQA
 
 from yatsm.executor import get_executor, EXECUTOR_DEFAULTS, EXECUTOR_TYPES
 
