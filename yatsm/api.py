@@ -12,9 +12,23 @@ from yatsm.results.utils import pattern_to_regex as _pattern_to_regex
 from yatsm.utils import cached_property as _cached_property, find as _find
 
 
+def _checked_property(prop):
+    """ Check a :class:`yatsm.Config` for a certain property
+    """
+    @functools.wraps(prop)
+    def wrapper(self):
+        if prop.__name__ not in self.keys():
+            raise PipelineConfigurationNotFound('Section "{0}" not found'
+                                                .format(prop.__name__))
+        return prop(self)
+    return property(wrapper)
+
+
 class Config(object):  # TODO: rename?
     """ Your go-to list of things to do
     """
+
+    SECTIONS = ('version', 'pipeline', 'tasks', 'results', 'data', )
 
     def __init__(self, config):
         self._config = copy.deepcopy(config)
@@ -65,23 +79,25 @@ class Config(object):  # TODO: rename?
             yield HDF5ResultsStore(result, **kwds)
 
     # PROPERTY ACCESS
-    @property
-    def data(self):
-        return self._config['data']
-
-    @property
+    @_checked_property
     def pipeline(self):
+        """ Pipeline configuration section
+        """
         return self._config['pipeline']
 
     @property
     def tasks(self):
-        return self._config['pipeline']['tasks']
+        return self.pipeline['tasks']
 
-    @property
+    @_checked_property
+    def data(self):
+        return self._config['data']
+
+    @_checked_property
     def version(self):
         return self._config['version']
 
-    @property
+    @_checked_property
     def results(self):
         return self._config['results']
 
@@ -90,4 +106,10 @@ class Config(object):  # TODO: rename?
         return self._config.keys()
 
     def __getitem__(self, key):
-        return self._config[key]
+        if key not in self.SECTIONS:
+            raise KeyError('Unknown configuration item "{0}"'.format(key))
+        try:
+            return self._config[key]
+        except KeyError as ke:
+            raise PipelineConfigurationNotFound('Section "{0}" not found'
+                                                .format(key))
