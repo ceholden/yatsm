@@ -168,6 +168,8 @@ def get_georeference(h5file, tag):
     if tag not in h5file.root._v_attrs._v_attrnames:
         raise KeyError('No such tag "%s" in %s' % (tag, h5file.filename))
     value = h5file.root._v_attrs[tag]
+    if isinstance(value, np.string_):
+        value = value.decode('utf-8')
     return STR_TO_GIS[tag](value)
 
 
