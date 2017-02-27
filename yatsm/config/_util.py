@@ -4,7 +4,6 @@ import logging
 import os
 
 from jsonschema import Draft4Validator, validators
-import six
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +15,9 @@ def extend_with_default(validator_cls):
     https://python-jsonschema.readthedocs.io/en/latest/faq/#why-doesn-t-my-schema-that-has-a-default-property-actually-set-the-default-on-my-instance
     """
     validate_props = validator_cls.VALIDATORS['properties']
+
     def set_defaults(validator, properties, instance, schema):
-        for prop, subschema in six.iteritems(properties):
+        for prop, subschema in properties.items():
             if 'default' in subschema:
                 instance.setdefault(prop, subschema['default'])
 
@@ -72,7 +72,7 @@ def expand_envvars(d):
                            'environment variables: "%s=%s"' % (k, v))
 
     _d = d.copy()
-    for k, v in six.iteritems(_d):
+    for k, v in _d.items():
         if isinstance(v, dict):
             _d[k] = expand_envvars(v)
         elif isinstance(v, str):

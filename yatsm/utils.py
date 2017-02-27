@@ -8,8 +8,6 @@ import logging
 import os
 import re
 
-import six
-
 try:
     from scandir import walk
 except:
@@ -102,7 +100,7 @@ def copy_dict_filter_key(d, regex):
     """ Copy a dict recursively, but only if key doesn't match regex pattern
     """
     out = {}
-    for k, v in six.iteritems(d):
+    for k, v in d.items():
         if not re.match(regex, k):
             if isinstance(v, dict):
                 out[k] = copy_dict_filter_key(v, regex)

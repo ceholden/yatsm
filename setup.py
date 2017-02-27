@@ -28,7 +28,7 @@ with open('README.rst') as f:
 # Installation requirements
 extras_require = {
     'core': [
-        'six',
+        'future', 'six',
         'numpy', 'pandas',
         'scipy',
         'matplotlib',

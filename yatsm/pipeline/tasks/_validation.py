@@ -65,7 +65,7 @@ import inspect
 import logging
 
 import decorator
-import six
+from future.utils import raise_from
 
 from yatsm.pipeline.language import PIPE_CONTENTS, REQUIRE, OUTPUT, STASH
 from yatsm.errors import PipelineConfigurationError as PCError
@@ -190,8 +190,9 @@ def check(name, **signature):
         try:
             signature[key] = _parse_signature(sig)
         except Exception as exc:
-            logger.exception('Invalid signature: {0}'.format(sig), exc)
-            six.raise_from(PCError('Invalid signature: {0}'.format(sig)), exc)
+            msg = 'Invalid signature: {0}'.format(sig),
+            logger.exception(msg, exc)
+            raise_from(PCError(msg), exc)
 
     @decorator.decorator
     def wrapper(func, *args, **kwargs):
@@ -208,7 +209,7 @@ def check(name, **signature):
             msg = ('Arg "{0}" to "{1.__name__}" is invalid: {3}({2})'
                    .format(name, func, type(exc), exc))
             logger.exception(msg, exc)
-            six.reraise(PCError, msg)
+            raise_from(PCError(msg), exc)
         return func(*args, **kwargs)
 
     return wrapper
