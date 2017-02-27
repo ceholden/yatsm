@@ -121,7 +121,7 @@ class _GDALStackReader(object):
 
         self.n_image = len(filenames)
         self.n_band = self.datasets[0].RasterCount
-        self.n_col = self.datasets[0].RasterXSize
+        self.n_col = int(self.datasets[0].RasterXSize)
         self.datatype = gdal_array.GDALTypeCodeToNumericTypeCode(
             self.datasets[0].GetRasterBand(1).DataType)
 
@@ -135,7 +135,7 @@ class _GDALStackReader(object):
                         self.datatype)
         for i, ds_bands in enumerate(self.dataset_bands):
             for n_b, band in enumerate(ds_bands):
-                data[n_b, i, :] = band.ReadAsArray(0, row, self.n_col, 1)
+                data[n_b, i, :] = band.ReadAsArray(0, int(row), self.n_col, 1)
         return data
 
     def read_row(self, filenames, row):
