@@ -5,8 +5,10 @@ from rasterio.coords import BoundingBox
 from rasterio.crs import CRS
 from shapely.geometry import Polygon
 
+from yatsm.gis.core import Georeference
 from yatsm.gis.utils import bounds_to_polygon
 from yatsm.gis.convert import GIS_TO_STR, STR_TO_GIS
+
 
 __all__ = [
     'Affine',
@@ -14,5 +16,6 @@ __all__ = [
     'CRS',
     'Polygon',
     'bounds_to_polygon',
-    'GIS_TO_STR', 'STR_TO_GIS'
+    'GIS_TO_STR', 'STR_TO_GIS',
+    'Georeference'
 ]
