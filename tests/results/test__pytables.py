@@ -1,64 +1,35 @@
 """ Tests for ``yatsm.results._pytables``
 """
+import shapely.wkt
 import pytest
 import tables as tb
 
-from yatsm.gis import (Affine, CRS, BoundingBox, Polygon,
-                       bounds_to_polygon)
+from yatsm.gis import Affine, CRS, BoundingBox, Georeference
 from yatsm.results import GEO_TAGS, HDF5ResultsStore
-
 
 # Fixtures and definitions
 _CRS = CRS({'init': 'epsg:32619'})
 _BOUNDS = BoundingBox(0, 0, 10, 10)
 _TRANSFORM = Affine(0.2,  0.0, -114,
                     0.0, -0.2, 46)
-_BBOX = bounds_to_polygon(_BOUNDS)
+_BBOX = shapely.wkt.loads('POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0))')
+
+_GEOREF = Georeference(_CRS, _BOUNDS, _TRANSFORM, _BBOX)
 
 
 @pytest.fixture(scope='function')
 def test_data_1(tmpdir):
-    with HDF5ResultsStore(str(tmpdir.join('1.nc')),
-                          crs=_CRS,
-                          bounds=_BOUNDS,
-                          transform=_TRANSFORM,
-                          bbox=_BBOX) as store:
+    with HDF5ResultsStore(str(tmpdir.join('1.nc')), georef=_GEOREF) as store:
         return store
 
 
 class TestHDF5ResultsStore(object):
 
     # CREATION
-    def test_create_no_crs(self, tmpdir):
+    def test_create_no_georef(self, tmpdir):
         with pytest.raises(TypeError) as te:
-            HDF5ResultsStore(str(tmpdir.join('1.nc')),
-                             bounds=_BOUNDS,
-                             transform=_TRANSFORM,
-                             bbox=_BBOX)
-        assert 'Must specify ``crs``' in str(te.value)
-
-    def test_create_no_bounds(self, tmpdir):
-        with pytest.raises(TypeError) as te:
-            HDF5ResultsStore(str(tmpdir.join('1.nc')),
-                             crs=_CRS,
-                             transform=_TRANSFORM,
-                             bbox=_BBOX)
-        assert 'Must specify ``bounds``' in str(te.value)
-
-    def test_create_no_transform(self, tmpdir):
-        with pytest.raises(TypeError) as te:
-            HDF5ResultsStore(str(tmpdir.join('1.nc')),
-                             crs=_CRS,
-                             bounds=_BOUNDS,
-                             bbox=_BBOX)
-        assert 'Must specify ``transform``' in str(te.value)
-
-    def test_create_no_bbox(self, tmpdir):
-        store = HDF5ResultsStore(str(tmpdir.join('1.nc')),
-                                 crs=_CRS,
-                                 bounds=_BOUNDS,
-                                 transform=_TRANSFORM)
-        assert isinstance(store._bbox, Polygon)
+            HDF5ResultsStore(str(tmpdir.join('1.nc')), georef=None)
+        assert 'Must specify `georef` as `Georeference`' in str(te.value)
 
     # CONTEXT MANAGER
     def test_with_write(self):

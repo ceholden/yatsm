@@ -12,8 +12,7 @@ import six
 import tables as tb
 
 from yatsm.algorithms import SEGMENT_ATTRS
-from yatsm.gis import (Affine, BoundingBox, CRS, Polygon, GIS_TO_STR,
-                       STR_TO_GIS, bounds_to_polygon)
+from yatsm.gis import Georeference
 from yatsm.results.utils import result_filename, RESULT_TEMPLATE
 
 logger = logging.getLogger(__name__)
@@ -91,7 +90,7 @@ def read_where(table, condition, fields, out=None, **where_kwds):
     return out
 
 
-def create_table(h5file, where, name, result, attrs=None,
+def create_table(h5file, where, name, result, attrs=None, georef=None,
                  index=True, expectedrows=10000, overwrite=False,
                  **table_config):
     """ Create table to store results
@@ -102,6 +101,8 @@ def create_table(h5file, where, name, result, attrs=None,
         name (str): Name of new table
         result (np.ndarray): Results as a NumPy structured array
         attrs (dict): Metadata to store as ``table.attrs``
+        georef (Georeference): Georeferencing information to add to
+            ``table.attrs``
         index (bool): Create index on :ref:`SEGMENT_ATTRS`
         expectedrows (int): Expected number of rows to store in table
         overwrite (bool): Overwrite existing table
@@ -127,50 +128,58 @@ def create_table(h5file, where, name, result, attrs=None,
             for attr in SEGMENT_ATTRS:
                 getattr(table.cols, attr).create_index()
 
-        for key, value in attrs.items():
-            table.attrs[key] = attrs[key]
+        if attrs:
+            for key, value in attrs.items():
+                table.attrs[key] = attrs[key]
+        if georef:
+            table = georeference(table, georef)
 
     return table
 
 
-def georeference(h5file, **tags):
+def georeference(node, georef):
     """ Georeference a :class:`tables.File`
 
     Args:
         h5file (tables.File): Open HDF5 file
-        **tags (dict): Georeferencing tags
+        georef (Georeference): Georeference information
+        where (str): HDF5 file node location
 
     Returns:
-        tables.File: Georeferenced HDF5 file
+        tables.Node: Georeferenced HDF5 node
     """
-    for tag in GEO_TAGS:
-        value = tags.get(tag, None)
-        if value:
-            value = GIS_TO_STR[tag](value)
-            logger.debug('Setting %s to %s' % (tag, value))
-            h5file.root._v_attrs[tag] = value
-    return h5file
+    for key, val in georef.str.items():
+        logger.debug('Setting %s to %s' % (key, val))
+        node._v_attrs[key] = val
+
+    return node
 
 
-def get_georeference(h5file, tag):
+def get_georeference(node):
     """ Get georeferencing information for a tag
 
     Args:
-        h5file (tables.File): Open HDF5 file
-        tag (str): Georeferencing attribute
+        node (tables.Node): HDF5 node
 
     Returns:
-        object: Georeferencing information requested
+        Georeference: Georeferencing information
 
     Raises:
-        KeyError: Raise if tag is missing
+        KeyError: Raise if georeferencing is missing
     """
-    if tag not in h5file.root._v_attrs._v_attrnames:
-        raise KeyError('No such tag "%s" in %s' % (tag, h5file.filename))
-    value = h5file.root._v_attrs[tag]
-    if isinstance(value, np.string_):
-        value = value.decode('utf-8')
-    return STR_TO_GIS[tag](value)
+    args = []
+    for key in Georeference._fields:
+        if key not in node._v_attrs._v_attrnames:
+            raise KeyError('Missing georeferencing attr "%s" in %r' %
+                           (key, node))
+        value = node._v_attrs[key]
+        if isinstance(value, np.string_):
+            logger.debug('Decoding string')
+            value = value.decode('utf-8')
+        args.append(value)
+    georef = Georeference.from_strings(*args)
+
+    return georef
 
 
 class HDF5ResultsStore(object):
@@ -180,52 +189,34 @@ class HDF5ResultsStore(object):
         filename (str): HDF5 file
         mode (str): File mode to open with. By default, opens in read mode or
             write mode if file doesn't exist
-        crs (str or :class:`rasterio.crs.CRS`): Coordinate reference system
-        bounds (BoundingBox): Bounding box of data stored
-        transform (affine.Affine): Affine transform of data stored
-        bbox (shapely.geometry.Polygon): Bounding box polygon
+        georef (Georeference): HDF file's georeference information
         title (str): Title of HDF5 file
         keep_open (bool): Keep file handle open after calls
         overwrite (bool): Overwrite file attributes or data
         tb_kwds: Optional keywork arguments to :ref:`tables.open_file`
     """
 
-    def __init__(self, filename, mode=None,
-                 crs=None, bounds=None, transform=None, bbox=None,
+    def __init__(self, filename, mode=None, georef=None,
                  title='YATSM',
                  keep_open=True, overwrite=False, **tb_kwds):
         _exists = os.path.exists(filename)
 
         self.filename = filename
         self.mode = mode or 'r' if _exists else 'w'
-        self._crs = crs
-        self._bounds = bounds
-        self._transform = transform
-        self._bbox = bbox
+        self.georef = georef
         self.title = title
         self.keep_open = keep_open
         self.overwrite = overwrite
         self.tb_kwds = tb_kwds
 
         self.h5file = None
-        if not _exists:
-            if not isinstance(self._crs, CRS):
-                raise TypeError('Must specify ``crs`` as ``CRS`` when '
-                                'creating a file')
-            if not isinstance(self._bounds, BoundingBox):
-                raise TypeError('Must specify ``bounds`` as ``BoundingBox`` '
-                                'when creating a new file')
-            if not isinstance(self._transform, Affine):
-                raise TypeError('Must specify ``transform`` as '
-                                '``affine.Affine``when creating a new file')
-            if not isinstance(self._bbox, Polygon):
-                self._bbox = bounds_to_polygon(self._bounds)
+        if not _exists and not isinstance(self.georef, Georeference):
+            raise TypeError('Must specify `georef` as `Georeference` when '
+                            'creating a file')
 
 # CREATION
     @classmethod
-    def from_window(cls, window,
-                    crs=None, bounds=None, transform=None, bbox=None,
-                    reader=None,
+    def from_window(cls, window, reader=None, georef=None,
                     root='.', pattern=RESULT_TEMPLATE,
                     **open_kwds):
         """ Return instance of class for a given window
@@ -233,16 +224,15 @@ class HDF5ResultsStore(object):
         When creating a file, the following attributes must be specified in
         one of two ways:
 
-            - ``crs``
-            - ``bounds``
-            - ``transform``
-            - ``bbox``
+            1. Passing ``reader``
+            2. Passing ``Georeference``
 
         They may either be explicitly passed, or retrieved from a reader
         instance from ``reader``
 
         Args:
             window (tuple): x_min, y_min, x_max, y_max for the given window
+            reader (rasterio.DatasetReader)
             root (str): Root directory to save file
             pattern (str): Filename pattern to use, usually derived in part
                 from attributes of ``window``
@@ -252,29 +242,31 @@ class HDF5ResultsStore(object):
         """
         filename = result_filename(window, root=root, pattern=pattern)
 
-        if reader:
-            crs = reader.crs
-            bounds = reader.window_bounds(window)
-            transform = reader.transform
-            bbox = bounds_to_polygon(bounds)
+        georef = (georef if isinstance(georef, Georeference) else
+                  Georeference.from_reader(reader))
+        if not georef:
+            raise TypeError('Must provide either `reader` or `georef`')
 
         return cls(filename,
-                   crs=crs, bounds=bounds, transform=transform, bbox=bbox,
+                   georef=georef,
                    **open_kwds)
 
 # READING
-    def find_column(self, pattern, where='/', regex=False):
+    def find_column(self, pattern, where='/', regex=False, return_table=False):
         """ Return :ref:`tb.Column` matching pattern
         """
         pattern = pattern if regex else fnmatch.translate(pattern)
 
         with self as store:
-            for node in store.h5file.walk_nodes(where=where,
-                                                classname='Table'):
-                colnames = [c for c in node.cols._v_colnames
+            for table in store.h5file.walk_nodes(where=where,
+                                                 classname='Table'):
+                colnames = [c for c in table.cols._v_colnames
                             if re.match(pattern, c)]
                 for colname in colnames:
-                    yield colname
+                    if return_table:
+                        yield table, colname
+                    else:
+                        yield colname
 
     def query(self, name, columns=(),
               px=None, py=None, d_start=None, d_end=None, d_break=None,
@@ -343,7 +335,8 @@ class HDF5ResultsStore(object):
             return table.read_where(table, query)
 
 # WRITING
-    def write_result(self, pipeline, result, overwrite=None, **kwds):
+    def write_result(self, pipeline, result, georef=None,
+                     overwrite=None, **kwds):
         """ Write result to HDF5
 
         Args:
@@ -351,6 +344,7 @@ class HDF5ResultsStore(object):
             result (dict): Dictionary of pipeline 'record' results
                 where key is task output and value is a structured
                 :ref:`np.ndarray`
+            georef (Georeference): Georeferencing information
             overwrite (bool): Overwrite existing values, overriding
                 even the class preference (:ref:`HDF5ResultsStore.overwrite`).
                 Defaults to behavior chosen during initialization
@@ -368,6 +362,7 @@ class HDF5ResultsStore(object):
                                      name,
                                      result[task.output_record],
                                      attrs=task.metadata,
+                                     georef=georef,
                                      overwrite=do_overwrite,
                                      **kwds)
                 table.append(result[task.output_record])
@@ -431,33 +426,47 @@ class HDF5ResultsStore(object):
             self.update_tag(key, value)
 
 # GIS METADATA
+    def set_georef(self, georef, where='/'):
+        """ Set file georeferencing information
+
+        Args:
+            georef (Georeference): Georeferencing information
+            where (str or tables.Node): Node location to georeference
+
+        Returns:
+            tables.Node: Georeferenced HDF5 node
+        """
+        with self as store:
+            node = store.h5file.get_node(where)
+            return georeference(node, georef)
+
     @property
     def crs(self):
         """ rasterio.crs.CRS: Coordinate reference system
         """
         with self as store:
-            return get_georeference(store.h5file, 'crs')
+            return store.georef.crs
 
     @property
     def bounds(self):
         """ BoundingBox: Bounding box of data in file
         """
         with self as store:
-            return get_georeference(store.h5file, 'bounds')
+            return store.georef.bounds
 
     @property
     def transform(self):
         """ affine.Affine: Affine transform
         """
         with self as store:
-            return get_georeference(store.h5file, 'transform')
+            return store.georef.transform
 
     @property
     def bbox(self):
         """ shapely.geometry.Polygon: Bounding box as polygon
         """
         with self as store:
-            return get_georeference(store.h5file, 'bbox')
+            return store.georef.bbox
 
 # CONTEXT HELPERS
     def __enter__(self):
@@ -485,11 +494,10 @@ class HDF5ResultsStore(object):
 
         # Set GIS related tags on write/overwrite
         if self.mode == 'w' or self.overwrite:
-            self.h5file = georeference(
-                self.h5file,
-                **dict((attr, getattr(self, '_' + attr, None))
-                       for attr in GEO_TAGS)
-            )
+            georeference(self.h5file.root, self.georef)
+        else:
+            self.georef = get_georeference(self.h5file.root)
+
         return self
 
     def __exit__(self, *args):

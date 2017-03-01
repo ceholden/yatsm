@@ -34,6 +34,14 @@ class _Georeference(_georeference):
 
         return '\n'.join(summary)
 
+    def keys(self):
+        for field in self._fields:
+            yield field
+
+    def items(self):
+        for field, val in zip(self._fields, self):
+            yield (field, val)
+
 
 class Georeference(_Georeference):
     """ namedtuple holding georeferencing information
@@ -81,14 +89,6 @@ class Georeference(_Georeference):
             *(GIS_TO_STR[field](getattr(self, field))
               for field in _Georeference._fields)
         )
-
-    def keys(self):
-        for field in self._fields:
-            yield field
-
-    def items(self):
-        for field, val in zip(self._fields, self):
-            yield (field, val)
 
 
 if __name__ == '__main__':
