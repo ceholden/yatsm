@@ -17,7 +17,8 @@ _georeference = namedtuple('Georeference',
 
 
 class _Georeference(_georeference):
-
+    """ :class:`Georeference`'s parent who doesn't typecheck
+    """
     def __repr__(self):
         summary = ['<yatsm.gis.%s at %s>' % (type(self).__name__,
                                              hex(id(self)))]
@@ -48,6 +49,7 @@ class Georeference(_Georeference):
         if isinstance(bbox, six.string_types):
             bbox = STR_TO_GIS(bbox)
 
+        # TODO: real TypeError raising
         assert isinstance(crs, CRS)
         assert isinstance(bounds, BoundingBox)
         assert isinstance(transform, Affine)
@@ -66,12 +68,27 @@ class Georeference(_Georeference):
                    transform=reader.transform,
                    bbox=bounds_to_polygon(reader.bounds))
 
+    @classmethod
+    def from_strings(cls, crs, bounds, transform, bbox):
+        return cls(crs=STR_TO_GIS['crs'](crs),
+                   bounds=STR_TO_GIS['bounds'](bounds),
+                   transform=STR_TO_GIS['transform'](transform),
+                   bbox=STR_TO_GIS['bbox'](bbox))
+
     @property
     def str(self):
         return _Georeference(
             *(GIS_TO_STR[field](getattr(self, field))
               for field in _Georeference._fields)
         )
+
+    def keys(self):
+        for field in self._fields:
+            yield field
+
+    def items(self):
+        for field, val in zip(self._fields, self):
+            yield (field, val)
 
 
 if __name__ == '__main__':
