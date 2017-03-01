@@ -60,7 +60,7 @@ def extract_roi(raster, vector, feature_prop=None, all_touched=False):
         coord_xs, coord_ys = transform * (xs, ys)
 
         masked = masked.compressed()
-        npix = masked.size / shape[0]
+        npix = int(masked.size / shape[0])
         masked = masked.reshape((shape[0], npix))
 
         label = np.repeat(label, coord_ys.size)
