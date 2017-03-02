@@ -159,60 +159,6 @@
 <span id="guide-models-ccdcesque"></span><h1>CCDCesque<a class="headerlink" href="#ccdcesque" title="Permalink to this headline">¶</a></h1>
 <p>A guide for the YATSM implementation of Continuous Classification and Change
 Detection (CCDC) <a class="reference internal" href="../../index.html#zhu2014152" id="id1">[1]</a>.</p>
-digraph G {
-    label = &quot;Algorithm Flowchart:\nCCDCesque&quot;
-    compound=true;
-    newrank=true;
-    ratio=1.5;
-    /*ranksep=1.0;*/
-
-    preprocess [label=&quot;preprocess&quot; shape=&quot;box&quot;];
-    fit [label=&quot;fit&quot; shape=&quot;box&quot;]
-    while [label=&quot;while\n(has observations)&quot;];
-    trained [label=&quot;Segment\ninitialized?&quot;];
-    end [label=&quot;Iterate\nforward&quot;];
-    # Training
-    clean [label=&quot;Multitemp mask&quot; shape=&quot;box&quot;];
-    stable [label=&quot;Test\nStability&quot;];
-    is_stable [label=&quot;Stable:\ninit segment&quot;]
-    is_unstable [label=&quot;Unstable:\nmove forward&quot;]
-    # Monitoring
-    monitor [label=&quot;Check next\nobservations&quot;];
-    noise [label=&quot;Delete noise&quot;]
-    change [label=&quot;Change:\nnew segment&quot;]
-    nochange [label=&quot;No change&quot;]
-
-    { rank=min;  preprocess; fit; while; }
-    { rank=same; trained; }
-    { rank=same; clean; monitor; }
-    { rank=max; end; }
-
-    preprocess -&gt; fit -&gt; while -&gt; trained;
-    trained -&gt; clean [label=&quot;No&quot; lhead=cluster0];
-    trained -&gt; monitor [label=&quot;Yes&quot; lhead=cluster1];
-
-    subgraph cluster0 {
-        label=&quot;Historic Period&quot;;
-        clean -&gt; stable;
-        stable -&gt; is_stable [label=&quot;Yes&quot;];
-        stable -&gt; is_unstable [label=&quot;No&quot;];
-    }
-    subgraph cluster1 {
-        label=&quot;Monitoring Period&quot;
-        monitor -&gt; noise [label=&quot;Noise\ndetected&quot;];
-        monitor -&gt; change [label=&quot;Above\nthreshold&quot;];
-        monitor -&gt; nochange [label=&quot;Within\nthreshold&quot;];
-    }
-
-    noise -&gt; end [ltail=cluster1];
-    change -&gt; end [ltail=cluster1];
-    nochange -&gt; end [ltail=cluster1];
-
-    is_stable -&gt; end [ltail=cluster0];
-    is_unstable -&gt; end [ltail=cluster0];
-    end -&gt; while;
-
-}
 <p id="bibtex-bibliography-guide/models/ccdcesque-0"><table class="docutils citation" frame="void" id="zhu2014152" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
@@ -236,7 +182,7 @@ digraph G {
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 2, 2017, 5:40:25 PM.
+      Last updated on Mar 2, 2017, 5:59:31 PM.
 
     </p>
   </div>
