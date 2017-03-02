@@ -470,35 +470,7 @@ class HDF5ResultsStore(object):
 
 # CONTEXT HELPERS
     def __enter__(self):
-        if isinstance(self.h5file, tb.file.File):
-            if (getattr(self.h5file, 'mode', '') == self.mode
-                    and self.h5file.isopen):
-                return self  # already opened in correct form, bail
-            else:
-                self.h5file.close()
-        else:
-            try:
-                dirname = os.path.dirname(self.filename)
-                if dirname:
-                    os.makedirs(dirname)
-            except OSError as er:
-                if er.errno == errno.EEXIST:
-                    pass
-                else:
-                    raise
-
-        logger.debug('Opening %s in mode %s' % (self.filename, self.mode))
-        self.h5file = tb.open_file(self.filename, mode=self.mode,
-                                   title=self.title,
-                                   **self.tb_kwds)
-
-        # Set GIS related tags on write/overwrite
-        if self.mode == 'w' or self.overwrite:
-            georeference(self.h5file.root, self.georef)
-        else:
-            self.georef = get_georeference(self.h5file.root)
-
-        return self
+        return self.start()
 
     def __exit__(self, *args):
         if self.h5file and not self.keep_open:
@@ -511,6 +483,31 @@ class HDF5ResultsStore(object):
     def __del__(self):
         if self.h5file:
             self.h5file.close()
+
+    def start(self):
+        """ Begin reading/writing to file
+
+        Returns:
+            HDF5
+        """
+        if isinstance(self.h5file, tb.file.File):
+            if (getattr(self.h5file, 'mode', '') == self.mode
+                    and self.h5file.isopen):
+                return self  # already opened in correct form, bail
+            else:
+                self.h5file.close()
+
+        logger.debug('Opening %s in mode %s' % (self.filename, self.mode))
+        self.h5file = tb.open_file(self.filename, mode=self.mode,
+                                   title=self.title,
+                                   **self.tb_kwds)
+
+        # Set GIS related tags on write/overwrite
+        if self.mode == 'w' or self.overwrite:
+            georeference(self.h5file.root, self.georef)
+        else:
+            self.georef = get_georeference(self.h5file.root)
+        return self
 
     def close(self):
         if self.h5file:
