@@ -10,6 +10,7 @@ Subpackages
     yatsm.classification
     yatsm.cli
     yatsm.config
+    yatsm.gis
     yatsm.io
     yatsm.mapping
     yatsm.phenology
@@ -24,10 +25,9 @@ Submodules
 .. toctree::
 
    yatsm.accel
-   yatsm.cache
-   yatsm.config_parser
+   yatsm.api
    yatsm.errors
-   yatsm.log_yatsm
+   yatsm.executor
    yatsm.masking
    yatsm.plots
    yatsm.utils

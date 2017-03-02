@@ -1,7 +1,7 @@
-yatsm.classification.batch module
+yatsm.pipeline.tasks.stash module
 =================================
 
-.. automodule:: yatsm.classification.batch
+.. automodule:: yatsm.pipeline.tasks.stash
     :members:
     :undoc-members:
     :show-inheritance:

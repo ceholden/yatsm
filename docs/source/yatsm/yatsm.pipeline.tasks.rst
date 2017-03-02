@@ -10,6 +10,7 @@ Submodules
    yatsm.pipeline.tasks.classify
    yatsm.pipeline.tasks.postprocess
    yatsm.pipeline.tasks.preprocess
+   yatsm.pipeline.tasks.stash
 
 Module contents
 ---------------

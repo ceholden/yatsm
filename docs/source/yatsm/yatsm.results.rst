@@ -1,6 +1,13 @@
 yatsm.results package
 =====================
 
+Submodules
+----------
+
+.. toctree::
+
+   yatsm.results.utils
+
 Module contents
 ---------------
 

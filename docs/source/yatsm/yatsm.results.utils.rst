@@ -1,7 +1,7 @@
-yatsm.config_parser module
+yatsm.results.utils module
 ==========================
 
-.. automodule:: yatsm.config_parser
+.. automodule:: yatsm.results.utils
     :members:
     :undoc-members:
     :show-inheritance:

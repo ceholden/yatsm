@@ -44,7 +44,8 @@ extras_require = {
         'click_plugins',
         'cligj',
         'pyyaml',
-        'jsonschema'
+        'jsonschema',
+        'pathlib',
     ],
     'pipeline': ['dask', 'distributed', 'toposort', 'graphviz']
 }

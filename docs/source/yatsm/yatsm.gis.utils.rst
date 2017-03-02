@@ -1,7 +1,7 @@
-yatsm.cli.cache module
+yatsm.gis.utils module
 ======================
 
-.. automodule:: yatsm.cli.cache
+.. automodule:: yatsm.gis.utils
     :members:
     :undoc-members:
     :show-inheritance:

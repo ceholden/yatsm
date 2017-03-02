@@ -1,4 +1,4 @@
-.. _yatsm_changemap:
+.. _yatsm_cli_changemap:
 
 
 `yatsm changemap`

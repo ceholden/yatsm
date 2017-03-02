@@ -8,7 +8,6 @@ Submodules
 
    yatsm.algorithms.ccdc
    yatsm.algorithms.postprocess
-   yatsm.algorithms.yatsm
 
 Module contents
 ---------------

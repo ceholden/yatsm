@@ -1,17 +1,19 @@
-yatsm.classification package
-============================
+yatsm.gis package
+=================
 
 Submodules
 ----------
 
 .. toctree::
 
-   yatsm.classification.roi
+   yatsm.gis.convert
+   yatsm.gis.core
+   yatsm.gis.utils
 
 Module contents
 ---------------
 
-.. automodule:: yatsm.classification
+.. automodule:: yatsm.gis
     :members:
     :undoc-members:
     :show-inheritance:

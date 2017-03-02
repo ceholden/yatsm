@@ -1,7 +1,7 @@
-yatsm.cli.console module
+yatsm.gis.convert module
 ========================
 
-.. automodule:: yatsm.cli.console
+.. automodule:: yatsm.gis.convert
     :members:
     :undoc-members:
     :show-inheritance:

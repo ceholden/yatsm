@@ -19,17 +19,6 @@ To get started with YATSM, please follow this user guide:
    :maxdepth: 2
 
    guide/install
-   guide/dataset
-   guide/exploration
-   guide/model_specification
-   guide/models/models
-   guide/configuration
-   guide/batch_interface
-   guide/map_static
-   guide/map_changes
-   guide/classification
-   guide/phenology
-   guide/developer/custom_timeseries_algorithms.rst
 
 
 Command Line Interface Utilities
