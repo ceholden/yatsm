@@ -52,7 +52,7 @@ rm -rf build
 git clone $SSH_REPO $SOURCE/
 cd $SOURCE/
 git checkout $DST_BRANCH || git checkout --orphan $DST_BRANCH
-cd $docs
+cd $DOCS/
 
 sphinx-apidoc -f -e -o $APIDOC ../yatsm/
 
