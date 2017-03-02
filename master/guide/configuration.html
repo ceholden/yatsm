@@ -35,9 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/>
-        <link rel="next" title="Batch Interface" href="batch_interface.html"/>
-        <link rel="prev" title="CCDCesque" href="models/ccdcesque.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -46,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -86,27 +85,8 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Model Configuration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dataset-parameters">Dataset Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model-parameters">Model Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#phenology">Phenology</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#classification">Classification</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -122,8 +102,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -132,23 +114,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>Model Configuration</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Model Configuration</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/configuration.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/configuration.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -166,81 +167,14 @@ file</a> to
 parameterize the run. The YAML file uses several sections:</p>
 <ol class="arabic simple">
 <li><code class="docutils literal"><span class="pre">dataset</span></code> describes dataset attributes common to all analysis</li>
-<li><code class="docutils literal"><span class="pre">YATSM</span></code> describes model parameters common to all analysis and declares what change detection algorithm should be run</li>
+<li><code class="docutils literal"><span class="pre">YATSM</span></code> describes model parameters common to all analysis and declares what
+change detection algorithm should be run</li>
 <li><code class="docutils literal"><span class="pre">classification</span></code> describes classification training data inputs</li>
 <li><code class="docutils literal"><span class="pre">phenology</span></code> describes phenology fitting parameters</li>
 </ol>
 <p>The following tables describes the meanings of the parameter and values used
 in the configuration file used in YATSM. Any parameters left blank will be
 interpreted as <code class="docutils literal"><span class="pre">None</span></code> (e.g., <code class="docutils literal"><span class="pre">cache_line_dir</span> <span class="pre">=</span></code>).</p>
-</div>
-<div class="section" id="dataset-parameters">
-<h2>Dataset Parameters<a class="headerlink" href="#dataset-parameters" title="Permalink to this headline">¶</a></h2>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This section is out of date for <cite>v0.5.0</cite> and requires re-writing</p>
-</div>
-<p><strong>Note</strong>: you can use <code class="docutils literal"><span class="pre">scripts/gen_date_file.sh</span></code> to generate the CSV
-file for <code class="docutils literal"><span class="pre">input_file</span></code>.</p>
-</div>
-<div class="section" id="model-parameters">
-<h2>Model Parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h2>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This section is out of date for <cite>v0.5.0</cite> and requires re-writing</p>
-</div>
-</div>
-<div class="section" id="phenology">
-<h2>Phenology<a class="headerlink" href="#phenology" title="Permalink to this headline">¶</a></h2>
-<p>The option for long term mean phenology calculation is an optional addition to <cite>YATSM</cite>. As such, visit <a class="reference internal" href="phenology.html#guide-phenology"><span class="std std-ref">the phenology guide page</span></a> for configuration options.</p>
-</div>
-<div class="section" id="classification">
-<h2>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h2>
-<p>The scripts included in YATSM which perform classification utilize a
-configuration INI file that specify which algorithm will be used and the
-parameters for said algorithm. The configuration details specified along
-with the dataset and YATSM algorithm options deal with the training
-data, not the algorithm details. These training data configuration
-options include:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="16%" />
-<col width="7%" />
-<col width="77%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Parameter</th>
-<th class="head">Data Type</th>
-<th class="head">Explanation</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">training_data</span></code></td>
-<td><code class="docutils literal"><span class="pre">str</span></code></td>
-<td>Training data raster image containing labeled pixels</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">mask_values</span></code></td>
-<td><code class="docutils literal"><span class="pre">list</span></code></td>
-<td>Values within the training data image to mask or ignore</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">training_start</span></code></td>
-<td><code class="docutils literal"><span class="pre">str</span></code></td>
-<td>Earliest date that training data are applicable. Training data labels will be paired with models that begin at least before this date</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">training_end</span></code></td>
-<td><code class="docutils literal"><span class="pre">str</span></code></td>
-<td>Latest date that training data are applicable. Training data labels will be paired with models that end at least after this date</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">training_date_format</span></code></td>
-<td><code class="docutils literal"><span class="pre">str</span></code></td>
-<td>Format specification that maps <code class="docutils literal"><span class="pre">training_start</span></code> and <code class="docutils literal"><span class="pre">training_end</span></code> to a Python datetime object (e.g., <code class="docutils literal"><span class="pre">%Y-%m-%d</span></code>)</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">cache_xy</span></code></td>
-<td><code class="docutils literal"><span class="pre">str</span></code></td>
-<td>Filename used for caching paired X features and y training labels</td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
@@ -251,17 +185,11 @@ options include:</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="batch_interface.html" class="btn btn-neutral float-right" title="Batch Interface" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="models/ccdcesque.html" class="btn btn-neutral" title="CCDCesque" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -269,7 +197,7 @@ options include:</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -294,7 +222,8 @@ options include:</p>
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

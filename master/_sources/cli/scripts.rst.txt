@@ -11,11 +11,7 @@ installed on your system, these scripts are installed in a location in your
    :maxdepth: 2
 
    yatsm
-   yatsm_pixel
-   yatsm_line
-   yatsm_cache
-   yatsm_train
-   yatsm_classify
+   yatsm batch
    yatsm_changemap
    yatsm_map
    gen_date_file

@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.pipeline.language module &mdash; YATSM 0.7.dev0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.dev0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="guide/install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.pipeline.language module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm.pipeline.language.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-yatsm.pipeline.language">
+<span id="yatsm-pipeline-language-module"></span><h1>yatsm.pipeline.language module<a class="headerlink" href="#module-yatsm.pipeline.language" title="Permalink to this headline">¶</a></h1>
+<p>Storage for the language used in this pipeline batch processing</p>
+<dl class="data">
+<dt id="yatsm.pipeline.language.CONFIG">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">CONFIG</code><em class="property"> = 'config'</em><a class="headerlink" href="#yatsm.pipeline.language.CONFIG" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of variable containing task-specific configuration</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.DATA">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">DATA</code><em class="property"> = 'data'</em><a class="headerlink" href="#yatsm.pipeline.language.DATA" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of raster &#8220;data&#8221; naming convention</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.OUTPUT">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">OUTPUT</code><em class="property"> = 'output'</em><a class="headerlink" href="#yatsm.pipeline.language.OUTPUT" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of function argument for specifying task outputs</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.PIPE">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">PIPE</code><em class="property"> = 'pipe'</em><a class="headerlink" href="#yatsm.pipeline.language.PIPE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of variable containing results computed during the pipeline</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.PIPE_CONTENTS">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">PIPE_CONTENTS</code><em class="property"> = ('data', 'record', 'stash')</em><a class="headerlink" href="#yatsm.pipeline.language.PIPE_CONTENTS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em> &#8211; Pipe contents</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.RECORD">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">RECORD</code><em class="property"> = 'record'</em><a class="headerlink" href="#yatsm.pipeline.language.RECORD" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of segment &#8220;structure&#8221; or &#8220;record&#8221; database-like information</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.REQUIRE">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">REQUIRE</code><em class="property"> = 'require'</em><a class="headerlink" href="#yatsm.pipeline.language.REQUIRE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of function argument for specifying task requirements</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.STASH">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">STASH</code><em class="property"> = 'stash'</em><a class="headerlink" href="#yatsm.pipeline.language.STASH" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of stashed Python objects (e.g., functions or classes, perhaps</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.pipeline.language.TASK">
+<code class="descclassname">yatsm.pipeline.language.</code><code class="descname">TASK</code><em class="property"> = 'task'</em><a class="headerlink" href="#yatsm.pipeline.language.TASK" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Name of argument that species task&#8217;s Python function</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.7.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

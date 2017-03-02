@@ -4,10 +4,7 @@ scripts
 .. toctree::
    :maxdepth: 4
 
-   yatsm_pixel
-   yatsm_line
-   yatsm_train
-   yatsm_classify
-   yatsm_changemap
-   yatsm_map
+   yatsm_cli_batch
+   yatsm_cli_changemap
+   yatsm_cli_map
    gen_date_file

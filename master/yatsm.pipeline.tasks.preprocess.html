@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.pipeline.tasks.preprocess module &mdash; YATSM 0.7.dev0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.dev0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="guide/install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.pipeline.tasks.preprocess module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm.pipeline.tasks.preprocess.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-yatsm.pipeline.tasks.preprocess">
+<span id="yatsm-pipeline-tasks-preprocess-module"></span><h1>yatsm.pipeline.tasks.preprocess module<a class="headerlink" href="#module-yatsm.pipeline.tasks.preprocess" title="Permalink to this headline">¶</a></h1>
+<p>Calculations one might want to perform in a preprocessing pipeline</p>
+<dl class="function">
+<dt id="yatsm.pipeline.tasks.preprocess.dmatrix">
+<code class="descclassname">yatsm.pipeline.tasks.preprocess.</code><code class="descname">dmatrix</code><span class="sig-paren">(</span><em>pipe</em>, <em>require</em>, <em>output</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yatsm/pipeline/tasks/preprocess.html#dmatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.tasks.preprocess.dmatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a design matrix from Patsy/R style design strings</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.pipeline.tasks.preprocess.dmatrix.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.preprocess.dmatrix.params.pipe">¶</a> &#8211; Piped data to operate on</li>
+<li><span class="target" id="yatsm.pipeline.tasks.preprocess.dmatrix.params.require"></span><strong>require</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.preprocess.dmatrix.params.require">¶</a> &#8211; Labels for the requirements of this
+calculation</li>
+<li><span class="target" id="yatsm.pipeline.tasks.preprocess.dmatrix.params.output"></span><strong>output</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.preprocess.dmatrix.params.output">¶</a> &#8211; Label for the result of this
+calculation</li>
+<li><span class="target" id="yatsm.pipeline.tasks.preprocess.dmatrix.params.config"></span><strong>config</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.preprocess.dmatrix.params.config">¶</a> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Piped output</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe" title="yatsm.pipeline.Pipe">yatsm.pipeline.Pipe</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.pipeline.tasks.preprocess.norm_diff">
+<code class="descclassname">yatsm.pipeline.tasks.preprocess.</code><code class="descname">norm_diff</code><span class="sig-paren">(</span><em>pipe</em>, <em>require</em>, <em>output</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yatsm/pipeline/tasks/preprocess.html#norm_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.pipeline.tasks.preprocess.norm_diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate a normalized difference of two bands</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.pipeline.tasks.preprocess.norm_diff.params.pipe"></span><strong>pipe</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.preprocess.norm_diff.params.pipe">¶</a> &#8211; Piped data to operate on</li>
+<li><span class="target" id="yatsm.pipeline.tasks.preprocess.norm_diff.params.require"></span><strong>require</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.preprocess.norm_diff.params.require">¶</a> &#8211; Labels for the requirements of this
+calculation</li>
+<li><span class="target" id="yatsm.pipeline.tasks.preprocess.norm_diff.params.output"></span><strong>output</strong><a class="paramlink headerlink reference internal" href="#yatsm.pipeline.tasks.preprocess.norm_diff.params.output">¶</a> &#8211; Label for the result of this
+calculation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Piped output</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipe" title="yatsm.pipeline.Pipe">yatsm.pipeline.Pipe</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.7.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

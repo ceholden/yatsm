@@ -46,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -88,17 +89,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Command Line Utilities</a></li>
@@ -114,8 +104,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -124,25 +116,44 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="scripts.html">Command Line Utilities</a> &raquo;</li>
-      
-    <li><cite>gen_date_file.sh</cite></li>
+        
+      <li><cite>gen_date_file.sh</cite></li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/cli/gen_date_file.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/cli/gen_date_file.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -151,27 +162,12 @@
   <div class="section" id="gen-date-file-sh">
 <span id="gen-date-file"></span><h1><cite>gen_date_file.sh</cite><a class="headerlink" href="#gen-date-file-sh" title="Permalink to this headline">¶</a></h1>
 <p>Generate Date and Filename Lists:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ gen_date_file.sh -h
-
-    usage: ./../scripts/gen_date_file.sh <span class="o">[</span>options<span class="o">]</span> &lt;root_directory&gt; &lt;output_file&gt;
-
-    This script will output a CSV list of the date and full filepath <span class="k">for</span>
-    all images within &lt;root_directory&gt; to &lt;output_file&gt;. Currently the date
-    must be in YYYYDOY format.
-
-    Options:
-        -p         Filename pattern <span class="o">[</span>default: L*stack<span class="o">]</span>
-        -d         Starting index of date within filename <span class="o">[</span>default: <span class="m">9</span><span class="o">]</span>
-        -s         Starting index of sensor within filename <span class="o">[</span>default: <span class="m">0</span><span class="o">]</span>
-        -r         Use relative paths
-        -o         Overwrite &lt;output_file&gt; <span class="k">if</span> exists
-        -v         Be verbose
-        -h         Show <span class="nb">help</span>
-</pre></div>
-</div>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -189,7 +185,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -214,7 +210,8 @@
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

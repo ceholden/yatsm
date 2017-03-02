@@ -44,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -86,17 +87,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -112,8 +102,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -122,23 +114,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>yatsm.classification package</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.classification package</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.classification.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.classification.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -150,51 +161,19 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.classification.batch.html">yatsm.classification.batch module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.classification.diagnostics.html">yatsm.classification.diagnostics module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.classification.roi.html">yatsm.classification.roi module</a></li>
 </ul>
 </div>
 </div>
-<div class="section" id="module-yatsm.classification">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.classification" title="Permalink to this headline">¶</a></h2>
-<p>Module storing classifiers for YATSM</p>
-<p>Contains utilities and helper classes for classifying timeseries generated
-using YATSM change detection.</p>
-<dl class="function">
-<dt id="yatsm.classification.cfg_to_algorithm">
-<code class="descclassname">yatsm.classification.</code><code class="descname">cfg_to_algorithm</code><span class="sig-paren">(</span><em>config_file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/classification.html#cfg_to_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.classification.cfg_to_algorithm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return instance of classification algorithm helper from config file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><span class="target" id="yatsm.classification.cfg_to_algorithm.params.config_file"></span><strong>config_file</strong><a class="paramlink headerlink reference internal" href="#yatsm.classification.cfg_to_algorithm.params.config_file">¶</a> &#8211; location of configuration file for algorithm</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">scikit-learn estimator (object) and configuration file (dict)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> &#8211; raise if configuration file is malformed</li>
-<li><code class="xref py py-exc docutils literal"><span class="pre">AlgorithmNotFoundException</span></code> &#8211; raise if algorithm is not implemented in
-YATSM</li>
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#TypeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> &#8211; raise if configuration file cannot be used to initialize
-the classifier</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -205,7 +184,7 @@ the classifier</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -230,7 +209,8 @@ the classifier</li>
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

@@ -35,10 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/>
-        <link rel="up" title="Science Models" href="models.html"/>
-        <link rel="next" title="Model Configuration" href="../configuration.html"/>
-        <link rel="prev" title="Science Models" href="models.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -47,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -87,25 +85,8 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="models.html">Science Models</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="models.html#models">Models</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">CCDCesque</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
@@ -121,8 +102,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -131,25 +114,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
-          <li><a href="models.html">Science Models</a> &raquo;</li>
-      
-    <li>CCDCesque</li>
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>CCDCesque</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/models/ccdcesque.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/models/ccdcesque.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -157,7 +157,8 @@
             
   <div class="section" id="ccdcesque">
 <span id="guide-models-ccdcesque"></span><h1>CCDCesque<a class="headerlink" href="#ccdcesque" title="Permalink to this headline">¶</a></h1>
-<p>A guide for the YATSM implementation of Continuous Classification and Change Detection (CCDC) <a class="reference internal" href="../../index.html#zhu2014152" id="id1">[1]</a></p>
+<p>A guide for the YATSM implementation of Continuous Classification and Change
+Detection (CCDC) <a class="reference internal" href="../../index.html#zhu2014152" id="id1">[1]</a>.</p>
 <object data="../../_images/graphviz-e56b832e112c0c9f13ac877e0066c4b246e52933.svg" type="image/svg+xml">
             <p class="warning">digraph G {
     label = &quot;Algorithm Flowchart:\nCCDCesque&quot;
@@ -224,17 +225,11 @@
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../configuration.html" class="btn btn-neutral float-right" title="Model Configuration" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="models.html" class="btn btn-neutral" title="Science Models" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -242,7 +237,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -267,7 +262,8 @@
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

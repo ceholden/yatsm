@@ -45,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -87,17 +88,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -113,8 +103,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -127,21 +119,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../../index.html">Module code</a> &raquo;</li>
-      
-    <li>yatsm.pipeline._pipeline</li>
+        
+      <li>yatsm.pipeline._pipeline</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/pipeline/_pipeline.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/pipeline/_pipeline.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -155,11 +166,12 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">dask</span> <span class="k">import</span> <span class="n">delayed</span>
-<span class="c1"># from toolz import curry  # TODO: evaluate</span>
 
-<span class="kn">from</span> <span class="nn">._topology</span> <span class="k">import</span> <span class="n">config_to_tasks</span>
-<span class="kn">from</span> <span class="nn">.language</span> <span class="k">import</span> <span class="n">CONFIG</span><span class="p">,</span> <span class="n">TASK</span><span class="p">,</span> <span class="n">REQUIRE</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">PIPE_CONTENTS</span>
-<span class="kn">from</span> <span class="nn">.tasks</span> <span class="k">import</span> <span class="n">PIPELINE_TASKS</span><span class="p">,</span> <span class="n">SEGMENT_TASKS</span>
+<span class="kn">from</span> <span class="nn">yatsm.errors</span> <span class="k">import</span> <span class="n">PipelineConfigurationError</span> <span class="k">as</span> <span class="n">PCError</span>
+<span class="kn">from</span> <span class="nn">yatsm.pipeline._topology</span> <span class="k">import</span> <span class="n">config_to_tasks</span>
+<span class="kn">from</span> <span class="nn">yatsm.pipeline.language</span> <span class="k">import</span> <span class="p">(</span><span class="n">CONFIG</span><span class="p">,</span> <span class="n">TASK</span><span class="p">,</span> <span class="n">REQUIRE</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">,</span>
+                                     <span class="n">PIPE_CONTENTS</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">yatsm.pipeline.tasks</span> <span class="k">import</span> <span class="n">PIPELINE_TASKS</span><span class="p">,</span> <span class="n">SEGMENT_TASKS</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -235,7 +247,7 @@
 
 
 <div class="viewcode-block" id="Task"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task">[docs]</a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; A :class:`Pipeline` task</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">require</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -255,15 +267,19 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">PIPELINE_TASKS</span><span class="p">[</span><span class="n">task</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ke</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Unknown pipeline task &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Unknown pipeline task &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task</span><span class="p">),</span> <span class="n">ke</span><span class="p">)</span>
+            <span class="k">raise</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="n">REQUIRE</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="n">OUTPUT</span><span class="p">],</span>
                    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">,</span> <span class="p">{}))</span></div>
 
 <div class="viewcode-block" id="Task.curry"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task.curry">[docs]</a>    <span class="k">def</span> <span class="nf">curry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span></div>
 
+    <span class="c1"># TODO: maybe there is eager in time, eager in space?</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_eager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Can this task be executed on all pixels (x/y) at once?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;is_eager&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Task.record_dependencies"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task.record_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">record_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
@@ -278,9 +294,8 @@
 <span class="sd">            computation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">deps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">req</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">require_record</span>
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">output_record</span> <span class="ow">and</span> <span class="n">task</span><span class="o">.</span><span class="n">output_record</span> <span class="ow">in</span> <span class="n">req</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">output_record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">require_record</span><span class="p">:</span>
                 <span class="n">deps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
                 <span class="n">deps</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">record_dependencies</span><span class="p">(</span><span class="n">tasks</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">deps</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
@@ -290,32 +305,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_record</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Task.record_result_location"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Task.record_result_location">[docs]</a>    <span class="k">def</span> <span class="nf">record_result_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Define what HDF5 group/table this task belongs in</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a</span>
-<span class="sd">                pipeline)</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            tuple (str, str): Return the group root (e.g., &#39;/ccdc&#39;) and the</span>
-<span class="sd">            table name (e.g., &#39;ccdc&#39;)</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; dict: Attributes to store as metadata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_record</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">group</span> <span class="o">=</span> <span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_dependencies</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
-                 <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">create_group</span><span class="p">]</span>
-
-        <span class="n">where</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
-        <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
-            <span class="n">where</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_group</span><span class="p">:</span>
-            <span class="n">where</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Task &#39;</span><span class="si">{}</span><span class="s2">&#39; has no root segment and does not create &quot;</span>
-                          <span class="s2">&quot;a segment&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="n">where</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">version</span>
+        <span class="p">)</span>
 
 <span class="c1"># SHORTCUT GETTERS</span>
     <span class="nd">@property</span>
@@ -452,19 +449,45 @@
         <span class="n">pl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eager_pipeline</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipe</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span><span class="n">rankdir</span><span class="o">=</span><span class="n">rankdir</span><span class="p">,</span> <span class="o">**</span><span class="n">visualize_kwds</span><span class="p">)</span></div>
 
-<span class="c1"># HELPERS</span>
+<span class="c1"># TASK STORAGE</span>
+<div class="viewcode-block" id="Pipeline.task_table"><a class="viewcode-back" href="../../../yatsm/yatsm.pipeline.html#yatsm.pipeline.Pipeline.task_table">[docs]</a>    <span class="k">def</span> <span class="nf">task_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Define what HDF5 group/table this task belongs in</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tasks (list[Task]): List of ``Task`` in chain of tasks (e.g., a</span>
+<span class="sd">                pipeline)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple (str, str): Return the group root (e.g., &#39;/ccdc&#39;) and the</span>
+<span class="sd">            table name (e.g., &#39;ccdc&#39;) if the task outputs a table, otherwise</span>
+<span class="sd">            (None, None)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">task</span><span class="o">.</span><span class="n">output_record</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">group</span> <span class="o">=</span> <span class="p">[</span><span class="n">_task</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">_task</span> <span class="ow">in</span>
+                 <span class="n">task</span><span class="o">.</span><span class="n">record_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                 <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">create_group</span><span class="p">]</span>
+
+        <span class="n">where</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+        <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
+            <span class="n">where</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">task</span><span class="o">.</span><span class="n">create_group</span><span class="p">:</span>
+            <span class="n">where</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">task</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PCError</span><span class="p">(</span><span class="s2">&quot;Task &#39;</span><span class="si">{}</span><span class="s2">&#39; has no root segment and does not create &quot;</span>
+                          <span class="s2">&quot;a segment&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">task_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; dict: :ref:`Task` name (str) -&gt; result file table location (str)</span>
+        <span class="sd">&quot;&quot;&quot; dict: :ref:`Task` -&gt; result file table location (str)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">task_tables</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">taskname</span><span class="p">,</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">location</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">record_result_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-            <span class="k">if</span> <span class="n">location</span><span class="p">:</span>
-                <span class="n">group</span><span class="p">,</span> <span class="n">tablename</span> <span class="o">=</span> <span class="n">location</span>
-                <span class="n">task_tables</span><span class="p">[</span><span class="n">taskname</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">tablename</span>
-        <span class="k">return</span> <span class="n">task_tables</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">task</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_table</span><span class="p">(</span><span class="n">task</span><span class="p">))</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">output_record</span><span class="p">)</span>
 
+<span class="c1"># HELPERS</span>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_check_eager</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">pipe</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check if it looks like eager task results have been computed</span>
@@ -502,6 +525,9 @@
 </pre></div>
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -511,7 +537,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 6, 2017, 9:52:18 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -536,7 +562,8 @@
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../../_static/jquery.js"></script>

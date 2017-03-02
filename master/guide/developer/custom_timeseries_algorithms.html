@@ -35,9 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/>
-        <link rel="next" title="Command Line Utilities" href="../../cli/scripts.html"/>
-        <link rel="prev" title="Long Term Mean Phenology" href="../phenology.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -46,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -86,23 +85,8 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Integration of user-provided time series algorithms</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#behind-the-scenes">Behind the scenes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#references">References:</a></li>
-</ul>
-</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
@@ -118,8 +102,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -128,23 +114,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
-    <li>Integration of user-provided time series algorithms</li>
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Integration of user-provided time series algorithms</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/developer/custom_timeseries_algorithms.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/developer/custom_timeseries_algorithms.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -155,7 +160,7 @@
 <p>The YATSM package provides some time series algorithms as part of the
 project, but developers can also build and integrate their own algorithms
 into the suite of time series algorithms that can be utilized by programs like
-<a class="reference internal" href="../../cli/yatsm_line.html#yatsm-line"><span class="std std-ref">yatsm line</span></a> or <a class="reference internal" href="../../cli/yatsm_pixel.html#yatsm-pixel"><span class="std std-ref">yatsm pixel</span></a>.</p>
+<span class="xref std std-ref">yatsm line</span> or <span class="xref std std-ref">yatsm pixel</span>.</p>
 <p>YATSM uses the <a class="reference external" href="https://pythonhosted.org/setuptools/setuptools.html">setuptools</a> module concept of &#8220;entry points&#8221; to
 enumerate time series algorithms. YATSM algorithms are registered into a
 group based on the type of algorithm &#8211; there are entry point groups for
@@ -197,17 +202,11 @@ including additional algorithms via <a class="reference external" href="https://
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../../cli/scripts.html" class="btn btn-neutral float-right" title="Command Line Utilities" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="../phenology.html" class="btn btn-neutral" title="Long Term Mean Phenology" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -215,7 +214,7 @@ including additional algorithms via <a class="reference external" href="https://
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -240,7 +239,8 @@ including additional algorithms via <a class="reference external" href="https://
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../_static/jquery.js"></script>

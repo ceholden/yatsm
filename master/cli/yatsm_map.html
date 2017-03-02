@@ -47,6 +47,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -89,20 +90,15 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="scripts.html">Command Line Utilities</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Command Line Utilities</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="yatsm.html"><cite>yatsm</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><cite>yatsm map</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -115,8 +111,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -125,86 +123,59 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="scripts.html">Command Line Utilities</a> &raquo;</li>
-      
-    <li><cite>yatsm map</cite></li>
+        
+      <li><cite>yatsm map</cite></li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/cli/yatsm_map.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/cli/yatsm_map.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
   <div class="section" id="yatsm-map">
-<span id="id1"></span><h1><cite>yatsm map</cite><a class="headerlink" href="#yatsm-map" title="Permalink to this headline">¶</a></h1>
+<span id="yatsm-cli-map"></span><h1><cite>yatsm map</cite><a class="headerlink" href="#yatsm-map" title="Permalink to this headline">¶</a></h1>
 <p>Create maps of coefficients, predicted images, or land cover for any given date
 from YATSM output:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ yatsm map --help
-Usage: yatsm map <span class="o">[</span>OPTIONS<span class="o">]</span> &lt;map_type&gt; &lt;date&gt; &lt;output&gt;
-
-  Map types: coef, predict, class, pheno
-
-  Map QA flags:
-      - <span class="nv">0</span> <span class="o">=</span>&gt; no values
-      - <span class="nv">1</span> <span class="o">=</span>&gt; before
-      - <span class="nv">2</span> <span class="o">=</span>&gt; after
-      - <span class="nv">3</span> <span class="o">=</span>&gt; intersect
-
-  Examples:
-  &gt; yatsm map --coef intercept --coef slope
-  ... --band <span class="m">3</span> --band <span class="m">4</span> --band <span class="m">5</span> --ndv -9999
-  ... coef <span class="m">2000</span>-01-01 coef_map.gtif
-
-  &gt; yatsm map -c intercept -c slope -b <span class="m">3</span> -b <span class="m">4</span> -b <span class="m">5</span> --ndv -9999
-  ... coef <span class="m">2000</span>-01-01 coef_map.gtif
-
-  &gt; yatsm map --date <span class="s2">&quot;%Y-%j&quot;</span> predict <span class="m">2000</span>-001 prediction.gtif
-
-  &gt; yatsm map --result <span class="s2">&quot;YATSM_new&quot;</span> --after class <span class="m">2000</span>-01-01 LCmap.gtif
-
-  Notes:
-      - Image predictions will not use categorical information in timeseries
-        models.
-
-Options:
-  --root &lt;directory&gt;        Root timeseries directory  <span class="o">[</span>default: ./<span class="o">]</span>
-  -r, --result &lt;directory&gt;  Directory of results  <span class="o">[</span>default: YATSM<span class="o">]</span>
-  -i, --image &lt;image&gt;       Example timeseries image  <span class="o">[</span>default: example_img<span class="o">]</span>
-  --date &lt;format&gt;           Input date format  <span class="o">[</span>default: %Y-%m-%d<span class="o">]</span>
-  --ndv &lt;NoDataValue&gt;       Output NoDataValue  <span class="o">[</span>default: -9999<span class="o">]</span>
-  -f, --format &lt;driver&gt;     Output format driver  <span class="o">[</span>default: GTiff<span class="o">]</span>
-  --warn-on-empty           Warn user when reading in empty results files
-  -b, --band &lt;band&gt;         Bands to <span class="nb">export</span> <span class="k">for</span> coefficient/prediction maps
-  -c, --coef &lt;coef&gt;         Coefficients to <span class="nb">export</span> <span class="k">for</span> coefficient maps
-  --after                   Use <span class="nb">time</span> segment after &lt;date&gt; <span class="k">if</span> needed <span class="k">for</span> map
-  --before                  Use <span class="nb">time</span> segment before &lt;date&gt; <span class="k">if</span> needed <span class="k">for</span> map
-  --qa                      Add QA band identifying segment <span class="nb">type</span>
-  --refit_prefix TEXT       Use coef/rmse with refit prefix <span class="k">for</span>
-                            coefficient/prediction maps  <span class="o">[</span>default: <span class="o">]</span>
-  --amplitude               Export amplitude of sin/cosine pairs instead of
-                            individual coefficient estimates
-  --predict-proba           Include prediction probability band <span class="o">(</span>scaled by
-                            <span class="m">10</span>,000<span class="o">)</span>
-  --help                    Show this message and exit.
-</pre></div>
-</div>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -224,7 +195,7 @@ Options:
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -249,7 +220,8 @@ Options:
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

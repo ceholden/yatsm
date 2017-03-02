@@ -44,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -86,17 +87,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -112,8 +102,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -122,23 +114,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>yatsm.regression package</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.regression package</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.regression.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.regression.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -153,7 +164,6 @@
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.cran.html">yatsm.regression.cran module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.design.html">yatsm.regression.design module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.diagnostics.html">yatsm.regression.diagnostics module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.regression.packaged.html">yatsm.regression.packaged module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.robust_fit.html">yatsm.regression.robust_fit module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.transforms.html">yatsm.regression.transforms module</a></li>
 </ul>
@@ -280,35 +290,6 @@ keys and indices of coefficient matrix as values</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.regression.find_packaged_regressor">
-<code class="descclassname">yatsm.regression.</code><code class="descname">find_packaged_regressor</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/packaged.html#find_packaged_regressor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.find_packaged_regressor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find location of a regression method packaged with YATSM</p>
-<p>See <code class="xref py py-data docutils literal"><span class="pre">packaged_regressions</span></code> for a list of
-available pre-packaged regressors</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><span class="target" id="yatsm.regression.find_packaged_regressor.params.name"></span><strong>name</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.find_packaged_regressor.params.name">¶</a> &#8211; name of packaged regression object</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">path to packaged regression method</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> &#8211; raise KeyError if user specifies unknown regressor</li>
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code></a> &#8211; raise IOError if the packaged regressor cannot be found</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="yatsm.regression.recresid">
 <code class="descclassname">yatsm.regression.</code><code class="descname">recresid</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>span=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/regression/_recresid.html#recresid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.regression.recresid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return standardized recursive residuals for y ~ X</p>
@@ -427,6 +408,9 @@ regression. If <code class="docutils literal"><span class="pre">span</span></cod
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -436,7 +420,7 @@ regression. If <code class="docutils literal"><span class="pre">span</span></cod
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -461,7 +445,8 @@ regression. If <code class="docutils literal"><span class="pre">span</span></cod
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

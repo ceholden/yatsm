@@ -4,6 +4,10 @@
 Long Term Mean Phenology
 ========================
 
+.. todo::
+
+    This section needs updating to turn into a task description
+
 This part of the guide is a work in progress and more information will be added.
 
 The purpose of this module within YATSM is to provide long term mean phenological

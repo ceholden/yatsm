@@ -45,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -87,17 +88,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -113,8 +103,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -127,21 +119,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../../index.html">Module code</a> &raquo;</li>
-      
-    <li>yatsm.mapping.classification</li>
+        
+      <li>yatsm.mapping.classification</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/mapping/classification.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/mapping/classification.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -152,86 +163,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">find_indices</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">find_results</span><span class="p">,</span> <span class="n">iter_records</span>
-
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_classification"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.classification.html#yatsm.mapping.get_classification">[docs]</a><span class="k">def</span> <span class="nf">get_classification</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">result_location</span><span class="p">,</span> <span class="n">image_ds</span><span class="p">,</span>
-                       <span class="n">after</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">qa</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                       <span class="n">pred_proba</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                       <span class="n">ndv</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;yatsm_r*&#39;</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Output raster with classification results</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        date (int): ordinal date for prediction image</span>
-<span class="sd">        result_location (str): Location of the results</span>
-<span class="sd">        image_ds (gdal.Dataset): Example dataset</span>
-<span class="sd">        after (bool, optional): If date intersects a disturbed period, use next</span>
-<span class="sd">            available time segment</span>
-<span class="sd">        before (bool, optional): If date does not intersect a model, use</span>
-<span class="sd">            previous non-disturbed time segment</span>
-<span class="sd">        qa (bool, optional): Add QA flag specifying segment type (intersect,</span>
-<span class="sd">            after, or before)</span>
-<span class="sd">        pred_proba (bool, optional): Include additional band with</span>
-<span class="sd">            classification value probabilities</span>
-<span class="sd">        ndv (int, optional): NoDataValue</span>
-<span class="sd">        pattern (str, optional): filename pattern of saved record results</span>
-<span class="sd">        warn_on_empty (bool, optional): Log warning if result contained no</span>
-<span class="sd">            result records (default: False)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        np.ndarray: 2D numpy array containing the classification map for the</span>
-<span class="sd">            date specified</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Find results</span>
-    <span class="n">records</span> <span class="o">=</span> <span class="n">find_results</span><span class="p">(</span><span class="n">result_location</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
-
-    <span class="n">n_bands</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">pred_proba</span> <span class="k">else</span> <span class="mi">1</span>
-    <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span> <span class="k">if</span> <span class="n">pred_proba</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
-
-    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Classification&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">pred_proba</span><span class="p">:</span>
-        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Pred Proba (x10,000)&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
-        <span class="n">n_bands</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">band_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SegmentQAQC&#39;</span><span class="p">)</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Allocating memory...&#39;</span><span class="p">)</span>
-    <span class="n">raster</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">image_ds</span><span class="o">.</span><span class="n">RasterYSize</span><span class="p">,</span> <span class="n">image_ds</span><span class="o">.</span><span class="n">RasterXSize</span><span class="p">,</span> <span class="n">n_bands</span><span class="p">),</span>
-                     <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">ndv</span><span class="p">)</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing results&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">rec</span><span class="p">,</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">iter_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">warn_on_empty</span><span class="o">=</span><span class="n">warn_on_empty</span><span class="p">,</span>
-                                   <span class="n">yield_filename</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s1">&#39;class&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Results in </span><span class="si">{f}</span><span class="s1"> do not have classification labels&#39;</span>
-                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">fname</span><span class="p">))</span>
-            <span class="k">continue</span>
-        <span class="k">if</span> <span class="s1">&#39;class_proba&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span> <span class="ow">and</span> <span class="n">pred_proba</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Results do not have classification prediction&#39;</span>
-                             <span class="s1">&#39; probability values&#39;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">_qa</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">find_indices</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">date</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="n">before</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
-                   <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">pred_proba</span><span class="p">:</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
-                       <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> \
-                    <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;class_proba&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10000</span>
-            <span class="k">if</span> <span class="n">qa</span><span class="p">:</span>
-                <span class="n">raster</span><span class="p">[</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;py&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">][</span><span class="n">index</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_qa</span>
-
-    <span class="k">return</span> <span class="n">raster</span><span class="p">,</span> <span class="n">band_names</span></div>
+<div class="viewcode-block" id="get_classification"><a class="viewcode-back" href="../../../yatsm/yatsm.mapping.classification.html#yatsm.mapping.get_classification">[docs]</a><span class="k">def</span> <span class="nf">get_classification</span><span class="p">():</span>
+    <span class="k">pass</span></div>
 </pre></div>
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -242,7 +183,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jan 19, 2017, 1:37:39 AM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -267,7 +208,8 @@
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../../_static/jquery.js"></script>

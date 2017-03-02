@@ -44,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -86,17 +87,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -112,8 +102,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -126,19 +118,38 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>Overview: module code</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Overview: module code</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/index.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/index.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -148,26 +159,25 @@
 <ul><li><a href="yatsm/accel.html">yatsm.accel</a></li>
 <li><a href="yatsm/algorithms/_core.html">yatsm.algorithms._core</a></li>
 <li><a href="yatsm/algorithms/ccdc.html">yatsm.algorithms.ccdc</a></li>
-<li><a href="yatsm/classification.html">yatsm.classification</a></li>
-<ul><li><a href="yatsm/classification/batch.html">yatsm.classification.batch</a></li>
-<li><a href="yatsm/classification/diagnostics.html">yatsm.classification.diagnostics</a></li>
-</ul><li><a href="yatsm/cli/batch.html">yatsm.cli.batch</a></li>
-<li><a href="yatsm/cli/console.html">yatsm.cli.console</a></li>
-<li><a href="yatsm/cli/logger.html">yatsm.cli.logger</a></li>
-<li><a href="yatsm/cli/main.html">yatsm.cli.main</a></li>
-<li><a href="yatsm/cli/options.html">yatsm.cli.options</a></li>
+<li><a href="yatsm/algorithms/postprocess.html">yatsm.algorithms.postprocess</a></li>
 <li><a href="yatsm/config/_parse.html">yatsm.config._parse</a></li>
 <li><a href="yatsm/config/_util.html">yatsm.config._util</a></li>
 <li><a href="yatsm/errors.html">yatsm.errors</a></li>
 <li><a href="yatsm/executor.html">yatsm.executor</a></li>
+<li><a href="yatsm/mapping/changes.html">yatsm.mapping.changes</a></li>
+<li><a href="yatsm/mapping/classification.html">yatsm.mapping.classification</a></li>
+<li><a href="yatsm/mapping/phenology.html">yatsm.mapping.phenology</a></li>
+<li><a href="yatsm/mapping/prediction.html">yatsm.mapping.prediction</a></li>
 <li><a href="yatsm/masking.html">yatsm.masking</a></li>
-<li><a href="yatsm/phenology/longtermmean.html">yatsm.phenology.longtermmean</a></li>
+<li><a href="yatsm/pipeline/_pipeline.html">yatsm.pipeline._pipeline</a></li>
+<li><a href="yatsm/pipeline/tasks/_validation.html">yatsm.pipeline.tasks._validation</a></li>
+<li><a href="yatsm/pipeline/tasks/change.html">yatsm.pipeline.tasks.change</a></li>
+<li><a href="yatsm/pipeline/tasks/preprocess.html">yatsm.pipeline.tasks.preprocess</a></li>
+<li><a href="yatsm/pipeline/tasks/stash.html">yatsm.pipeline.tasks.stash</a></li>
 <li><a href="yatsm/plots.html">yatsm.plots</a></li>
 <li><a href="yatsm/regression/_recresid.html">yatsm.regression._recresid</a></li>
-<li><a href="yatsm/regression/cran.html">yatsm.regression.cran</a></li>
 <li><a href="yatsm/regression/design.html">yatsm.regression.design</a></li>
 <li><a href="yatsm/regression/diagnostics.html">yatsm.regression.diagnostics</a></li>
-<li><a href="yatsm/regression/packaged.html">yatsm.regression.packaged</a></li>
 <li><a href="yatsm/regression/robust_fit.html">yatsm.regression.robust_fit</a></li>
 <li><a href="yatsm/regression/transforms.html">yatsm.regression.transforms</a></li>
 <li><a href="yatsm/structural_break/_core.html">yatsm.structural_break._core</a></li>
@@ -178,6 +188,9 @@
 </ul>
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -187,7 +200,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -212,7 +225,8 @@
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>

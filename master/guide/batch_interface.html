@@ -35,9 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/>
-        <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
-        <link rel="prev" title="Model Configuration" href="configuration.html"/> 
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -46,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -86,22 +85,8 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Batch Interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#sun-grid-engine">Sun Grid Engine</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -117,8 +102,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -127,23 +114,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>Batch Interface</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Batch Interface</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/batch_interface.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/batch_interface.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -157,17 +163,7 @@ number of lines can be broken up among the <code class="docutils literal"><span 
 using the batch interface, make sure you already have a parameter file
 generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><span class="std std-ref">Model Configuration</span></a>.</p>
 <p>The batch interface which runs each line separately is
-<a class="reference internal" href="../cli/yatsm_line.html#yatsm-line"><span class="std std-ref">yatsm line</span></a>. It&#8217;s usage is:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ yatsm line --help
-Usage: yatsm line <span class="o">[</span>OPTIONS<span class="o">]</span> &lt;config&gt; &lt;job_number&gt; &lt;total_jobs&gt;
-
-Options:
-  --check_cache  Check that cache file contains matching data
-  --resume       Do not overwrite preexisting results
-  --do-not-run   Do not run YATSM <span class="o">(</span>useful <span class="k">for</span> just caching data<span class="o">)</span>
-  --help         Show this message and exit.
-</pre></div>
-</div>
+<span class="xref std std-ref">yatsm line</span>. It&#8217;s usage is:</p>
 <p>Let&#8217;s say our image stack contains 1,000 rows. If we use 50 total CPUs
 to process the image stack, then each CPU will be responsible for only
 20 lines. To evenly distribute the number of pixels that contain
@@ -224,17 +220,11 @@ $ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m"
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="map_static.html" class="btn btn-neutral float-right" title="Mapping Derived Information" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="configuration.html" class="btn btn-neutral" title="Model Configuration" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>
@@ -242,7 +232,7 @@ $ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m"
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 3:54:33 PM.
 
     </p>
   </div>
@@ -267,7 +257,8 @@ $ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m"
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
