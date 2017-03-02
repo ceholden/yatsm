@@ -45,6 +45,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -87,17 +88,6 @@
             
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -113,8 +103,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -127,21 +119,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
           <li><a href="../../index.html">Module code</a> &raquo;</li>
-      
-    <li>yatsm.cli.batch</li>
+        
+      <li>yatsm.cli.batch</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/batch.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/batch.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -152,10 +163,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">import</span> <span class="nn">click</span>
@@ -185,9 +195,7 @@
 <span class="sd">          options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Imports inside CLI for speed</span>
-    <span class="kn">from</span> <span class="nn">yatsm</span> <span class="k">import</span> <span class="n">io</span>
     <span class="kn">from</span> <span class="nn">yatsm.utils</span> <span class="k">import</span> <span class="n">distribute_jobs</span>
-    <span class="kn">from</span> <span class="nn">yatsm.pipeline</span> <span class="k">import</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">Pipeline</span>
 
     <span class="c1"># TODO: remove when not debugging</span>
     <span class="kn">import</span> <span class="nn">dask</span>
@@ -218,7 +226,7 @@
                                  <span class="n">overwrite</span><span class="o">=</span><span class="n">force_overwrite</span><span class="p">)</span>
         <span class="n">futures</span><span class="p">[</span><span class="n">future</span><span class="p">]</span> <span class="o">=</span> <span class="n">window</span>
 
-    <span class="n">n_good</span><span class="p">,</span> <span class="n">n_skip</span><span class="p">,</span> <span class="n">n_bad</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">n_good</span><span class="p">,</span> <span class="n">n_skip</span><span class="p">,</span> <span class="n">n_fail</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">executor</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">):</span>
         <span class="n">window</span> <span class="o">=</span> <span class="n">futures</span><span class="p">[</span><span class="n">future</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
@@ -229,13 +237,13 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">n_skip</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">ke</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Interrupting and shutting down&#39;</span><span class="p">)</span>
             <span class="n">executor</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Exception for window: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window</span><span class="p">))</span>
-            <span class="n">n_bad</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">n_fail</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">raise</span>  <span class="c1"># TODO: remove and log?</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Complete: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">n_good</span><span class="p">)</span>
@@ -249,8 +257,8 @@
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
     <span class="kn">from</span> <span class="nn">yatsm</span> <span class="k">import</span> <span class="n">io</span>
-    <span class="kn">from</span> <span class="nn">yatsm.results</span> <span class="k">import</span> <span class="n">HDF5ResultsStore</span><span class="p">,</span> <span class="n">result_filename</span>
-    <span class="kn">from</span> <span class="nn">yatsm.pipeline</span> <span class="k">import</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">Pipeline</span>
+    <span class="kn">from</span> <span class="nn">yatsm.results</span> <span class="k">import</span> <span class="n">HDF5ResultsStore</span>
+    <span class="kn">from</span> <span class="nn">yatsm.pipeline</span> <span class="k">import</span> <span class="n">Pipe</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
 
@@ -277,21 +285,20 @@
         <span class="c1"># TODO: read this from pre-existing results</span>
         <span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="n">pipeline</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_pipeline</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">IPython.core.debugger</span> <span class="k">import</span> <span class="n">Pdb</span><span class="p">;</span> <span class="n">Pdb</span><span class="p">()</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
 
         <span class="c1"># TODO: finish checking for resume</span>
-        <span class="c1"># TODO: encapsulate?</span>
-        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">table_name</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span>
-                <span class="n">pipeline</span><span class="o">.</span><span class="n">task_tables</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">store</span><span class="o">.</span><span class="n">completed</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Already completed: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
             <span class="k">return</span>
 
         <span class="n">pipe</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run_eager</span><span class="p">(</span><span class="n">pipe</span><span class="p">)</span>
 
         <span class="n">record_results</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">)):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing pixel </span><span class="si">{pct:&gt;4.2f}</span><span class="s1">%: y/x </span><span class="si">{y}</span><span class="s1">/</span><span class="si">{x}</span><span class="s1">&#39;</span>
-                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="n">i</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">))</span>
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pct</span><span class="o">=</span><span class="n">i</span> <span class="o">/</span> <span class="n">n_</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">))</span>
             <span class="n">pix_pipe</span> <span class="o">=</span> <span class="n">sel_pix</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 
             <span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">pix_pipe</span><span class="p">,</span> <span class="n">check_eager</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -312,6 +319,9 @@
 </pre></div>
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -321,7 +331,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Mar 2, 2017, 5:40:25 PM.
 
     </p>
   </div>
@@ -346,7 +356,8 @@
             VERSION:'0.7.dev0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../../../_static/jquery.js"></script>

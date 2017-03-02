@@ -167,8 +167,463 @@
 </ul>
 </div>
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-yatsm.gis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.gis" title="Permalink to this headline">¶</a></h2>
+<p>GIS utilities</p>
+<dl class="class">
+<dt id="yatsm.gis.Affine">
+<em class="property">class </em><code class="descclassname">yatsm.gis.</code><code class="descname">Affine</code><a class="reference internal" href="../_modules/affine.html#Affine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">affine.Affine</span></code></p>
+<p>Two dimensional affine transform for 2D linear mapping.</p>
+<p>Parallel lines are preserved by these transforms. Affine transforms
+can perform any combination of translations, scales/flips, shears,
+and rotations.  Class methods are provided to conveniently compose
+transforms from these operations.</p>
+<p>Internally the transform is stored as a 3x3 transformation matrix.
+The transform may be constructed directly by specifying the first
+two rows of matrix values as 6 floats. Since the matrix is an affine
+transform, the last row is always <code class="docutils literal"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">1)</span></code>.</p>
+<p>N.B.: multiplication of a transform and an (x, y) vector <em>always</em>
+returns the column vector that is the matrix multiplication product
+of the transform and (x, y) as a column vector, no matter which is
+on the left or right side. This is obviously not the case for
+matrices and vectors in general, but provides a convenience for
+users of this class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.Affine.params.members"></span><strong>members</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.params.members">¶</a> &#8211; 6 floats for the first two matrix rows.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="yatsm.gis.Affine.almost_equals">
+<code class="descname">almost_equals</code><span class="sig-paren">(</span><em>other</em>, <em>precision=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.almost_equals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.almost_equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare transforms for approximate equality.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.Affine.almost_equals.params.other"></span><strong>other</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.almost_equals.params.other">¶</a> &#8211; Transform being compared.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if absolute difference between each element
+of each respective transform matrix &lt; <code class="docutils literal"><span class="pre">self.precision</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yatsm.gis.Affine.from_gdal">
+<em class="property">classmethod </em><code class="descname">from_gdal</code><span class="sig-paren">(</span><em>c</em>, <em>a</em>, <em>b</em>, <em>f</em>, <em>d</em>, <em>e</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.from_gdal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.from_gdal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use same coefficient order as GDAL&#8217;s GetGeoTransform().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.Affine.from_gdal.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.from_gdal.params.a">¶</a><strong>, </strong><strong>b</strong><strong>, </strong><strong>f</strong><strong>, </strong><strong>d</strong><strong>, </strong><strong>e</strong> (<em>c</em><em>,</em><em></em>) &#8211; 6 floats ordered by GDAL.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#yatsm.gis.Affine" title="yatsm.gis.Affine">Affine</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yatsm.gis.Affine.identity">
+<em class="property">classmethod </em><code class="descname">identity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the identity transform.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#yatsm.gis.Affine" title="yatsm.gis.Affine">Affine</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.gis.Affine.itransform">
+<code class="descname">itransform</code><span class="sig-paren">(</span><em>seq</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.itransform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.itransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a sequence of points or vectors in place.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.Affine.itransform.params.seq"></span><strong>seq</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.itransform.params.seq">¶</a> &#8211; Mutable sequence of <code class="xref py py-class docutils literal"><span class="pre">Vec2</span></code> to be
+transformed.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None, the input sequence is mutated in place.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yatsm.gis.Affine.rotation">
+<em class="property">classmethod </em><code class="descname">rotation</code><span class="sig-paren">(</span><em>angle</em>, <em>pivot=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.rotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a rotation transform at the specified angle.</p>
+<p>A pivot point other than the coordinate system origin may be
+optionally specified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.gis.Affine.rotation.params.angle"></span><strong>angle</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.rotation.params.angle">¶</a> &#8211; Rotation angle in degrees, counter-clockwise
+about the pivot point.</li>
+<li><span class="target" id="yatsm.gis.Affine.rotation.params.pivot"></span><strong>pivot</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.rotation.params.pivot">¶</a> &#8211; Point to rotate about, if omitted the rotation is
+about the origin.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#yatsm.gis.Affine" title="yatsm.gis.Affine">Affine</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yatsm.gis.Affine.scale">
+<em class="property">classmethod </em><code class="descname">scale</code><span class="sig-paren">(</span><em>*scaling</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a scaling transform from a scalar or vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.Affine.scale.params.scaling"></span><strong>scaling</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.scale.params.scaling">¶</a> &#8211; The scaling factor. A scalar value will
+scale in both dimensions equally. A vector scaling
+value scales the dimensions independently.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#yatsm.gis.Affine" title="yatsm.gis.Affine">Affine</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yatsm.gis.Affine.shear">
+<em class="property">classmethod </em><code class="descname">shear</code><span class="sig-paren">(</span><em>x_angle=0</em>, <em>y_angle=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.shear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.shear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a shear transform along one or both axes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.gis.Affine.shear.params.x_angle"></span><strong>x_angle</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.shear.params.x_angle">¶</a> &#8211; Shear angle in degrees parallel to the x-axis.</li>
+<li><span class="target" id="yatsm.gis.Affine.shear.params.y_angle"></span><strong>y_angle</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.shear.params.y_angle">¶</a> &#8211; Shear angle in degrees parallel to the y-axis.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#yatsm.gis.Affine" title="yatsm.gis.Affine">Affine</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.gis.Affine.to_gdal">
+<code class="descname">to_gdal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.to_gdal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.to_gdal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return same coefficient order as GDAL&#8217;s SetGeoTransform().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yatsm.gis.Affine.translation">
+<em class="property">classmethod </em><code class="descname">translation</code><span class="sig-paren">(</span><em>xoff</em>, <em>yoff</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/affine.html#Affine.translation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Affine.translation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a translation transform from an offset vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.gis.Affine.translation.params.xoff"></span><strong>xoff</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.translation.params.xoff">¶</a> &#8211; Translation x offset.</li>
+<li><span class="target" id="yatsm.gis.Affine.translation.params.yoff"></span><strong>yoff</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Affine.translation.params.yoff">¶</a> &#8211; Translation y offset.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#yatsm.gis.Affine" title="yatsm.gis.Affine">Affine</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.column_vectors">
+<code class="descname">column_vectors</code><a class="headerlink" href="#yatsm.gis.Affine.column_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>The values of the transform as three 2D column vectors</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.determinant">
+<code class="descname">determinant</code><a class="headerlink" href="#yatsm.gis.Affine.determinant" title="Permalink to this definition">¶</a></dt>
+<dd><p>The determinant of the transform matrix.</p>
+<p>This value is equal to the area scaling factor when the
+transform is applied to a shape.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.is_conformal">
+<code class="descname">is_conformal</code><a class="headerlink" href="#yatsm.gis.Affine.is_conformal" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the transform is conformal.</p>
+<p>i.e., if angles between points are preserved after applying the
+transform, within rounding limits.  This implies that the
+transform has no effective shear.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.is_degenerate">
+<code class="descname">is_degenerate</code><a class="headerlink" href="#yatsm.gis.Affine.is_degenerate" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if this transform is degenerate.</p>
+<p>Which means that it will collapse a shape to an effective area
+of zero. Degenerate transforms cannot be inverted.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.is_identity">
+<code class="descname">is_identity</code><a class="headerlink" href="#yatsm.gis.Affine.is_identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if this transform equals the identity matrix,
+within rounding limits.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.is_orthonormal">
+<code class="descname">is_orthonormal</code><a class="headerlink" href="#yatsm.gis.Affine.is_orthonormal" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the transform is orthonormal.</p>
+<p>Which means that the transform represents a rigid motion, which
+has no effective scaling or shear. Mathematically, this means
+that the axis vectors of the transform matrix are perpendicular
+and unit-length.  Applying an orthonormal transform to a shape
+always results in a congruent shape.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.is_rectilinear">
+<code class="descname">is_rectilinear</code><a class="headerlink" href="#yatsm.gis.Affine.is_rectilinear" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the transform is rectilinear.</p>
+<p>i.e., whether a shape would remain axis-aligned, within rounding
+limits, after applying the transform.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.precision">
+<code class="descname">precision</code><em class="property"> = 1e-05</em><a class="headerlink" href="#yatsm.gis.Affine.precision" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.xoff">
+<code class="descname">xoff</code><a class="headerlink" href="#yatsm.gis.Affine.xoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for &#8216;c&#8217;</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Affine.yoff">
+<code class="descname">yoff</code><a class="headerlink" href="#yatsm.gis.Affine.yoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for &#8216;f&#8217;</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.gis.BoundingBox">
+<em class="property">class </em><code class="descclassname">yatsm.gis.</code><code class="descname">BoundingBox</code><a class="reference internal" href="../_modules/rasterio/coords.html#BoundingBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.BoundingBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rasterio.coords.BoundingBox</span></code></p>
+<p>Bounding box named tuple, defining extent in cartesian coordinates.</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">BoundingBox</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>left</strong> &#8211; Left coordinate</li>
+<li><strong>bottom</strong> &#8211; Bottom coordinate</li>
+<li><strong>right</strong> &#8211; Right coordinate</li>
+<li><strong>top</strong> &#8211; Top coordinate</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.gis.CRS">
+<em class="property">class </em><code class="descclassname">yatsm.gis.</code><code class="descname">CRS</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rasterio/crs.html#CRS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.CRS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rasterio._crs._CRS</span></code></p>
+<p>A container class for coordinate reference system info</p>
+<p>PROJ.4 is the law of this land: <a class="reference external" href="http://proj.osgeo.org/">http://proj.osgeo.org/</a>. But whereas PROJ.4
+coordinate reference systems are described by strings of parameters such as</p>
+<blockquote>
+<div>+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs</div></blockquote>
+<p>here we use mappings:</p>
+<blockquote>
+<div>{&#8216;proj&#8217;: &#8216;longlat&#8217;, &#8216;ellps&#8217;: &#8216;WGS84&#8217;, &#8216;datum&#8217;: &#8216;WGS84&#8217;, &#8216;no_defs&#8217;: True}</div></blockquote>
+<p>One can set/get any PROJ.4 parameter using a dict-like key/value pair on the
+object. You can instantiate the object by simply passing a dict to the
+constructor. E.g.</p>
+<blockquote>
+<div>crs = CRS({&#8216;init&#8217;: &#8216;epsg:3005&#8217;})</div></blockquote>
+<dl class="staticmethod">
+<dt id="yatsm.gis.CRS.from_epsg">
+<em class="property">static </em><code class="descname">from_epsg</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rasterio/crs.html#CRS.from_epsg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.CRS.from_epsg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an integer code, returns an EPSG-like mapping.</p>
+<p>Note: the input code is not validated against an EPSG database.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="yatsm.gis.CRS.from_string">
+<em class="property">static </em><code class="descname">from_string</code><span class="sig-paren">(</span><em>prjs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rasterio/crs.html#CRS.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.CRS.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a PROJ.4 string into a mapping of parameters.</p>
+<p>Bare parameters like &#8220;+no_defs&#8221; are given a value of <code class="docutils literal"><span class="pre">True</span></code>. All keys
+are checked against the <code class="docutils literal"><span class="pre">all_proj_keys</span></code> list.</p>
+<p>EPSG:nnnn is allowed.</p>
+<p>JSON text-encoded strings are allowed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.gis.CRS.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rasterio/crs.html#CRS.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.CRS.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="yatsm.gis.CRS.to_string">
+<code class="descname">to_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rasterio/crs.html#CRS.to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.CRS.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a parameter mapping into a more conventional PROJ.4 string.</p>
+<p>Mapping keys are tested against the <code class="docutils literal"><span class="pre">all_proj_keys</span></code> list. Values of
+<code class="docutils literal"><span class="pre">True</span></code> are omitted, leaving the key bare: {&#8216;no_defs&#8217;: True} -&gt; &#8220;+no_defs&#8221;
+and items where the value is otherwise not a str, int, or float are
+omitted.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.CRS.is_epsg_code">
+<code class="descname">is_epsg_code</code><a class="headerlink" href="#yatsm.gis.CRS.is_epsg_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.CRS.is_valid">
+<code class="descname">is_valid</code><a class="headerlink" href="#yatsm.gis.CRS.is_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if valid geographic or projected coordinate reference system.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.gis.Polygon">
+<em class="property">class </em><code class="descclassname">yatsm.gis.</code><code class="descname">Polygon</code><span class="sig-paren">(</span><em>shell=None</em>, <em>holes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/shapely/geometry/polygon.html#Polygon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">shapely.geometry.base.BaseGeometry</span></code></p>
+<p>A two-dimensional figure bounded by a linear ring</p>
+<p>A polygon has a non-zero area. It may have one or more negative-space
+&#8220;holes&#8221; which are also bounded by linear rings. If any rings cross each
+other, the feature is invalid and operations on it may fail.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#yatsm.gis.Polygon.exterior" title="yatsm.gis.Polygon.exterior"><strong>exterior</strong></a> (<em>LinearRing</em>) &#8211; The ring which bounds the positive space of the polygon.</li>
+<li><a class="reference internal" href="#yatsm.gis.Polygon.interiors" title="yatsm.gis.Polygon.interiors"><strong>interiors</strong></a> (<em>sequence</em>) &#8211; A sequence of rings which bound all existing holes.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="yatsm.gis.Polygon.svg">
+<code class="descname">svg</code><span class="sig-paren">(</span><em>scale_factor=1.0</em>, <em>fill_color=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/shapely/geometry/polygon.html#Polygon.svg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Polygon.svg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns SVG path element for the Polygon geometry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><span class="target" id="yatsm.gis.Polygon.svg.params.scale_factor"></span><strong>scale_factor</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Polygon.svg.params.scale_factor">¶</a> &#8211; Multiplication factor for the SVG stroke-width.  Default is 1.</li>
+<li><span class="target" id="yatsm.gis.Polygon.svg.params.fill_color"></span><strong>fill_color</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.Polygon.svg.params.fill_color">¶</a> &#8211; Hex string for fill color. Default is to use &#8220;#66cc99&#8221; if
+geometry is valid, and &#8220;#ff3333&#8221; if invalid.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Polygon.coords">
+<code class="descname">coords</code><a class="headerlink" href="#yatsm.gis.Polygon.coords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Polygon.ctypes">
+<code class="descname">ctypes</code><a class="headerlink" href="#yatsm.gis.Polygon.ctypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Polygon.exterior">
+<code class="descname">exterior</code><a class="headerlink" href="#yatsm.gis.Polygon.exterior" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Polygon.interiors">
+<code class="descname">interiors</code><a class="headerlink" href="#yatsm.gis.Polygon.interiors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.gis.Georeference">
+<em class="property">class </em><code class="descclassname">yatsm.gis.</code><code class="descname">Georeference</code><a class="reference internal" href="../_modules/yatsm/gis/core.html#Georeference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Georeference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">yatsm.gis.core._Georeference</span></code></p>
+<p>namedtuple holding georeferencing information</p>
+<dl class="classmethod">
+<dt id="yatsm.gis.Georeference.from_reader">
+<em class="property">classmethod </em><code class="descname">from_reader</code><span class="sig-paren">(</span><em>reader</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/core.html#Georeference.from_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Georeference.from_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a <cite>Georeference</cite> from a <code class="xref py py-class docutils literal"><span class="pre">rasterio.DatasetReader</span></code></p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yatsm.gis.Georeference.from_strings">
+<em class="property">classmethod </em><code class="descname">from_strings</code><span class="sig-paren">(</span><em>crs</em>, <em>bounds</em>, <em>transform</em>, <em>bbox</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/core.html#Georeference.from_strings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.Georeference.from_strings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.Georeference.str">
+<code class="descname">str</code><a class="headerlink" href="#yatsm.gis.Georeference.str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.gis.bounds_to_polygon">
+<code class="descclassname">yatsm.gis.</code><code class="descname">bounds_to_polygon</code><span class="sig-paren">(</span><em>bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/utils.html#bounds_to_polygon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.bounds_to_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns Shapely polygon of bounds</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.bounds_to_polygon.params.bounds"></span><strong>bounds</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.bounds_to_polygon.params.bounds">¶</a> &#8211; bounds (left bottom right top)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">polygon of bounds</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">shapely.geometry.Polygon</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
@@ -186,7 +641,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 2, 2017, 5:29:52 PM.
+      Last updated on Mar 2, 2017, 5:40:25 PM.
 
     </p>
   </div>

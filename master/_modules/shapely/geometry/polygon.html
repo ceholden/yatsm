@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>shapely.geometry.polygon &mdash; YATSM 0.7.dev0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.dev0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>shapely.geometry.polygon</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/shapely/geometry/polygon.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for shapely.geometry.polygon</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Polygons and their linear ring components</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="nb">range</span> <span class="o">=</span> <span class="n">xrange</span>
+
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="n">c_double</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">POINTER</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="n">ArgumentError</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
+
+<span class="kn">from</span> <span class="nn">shapely.algorithms.cga</span> <span class="k">import</span> <span class="n">signed_area</span>
+<span class="kn">from</span> <span class="nn">shapely.coords</span> <span class="k">import</span> <span class="n">required</span>
+<span class="kn">from</span> <span class="nn">shapely.geos</span> <span class="k">import</span> <span class="n">lgeos</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry.base</span> <span class="k">import</span> <span class="n">BaseGeometry</span><span class="p">,</span> <span class="n">geos_geom_from_py</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry.linestring</span> <span class="k">import</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">LineStringAdapter</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry.proxy</span> <span class="k">import</span> <span class="n">PolygonProxy</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Polygon&#39;</span><span class="p">,</span> <span class="s1">&#39;asPolygon&#39;</span><span class="p">,</span> <span class="s1">&#39;LinearRing&#39;</span><span class="p">,</span> <span class="s1">&#39;asLinearRing&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">LinearRing</span><span class="p">(</span><span class="n">LineString</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A closed one-dimensional feature comprising one or more line segments</span>
+
+<span class="sd">    A LinearRing that crosses itself or touches itself at a single point is</span>
+<span class="sd">    invalid and operations on it may fail.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordinates : sequence</span>
+<span class="sd">            A sequence of (x, y [,z]) numeric coordinate pairs or triples</span>
+
+<span class="sd">        Rings are implicitly closed. There is no need to specific a final</span>
+<span class="sd">        coordinate pair identical to the first.</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        Construct a square ring.</span>
+
+<span class="sd">          &gt;&gt;&gt; ring = LinearRing( ((0, 0), (0, 1), (1 ,1 ), (1 , 0)) )</span>
+<span class="sd">          &gt;&gt;&gt; ring.is_closed</span>
+<span class="sd">          True</span>
+<span class="sd">          &gt;&gt;&gt; ring.length</span>
+<span class="sd">          4.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseGeometry</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">coordinates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_coords</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__geo_interface__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;LinearRing&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;coordinates&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+            <span class="p">}</span>
+
+    <span class="c1"># Coordinate access</span>
+
+    <span class="n">_get_coords</span> <span class="o">=</span> <span class="n">BaseGeometry</span><span class="o">.</span><span class="n">_get_coords</span>
+
+    <span class="k">def</span> <span class="nf">_set_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndim</span> <span class="o">=</span> <span class="n">geos_linearring_from_py</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_coords</span><span class="p">,</span> <span class="n">_set_coords</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_ccw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True is the ring is oriented counter clock-wise&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">impl</span><span class="p">[</span><span class="s1">&#39;is_ccw&#39;</span><span class="p">](</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True if the geometry is simple, meaning that any self-intersections</span>
+<span class="sd">        are only at boundary points, else False&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LineString</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">is_simple</span>
+
+
+<span class="k">class</span> <span class="nc">LinearRingAdapter</span><span class="p">(</span><span class="n">LineStringAdapter</span><span class="p">):</span>
+
+    <span class="n">__p__</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factory</span> <span class="o">=</span> <span class="n">geos_linearring_from_py</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__geo_interface__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;LinearRing&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;coordinates&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+            <span class="p">}</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">BaseGeometry</span><span class="o">.</span><span class="n">_get_coords</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">asLinearRing</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adapt an object to the LinearRing interface&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">LinearRingAdapter</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">InteriorRingSequence</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">_factory</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_geom</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">__p__</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_ndim</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">_length</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">__rings__</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_gtag</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__p__</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_geom</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndim</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">_ndim</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span><span class="p">:</span>
+            <span class="n">ring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">ring</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="nb">next</span> <span class="o">=</span> <span class="fm">__next__</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGetNumInteriorRings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geom</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">+</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">&gt;=</span> <span class="n">m</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;index out of range&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="n">key</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ring</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">stride</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">stride</span><span class="p">):</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_ring</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;key must be an index or slice&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_longest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">max</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">l</span> <span class="o">&gt;</span> <span class="nb">max</span><span class="p">:</span>
+                <span class="nb">max</span> <span class="o">=</span> <span class="n">l</span>
+
+    <span class="k">def</span> <span class="nf">gtag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__p__</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_get_ring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="n">gtag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gtag</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">gtag</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gtag</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__rings__</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rings__</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGetInteriorRingN</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geom</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">ring</span> <span class="o">=</span> <span class="n">LinearRing</span><span class="p">()</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="n">g</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">__p__</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">_other_owned</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">_ndim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndim</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__rings__</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__rings__</span><span class="p">[</span><span class="n">i</span><span class="p">]()</span>
+
+
+<div class="viewcode-block" id="Polygon"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.html#yatsm.gis.Polygon">[docs]</a><span class="k">class</span> <span class="nc">Polygon</span><span class="p">(</span><span class="n">BaseGeometry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A two-dimensional figure bounded by a linear ring</span>
+
+<span class="sd">    A polygon has a non-zero area. It may have one or more negative-space</span>
+<span class="sd">    &quot;holes&quot; which are also bounded by linear rings. If any rings cross each</span>
+<span class="sd">    other, the feature is invalid and operations on it may fail.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    exterior : LinearRing</span>
+<span class="sd">        The ring which bounds the positive space of the polygon.</span>
+<span class="sd">    interiors : sequence</span>
+<span class="sd">        A sequence of rings which bound all existing holes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_exterior</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_interiors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_ndim</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shell : sequence</span>
+<span class="sd">            A sequence of (x, y [,z]) numeric coordinate pairs or triples</span>
+<span class="sd">        holes : sequence</span>
+<span class="sd">            A sequence of objects which satisfy the same requirements as the</span>
+<span class="sd">            shell parameters above</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        Create a square polygon with no holes</span>
+
+<span class="sd">          &gt;&gt;&gt; coords = ((0., 0.), (0., 1.), (1., 1.), (1., 0.), (0., 0.))</span>
+<span class="sd">          &gt;&gt;&gt; polygon = Polygon(coords)</span>
+<span class="sd">          &gt;&gt;&gt; polygon.area</span>
+<span class="sd">          1.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BaseGeometry</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">shell</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_geom</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndim</span> <span class="o">=</span> <span class="n">geos_polygon_from_py</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">holes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">exterior</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exterior</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exterior</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGetExteriorRing</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geom</span><span class="p">)</span>
+            <span class="n">ring</span> <span class="o">=</span> <span class="n">LinearRing</span><span class="p">()</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">_geom</span> <span class="o">=</span> <span class="n">g</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">__p__</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">_other_owned</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">ring</span><span class="o">.</span><span class="n">_ndim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndim</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_exterior</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exterior</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">interiors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">InteriorRingSequence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">check_empty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">is_empty</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">check_empty</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">check_empty</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">my_coords</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">),</span>
+            <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interiors</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">other_coords</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">),</span>
+            <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">interiors</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">my_coords</span> <span class="o">==</span> <span class="n">other_coords</span>
+
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="fm">__hash__</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ctypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctypes_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ctypes_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">ctypes</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctypes_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__array_interface__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="s2">&quot;A polygon does not itself provide the array interface. Its rings do.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="s2">&quot;Component rings have coordinate sequences, but the polygon does not&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ob</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="s2">&quot;Component rings have coordinate sequences, but the polygon does not&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="s2">&quot;Component rings have coordinate sequences, but the polygon does not&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">__geo_interface__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">hole</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interiors</span><span class="p">:</span>
+            <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">hole</span><span class="o">.</span><span class="n">coords</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Polygon&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;coordinates&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+            <span class="p">}</span>
+
+<div class="viewcode-block" id="Polygon.svg"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.html#yatsm.gis.Polygon.svg">[docs]</a>    <span class="k">def</span> <span class="nf">svg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns SVG path element for the Polygon geometry.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ==========</span>
+<span class="sd">        scale_factor : float</span>
+<span class="sd">            Multiplication factor for the SVG stroke-width.  Default is 1.</span>
+<span class="sd">        fill_color : str, optional</span>
+<span class="sd">            Hex string for fill color. Default is to use &quot;#66cc99&quot; if</span>
+<span class="sd">            geometry is valid, and &quot;#ff3333&quot; if invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&lt;g /&gt;&#39;</span>
+        <span class="k">if</span> <span class="n">fill_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fill_color</span> <span class="o">=</span> <span class="s2">&quot;#66cc99&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span> <span class="k">else</span> <span class="s2">&quot;#ff3333&quot;</span>
+        <span class="n">exterior_coords</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">,</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">coords</span><span class="p">]]</span>
+        <span class="n">interior_coords</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">,</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">interior</span><span class="o">.</span><span class="n">coords</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">interior</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interiors</span><span class="p">]</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="s2">&quot;M </span><span class="si">{0}</span><span class="s2"> L </span><span class="si">{1}</span><span class="s2"> z&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot; L &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+            <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="n">exterior_coords</span> <span class="o">+</span> <span class="n">interior_coords</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s1">&#39;&lt;path fill-rule=&quot;evenodd&quot; fill=&quot;</span><span class="si">{2}</span><span class="s1">&quot; stroke=&quot;#555555&quot; &#39;</span>
+            <span class="s1">&#39;stroke-width=&quot;</span><span class="si">{0}</span><span class="s1">&quot; opacity=&quot;0.6&quot; d=&quot;</span><span class="si">{1}</span><span class="s1">&quot; /&gt;&#39;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fill_color</span><span class="p">)</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">PolygonAdapter</span><span class="p">(</span><span class="n">PolygonProxy</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="o">=</span> <span class="n">shell</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">holes</span> <span class="o">=</span> <span class="n">holes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">holes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factory</span> <span class="o">=</span> <span class="n">geos_polygon_from_py</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_ndim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># From array protocol</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">__array_interface__</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span>
+            <span class="k">return</span> <span class="n">n</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># Fall back on list</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">asPolygon</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adapt objects to the Polygon interface&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">PolygonAdapter</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">holes</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">orient</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">sign</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sign</span><span class="p">)</span>
+    <span class="n">rings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ring</span> <span class="o">=</span> <span class="n">polygon</span><span class="o">.</span><span class="n">exterior</span>
+    <span class="k">if</span> <span class="n">signed_area</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span><span class="o">/</span><span class="n">s</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">rings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ring</span><span class="o">.</span><span class="n">coords</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">ring</span> <span class="ow">in</span> <span class="n">polygon</span><span class="o">.</span><span class="n">interiors</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">signed_area</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span><span class="o">/</span><span class="n">s</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">rings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ring</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ring</span><span class="o">.</span><span class="n">coords</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">rings</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rings</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+<span class="k">def</span> <span class="nf">geos_linearring_from_py</span><span class="p">(</span><span class="n">ob</span><span class="p">,</span> <span class="n">update_geom</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">update_ndim</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># If a LinearRing is passed in, clone it and return</span>
+    <span class="c1"># If a LineString is passed in, clone the coord seq and return a LinearRing</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ob</span><span class="p">,</span> <span class="n">LineString</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span> <span class="o">==</span> <span class="n">LinearRing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">geos_geom_from_py</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ob</span><span class="o">.</span><span class="n">is_closed</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ob</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">geos_geom_from_py</span><span class="p">(</span><span class="n">ob</span><span class="p">,</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGeom_createLinearRing</span><span class="p">)</span>
+
+    <span class="c1"># If numpy is present, we use numpy.require to ensure that we have a</span>
+    <span class="c1"># C-continguous array that owns its data. View data will be copied.</span>
+    <span class="n">ob</span> <span class="o">=</span> <span class="n">required</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># From array protocol</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">__array_interface__</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;A LinearRing must have at least 3 coordinate tuples&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span>
+
+        <span class="c1"># Make pointer to the coordinate array</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="c1"># numpy tuple (addr, read-only)</span>
+            <span class="n">cp</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_double</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cp</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Add closing coordinates to sequence?</span>
+        <span class="k">if</span> <span class="n">cp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">cp</span><span class="p">[</span><span class="n">m</span><span class="o">*</span><span class="n">n</span><span class="o">-</span><span class="n">n</span><span class="p">]</span> <span class="ow">or</span> <span class="n">cp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">cp</span><span class="p">[</span><span class="n">m</span><span class="o">*</span><span class="n">n</span><span class="o">-</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">m</span>
+
+        <span class="c1"># Create a coordinate sequence</span>
+        <span class="k">if</span> <span class="n">update_geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cs</span> <span class="o">=</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGeom_getCoordSeq</span><span class="p">(</span><span class="n">update_geom</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">update_ndim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Wrong coordinate dimensions; this geometry has dimensions: </span><span class="si">%d</span><span class="s2">&quot;</span> \
+                <span class="o">%</span> <span class="n">update_ndim</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cs</span> <span class="o">=</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_create</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># add to coordinate sequence</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="c1"># Because of a bug in the GEOS C API,</span>
+            <span class="c1"># always set X before Y</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setX</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">cp</span><span class="p">[</span><span class="n">n</span><span class="o">*</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setY</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">cp</span><span class="p">[</span><span class="n">n</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setZ</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">cp</span><span class="p">[</span><span class="n">n</span><span class="o">*</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="c1"># Add closing coordinates to sequence?</span>
+        <span class="k">if</span> <span class="n">M</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
+            <span class="c1"># Because of a bug in the GEOS C API,</span>
+            <span class="c1"># always set X before Y</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setX</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">cp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setY</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">cp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setZ</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">cp</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># Fall back on list</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># Iterators, e.g. Python 3 zip</span>
+            <span class="n">ob</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ob</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;A LinearRing must have at least 3 coordinate tuples&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># Add closing coordinates if not provided</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">ob</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ob</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">ob</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ob</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">m</span>
+
+        <span class="c1"># Create a coordinate sequence</span>
+        <span class="k">if</span> <span class="n">update_geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cs</span> <span class="o">=</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGeom_getCoordSeq</span><span class="p">(</span><span class="n">update_geom</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">update_ndim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Wrong coordinate dimensions; this geometry has dimensions: </span><span class="si">%d</span><span class="s2">&quot;</span> \
+                <span class="o">%</span> <span class="n">update_ndim</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cs</span> <span class="o">=</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_create</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># add to coordinate sequence</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">ob</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># Because of a bug in the GEOS C API,</span>
+            <span class="c1"># always set X before Y</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setX</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setY</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setZ</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent coordinate dimensionality&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add closing coordinates to sequence?</span>
+        <span class="k">if</span> <span class="n">M</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">ob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Because of a bug in the GEOS C API,</span>
+            <span class="c1"># always set X before Y</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setX</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setY</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSCoordSeq_setZ</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">M</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">update_geom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGeom_createLinearRing</span><span class="p">(</span><span class="n">cs</span><span class="p">),</span> <span class="n">n</span>
+
+<span class="k">def</span> <span class="nf">update_linearring_from_py</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">ob</span><span class="p">):</span>
+    <span class="n">geos_linearring_from_py</span><span class="p">(</span><span class="n">ob</span><span class="p">,</span> <span class="n">geom</span><span class="o">.</span><span class="n">_geom</span><span class="p">,</span> <span class="n">geom</span><span class="o">.</span><span class="n">_ndim</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">geos_polygon_from_py</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">geos_geom_from_py</span><span class="p">(</span><span class="n">shell</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shell</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">geos_shell</span><span class="p">,</span> <span class="n">ndim</span> <span class="o">=</span> <span class="n">geos_linearring_from_py</span><span class="p">(</span><span class="n">shell</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">holes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">holes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ob</span> <span class="o">=</span> <span class="n">holes</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
+            <span class="n">exemplar</span> <span class="o">=</span> <span class="n">ob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">exemplar</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="n">N</span> <span class="o">=</span> <span class="n">exemplar</span><span class="o">.</span><span class="n">_ndim</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">L</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;number of holes must be non zero&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">N</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;insufficiant coordinate dimension&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Array of pointers to ring geometries</span>
+            <span class="n">geos_holes</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_void_p</span> <span class="o">*</span> <span class="n">L</span><span class="p">)()</span>
+
+            <span class="c1"># add to coordinate sequence</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">):</span>
+                <span class="n">geom</span><span class="p">,</span> <span class="n">ndim</span> <span class="o">=</span> <span class="n">geos_linearring_from_py</span><span class="p">(</span><span class="n">ob</span><span class="p">[</span><span class="n">l</span><span class="p">])</span>
+                <span class="n">geos_holes</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">c_void_p</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">geos_holes</span> <span class="o">=</span> <span class="n">POINTER</span><span class="p">(</span><span class="n">c_void_p</span><span class="p">)()</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">lgeos</span><span class="o">.</span><span class="n">GEOSGeom_createPolygon</span><span class="p">(</span>
+                        <span class="n">c_void_p</span><span class="p">(</span><span class="n">geos_shell</span><span class="p">),</span>
+                        <span class="n">geos_holes</span><span class="p">,</span>
+                        <span class="n">L</span>
+                        <span class="p">),</span>
+            <span class="n">ndim</span>
+            <span class="p">)</span>
+
+<span class="c1"># Test runner</span>
+<span class="k">def</span> <span class="nf">_test</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">_test</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Mar 2, 2017, 5:40:25 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

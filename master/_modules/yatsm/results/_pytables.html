@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.results._pytables &mdash; YATSM 0.7.dev0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.dev0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>yatsm.results._pytables</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/results/_pytables.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.results._pytables</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Results storage in HDF5 datasets using PyTables</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">errno</span>
+<span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">tables</span> <span class="k">as</span> <span class="nn">tb</span>
+
+<span class="kn">from</span> <span class="nn">yatsm.algorithms</span> <span class="k">import</span> <span class="n">SEGMENT_ATTRS</span>
+<span class="kn">from</span> <span class="nn">yatsm.gis</span> <span class="k">import</span> <span class="n">Georeference</span>
+<span class="kn">from</span> <span class="nn">yatsm.results.utils</span> <span class="k">import</span> <span class="n">result_filename</span><span class="p">,</span> <span class="n">RESULT_TEMPLATE</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">FILTERS</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">Filters</span><span class="p">(</span><span class="n">complevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">complib</span><span class="o">=</span><span class="s1">&#39;zlib&#39;</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># TODO: maybe somehow make these CF-ish, or readable via xarray?</span>
+<span class="c1">#       https://github.com/shoyer/h5netcdf/blob/master/h5netcdf/core.py#L48</span>
+<span class="n">GEO_TAGS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;crs&#39;</span><span class="p">,</span> <span class="s1">&#39;bounds&#39;</span><span class="p">,</span> <span class="s1">&#39;transform&#39;</span><span class="p">,</span> <span class="s1">&#39;bbox&#39;</span><span class="p">,</span> <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_has_node</span><span class="p">(</span><span class="n">h5</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">h5</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">tb</span><span class="o">.</span><span class="n">NoSuchNodeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="dtype_to_table"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.dtype_to_table">[docs]</a><span class="k">def</span> <span class="nf">dtype_to_table</span><span class="p">(</span><span class="n">dtype</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert a NumPy dtype to a PyTables Table description</span>
+
+<span class="sd">    Essentially just :ref:`tables.descr_from_dtype` but it works on</span>
+<span class="sd">    :ref:`np.datetime64`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype (np.dtype): NumPy data type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: PyTables description</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
+        <span class="n">_dt</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dtype</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">_dt</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">):</span>
+            <span class="n">tb_dtype</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">Description</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">tb</span><span class="o">.</span><span class="n">Time64Col</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">idx</span><span class="p">)})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tb_dtype</span><span class="p">,</span> <span class="n">byteorder</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">descr_from_dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="n">name</span><span class="p">,</span> <span class="n">_dt</span><span class="p">)]))</span>
+        <span class="n">_tb_dtype</span> <span class="o">=</span> <span class="n">tb_dtype</span><span class="o">.</span><span class="n">_v_colobjects</span>
+        <span class="n">_tb_dtype</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">_v_pos</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">desc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_tb_dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">desc</span></div>
+
+
+<span class="k">def</span> <span class="nf">read_where</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">where_kwds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A better version of `table.read_where` that accepts multiple fields</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (tb.Table): Table</span>
+<span class="sd">        condition (str): Search condition</span>
+<span class="sd">        fields (list[str]): Fields to return</span>
+<span class="sd">        where_kwds (dict): Keyword options to pass to :ref:`tables.Table.where`</span>
+<span class="sd">            and other similar functions</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Structured array of results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">get_where_list</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">where_kwds</span><span class="p">)</span>
+
+    <span class="n">_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="n">col</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">coldtypes</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_dtype</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_descr</span> <span class="ow">in</span> <span class="n">_dtype</span><span class="o">.</span><span class="n">descr</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_descr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">descr</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Provided workspace array &quot;out&quot; is &#39;</span>
+                                <span class="s1">&#39;incompatible with required datatypes: </span><span class="si">{}</span><span class="s1">&#39;</span>
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_dtype</span><span class="o">.</span><span class="n">descr</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Using provided `out` workspace array. TODO check compat&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">read_coordinates</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="n">h5file</span><span class="p">,</span> <span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">georef</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">expectedrows</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">table_config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create table to store results</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        h5file (tables.file.File): PyTables HDF5 file</span>
+<span class="sd">        where (str or tables.group.Group): Parent group to place table</span>
+<span class="sd">        name (str): Name of new table</span>
+<span class="sd">        result (np.ndarray): Results as a NumPy structured array</span>
+<span class="sd">        attrs (dict): Metadata to store as ``table.attrs``</span>
+<span class="sd">        georef (Georeference): Georeferencing information to add to</span>
+<span class="sd">            ``table.attrs``</span>
+<span class="sd">        index (bool): Create index on :ref:`SEGMENT_ATTRS`</span>
+<span class="sd">        expectedrows (int): Expected number of rows to store in table</span>
+<span class="sd">        overwrite (bool): Overwrite existing table</span>
+<span class="sd">        table_config (dict): Additional keyword arguments to be passed</span>
+<span class="sd">            to ``h5file.create_table``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        table.table.Table: HDF5 table</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table_desc</span> <span class="o">=</span> <span class="n">dtype_to_table</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_has_node</span><span class="p">(</span><span class="n">h5file</span><span class="p">,</span> <span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Returning existing table </span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Creating new table </span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">h5file</span><span class="o">.</span><span class="n">create_table</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span>
+                                    <span class="n">description</span><span class="o">=</span><span class="n">table_desc</span><span class="p">,</span>
+                                    <span class="n">expectedrows</span><span class="o">=</span><span class="n">expectedrows</span><span class="p">,</span>
+                                    <span class="n">createparents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                    <span class="o">**</span><span class="n">table_config</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">SEGMENT_ATTRS</span><span class="p">:</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span><span class="o">.</span><span class="n">create_index</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">attrs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">georef</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">georeference</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">georef</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+
+
+<span class="k">def</span> <span class="nf">georeference</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">georef</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Georeference a :class:`tables.File`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        h5file (tables.File): Open HDF5 file</span>
+<span class="sd">        georef (Georeference): Georeference information</span>
+<span class="sd">        where (str): HDF5 file node location</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tables.Node: Georeferenced HDF5 node</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">georef</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting </span><span class="si">%s</span><span class="s1"> to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+        <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">return</span> <span class="n">node</span>
+
+
+<span class="k">def</span> <span class="nf">get_georeference</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get georeferencing information for a tag</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        node (tables.Node): HDF5 node</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Georeference: Georeferencing information</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        KeyError: Raise if georeferencing is missing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">Georeference</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="o">.</span><span class="n">_v_attrnames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Missing georeferencing attr &quot;</span><span class="si">%s</span><span class="s1">&quot; in </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span>
+                           <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">string_</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Decoding string&#39;</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">georef</span> <span class="o">=</span> <span class="n">Georeference</span><span class="o">.</span><span class="n">from_strings</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">georef</span>
+
+
+<div class="viewcode-block" id="HDF5ResultsStore"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore">[docs]</a><span class="k">class</span> <span class="nc">HDF5ResultsStore</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; PyTables based HDF5 results storage</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): HDF5 file</span>
+<span class="sd">        mode (str): File mode to open with. By default, opens in read mode or</span>
+<span class="sd">            write mode if file doesn&#39;t exist</span>
+<span class="sd">        georef (Georeference): HDF file&#39;s georeference information</span>
+<span class="sd">        title (str): Title of HDF5 file</span>
+<span class="sd">        keep_open (bool): Keep file handle open after calls</span>
+<span class="sd">        overwrite (bool): Overwrite file attributes or data</span>
+<span class="sd">        tb_kwds: Optional keywork arguments to :ref:`tables.open_file`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">georef</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">title</span><span class="o">=</span><span class="s1">&#39;YATSM&#39;</span><span class="p">,</span>
+                 <span class="n">keep_open</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">tb_kwds</span><span class="p">):</span>
+        <span class="n">_exists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span> <span class="ow">or</span> <span class="s1">&#39;r&#39;</span> <span class="k">if</span> <span class="n">_exists</span> <span class="k">else</span> <span class="s1">&#39;w&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">georef</span> <span class="o">=</span> <span class="n">georef</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span> <span class="o">=</span> <span class="n">keep_open</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tb_kwds</span> <span class="o">=</span> <span class="n">tb_kwds</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_exists</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">georef</span><span class="p">,</span> <span class="n">Georeference</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must specify `georef` as `Georeference` when &#39;</span>
+                            <span class="s1">&#39;creating a file&#39;</span><span class="p">)</span>
+
+<span class="c1"># CREATION</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="HDF5ResultsStore.from_window"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.from_window">[docs]</a>    <span class="k">def</span> <span class="nf">from_window</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">reader</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">georef</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">root</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">RESULT_TEMPLATE</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">open_kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return instance of class for a given window</span>
+
+<span class="sd">        When creating a file, the following attributes must be specified in</span>
+<span class="sd">        one of two ways:</span>
+
+<span class="sd">            1. Passing ``reader``</span>
+<span class="sd">            2. Passing ``Georeference``</span>
+
+<span class="sd">        They may either be explicitly passed, or retrieved from a reader</span>
+<span class="sd">        instance from ``reader``</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            window (tuple): x_min, y_min, x_max, y_max for the given window</span>
+<span class="sd">            reader (rasterio.DatasetReader)</span>
+<span class="sd">            root (str): Root directory to save file</span>
+<span class="sd">            pattern (str): Filename pattern to use, usually derived in part</span>
+<span class="sd">                from attributes of ``window``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            cls: HDF5ResultsStore</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">result_filename</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">)</span>
+
+        <span class="n">georef</span> <span class="o">=</span> <span class="p">(</span><span class="n">georef</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">georef</span><span class="p">,</span> <span class="n">Georeference</span><span class="p">)</span> <span class="k">else</span>
+                  <span class="n">Georeference</span><span class="o">.</span><span class="n">from_reader</span><span class="p">(</span><span class="n">reader</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">georef</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must provide either `reader` or `georef`&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span>
+                   <span class="n">georef</span><span class="o">=</span><span class="n">georef</span><span class="p">,</span>
+                   <span class="o">**</span><span class="n">open_kwds</span><span class="p">)</span></div>
+
+<span class="c1"># READING</span>
+<div class="viewcode-block" id="HDF5ResultsStore.find_column"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.find_column">[docs]</a>    <span class="k">def</span> <span class="nf">find_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_table</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return :ref:`tb.Column` matching pattern</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span> <span class="k">if</span> <span class="n">regex</span> <span class="k">else</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">walk_nodes</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span>
+                                                 <span class="n">classname</span><span class="o">=</span><span class="s1">&#39;Table&#39;</span><span class="p">):</span>
+                <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">_v_colnames</span>
+                            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">c</span><span class="p">)]</span>
+                <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">colnames</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">return_table</span><span class="p">:</span>
+                        <span class="k">yield</span> <span class="n">table</span><span class="p">,</span> <span class="n">colname</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">yield</span> <span class="n">colname</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.query"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">(),</span>
+              <span class="n">px</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d_break</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="o">*</span><span class="n">query_terms</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yield table results from a search query</span>
+
+<span class="sd">        For arguments where `slice` are possible arguments (coordinates and</span>
+<span class="sd">        dates), passing a single value will construct a query using the</span>
+<span class="sd">        following sign conventions:</span>
+
+<span class="sd">            * px ==</span>
+<span class="sd">            * py ==</span>
+<span class="sd">            * d_start &lt;</span>
+<span class="sd">            * d_end &gt;</span>
+<span class="sd">            * d_break &gt;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name of table containg segment results</span>
+<span class="sd">            column (str, or iterable): One or more columns to include in</span>
+<span class="sd">                returned results</span>
+<span class="sd">            px (float, or slice): One X coordinate, or a range of X coordinates</span>
+<span class="sd">            px (float, or slice): One Y coordinate, or a range of Y coordinates</span>
+<span class="sd">            d_start (datetime, or slice): One date, or a range of dates</span>
+<span class="sd">            d_end (datetime, or slice): One date, or a range of dates</span>
+<span class="sd">            d_break (datetime, or slice): One date, or a range of dates</span>
+<span class="sd">            *query_terms: Additional search terms to send to ``Table.where``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: deal when we have a table join vs inside table</span>
+        <span class="c1"># TODO: look into &quot;condavars&quot; argument</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">_build_dt</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
+                <span class="c1"># TODO: have attr on self to decide time storage convention</span>
+                <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">toordinal</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                <span class="k">return</span> <span class="s1">&#39; &amp; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">_build_dt</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="ow">in</span>
+                                   <span class="p">((</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">start</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">stop</span><span class="p">))])</span>
+
+        <span class="k">def</span> <span class="nf">_build_coord</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">coord</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">coord</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                <span class="k">return</span> <span class="s1">&#39; &amp; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">_build_coord</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="ow">in</span>
+                                   <span class="p">((</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="n">coord</span><span class="o">.</span><span class="n">start</span><span class="p">),</span>
+                                    <span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">coord</span><span class="o">.</span><span class="n">stop</span><span class="p">))])</span>
+
+        <span class="n">px</span> <span class="o">=</span> <span class="n">_build_coord</span><span class="p">(</span><span class="s1">&#39;px&#39;</span><span class="p">,</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span> <span class="n">px</span><span class="p">)</span>
+        <span class="n">py</span> <span class="o">=</span> <span class="n">_build_coord</span><span class="p">(</span><span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
+        <span class="n">d_start</span> <span class="o">=</span> <span class="n">_build_dt</span><span class="p">(</span><span class="s1">&#39;start_day&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="n">d_start</span><span class="p">)</span>
+        <span class="n">d_end</span> <span class="o">=</span> <span class="n">_build_dt</span><span class="p">(</span><span class="s1">&#39;end_day&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="n">d_end</span><span class="p">)</span>
+        <span class="n">d_break</span> <span class="o">=</span> <span class="n">_build_dt</span><span class="p">(</span><span class="s1">&#39;break_day&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="n">d_break</span><span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39; &amp; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span>
+                            <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">d_start</span><span class="p">,</span> <span class="n">d_end</span><span class="p">,</span> <span class="n">d_break</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="n">query_terms</span>
+                            <span class="k">if</span> <span class="n">item</span><span class="p">])</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Searching: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">read_where</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">table</span><span class="o">.</span><span class="n">read_where</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span></div>
+
+<span class="c1"># WRITING</span>
+<div class="viewcode-block" id="HDF5ResultsStore.write_result"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.write_result">[docs]</a>    <span class="k">def</span> <span class="nf">write_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">georef</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Write result to HDF5</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pipeline (yatsm.pipeline.Pipeline): YATSM pipeline of tasks</span>
+<span class="sd">            result (dict): Dictionary of pipeline &#39;record&#39; results</span>
+<span class="sd">                where key is task output and value is a structured</span>
+<span class="sd">                :ref:`np.ndarray`</span>
+<span class="sd">            georef (Georeference): Georeferencing information</span>
+<span class="sd">            overwrite (bool): Overwrite existing values, overriding</span>
+<span class="sd">                even the class preference (:ref:`HDF5ResultsStore.overwrite`).</span>
+<span class="sd">                Defaults to behavior chosen during initialization</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HDF5ResultsStore</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">do_overwrite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="k">if</span> <span class="n">overwrite</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">overwrite</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">task</span><span class="p">,</span> <span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">task_tables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">where</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">create_table</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="p">,</span>
+                                     <span class="n">where</span><span class="p">,</span>
+                                     <span class="n">name</span><span class="p">,</span>
+                                     <span class="n">result</span><span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">output_record</span><span class="p">],</span>
+                                     <span class="n">attrs</span><span class="o">=</span><span class="n">task</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                                     <span class="n">georef</span><span class="o">=</span><span class="n">georef</span><span class="p">,</span>
+                                     <span class="n">overwrite</span><span class="o">=</span><span class="n">do_overwrite</span><span class="p">,</span>
+                                     <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="n">task</span><span class="o">.</span><span class="n">output_record</span><span class="p">])</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.completed"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.completed">[docs]</a>    <span class="k">def</span> <span class="nf">completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">min_rows</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return True if all tables from pipeline have been written</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pipeline (yatsm.pipeline.Pipeline): Pipeline of tasks</span>
+<span class="sd">            min_rows (int): Minimum number of rows to qualify as</span>
+<span class="sd">                having been completed</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if it looks like the data have been written</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">task_tables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">where</span> <span class="ow">and</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">table</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="n">tb</span><span class="o">.</span><span class="n">NoSuchNodeError</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">tb</span><span class="o">.</span><span class="n">Table</span><span class="p">):</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Node named &quot;</span><span class="si">%s</span><span class="s1">&quot; is not a table&#39;</span> <span class="o">%</span>
+                                         <span class="n">name</span><span class="p">)</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_rows</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Table &quot;</span><span class="si">%s</span><span class="s1">&quot; has fewer than </span><span class="si">%i</span><span class="s1"> rows&#39;</span> <span class="o">%</span>
+                                         <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">min_rows</span><span class="p">))</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<span class="c1"># METADATA</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">basename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Alias of self.h5file.root._v_attrs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">isopen</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">_v_attrs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">key</span><span class="p">,</span> <span class="n">store</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span>
+                         <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">_tags</span><span class="o">.</span><span class="n">_v_attrnames</span><span class="p">])</span>
+
+<div class="viewcode-block" id="HDF5ResultsStore.update_tag"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.update_tag">[docs]</a>    <span class="k">def</span> <span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.update_tags"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.update_tags">[docs]</a>    <span class="k">def</span> <span class="nf">update_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">tags</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_tag</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<span class="c1"># GIS METADATA</span>
+<div class="viewcode-block" id="HDF5ResultsStore.set_georef"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.set_georef">[docs]</a>    <span class="k">def</span> <span class="nf">set_georef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">georef</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set file georeferencing information</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            georef (Georeference): Georeferencing information</span>
+<span class="sd">            where (str or tables.Node): Node location to georeference</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tables.Node: Georeferenced HDF5 node</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">georeference</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">georef</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">crs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; rasterio.crs.CRS: Coordinate reference system</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">georef</span><span class="o">.</span><span class="n">crs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; BoundingBox: Bounding box of data in file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">georef</span><span class="o">.</span><span class="n">bounds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; affine.Affine: Affine transform</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">georef</span><span class="o">.</span><span class="n">transform</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; shapely.geometry.Polygon: Bounding box as polygon</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">georef</span><span class="o">.</span><span class="n">bbox</span>
+
+<span class="c1"># CONTEXT HELPERS</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Would have caused an error when closing </span><span class="si">{0}</span><span class="s1">&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">),</span> <span class="n">ae</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="HDF5ResultsStore.start"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Begin reading/writing to file</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HDF5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">,</span> <span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span>
+                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">isopen</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span>  <span class="c1"># already opened in correct form, bail</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Opening </span><span class="si">%s</span><span class="s1"> in mode </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
+                                   <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">tb_kwds</span><span class="p">)</span>
+
+        <span class="c1"># Set GIS related tags on write/overwrite</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
+            <span class="n">georeference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">georef</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">georef</span> <span class="o">=</span> <span class="n">get_georeference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.close"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<span class="c1"># DICT LIKE</span>
+<div class="viewcode-block" id="HDF5ResultsStore.keys"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yields HDF5 file nodes names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">walk_nodes</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_pathname</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.items"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yields key/value pairs for nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">walk_nodes</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_pathname</span><span class="p">,</span> <span class="n">node</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.groups"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.groups">[docs]</a>    <span class="k">def</span> <span class="nf">groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yields key/value pairs for :ref:`tables.Group` stored</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">tb</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.tables"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.tables">[docs]</a>    <span class="k">def</span> <span class="nf">tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yields key/value pairs for :ref:`tables.Table` stored</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">walk_nodes</span><span class="p">(</span><span class="n">classname</span><span class="o">=</span><span class="s1">&#39;Table&#39;</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_pathname</span><span class="p">,</span> <span class="n">node</span></div>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Allow table/group access as str, or tuple that also gives Column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">key</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span> <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">key</span>
+
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot find node </span><span class="si">{}</span><span class="s1"> in HDF5 store&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+            <span class="n">node</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">col</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">_v_colnames</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot find Column </span><span class="si">{}</span><span class="s1"> in node </span><span class="si">{}</span><span class="s1">&#39;</span>
+                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">cols</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">node</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot find node </span><span class="si">{}</span><span class="s1"> in HDF5 store&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            <span class="n">group</span><span class="p">,</span> <span class="n">table</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">tb</span><span class="o">.</span><span class="n">Table</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Cannot set value for non-table &#39;</span>
+                                     <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">opened</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">isopen</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> &lt;</span><span class="si">{1.__class__.__name__}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;(filename=</span><span class="si">{1.filename}</span><span class="s2">, mode=</span><span class="si">{1.mode}</span><span class="s2">)&gt;&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;Open&#39;</span> <span class="k">if</span> <span class="n">opened</span> <span class="k">else</span> <span class="s1">&#39;Closed&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Mar 2, 2017, 5:40:25 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
