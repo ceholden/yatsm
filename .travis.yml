@@ -10,6 +10,7 @@ addons:
     apt:
         packages:
             - gfortran
+            - graphviz
 before_install:
     # Install conda
     - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -26,15 +27,14 @@ before_install:
     - conda install conda-env  # no longer installed by default?
 install:
     # Edit in the correct Python version into environment.yaml
-    - sed -i "s/- python/- python=${TRAVIS_PYTHON_VERSION}/g" environment.yaml
+    - sed -i "s/- python$/- python=${TRAVIS_PYTHON_VERSION}/g" environment.yaml
     # Create conda matching requirements
     - conda env create -n test -f environment.yaml
     - source activate test
-    - pip install rpy2  # temp fix for broken ICU with conda-forge & r channels
-    # Rest of dependencies
-    - "pip install -r tests/requirements.txt"
-    # Install YATSM
-    - "pip install -e ."
+    # Temp fix for broken ICU with conda-forge & r channels
+    - CFLAGS="-I${CONDA_PREFIX}/include ${CFLAGS}" pip install rpy2
+    # Install YATSM, with all dependencies
+    - "pip install -e .[all]"
     # Info
     - conda env export
 script:
@@ -50,9 +50,11 @@ after_success:
 after_script:
     # Docs
     - source activate test
-    - conda install python-graphviz
+    - pip install graphviz
     - pip install -r docs/requirements-docs.txt
+    - rm -rf docs/source/yatsm
     - sphinx-apidoc -f -e -o docs/source/yatsm yatsm/
+    - python docs/scripts/build-cli-docs.py
     - bash docs/scripts/deploy-to-gh-pages.sh
 before_cache:
     # Deactivate conda so we use system 'curl'

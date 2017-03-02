@@ -9,7 +9,6 @@ PY2 = sys.version_info[0] == 2
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger()
 
-
 # Get version
 with open('yatsm/version.py') as f:
     for line in f:
@@ -19,17 +18,17 @@ with open('yatsm/version.py') as f:
             version = version.strip("'")
             continue
 
-
 # Get README
 with open('README.rst') as f:
     readme = f.read()
 
-
 # Installation requirements
 extras_require = {
     'core': [
-        'future', 'six',
-        'numpy', 'pandas',
+        'future',
+        'six',
+        'numpy',
+        'pandas',
         'scipy',
         'matplotlib',
         'scikit-learn',
@@ -47,18 +46,22 @@ extras_require = {
         'jsonschema',
         'pathlib',
     ],
-    'pipeline': ['dask', 'distributed', 'toposort', 'graphviz']
+    'accel': ['numba'],
+    'pipeline': ['dask', 'distributed', 'toposort'],
+    'viz': ['graphviz'],
+    'docs': [
+        'mock', 'click', 'click_plugins', 'sphinx>=1.4', 'sphinx_rtd_theme',
+        'sphinxcontrib-bibtex', 'sphinx-paramlinks'
+    ],
+    'test': ['pytest', 'coverage', 'mock']
 }
 if PY2:
     extras_require['pipeline'].extend(['futures'])
-extras_require['complete'] = sorted(set(sum(extras_require.values(), [])))
-
+extras_require['all'] = sorted(set(sum(extras_require.values(), [])))
 
 # Pre-packaged regression algorithms included in installation
 package_data = {
-    'yatsm': [
-        os.path.join('config', 'config_schema.yaml')
-    ]
+    'yatsm': [os.path.join('config', 'config_schema.yaml')]
 }
 
 # Setup
@@ -83,7 +86,6 @@ entry_points = '''
     [yatsm.pipeline.tasks.segment]
     pixel_CCDCesque = yatsm.pipeline.tasks.change:pixel_CCDCesque
 '''
-
 
 desc = ('Algorithms for remote sensing land cover and condition monitoring '
         'in Python')

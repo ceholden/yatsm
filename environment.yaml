@@ -6,6 +6,9 @@ channels:
 dependencies:
     # Base
     - python
+    - future
+    - six
+    - pathlib  # [py2]
     - numpy>=1.9.0
     - scipy>=0.14.0
     # Statistics
@@ -19,10 +22,12 @@ dependencies:
     - shapely
     - gdal
     - shapely>=1.5.16
-    - xarray>=0.7.1
-    - pytables>=3.2.0
+    - xarray>=0.8
+    - pytables>=3.2
     # CLI
     - click>=4.0
+    - click-plugins
+    - cligj
     # Config file
     - pyyaml>=3.11
     - jsonschema>=2.5.1
@@ -30,7 +35,12 @@ dependencies:
     - dask
     - distributed
     # Plotting
-    - matplotlib>=1.4.2
+    - matplotlib>=1.5
+    # Interactive (OPTIONAL)
+    - jupyter
+    - notebook
+    - ipython
+    - bokeh
     # Accelerated functions w/ numba (OPTIONAL)
     - numba>=0.27.0
     # Python interface to R (OPTIONAL)
@@ -40,6 +50,5 @@ dependencies:
         - git+git://github.com/ceholden/glmnet-python.git@v2.0.1
         # Required but missing from conda
         - palettable>=2.0.0
-        - click_plugins>=1.0
         - decorator>=4.0.10
         - toposort>=1.4

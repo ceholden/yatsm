@@ -21,7 +21,8 @@ from yatsm.cli.main import cli as yatsm_cli
 
 
 # Add YATSM to sys.path
-here = Path(os.path.dirname(__file__)).resolve()
+here = Path(__file__).parent.resolve()
+source = here.parent.joinpath('source')
 sys.path.insert(0, os.path.join(str(here.parent)))
 
 
@@ -31,9 +32,9 @@ def make_destination(clean=True):
             _rmtree(_p) if _p.is_dir() else _p.unlink()
         p.rmdir()
     # Output directory
-    help_docs_dst = here.joinpath('cli', 'usage')
+    help_docs_dst = source.joinpath('cli', 'usage')
     try:
-        if clean:
+        if clean and help_docs_dst.exists():
             _rmtree(help_docs_dst)
         help_docs_dst.mkdir(parents=True)
     except OSError as e:
@@ -84,11 +85,9 @@ if __name__ == '__main__':
     script_dir = here.parent.parent.joinpath('scripts')
     os.environ['PATH'] += '%s%s' % (os.pathsep, str(script_dir))
     for script in script_dir.glob('*'):  # ignores 'hidden' files
-        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
         script_name = script_dir.joinpath(script).stem
         dst = help_docs_dst.joinpath('{}.txt'.format(script_name))
         with open(str(dst), 'w') as fid:
             fid.write('$ {} -h\n'.format(script))
             fid.flush()
-            from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
             subprocess.Popen([script, '-h'], stdout=fid).communicate()

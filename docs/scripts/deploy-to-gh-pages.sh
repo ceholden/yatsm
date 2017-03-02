@@ -6,7 +6,7 @@ set -o errexit -o nounset
 
 DOCS=$(dirname $(readlink -f $0))/../
 
-APIDOC="$DOCS/source/"
+APIDOC="$DOCS/source/yatsm"
 
 KEY_FILE=.deploy_key
 SOURCE=_build
