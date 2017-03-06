@@ -1,10 +1,10 @@
 """ Results storage in HDF5 datasets using PyTables
 """
 import datetime as dt
-import errno
 import fnmatch
 import logging
 import os
+from pathlib import Path
 import re
 
 import numpy as np
@@ -18,10 +18,6 @@ from yatsm.results.utils import result_filename, RESULT_TEMPLATE
 logger = logging.getLogger(__name__)
 
 FILTERS = tb.Filters(complevel=1, complib='zlib', shuffle=True)
-
-# TODO: maybe somehow make these CF-ish, or readable via xarray?
-#       https://github.com/shoyer/h5netcdf/blob/master/h5netcdf/core.py#L48
-GEO_TAGS = ('crs', 'bounds', 'transform', 'bbox', )
 
 
 def _has_node(h5, node, **kwds):
@@ -185,6 +181,26 @@ def get_georeference(node):
 class HDF5ResultsStore(object):
     """ PyTables based HDF5 results storage
 
+    Two ways to open and begin reading or writing to the file.
+
+    Using a context manager:
+
+    .. code-block:: python
+
+        >>> with HDF5ResultsStore('some_data.h5', 'r+') as store:
+        >>>     print(store.georef)
+        >>>     print(store['/result/table', 'column'])
+
+    Explicitly calling :ref:`~HDF5ResultsStore.start` and
+    :ref:`HDF5ResultsStore.close()`:
+
+    .. code-block:: python
+
+        >>> store = HDF5ResultsStore('some_data.h5', 'r+').start()
+        >>> print(store.georef)
+        >>> print(store['/result/table', 'column'])
+        >>> store.close()
+
     Args:
         filename (str): HDF5 file
         mode (str): File mode to open with. By default, opens in read mode or
@@ -202,6 +218,7 @@ class HDF5ResultsStore(object):
         _exists = os.path.exists(filename)
 
         self.filename = filename
+        self.path = Path(filename)
         self.mode = mode or 'r' if _exists else 'w'
         self.georef = georef
         self.title = title
@@ -488,7 +505,8 @@ class HDF5ResultsStore(object):
         """ Begin reading/writing to file
 
         Returns:
-            HDF5
+            HDF5ResultsStore: Return the dataset storage, but opened
+                according to :attr:`HDF5ResultsStore.mode`
         """
         if isinstance(self.h5file, tb.file.File):
             if (getattr(self.h5file, 'mode', '') == self.mode
