@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -85,7 +87,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
 </ul>
 <ul>
@@ -165,14 +170,29 @@
 </ul>
 </div>
 </div>
-<div class="section" id="module-yatsm.results">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.results" title="Permalink to this headline">¶</a></h2>
-<p>Module for handling result file storage</p>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-yatsm.results"></span><p>Module for handling result file storage</p>
 <dl class="class">
 <dt id="yatsm.results.HDF5ResultsStore">
 <em class="property">class </em><code class="descclassname">yatsm.results.</code><code class="descname">HDF5ResultsStore</code><span class="sig-paren">(</span><em>filename</em>, <em>mode=None</em>, <em>georef=None</em>, <em>title='YATSM'</em>, <em>keep_open=True</em>, <em>overwrite=False</em>, <em>**tb_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>PyTables based HDF5 results storage</p>
+<p>Two ways to open and begin reading or writing to the file.</p>
+<p>Using a context manager:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">HDF5ResultsStore</span><span class="p">(</span><span class="s1">&#39;some_data.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">print</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">georef</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">print</span><span class="p">(</span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;/result/table&#39;</span><span class="p">,</span> <span class="s1">&#39;column&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Explicitly calling <span class="xref std std-ref">~HDF5ResultsStore.start</span> and
+<span class="xref std std-ref">HDF5ResultsStore.close()</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="n">HDF5ResultsStore</span><span class="p">(</span><span class="s1">&#39;some_data.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">georef</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">store</span><span class="p">[</span><span class="s1">&#39;/result/table&#39;</span><span class="p">,</span> <span class="s1">&#39;column&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -265,6 +285,18 @@ from attributes of <code class="docutils literal"><span class="pre">window</span
 </dd></dl>
 
 <dl class="method">
+<dt id="yatsm.results.HDF5ResultsStore.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return value for <cite>key</cite> if exists otherwise <cite>default</cite></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.results.HDF5ResultsStore.get_georef">
+<code class="descname">get_georef</code><span class="sig-paren">(</span><em>where='/'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore.get_georef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore.get_georef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return georeferencing info for a node or table</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="yatsm.results.HDF5ResultsStore.groups">
 <code class="descname">groups</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore.groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore.groups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields key/value pairs for <span class="xref std std-ref">tables.Group</span> stored</p>
@@ -321,15 +353,17 @@ returned results</li>
 
 <dl class="method">
 <dt id="yatsm.results.HDF5ResultsStore.set_georef">
-<code class="descname">set_georef</code><span class="sig-paren">(</span><em>georef</em>, <em>where='/'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore.set_georef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore.set_georef" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_georef</code><span class="sig-paren">(</span><em>where='/'</em>, <em>georef=None</em>, <em>**geo_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore.set_georef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore.set_georef" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set file georeferencing information</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.results.HDF5ResultsStore.set_georef.params.georef"></span><strong>georef</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.set_georef.params.georef">¶</a> &#8211; Georeferencing information</li>
 <li><span class="target" id="yatsm.results.HDF5ResultsStore.set_georef.params.where"></span><strong>where</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.set_georef.params.where">¶</a> &#8211; Node location to georeference</li>
+<li><span class="target" id="yatsm.results.HDF5ResultsStore.set_georef.params.georef"></span><strong>georef</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.set_georef.params.georef">¶</a> &#8211; Georeferencing information</li>
+<li><span class="target" id="yatsm.results.HDF5ResultsStore.set_georef.params.geo_kwds"></span><strong>geo_kwds</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.set_georef.params.geo_kwds">¶</a> &#8211; Specific <code class="xref py py-class docutils literal"><span class="pre">Georeferencing</span></code> attribute to
+modify (need to exist beforehand)</li>
 </ul>
 </td>
 </tr>
@@ -351,7 +385,13 @@ returned results</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">HDF5</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>Return the dataset storage, but opened</dt>
+<dd>according to <code class="xref py py-attr docutils literal"><span class="pre">HDF5ResultsStore.mode</span></code></dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#yatsm.results.HDF5ResultsStore" title="yatsm.results.HDF5ResultsStore">HDF5ResultsStore</a></td>
 </tr>
 </tbody>
 </table>
@@ -507,7 +547,7 @@ tuple to use for information</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 2, 2017, 7:34:58 PM.
+      Last updated on Mar 7, 2017, 11:06:58 PM.
 
     </p>
   </div>

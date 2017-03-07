@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -86,7 +88,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
 </ul>
 <ul>
@@ -162,10 +167,10 @@
 <span></span><span class="sd">&quot;&quot;&quot; Results storage in HDF5 datasets using PyTables</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">import</span> <span class="nn">errno</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -179,10 +184,6 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">FILTERS</span> <span class="o">=</span> <span class="n">tb</span><span class="o">.</span><span class="n">Filters</span><span class="p">(</span><span class="n">complevel</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">complib</span><span class="o">=</span><span class="s1">&#39;zlib&#39;</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># TODO: maybe somehow make these CF-ish, or readable via xarray?</span>
-<span class="c1">#       https://github.com/shoyer/h5netcdf/blob/master/h5netcdf/core.py#L48</span>
-<span class="n">GEO_TAGS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;crs&#39;</span><span class="p">,</span> <span class="s1">&#39;bounds&#39;</span><span class="p">,</span> <span class="s1">&#39;transform&#39;</span><span class="p">,</span> <span class="s1">&#39;bbox&#39;</span><span class="p">,</span> <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_has_node</span><span class="p">(</span><span class="n">h5</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
@@ -346,6 +347,26 @@
 <div class="viewcode-block" id="HDF5ResultsStore"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore">[docs]</a><span class="k">class</span> <span class="nc">HDF5ResultsStore</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; PyTables based HDF5 results storage</span>
 
+<span class="sd">    Two ways to open and begin reading or writing to the file.</span>
+
+<span class="sd">    Using a context manager:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; with HDF5ResultsStore(&#39;some_data.h5&#39;, &#39;r+&#39;) as store:</span>
+<span class="sd">        &gt;&gt;&gt;     print(store.georef)</span>
+<span class="sd">        &gt;&gt;&gt;     print(store[&#39;/result/table&#39;, &#39;column&#39;])</span>
+
+<span class="sd">    Explicitly calling :ref:`~HDF5ResultsStore.start` and</span>
+<span class="sd">    :ref:`HDF5ResultsStore.close()`:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; store = HDF5ResultsStore(&#39;some_data.h5&#39;, &#39;r+&#39;).start()</span>
+<span class="sd">        &gt;&gt;&gt; print(store.georef)</span>
+<span class="sd">        &gt;&gt;&gt; print(store[&#39;/result/table&#39;, &#39;column&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; store.close()</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        filename (str): HDF5 file</span>
 <span class="sd">        mode (str): File mode to open with. By default, opens in read mode or</span>
@@ -363,6 +384,7 @@
         <span class="n">_exists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span> <span class="ow">or</span> <span class="s1">&#39;r&#39;</span> <span class="k">if</span> <span class="n">_exists</span> <span class="k">else</span> <span class="s1">&#39;w&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">georef</span> <span class="o">=</span> <span class="n">georef</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
@@ -587,19 +609,31 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">update_tag</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 <span class="c1"># GIS METADATA</span>
-<div class="viewcode-block" id="HDF5ResultsStore.set_georef"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.set_georef">[docs]</a>    <span class="k">def</span> <span class="nf">set_georef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">georef</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="HDF5ResultsStore.get_georef"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.get_georef">[docs]</a>    <span class="k">def</span> <span class="nf">get_georef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return georeferencing info for a node or table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">get_georeference</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HDF5ResultsStore.set_georef"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.set_georef">[docs]</a>    <span class="k">def</span> <span class="nf">set_georef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">georef</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">geo_kwds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set file georeferencing information</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            georef (Georeference): Georeferencing information</span>
 <span class="sd">            where (str or tables.Node): Node location to georeference</span>
+<span class="sd">            georef (Georeference): Georeferencing information</span>
+<span class="sd">            geo_kwds (dict): Specific :class:`Georeferencing` attribute to</span>
+<span class="sd">                modify (need to exist beforehand)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tables.Node: Georeferenced HDF5 node</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
             <span class="n">node</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">georeference</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">georef</span><span class="p">)</span></div>
+            <span class="c1"># Get modified georef</span>
+            <span class="n">node_georef</span> <span class="o">=</span> <span class="n">get_georeference</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="n">georef</span><span class="p">,</span> <span class="o">**</span><span class="n">geo_kwds</span><span class="p">)</span>
+            <span class="c1"># Modify it</span>
+            <span class="k">return</span> <span class="n">georeference</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">node_georef</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">crs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -649,7 +683,8 @@
         <span class="sd">&quot;&quot;&quot; Begin reading/writing to file</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            HDF5</span>
+<span class="sd">            HDF5ResultsStore: Return the dataset storage, but opened</span>
+<span class="sd">                according to :attr:`HDF5ResultsStore.mode`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">,</span> <span class="n">tb</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span>
@@ -703,9 +738,23 @@
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">walk_nodes</span><span class="p">(</span><span class="n">classname</span><span class="o">=</span><span class="s1">&#39;Table&#39;</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_pathname</span><span class="p">,</span> <span class="n">node</span></div>
 
+<div class="viewcode-block" id="HDF5ResultsStore.get"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return value for `key` if exists otherwise `default`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">tb</span><span class="o">.</span><span class="n">NoSuchNodeError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">default</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">node</span></div>
+
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Allow table/group access as str, or tuple that also gives Column</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="p">:</span>  <span class="c1"># guard empty string, None, etc.</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;No such group or table &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+
         <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
                 <span class="n">key</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">key</span>
@@ -756,7 +805,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 2, 2017, 7:34:58 PM.
+      Last updated on Mar 7, 2017, 11:06:58 PM.
 
     </p>
   </div>
