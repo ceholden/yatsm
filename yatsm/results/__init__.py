@@ -1,7 +1,6 @@
 """ Module for handling result file storage
 """
-from yatsm.results._pytables import (GEO_TAGS, HDF5ResultsStore,
-                                     dtype_to_table, )
+from yatsm.results._pytables import HDF5ResultsStore, dtype_to_table
 from yatsm.results.utils import result_filename
 
 

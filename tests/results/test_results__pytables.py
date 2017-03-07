@@ -5,7 +5,7 @@ import pytest
 import tables as tb
 
 from yatsm.gis import Affine, CRS, BoundingBox, Georeference
-from yatsm.results import GEO_TAGS, HDF5ResultsStore
+from yatsm.results import HDF5ResultsStore
 
 # Fixtures and definitions
 _CRS = CRS({'init': 'epsg:32619'})
@@ -59,7 +59,8 @@ class TestHDF5ResultsStore(object):
         assert test_data_1.basename == '1.nc'
 
     def test_tags(self, test_data_1):
-        assert all([tagname in test_data_1.tags for tagname in GEO_TAGS])
+        assert all([tagname in test_data_1.tags for tagname in
+                    Georeference._fields])
 
     def test_write_tags(self, test_data_1):
         tags = {

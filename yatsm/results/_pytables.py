@@ -443,19 +443,31 @@ class HDF5ResultsStore(object):
             self.update_tag(key, value)
 
 # GIS METADATA
-    def set_georef(self, georef, where='/'):
+    def get_georef(self, where='/'):
+        """ Return georeferencing info for a node or table
+        """
+        with self as store:
+            node = store.h5file.get_node(where)
+            return get_georeference(node)
+
+    def set_georef(self, where='/', georef=None, **geo_kwds):
         """ Set file georeferencing information
 
         Args:
-            georef (Georeference): Georeferencing information
             where (str or tables.Node): Node location to georeference
+            georef (Georeference): Georeferencing information
+            geo_kwds (dict): Specific :class:`Georeferencing` attribute to
+                modify (need to exist beforehand)
 
         Returns:
             tables.Node: Georeferenced HDF5 node
         """
         with self as store:
             node = store.h5file.get_node(where)
-            return georeference(node, georef)
+            # Get modified georef
+            node_georef = get_georeference(node).modify(georef, **geo_kwds)
+            # Modify it
+            return georeference(node, node_georef)
 
     @property
     def crs(self):
@@ -560,9 +572,23 @@ class HDF5ResultsStore(object):
             for node in store.h5file.walk_nodes(classname='Table'):
                 yield node._v_pathname, node
 
+    def get(self, key, default=None):
+        """ Return value for `key` if exists otherwise `default`
+        """
+        with self as store:
+            try:
+                node = store.h5file.get_node(key)
+            except tb.NoSuchNodeError:
+                return default
+            else:
+                return node
+
     def __getitem__(self, key, col=None):
         """ Allow table/group access as str, or tuple that also gives Column
         """
+        if not key:  # guard empty string, None, etc.
+            raise KeyError('No such group or table "%s"' % key)
+
         with self as store:
             if isinstance(key, tuple):
                 key, col = key
