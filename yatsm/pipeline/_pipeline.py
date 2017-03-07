@@ -20,13 +20,13 @@ class Pipe(object):
     """
 
     #: list: List of attributes stored in :class:`Pipe`
-    __slots__ = PIPE_CONTENTS + ('contents', )
+    __slots__ = PIPE_CONTENTS
 
     def __init__(self, **kwds):
-        for item in self.__slots__:
-            value = kwds.get(item, dict())
+        for item in PIPE_CONTENTS:
+            value = kwds.get(item, None) or {}
+            logger.debug('Setting {} to {}'.format(item, value))
             setattr(self, item, value)
-        self.contents = self.__slots__[:-1]
 
     def pixel(self, y, x):
         """ Subset ``Pipe`` to one pixel
@@ -38,37 +38,46 @@ class Pipe(object):
 
     # Limit possible attributes
     # TODO: reconsider? could be useful for metadata
-    def __setattr__(self, key, value):
-        if key not in self.__slots__:
-            raise AttributeError('{0.__class__.__name__} cannot store '
-                                 'attributes other than: "{1}"'
-                                 .format(self, '", "'.join(PIPE_CONTENTS)))
-        else:
-            object.__setattr__(self, key, value)
+#    def __setattr__(self, key, value):
+#        if key not in self.__slots__:
+#            raise AttributeError('{0.__class__.__name__} cannot store '
+#                                 'attributes other than: "{1}"'
+#                                 .format(self, '", "'.join(PIPE_CONTENTS)))
+#        else:
+#            from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
+#            object.__setattr__(self, key, value)
+
+# TUPLE-LIKE
+    @property
+    def _fields(self):
+        return self.__slots__
+
+    @property
+    def _contents(self):
+        return (getattr(self, item) for item in self._fields)
 
 # DICT-LIKE
     def __len__(self):
-        return len(self.contents)
+        return len(self._fields)
 
     def __iter__(self):
-        for item in self.contents:
+        for item in self._contents:
             yield item
 
     def __getitem__(self, key):
-        if key in self.contents:
+        if key in self._fields:
             return getattr(self, key)
         else:
             raise KeyError('{0.__class__.__name__} does not store '
                            'attributes other than: "{1}"'
-                           .format(self, '", "'.join(PIPE_CONTENTS)))
+                           .format(self, '", "'.join(self._fields)))
 
     def items(self):
-        for key in self:
-            value = self[key]
+        for key, value in zip(self._fields, self):
             yield key, value
 
     def keys(self):
-        for key in self:
+        for key in self._fields:
             yield key
 
     def get(self, key, default=None):
@@ -78,10 +87,10 @@ class Pipe(object):
             return default
 
     def __repr__(self):
-        return "<{0.__class__.__name__} at {1}> storing:{2}".format(
+        return "<{0.__class__.__name__} at {1}> storing:\n  * {2}".format(
             self,
             hex(id(self)),
-            '\n'.join(self.contents)
+            '\n  * '.join(self._fields)
         )
 
 
