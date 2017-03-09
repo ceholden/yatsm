@@ -528,16 +528,11 @@ class HDF5ResultsStore(object):
         return self.start()
 
     def __exit__(self, *args):
-        if self.h5file and not self.keep_open:
-            try:
-                self.h5file.close()
-            except AttributeError as ae:
-                logger.debug('Would have caused an error when closing {0}'
-                             .format(self.filename), ae)
+        if not self.keep_open:
+            self.close()
 
     def __del__(self):
-        if self.h5file:
-            self.h5file.close()
+        self.close()
 
     def start(self):
         """ Begin reading/writing to file
@@ -626,9 +621,9 @@ class HDF5ResultsStore(object):
             node = store.h5file.get_node(key)
             if col:
                 if col not in node.cols._v_colnames:
-                    raise KeyError('Cannot find Column {} in node {}'
-                                   .format(col, node))
-                return store.h5file.get_node(key).cols
+                    raise KeyError('Cannot find column "{0}" in node "{1}"'
+                                   .format(col, key))
+                return store.h5file.get_node(key).cols._g_col(col)
             else:
                 return node
 
