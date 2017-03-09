@@ -5,6 +5,7 @@ from functools import partial
 import logging
 
 from dask import delayed
+import xarray as xr
 
 from yatsm.errors import PipelineConfigurationError as PCError
 from yatsm.pipeline._topology import config_to_tasks
@@ -19,33 +20,20 @@ class Pipe(object):
     """ A Bunch for pipeline communication
     """
 
-    #: list: List of attributes stored in :class:`Pipe`
     __slots__ = PIPE_CONTENTS
 
     def __init__(self, **kwds):
         for item in PIPE_CONTENTS:
             value = kwds.get(item, None) or {}
-            logger.debug('Setting {} to {}'.format(item, value))
             setattr(self, item, value)
 
     def pixel(self, y, x):
         """ Subset ``Pipe`` to one pixel
         """
-        return Pipe(
-            data=self.data.sel(y=y, x=x),
-            record=self.record
-        )
-
-    # Limit possible attributes
-    # TODO: reconsider? could be useful for metadata
-#    def __setattr__(self, key, value):
-#        if key not in self.__slots__:
-#            raise AttributeError('{0.__class__.__name__} cannot store '
-#                                 'attributes other than: "{1}"'
-#                                 .format(self, '", "'.join(PIPE_CONTENTS)))
-#        else:
-#            from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
-#            object.__setattr__(self, key, value)
+        p = Pipe(*self)
+        if isinstance(p.data, xr.Dataset):
+            p.data = p.data.sel(y=y, x=x)
+        return p
 
 # TUPLE-LIKE
     @property
@@ -85,6 +73,9 @@ class Pipe(object):
             return self[key]
         except KeyError:
             return default
+
+    def asdict(self):
+        return OrderedDict(self.items())
 
     def __repr__(self):
         return "<{0.__class__.__name__} at {1}> storing:\n  * {2}".format(
