@@ -1,4 +1,5 @@
 from collections import namedtuple
+import json
 import re
 
 import six
@@ -42,6 +43,22 @@ class _Georeference(_georeference):
         for field, val in zip(self._fields, self):
             yield (field, val)
 
+    def modify(self, georef=None, **geo_kwds):
+        """ Return a new tuple with fields modified with new values
+
+        Args:
+            georef (Georeference): Georeferencing information given as a tuple
+            **kwds (dict): Specific fields given as keyword arguments to modify
+        """
+        if georef:
+            pass
+        elif geo_kwds:
+            args = (geo_kwds.get(field, current_value) for field, current_value
+                    in zip(self._fields, self))
+        else:
+            raise TypeError('Must specify either `georef` or `**geo_kwds`')
+        return self._make(args)
+
 
 class Georeference(_Georeference):
     """ namedtuple holding georeferencing information
@@ -83,6 +100,11 @@ class Georeference(_Georeference):
                    transform=STR_TO_GIS['transform'](transform),
                    bbox=STR_TO_GIS['bbox'](bbox))
 
+    @classmethod
+    def from_json(cls, data):
+        data = json.loads(data)
+        return cls(*(STR_TO_GIS[field](data[field]) for field in cls._fields))
+
     @property
     def str(self):
         return _Georeference(
@@ -90,9 +112,6 @@ class Georeference(_Georeference):
               for field in _Georeference._fields)
         )
 
-
-if __name__ == '__main__':
-    import rasterio
-    s = rasterio.open('asdf.tif')
-    g = Georeference.from_reader(s)
-    from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
+    def to_json(self):
+        return json.dumps({field: GIS_TO_STR[field](attr) for
+                           (attr, field) in zip(self, self._fields)})
