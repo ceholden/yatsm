@@ -246,6 +246,12 @@ class HDF5ResultsStore(object):
         self.overwrite = overwrite
         self.tb_kwds = tb_kwds
 
+        if self.mode == 'w' and _exists and not self.overwrite:
+            logger.warning('Moving you down to "r+" permissions. '
+                           'Use `overwrite=True` if you want to nuke '
+                           'the preexisting file.')
+            self.mode = 'r+'
+
         self.h5file = None
         if not _exists and not isinstance(self.georef, Georeference):
             raise TypeError('Must specify `georef` as `Georeference` when '
