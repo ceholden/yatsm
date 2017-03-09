@@ -310,9 +310,15 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        tables.Node: Georeferenced HDF5 node</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: decide between these approaches</span>
+
+    <span class="c1"># 1. Store strings individually</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">georef</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Setting </span><span class="si">%s</span><span class="s1"> to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
         <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="c1"># 2. Store all as JSON</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="s1">&#39;georef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">georef</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">node</span>
 
@@ -329,6 +335,9 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        KeyError: Raise if georeferencing is missing</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: decide between these approaches</span>
+
+    <span class="c1"># 1. Strings stored individually</span>
     <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">Georeference</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="o">.</span><span class="n">_v_attrnames</span><span class="p">:</span>
@@ -340,6 +349,17 @@
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="n">georef</span> <span class="o">=</span> <span class="n">Georeference</span><span class="o">.</span><span class="n">from_strings</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># 2. Store all as JSON</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;georef&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_file</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_file</span><span class="o">.</span><span class="n">isopen</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Temporarily adding &quot;georef&quot; to your file...&#39;</span><span class="p">)</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="s1">&#39;georef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">georef</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;georef&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">:</span>
+            <span class="n">georef</span> <span class="o">=</span> <span class="n">Georeference</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="s1">&#39;georef&#39;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">IPython.core.debugger</span> <span class="k">import</span> <span class="n">Pdb</span><span class="p">;</span> <span class="n">Pdb</span><span class="p">()</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>  <span class="c1"># NOQA</span>
 
     <span class="k">return</span> <span class="n">georef</span>
 
@@ -391,6 +411,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span> <span class="o">=</span> <span class="n">keep_open</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tb_kwds</span> <span class="o">=</span> <span class="n">tb_kwds</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">and</span> <span class="n">_exists</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Moving you down to &quot;r+&quot; permissions. &#39;</span>
+                           <span class="s1">&#39;Use `overwrite=True` if you want to nuke &#39;</span>
+                           <span class="s1">&#39;the preexisting file.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;r+&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_exists</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">georef</span><span class="p">,</span> <span class="n">Georeference</span><span class="p">):</span>
@@ -668,16 +694,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">ae</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Would have caused an error when closing </span><span class="si">{0}</span><span class="s1">&#39;</span>
-                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">),</span> <span class="n">ae</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="HDF5ResultsStore.start"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begin reading/writing to file</span>
@@ -766,9 +787,9 @@
             <span class="n">node</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">col</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">_v_colnames</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot find Column </span><span class="si">{}</span><span class="s1"> in node </span><span class="si">{}</span><span class="s1">&#39;</span>
-                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">node</span><span class="p">))</span>
-                <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">cols</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot find column &quot;</span><span class="si">{0}</span><span class="s1">&quot; in node &quot;</span><span class="si">{1}</span><span class="s1">&quot;&#39;</span>
+                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">_g_col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">node</span>
 
@@ -805,7 +826,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 8, 2017, 2:44:09 PM.
+      Last updated on Mar 9, 2017, 4:00:29 PM.
 
     </p>
   </div>

@@ -165,6 +165,7 @@
             
   <h1>Source code for yatsm.gis.core</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">import</span> <span class="nn">six</span>
@@ -208,6 +209,22 @@
         <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
             <span class="k">yield</span> <span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">modify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">georef</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">geo_kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a new tuple with fields modified with new values</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            georef (Georeference): Georeferencing information given as a tuple</span>
+<span class="sd">            **kwds (dict): Specific fields given as keyword arguments to modify</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">georef</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">geo_kwds</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">geo_kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">current_value</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">current_value</span>
+                    <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must specify either `georef` or `**geo_kwds`&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="Georeference"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.core.html#yatsm.gis.Georeference">[docs]</a><span class="k">class</span> <span class="nc">Georeference</span><span class="p">(</span><span class="n">_Georeference</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; namedtuple holding georeferencing information</span>
@@ -249,19 +266,21 @@
                    <span class="n">transform</span><span class="o">=</span><span class="n">STR_TO_GIS</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">](</span><span class="n">transform</span><span class="p">),</span>
                    <span class="n">bbox</span><span class="o">=</span><span class="n">STR_TO_GIS</span><span class="p">[</span><span class="s1">&#39;bbox&#39;</span><span class="p">](</span><span class="n">bbox</span><span class="p">))</span></div>
 
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Georeference.from_json"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.core.html#yatsm.gis.Georeference.from_json">[docs]</a>    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">STR_TO_GIS</span><span class="p">[</span><span class="n">field</span><span class="p">](</span><span class="n">data</span><span class="p">[</span><span class="n">field</span><span class="p">])</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_fields</span><span class="p">))</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_Georeference</span><span class="p">(</span>
             <span class="o">*</span><span class="p">(</span><span class="n">GIS_TO_STR</span><span class="p">[</span><span class="n">field</span><span class="p">](</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">))</span>
               <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">_Georeference</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">rasterio</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;asdf.tif&#39;</span><span class="p">)</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">Georeference</span><span class="o">.</span><span class="n">from_reader</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">IPython.core.debugger</span> <span class="k">import</span> <span class="n">Pdb</span><span class="p">;</span> <span class="n">Pdb</span><span class="p">()</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>  <span class="c1"># NOQA</span>
+<div class="viewcode-block" id="Georeference.to_json"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.core.html#yatsm.gis.Georeference.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="n">field</span><span class="p">:</span> <span class="n">GIS_TO_STR</span><span class="p">[</span><span class="n">field</span><span class="p">](</span><span class="n">attr</span><span class="p">)</span> <span class="k">for</span>
+                           <span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">)})</span></div></div>
 </pre></div>
 
            </div>
@@ -277,7 +296,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 8, 2017, 2:44:09 PM.
+      Last updated on Mar 9, 2017, 4:00:29 PM.
 
     </p>
   </div>
