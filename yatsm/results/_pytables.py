@@ -144,9 +144,15 @@ def georeference(node, georef):
     Returns:
         tables.Node: Georeferenced HDF5 node
     """
+    # TODO: decide between these approaches
+
+    # 1. Store strings individually
     for key, val in georef.str.items():
         logger.debug('Setting %s to %s' % (key, val))
         node._v_attrs[key] = val
+
+    # 2. Store all as JSON
+    node._v_attrs['georef'] = georef.to_json()
 
     return node
 
@@ -163,6 +169,9 @@ def get_georeference(node):
     Raises:
         KeyError: Raise if georeferencing is missing
     """
+    # TODO: decide between these approaches
+
+    # 1. Strings stored individually
     args = []
     for key in Georeference._fields:
         if key not in node._v_attrs._v_attrnames:
@@ -174,6 +183,17 @@ def get_georeference(node):
             value = value.decode('utf-8')
         args.append(value)
     georef = Georeference.from_strings(*args)
+
+    # 2. Store all as JSON
+    try:
+        if 'georef' not in node._v_attrs:
+            if node._v_file.mode in ('w', 'r+') and node._v_file.isopen:
+                logger.warning('Temporarily adding "georef" to your file...')
+                node._v_attrs['georef'] = georef.to_json()
+        if 'georef' in node._v_attrs:
+            georef = Georeference.from_json(node._v_attrs['georef'])
+    except Exception as e:
+        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
 
     return georef
 
