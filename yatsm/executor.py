@@ -59,6 +59,8 @@ class SyncExecutor(_Executor):
 
     @staticmethod
     def _result(future, func, *args, **kwds):
+        if not future.set_running_or_notify_cancel():
+            return
         try:
             result = func(*args, **kwds)
         except Exception as e:
