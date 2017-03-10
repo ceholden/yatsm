@@ -582,9 +582,9 @@ class HDF5ResultsStore(object):
     def groups(self):
         """ Yields key/value pairs for :ref:`tables.Group` stored
         """
-        for name, node in self.items():
-            if isinstance(node, tb.Group):
-                yield name, node
+        with self as store:
+            for node in store.h5file.walk_nodes(classname='Group'):
+                yield node._v_pathname, node
 
     def tables(self):
         """ Yields key/value pairs for :ref:`tables.Table` stored
