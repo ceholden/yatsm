@@ -186,14 +186,13 @@ def get_georeference(node):
 
     # 2. Store all as JSON
     try:
-        if 'georef' not in node._v_attrs:
-            if node._v_file.mode in ('w', 'r+') and node._v_file.isopen:
-                logger.warning('Temporarily adding "georef" to your file...')
-                node._v_attrs['georef'] = georef.to_json()
         if 'georef' in node._v_attrs:
             georef = Georeference.from_json(node._v_attrs['georef'])
-    except Exception as e:
-        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
+    except Exception as exc:
+        logger.debug('Could not parse from JSON for node {0}: {1}'
+                     .format(node, exc))
+        if logger.level <= logging.DEBUG:
+            from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
 
     return georef
 
@@ -311,7 +310,7 @@ class HDF5ResultsStore(object):
                     else:
                         yield colname
 
-    def query(self, name, columns=(),
+    def query(self, table, columns=(),
               px=None, py=None, d_start=None, d_end=None, d_break=None,
               *query_terms):
         """ Yield table results from a search query
@@ -327,7 +326,8 @@ class HDF5ResultsStore(object):
             * d_break >
 
         Args:
-            name (str): Name of table containg segment results
+            table (str or tb.Table): Name of table, or the table itself,
+                containg segment results
             column (str, or iterable): One or more columns to include in
                 returned results
             px (float, or slice): One X coordinate, or a range of X coordinates
@@ -337,13 +337,25 @@ class HDF5ResultsStore(object):
             d_break (datetime, or slice): One date, or a range of dates
             *query_terms: Additional search terms to send to ``Table.where``
 
+        Returns:
+            np.ndarray: Return a structured :ref:`np.ndarray` with the search
+            results
+
+        Raises:
+            TypeError: If `table` argument isn't one of the allowed types
+            (string or tables.Table)
+
         """
         # TODO: deal when we have a table join vs inside table
         # TODO: look into "condavars" argument
         if isinstance(columns, six.string_types):
             columns = (columns, )
 
-        table = self[name]
+        if isinstance(table, six.string_types):
+            table = self[table]
+        elif not isinstance(table, tb.Table):
+            raise TypeError('`table` argument must be a string or '
+                            '`tables.Table`')
 
         def _build_dt(name, sign, d):
             if isinstance(d, dt.datetime):
@@ -562,6 +574,7 @@ class HDF5ResultsStore(object):
 
     def close(self):
         if self.h5file:
+            logger.debug('Closing {0.filename}'.format(self.h5file))
             self.h5file.close()
 
 # DICT LIKE
