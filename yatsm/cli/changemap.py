@@ -1,12 +1,10 @@
 """ Command line interface for creating changemaps of YATSM algorithm output
 """
 import logging
-import os
 
 import click
 
 from . import options
-from ..config import validate_and_parse_configfile
 
 
 logger = logging.getLogger('yatsm')
@@ -37,65 +35,72 @@ def changemap(ctx):
 @options.opt_bounds
 @options.mapping_decorations
 @options.opt_date_format
+@options.opt_map_date_format
 def first(ctx, config, start_date, end_date, output,
           table, bounds,
-          driver, nodata, creation_options, force_overwrite, date_format):
+          driver, nodata, creation_options, force_overwrite,
+          date_format, map_date_format):
     """ Date of first change
     """
+    # TODO: make this an input...
+    # TODO: mapping between
+    #           * output band # and total # bands
+    #           * result value mapping/transform function
+    #           * also takes care of QA/QC
+    attr_columns = ('break_day', )
+    attr_funcs = (None, )
+
     import numpy as np
     import rasterio
-    import tables as tb
+    from yatsm.mapping import result_map
+    # Get results, then pop first out to get geographic attrs.
+    # Finally, return it back into result generator
+    # TODO: limit query by extent somehow?
+    # TODO: this should be more robust to first result being corrupt...
+    results = config.find_results(**config.results)
+    try:
+        result, results = config.peak_results(results, table=table)
+    except StopIteration:
+        logger.error('Cannot find results')
+        raise click.Abort()
 
-    results = config.find_results(**config.results)  # TODO: extent?
+    if not table:
+        table = config.peak_table(result)[0]
+        logger.info('Assuming you want table: "{0}"'.format(table))
 
     # TODO: manually specify extent (e.g., subset)
-    crs = config.primary_reader.crs
-    transform = config.primary_reader.transform
-    bounds = config.primary_reader.bounds
+    #: BoundingBox: bounds, in geographic/projected "real" coordinates
+    bounds = bounds or result.bounds
+    logger.debug('Using bounds: {0!r}'.format(bounds))
+
+    # TODO: allow window to come from arg, e.g., "srcwin"
     window = rasterio.windows.from_bounds(*bounds,
-                                          transform=transform,
+                                          transform=result.georef.transform,
                                           boundless=True)
+    logger.debug('Calculated window as: {0!r}'.format(window))
+    # Recalculate transform
+    transform = rasterio.windows.transform(window, result.transform)
+
     kwds = {
         'driver': driver,
         'nodata': nodata,
         'dtype': np.int32,
-        'count': 1,  # TODO: qa/qc
-        'crs': crs,
+        'count': len(attr_columns),  # TODO: qa/qc band may influence this
+        'crs': result.georef.crs,
         'height': window[0][1] - window[0][0],
         'width': window[1][1] - window[1][0],
         'transform': rasterio.windows.transform(window, transform)
     }
     kwds.update(**creation_options)
 
-    columns = ('px', 'py', 'break_day', )
-
     with rasterio.open(output, 'w', **kwds) as dst:
         out = np.full(dst.shape, dst.nodata, dst.dtypes[0])
-        for _result in results:
-            try:
-                with _result as result:  # Open
-                    if not table:  # set if first time
-                        _tables = list(result.tables())
-                        if _tables:
-                            table = _tables[0][0]
-                            logger.info('Assuming you want table {}'
-                                        .format(table))
-                    segs = result.query(table, columns=columns,
-                                        d_start=start_date, d_end=end_date)
-                    y, x = rasterio.transform.rowcol(result.transform,
-                                                     segs['px'], segs['py'])
-                    out[y, x] = segs[columns[-1]]
-            except tb.exceptions.HDF5ExtError as err:
-                logger.error('Result file {} is corrupt or unreadable'
-                             .format(_result.filename), err)
-
-        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
-        dst.write(out, 1)
+        out = result_map(out, results, table, attr_columns,
+                         attr_funcs=attr_funcs,
+                         d_start=start_date, d_end=end_date)
+        dst.write(out)
         print(dst.tags())
-
-    if not results:
-        logger.exception('No results found in %s' % config.results['output'])
-        raise click.Abort()
+    logger.info('Complete')
 
 
 @changemap.command(short_help="Date of last change")
