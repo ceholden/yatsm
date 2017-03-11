@@ -209,6 +209,59 @@
 <code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/api.html#Config.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.api.Config.keys" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="yatsm.api.Config.peak_results">
+<code class="descname">peak_results</code><span class="sig-paren">(</span><em>results</em>, <em>table=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/api.html#Config.peak_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.api.Config.peak_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop an example result file off a list to inspect</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.api.Config.peak_results.params.results"></span><strong>results</strong><a class="paramlink headerlink reference internal" href="#yatsm.api.Config.peak_results.params.results">¶</a> &#8211; A generator or list of
+<code class="xref py py-class docutils literal"><span class="pre">HDF5ResultsStore</span></code></li>
+<li><span class="target" id="yatsm.api.Config.peak_results.params.table"></span><strong>table</strong><a class="paramlink headerlink reference internal" href="#yatsm.api.Config.peak_results.params.table">¶</a> &#8211; Optionally, table to require in order to be a &#8220;valid&#8221;
+example</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Return an example <code class="xref py py-class docutils literal"><span class="pre">HDF5ResultsStore</span></code> and the original
+generator (or list) supplied to the function (with the example
+still in the generator)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#StopIteration" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">StopIteration</span></code></a> &#8211; Raise (by not catching if thrown) if function cannot</li>
+<li>find any valid results</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.api.Config.peak_table">
+<code class="descname">peak_table</code><span class="sig-paren">(</span><em>store</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/api.html#Config.peak_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.api.Config.peak_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the first obvious table to use from a HDF5ResultsStore</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.api.Config.peak_table.params.store"></span><strong>store</strong><a class="paramlink headerlink reference internal" href="#yatsm.api.Config.peak_table.params.store">¶</a> &#8211; HDF5 results file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">table location, or <cite>None</cite> if there are no tables
+stored</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="yatsm.gis.html#yatsm.gis.Georeference.str" title="yatsm.gis.Georeference.str">str</a> or <a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.7)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="yatsm.api.Config.SECTIONS">
 <code class="descname">SECTIONS</code><em class="property"> = ('version', 'pipeline', 'tasks', 'results', 'data')</em><a class="headerlink" href="#yatsm.api.Config.SECTIONS" title="Permalink to this definition">¶</a></dt>
@@ -268,7 +321,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 9, 2017, 4:00:29 PM.
+      Last updated on Mar 11, 2017, 3:46:14 PM.
 
     </p>
   </div>

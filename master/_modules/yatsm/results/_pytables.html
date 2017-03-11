@@ -352,14 +352,13 @@
 
     <span class="c1"># 2. Store all as JSON</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s1">&#39;georef&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_file</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_file</span><span class="o">.</span><span class="n">isopen</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Temporarily adding &quot;georef&quot; to your file...&#39;</span><span class="p">)</span>
-                <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="s1">&#39;georef&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">georef</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;georef&#39;</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">:</span>
             <span class="n">georef</span> <span class="o">=</span> <span class="n">Georeference</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">_v_attrs</span><span class="p">[</span><span class="s1">&#39;georef&#39;</span><span class="p">])</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">IPython.core.debugger</span> <span class="k">import</span> <span class="n">Pdb</span><span class="p">;</span> <span class="n">Pdb</span><span class="p">()</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>  <span class="c1"># NOQA</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Could not parse from JSON for node </span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">&#39;</span>
+                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">exc</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">level</span> <span class="o">&lt;=</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">IPython.core.debugger</span> <span class="k">import</span> <span class="n">Pdb</span><span class="p">;</span> <span class="n">Pdb</span><span class="p">()</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>  <span class="c1"># NOQA</span>
 
     <span class="k">return</span> <span class="n">georef</span>
 
@@ -477,7 +476,7 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">yield</span> <span class="n">colname</span></div>
 
-<div class="viewcode-block" id="HDF5ResultsStore.query"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">(),</span>
+<div class="viewcode-block" id="HDF5ResultsStore.query"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.query">[docs]</a>    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">(),</span>
               <span class="n">px</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">d_break</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
               <span class="o">*</span><span class="n">query_terms</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Yield table results from a search query</span>
@@ -493,7 +492,8 @@
 <span class="sd">            * d_break &gt;</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name (str): Name of table containg segment results</span>
+<span class="sd">            table (str or tb.Table): Name of table, or the table itself,</span>
+<span class="sd">                containg segment results</span>
 <span class="sd">            column (str, or iterable): One or more columns to include in</span>
 <span class="sd">                returned results</span>
 <span class="sd">            px (float, or slice): One X coordinate, or a range of X coordinates</span>
@@ -503,13 +503,25 @@
 <span class="sd">            d_break (datetime, or slice): One date, or a range of dates</span>
 <span class="sd">            *query_terms: Additional search terms to send to ``Table.where``</span>
 
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Return a structured :ref:`np.ndarray` with the search</span>
+<span class="sd">            results</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If `table` argument isn&#39;t one of the allowed types</span>
+<span class="sd">            (string or tables.Table)</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO: deal when we have a table join vs inside table</span>
         <span class="c1"># TODO: look into &quot;condavars&quot; argument</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="p">)</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">table</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">tb</span><span class="o">.</span><span class="n">Table</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`table` argument must be a string or &#39;</span>
+                            <span class="s1">&#39;`tables.Table`&#39;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">_build_dt</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sign</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
@@ -728,6 +740,7 @@
 
 <div class="viewcode-block" id="HDF5ResultsStore.close"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Closing </span><span class="si">{0.filename}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <span class="c1"># DICT LIKE</span>
@@ -748,9 +761,9 @@
 <div class="viewcode-block" id="HDF5ResultsStore.groups"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.groups">[docs]</a>    <span class="k">def</span> <span class="nf">groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Yields key/value pairs for :ref:`tables.Group` stored</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">tb</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span></div>
+        <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">store</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">h5file</span><span class="o">.</span><span class="n">walk_nodes</span><span class="p">(</span><span class="n">classname</span><span class="o">=</span><span class="s1">&#39;Group&#39;</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_v_pathname</span><span class="p">,</span> <span class="n">node</span></div>
 
 <div class="viewcode-block" id="HDF5ResultsStore.tables"><a class="viewcode-back" href="../../../yatsm/yatsm.results.html#yatsm.results.HDF5ResultsStore.tables">[docs]</a>    <span class="k">def</span> <span class="nf">tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Yields key/value pairs for :ref:`tables.Table` stored</span>
@@ -826,7 +839,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 9, 2017, 4:00:29 PM.
+      Last updated on Mar 11, 2017, 3:46:14 PM.
 
     </p>
   </div>

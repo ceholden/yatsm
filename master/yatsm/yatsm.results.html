@@ -316,7 +316,7 @@ from attributes of <code class="docutils literal"><span class="pre">window</span
 
 <dl class="method">
 <dt id="yatsm.results.HDF5ResultsStore.query">
-<code class="descname">query</code><span class="sig-paren">(</span><em>name</em>, <em>columns=()</em>, <em>px=None</em>, <em>py=None</em>, <em>d_start=None</em>, <em>d_end=None</em>, <em>d_break=None</em>, <em>*query_terms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore.query" title="Permalink to this definition">¶</a></dt>
+<code class="descname">query</code><span class="sig-paren">(</span><em>table</em>, <em>columns=()</em>, <em>px=None</em>, <em>py=None</em>, <em>d_start=None</em>, <em>d_end=None</em>, <em>d_break=None</em>, <em>*query_terms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/results/_pytables.html#HDF5ResultsStore.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.results.HDF5ResultsStore.query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yield table results from a search query</p>
 <p>For arguments where <cite>slice</cite> are possible arguments (coordinates and
 dates), passing a single value will construct a query using the
@@ -334,8 +334,9 @@ following sign conventions:</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><span class="target" id="yatsm.results.HDF5ResultsStore.query.params.name"></span><strong>name</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.query.params.name">¶</a> &#8211; Name of table containg segment results</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.results.HDF5ResultsStore.query.params.table"></span><strong>table</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.query.params.table">¶</a> &#8211; Name of table, or the table itself,
+containg segment results</li>
 <li><span class="target" id="yatsm.results.HDF5ResultsStore.query.params.column"></span><strong>column</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.query.params.column">¶</a> &#8211; One or more columns to include in
 returned results</li>
 <li><span class="target" id="yatsm.results.HDF5ResultsStore.query.params.px"></span><strong>px</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.query.params.px">¶</a> &#8211; One X coordinate, or a range of X coordinates</li>
@@ -344,6 +345,19 @@ returned results</li>
 <li><span class="target" id="yatsm.results.HDF5ResultsStore.query.params.d_end"></span><strong>d_end</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.query.params.d_end">¶</a> &#8211; One date, or a range of dates</li>
 <li><span class="target" id="yatsm.results.HDF5ResultsStore.query.params.d_break"></span><strong>d_break</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.query.params.d_break">¶</a> &#8211; One date, or a range of dates</li>
 <li><span class="target" id="yatsm.results.HDF5ResultsStore.query.params.*query_terms"></span><strong>*query_terms</strong><a class="paramlink headerlink reference internal" href="#yatsm.results.HDF5ResultsStore.query.params.*query_terms">¶</a> &#8211; Additional search terms to send to <code class="docutils literal"><span class="pre">Table.where</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Return a structured <span class="xref std std-ref">np.ndarray</span> with the search
+results</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.ndarray</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#TypeError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code></a> &#8211; If <cite>table</cite> argument isn&#8217;t one of the allowed types</li>
+<li>(string or tables.Table)</li>
 </ul>
 </td>
 </tr>
@@ -523,7 +537,7 @@ tuple to use for information</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Filename filled out</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="yatsm.gis.core.html#yatsm.gis.core.Georeference.str" title="yatsm.gis.core.Georeference.str">str</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="yatsm.gis.html#yatsm.gis.Georeference.str" title="yatsm.gis.Georeference.str">str</a></p>
 </td>
 </tr>
 </tbody>
@@ -547,7 +561,7 @@ tuple to use for information</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 9, 2017, 4:00:29 PM.
+      Last updated on Mar 11, 2017, 3:46:14 PM.
 
     </p>
   </div>
