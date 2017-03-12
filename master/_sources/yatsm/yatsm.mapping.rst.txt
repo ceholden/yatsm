@@ -1,6 +1,13 @@
 yatsm.mapping package
 =====================
 
+Submodules
+----------
+
+.. toctree::
+
+   yatsm.mapping.core
+
 Module contents
 ---------------
 

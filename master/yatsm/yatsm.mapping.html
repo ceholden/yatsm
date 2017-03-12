@@ -162,10 +162,58 @@
             
   <div class="section" id="yatsm-mapping-package">
 <h1>yatsm.mapping package<a class="headerlink" href="#yatsm-mapping-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.core.html">yatsm.mapping.core module</a></li>
+</ul>
+</div>
+</div>
 <div class="section" id="module-yatsm.mapping">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.mapping" title="Permalink to this headline">¶</a></h2>
 <p>Module for making map products from YATSM results</p>
 <p>Contains functions used in &#8220;map&#8221; command line interface script.</p>
+<dl class="function">
+<dt id="yatsm.mapping.result_map">
+<code class="descclassname">yatsm.mapping.</code><code class="descname">result_map</code><span class="sig-paren">(</span><em>out</em>, <em>results</em>, <em>table</em>, <em>attr_columns</em>, <em>attr_funcs=None</em>, <em>**query_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/core.html#result_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.result_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate <cite>out</cite> from data queried from saved record model results</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.mapping.result_map.params.out"></span><strong>out</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.out">¶</a> &#8211; 2D or 3D (nband x nrow x ncol) array to fill result
+data into</li>
+<li><span class="target" id="yatsm.mapping.result_map.params.results"></span><strong>results</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.results">¶</a> &#8211; A list of <code class="xref py py-class docutils literal"><span class="pre">HDF5ResultsStore</span></code> files</li>
+<li><span class="target" id="yatsm.mapping.result_map.params.table"></span><strong>table</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.table">¶</a> &#8211; The table to retrieve the data from</li>
+<li><span class="target" id="yatsm.mapping.result_map.params.attr_columns"></span><strong>attr_columns</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.attr_columns">¶</a> &#8211; Attributes from results table to map. The number
+of attributes given should be the same as the number of bands in
+<cite>out</cite>.</li>
+<li><span class="target" id="yatsm.mapping.result_map.params.attr_funcs"></span><strong>attr_funcs</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.attr_funcs">¶</a> &#8211; Optionally, provide a function to apply to each
+attribute described in <cite>attr_columns</cite>. Please supply <cite>None</cite>, or an
+iterable of either a <cite>callable</cite> object or <cite>None</cite> for each attribute
+in <cite>attr_columns</cite>.</li>
+<li><span class="target" id="yatsm.mapping.result_map.params.query_kwds"></span><strong>query_kwds</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.query_kwds">¶</a> &#8211; Additional search terms to pass to
+<code class="xref py py-meth docutils literal"><span class="pre">HDF5ResultsStore.query()</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt><cite>out</cite>, but with desired result file attributes mapped into</dt>
+<dd><p class="first last">the image</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
@@ -183,7 +231,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 11, 2017, 3:46:14 PM.
+      Last updated on Mar 12, 2017, 1:15:03 AM.
 
     </p>
   </div>

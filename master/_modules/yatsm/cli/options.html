@@ -165,7 +165,7 @@
             
   <h1>Source code for yatsm.cli.options</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; YATSM command line interface &quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
@@ -246,7 +246,8 @@
     <span class="k">def</span> <span class="nf">_arg_date</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">date_format_key</span><span class="p">])</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span>
+                                             <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">date_format_key</span><span class="p">])</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">ClickException</span><span class="p">(</span>
                     <span class="s1">&#39;Need to use `date_format_opt` when using `date_arg`&#39;</span><span class="p">)</span>
@@ -309,6 +310,37 @@
     <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">is_eager</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input date format&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="opt_map_date_format"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.opt_map_date_format">[docs]</a><span class="k">def</span> <span class="nf">opt_map_date_format</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># TODO: this needs to ensure conversion if required, because</span>
+        <span class="c1">#       results dates eventually won&#39;t always be in ordinal</span>
+        <span class="c1">#       date format (in fact, it makes little sense because</span>
+        <span class="c1">#       basically nothing in Python uses it, except certain</span>
+        <span class="c1">#       regression models for historic reasons)</span>
+        <span class="c1">#       See: `yatsm.tslib.datetime2int`</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ordinal&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;ordinal&#39;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">test_dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">test_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">{0}</span><span class="s1">&quot; is not a valid date format string for &#39;</span>
+                       <span class="s1">&#39;parameter &quot;</span><span class="si">{1}</span><span class="s1">&quot;: </span><span class="si">{2!r}</span><span class="s1">&#39;</span>
+                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">metavar</span><span class="p">,</span> <span class="n">exc</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> must be a valid `datetime.strftime` &#39;</span>
+                                 <span class="s1">&#39;format string or &quot;ordinal&quot;&#39;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">metavar</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s1">&#39;--map_date_format&#39;</span><span class="p">,</span> <span class="s1">&#39;--mdformat&#39;</span><span class="p">,</span> <span class="s1">&#39;map_date_format&#39;</span><span class="p">,</span>
+        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output map date format (&quot;ordinal&quot; or a date fstring)&#39;</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
 
 
 <span class="n">opt_format</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
@@ -413,7 +445,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 11, 2017, 3:46:14 PM.
+      Last updated on Mar 12, 2017, 1:15:03 AM.
 
     </p>
   </div>

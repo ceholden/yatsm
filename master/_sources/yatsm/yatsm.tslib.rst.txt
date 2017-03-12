@@ -1,0 +1,7 @@
+yatsm.tslib module
+==================
+
+.. automodule:: yatsm.tslib
+    :members:
+    :undoc-members:
+    :show-inheritance:

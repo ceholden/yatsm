@@ -1,0 +1,7 @@
+yatsm.mapping.core module
+=========================
+
+.. automodule:: yatsm.mapping.core
+    :members:
+    :undoc-members:
+    :show-inheritance:

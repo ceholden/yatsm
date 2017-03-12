@@ -30,6 +30,7 @@ Submodules
    yatsm.executor
    yatsm.masking
    yatsm.plots
+   yatsm.tslib
    yatsm.utils
    yatsm.vegetation_indices
    yatsm.version

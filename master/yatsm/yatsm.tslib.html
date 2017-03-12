@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.plots module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.tslib module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -139,14 +139,14 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>yatsm.plots module</li>
+      <li>yatsm.tslib module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.plots.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.tslib.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -160,57 +160,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.plots">
-<span id="yatsm-plots-module"></span><h1>yatsm.plots module<a class="headerlink" href="#module-yatsm.plots" title="Permalink to this headline">¶</a></h1>
-<p>Plots useful for YATSM</p>
+  <div class="section" id="module-yatsm.tslib">
+<span id="yatsm-tslib-module"></span><h1>yatsm.tslib module<a class="headerlink" href="#module-yatsm.tslib" title="Permalink to this headline">¶</a></h1>
+<p>Various datetime tools</p>
 <dl class="function">
-<dt id="yatsm.plots.plot">
-<code class="descclassname">yatsm.plots.</code><code class="descname">plot</code><span class="sig-paren">(</span><em>yatsm</em>, <em>band</em>, <em>freq</em>, <em>ylim=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/plots.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.plots.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot YATSM results for a specified band
-:param _sphinx_paramlinks_yatsm.plots.plot.yatsm: model
-:type yatsm: yatsm.YATSM
-:param _sphinx_paramlinks_yatsm.plots.plot.band: data band to plot
-:type band: int
-:param _sphinx_paramlinks_yatsm.plots.plot.freq: frequency of sine/cosine (for predictions)
-:type freq: iterable
-:param _sphinx_paramlinks_yatsm.plots.plot.ylim: tuple of floats for y-axes limits
-:type ylim: tuple</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.plots.plot_crossvalidation_scores">
-<code class="descclassname">yatsm.plots.</code><code class="descname">plot_crossvalidation_scores</code><span class="sig-paren">(</span><em>kfold_scores</em>, <em>test_labels</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/plots.html#plot_crossvalidation_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.plots.plot_crossvalidation_scores" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots KFold test summary statistics</p>
+<dt id="yatsm.tslib.datetime2int">
+<code class="descclassname">yatsm.tslib.</code><code class="descname">datetime2int</code><span class="sig-paren">(</span><em>data</em>, <em>out_format</em>, <em>in_format=None</em>, <em>dtype=&lt;type 'numpy.int32'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/tslib.html#datetime2int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.tslib.datetime2int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return input data in an integer friendly date format</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><span class="target" id="yatsm.plots.plot_crossvalidation_scores.params.kfold_scores"></span><strong>kfold_scores</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_crossvalidation_scores.params.kfold_scores">¶</a> &#8211; n by 2 shaped array of mean and standard
-deviation of KFold scores</li>
-<li><span class="target" id="yatsm.plots.plot_crossvalidation_scores.params.test_labels"></span><strong>test_labels</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_crossvalidation_scores.params.test_labels">¶</a> &#8211; n length list of KFold label names</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.tslib.datetime2int.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#yatsm.tslib.datetime2int.params.data">¶</a> &#8211; Time data</li>
+<li><span class="target" id="yatsm.tslib.datetime2int.params.out_format"></span><strong>out_format</strong><a class="paramlink headerlink reference internal" href="#yatsm.tslib.datetime2int.params.out_format">¶</a> &#8211; Either &#8216;ordinal&#8217; for ordinal data (see
+:ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>dt.datetime.toordinal), or a date string (e.g.,
+&#8216;%Y%m%d&#8217;)</li>
+<li><span class="target" id="yatsm.tslib.datetime2int.params.in_format"></span><strong>in_format</strong><a class="paramlink headerlink reference internal" href="#yatsm.tslib.datetime2int.params.in_format">¶</a> &#8211; Optionally, if <cite>data</cite> is a character dtype
+then provide the date format for it</li>
+<li><span class="target" id="yatsm.tslib.datetime2int.params.dtype"></span><strong>dtype</strong><a class="paramlink headerlink reference internal" href="#yatsm.tslib.datetime2int.params.dtype">¶</a> &#8211; Output datatype</li>
 </ul>
 </td>
 </tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.plots.plot_feature_importance">
-<code class="descclassname">yatsm.plots.</code><code class="descname">plot_feature_importance</code><span class="sig-paren">(</span><em>algo</em>, <em>cfg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/plots.html#plot_feature_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.plots.plot_feature_importance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots Random Forest feature importance as barplot</p>
-<p>If YATSM configuration (cfg[&#8216;YATSM&#8217;]) contains Patsy design information in
-&#8216;design_info&#8217;, then this plot will show more specific labels for each
-feature.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><span class="target" id="yatsm.plots.plot_feature_importance.params.algo"></span><strong>algo</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_feature_importance.params.algo">¶</a> &#8211; Random Forest algorithm</li>
-<li><span class="target" id="yatsm.plots.plot_feature_importance.params.cfg"></span><strong>cfg</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_feature_importance.params.cfg">¶</a> &#8211; YATSM configuration dictionary</li>
-</ul>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Integer date representation</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>

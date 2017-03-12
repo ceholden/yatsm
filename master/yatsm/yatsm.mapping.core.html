@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.plots module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.mapping.core module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -139,14 +139,14 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>yatsm.plots module</li>
+      <li>yatsm.mapping.core module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.plots.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.mapping.core.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -160,57 +160,43 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.plots">
-<span id="yatsm-plots-module"></span><h1>yatsm.plots module<a class="headerlink" href="#module-yatsm.plots" title="Permalink to this headline">¶</a></h1>
-<p>Plots useful for YATSM</p>
+  <div class="section" id="module-yatsm.mapping.core">
+<span id="yatsm-mapping-core-module"></span><h1>yatsm.mapping.core module<a class="headerlink" href="#module-yatsm.mapping.core" title="Permalink to this headline">¶</a></h1>
+<p>Core mapping functions and utilities</p>
 <dl class="function">
-<dt id="yatsm.plots.plot">
-<code class="descclassname">yatsm.plots.</code><code class="descname">plot</code><span class="sig-paren">(</span><em>yatsm</em>, <em>band</em>, <em>freq</em>, <em>ylim=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/plots.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.plots.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot YATSM results for a specified band
-:param _sphinx_paramlinks_yatsm.plots.plot.yatsm: model
-:type yatsm: yatsm.YATSM
-:param _sphinx_paramlinks_yatsm.plots.plot.band: data band to plot
-:type band: int
-:param _sphinx_paramlinks_yatsm.plots.plot.freq: frequency of sine/cosine (for predictions)
-:type freq: iterable
-:param _sphinx_paramlinks_yatsm.plots.plot.ylim: tuple of floats for y-axes limits
-:type ylim: tuple</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.plots.plot_crossvalidation_scores">
-<code class="descclassname">yatsm.plots.</code><code class="descname">plot_crossvalidation_scores</code><span class="sig-paren">(</span><em>kfold_scores</em>, <em>test_labels</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/plots.html#plot_crossvalidation_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.plots.plot_crossvalidation_scores" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots KFold test summary statistics</p>
+<dt id="yatsm.mapping.core.result_map">
+<code class="descclassname">yatsm.mapping.core.</code><code class="descname">result_map</code><span class="sig-paren">(</span><em>out</em>, <em>results</em>, <em>table</em>, <em>attr_columns</em>, <em>attr_funcs=None</em>, <em>**query_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/core.html#result_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.core.result_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populate <cite>out</cite> from data queried from saved record model results</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><span class="target" id="yatsm.plots.plot_crossvalidation_scores.params.kfold_scores"></span><strong>kfold_scores</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_crossvalidation_scores.params.kfold_scores">¶</a> &#8211; n by 2 shaped array of mean and standard
-deviation of KFold scores</li>
-<li><span class="target" id="yatsm.plots.plot_crossvalidation_scores.params.test_labels"></span><strong>test_labels</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_crossvalidation_scores.params.test_labels">¶</a> &#8211; n length list of KFold label names</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.mapping.core.result_map.params.out"></span><strong>out</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.core.result_map.params.out">¶</a> &#8211; 2D or 3D (nband x nrow x ncol) array to fill result
+data into</li>
+<li><span class="target" id="yatsm.mapping.core.result_map.params.results"></span><strong>results</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.core.result_map.params.results">¶</a> &#8211; A list of <code class="xref py py-class docutils literal"><span class="pre">HDF5ResultsStore</span></code> files</li>
+<li><span class="target" id="yatsm.mapping.core.result_map.params.table"></span><strong>table</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.core.result_map.params.table">¶</a> &#8211; The table to retrieve the data from</li>
+<li><span class="target" id="yatsm.mapping.core.result_map.params.attr_columns"></span><strong>attr_columns</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.core.result_map.params.attr_columns">¶</a> &#8211; Attributes from results table to map. The number
+of attributes given should be the same as the number of bands in
+<cite>out</cite>.</li>
+<li><span class="target" id="yatsm.mapping.core.result_map.params.attr_funcs"></span><strong>attr_funcs</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.core.result_map.params.attr_funcs">¶</a> &#8211; Optionally, provide a function to apply to each
+attribute described in <cite>attr_columns</cite>. Please supply <cite>None</cite>, or an
+iterable of either a <cite>callable</cite> object or <cite>None</cite> for each attribute
+in <cite>attr_columns</cite>.</li>
+<li><span class="target" id="yatsm.mapping.core.result_map.params.query_kwds"></span><strong>query_kwds</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.core.result_map.params.query_kwds">¶</a> &#8211; Additional search terms to pass to
+<code class="xref py py-meth docutils literal"><span class="pre">HDF5ResultsStore.query()</span></code></li>
 </ul>
 </td>
 </tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.plots.plot_feature_importance">
-<code class="descclassname">yatsm.plots.</code><code class="descname">plot_feature_importance</code><span class="sig-paren">(</span><em>algo</em>, <em>cfg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/plots.html#plot_feature_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.plots.plot_feature_importance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots Random Forest feature importance as barplot</p>
-<p>If YATSM configuration (cfg[&#8216;YATSM&#8217;]) contains Patsy design information in
-&#8216;design_info&#8217;, then this plot will show more specific labels for each
-feature.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><span class="target" id="yatsm.plots.plot_feature_importance.params.algo"></span><strong>algo</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_feature_importance.params.algo">¶</a> &#8211; Random Forest algorithm</li>
-<li><span class="target" id="yatsm.plots.plot_feature_importance.params.cfg"></span><strong>cfg</strong><a class="paramlink headerlink reference internal" href="#yatsm.plots.plot_feature_importance.params.cfg">¶</a> &#8211; YATSM configuration dictionary</li>
-</ul>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt><cite>out</cite>, but with desired result file attributes mapped into</dt>
+<dd><p class="first last">the image</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
 </td>
 </tr>
 </tbody>
