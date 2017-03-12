@@ -1,5 +1,5 @@
 """ YATSM command line interface """
-from datetime import datetime as dt
+import datetime as dt
 import functools
 import logging
 
@@ -80,7 +80,8 @@ def _arg_date(name, date_format_key='date_format', **kwds):
     def _arg_date(f):
         def callback(ctx, param, value):
             try:
-                value = dt.strptime(value, ctx.params[date_format_key])
+                value = dt.datetime.strptime(value,
+                                             ctx.params[date_format_key])
             except KeyError:
                 raise click.ClickException(
                     'Need to use `date_format_opt` when using `date_arg`')
@@ -143,6 +144,37 @@ opt_date_format = click.option(
     show_default=True,
     is_eager=True,
     help='Input date format')
+
+
+def opt_map_date_format(f):
+    def callback(ctx, param, value):
+        # TODO: this needs to ensure conversion if required, because
+        #       results dates eventually won't always be in ordinal
+        #       date format (in fact, it makes little sense because
+        #       basically nothing in Python uses it, except certain
+        #       regression models for historic reasons)
+        #       See: `yatsm.tslib.datetime2int`
+        if value.lower() == 'ordinal':
+            return 'ordinal'
+        elif isinstance(value, str):
+            test_dt = dt.datetime.now()
+            try:
+                int(test_dt.strftime(value))
+            except Exception as exc:
+                msg = ('"{0}" is not a valid date format string for '
+                       'parameter "{1}": {2!r}'
+                       .format(value, param.metavar, exc))
+                raise click.BadParameter(msg)
+            else:
+                return value
+        raise click.BadParameter('{0} must be a valid `datetime.strftime` '
+                                 'format string or "ordinal"'
+                                 .format(param.metavar))
+    return click.option(
+        '--map_date_format', '--mdformat', 'map_date_format',
+        callback=callback,
+        default='%Y%m%d', show_default=True,
+        help='Output map date format ("ordinal" or a date fstring)')(f)
 
 
 opt_format = click.option(

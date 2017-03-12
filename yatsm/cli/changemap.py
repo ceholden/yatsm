@@ -1,5 +1,6 @@
 """ Command line interface for creating changemaps of YATSM algorithm output
 """
+import functools
 import logging
 
 import click
@@ -47,8 +48,15 @@ def first(ctx, config, start_date, end_date, output,
     #           * output band # and total # bands
     #           * result value mapping/transform function
     #           * also takes care of QA/QC
+    from yatsm.tslib import datetime2int
+
     attr_columns = ('break_day', )
-    attr_funcs = (None, )
+    break_day_func = (
+        # TODO: deal with when input isn't ordinal...
+        None if map_date_format.lower() == 'ordinal' else
+        functools.partial(datetime2int, out_format=map_date_format)
+    )
+    attr_funcs = (break_day_func, )
 
     import numpy as np
     import rasterio
@@ -65,7 +73,7 @@ def first(ctx, config, start_date, end_date, output,
         raise click.Abort()
 
     if not table:
-        table = config.peak_table(result)[0]
+        table = config.peak_table(result)
         logger.info('Assuming you want table: "{0}"'.format(table))
 
     # TODO: manually specify extent (e.g., subset)
@@ -94,7 +102,7 @@ def first(ctx, config, start_date, end_date, output,
     kwds.update(**creation_options)
 
     with rasterio.open(output, 'w', **kwds) as dst:
-        out = np.full(dst.shape, dst.nodata, dst.dtypes[0])
+        out = np.full((dst.count, ) + dst.shape, dst.nodata, dst.dtypes[0])
         out = result_map(out, results, table, attr_columns,
                          attr_funcs=attr_funcs,
                          d_start=start_date, d_end=end_date)
