@@ -166,6 +166,7 @@
   <h1>Source code for yatsm.gis.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Geospatial utility functions</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">shapely.geometry</span>
 
 
@@ -185,6 +186,28 @@
         <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
         <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
     <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="window_coords"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.utils.html#yatsm.gis.window_coords">[docs]</a><span class="k">def</span> <span class="nf">window_coords</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return Y/X coordinates for a given window and transform</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel</span>
+<span class="sd">            space</span>
+<span class="sd">        transform (affine.Affine): Affine transform</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Y/X coordinates</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">xoff</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">yoff</span>
+    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">e</span>
+
+    <span class="n">coord_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nx</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="p">(</span><span class="n">nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dx</span><span class="p">))</span>
+    <span class="n">coord_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">ny</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="p">(</span><span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dy</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">coord_y</span><span class="p">,</span> <span class="n">coord_x</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -200,7 +223,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 12, 2017, 1:15:03 AM.
+      Last updated on Mar 12, 2017, 3:55:36 PM.
 
     </p>
   </div>
