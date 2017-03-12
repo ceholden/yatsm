@@ -37,12 +37,15 @@ def result_map(out, results, table, attr_columns,
     def guard_out(out):
         shape = (1, ) * (3 - out.ndim) + out.shape
         return np.atleast_3d(out).reshape(*shape)
+
     out = guard_out(out)
 
     assert out.ndim == 3, '`guard_out` should have worked!'
-    if out.shape[0] == len(attr_columns):
-        raise ValueError('Provided `out` must have {0} bands to store {1!r}'
-                         .format(len(attr_columns), attr_columns))
+    if out.shape[0] != len(attr_columns):
+        raise ValueError(
+            'Provided `out` must have "{0}" bands to store '
+            '"{1!r}" but it has "{2}" number of bands'
+            .format(len(attr_columns), attr_columns, out.shape[0]))
 
     for _result in results:
         try:
@@ -51,7 +54,8 @@ def result_map(out, results, table, attr_columns,
                     from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
                 segs = result.query(table, columns=columns, **query_kwds)
                 y, x = rasterio.transform.rowcol(result.transform,
-                                                 segs['px'], segs['py'])
+                                                 segs['px'],
+                                                 segs['py'])
                 for bidx, attr in enumerate(attr_columns):
                     out[bidx, y, x] = segs[attr]
         except tb.exceptions.HDF5ExtError as err:

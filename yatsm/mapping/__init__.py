@@ -2,6 +2,8 @@
 
 Contains functions used in "map" command line interface script.
 """
+from .core import result_map
+
 # QA/QC values for segment types
 MODEL_QA_QC = {
     'INTERSECT': 3,
@@ -11,5 +13,6 @@ MODEL_QA_QC = {
 
 
 __all__ = [
-    'MODEL_QA_QC'
+    'MODEL_QA_QC',
+    'result_map',
 ]
