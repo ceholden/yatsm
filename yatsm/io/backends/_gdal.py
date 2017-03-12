@@ -7,8 +7,10 @@ import os
 import numpy as np
 import pandas as pd
 import rasterio
-from rasterio.coords import BoundingBox
 import xarray as xr
+
+from yatsm.gis import BoundingBox
+from yatsm.gis.utils import window_coords as _window_coords
 
 logger = logging.getLogger(__name__)
 
@@ -278,14 +280,8 @@ class GDALTimeSeries(object):
         Returns:
             tuple (np.ndarray, np.ndarray): Y and X coordinates for window
         """
-        x0, y0 = self.ul[0], self.ul[1]
-        nx, ny = window[1][1] - window[1][0], window[0][1] - window[0][0]
-        dx, dy = self.res[0], -self.res[1]
-
-        coord_x = np.linspace(start=x0, num=nx, stop=(x0 + (nx - 1) * dx))
-        coord_y = np.linspace(start=y0, num=ny, stop=(y0 + (ny - 1) * dy))
-
-        return (coord_y, coord_x)
+        y, x = _window_coords(window, self.transform)
+        return y, x
 
     def window_bounds(self, window):
         """ Return coordinate bounds of a given window

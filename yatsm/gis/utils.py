@@ -1,5 +1,6 @@
 """ Geospatial utility functions
 """
+import numpy as np
 import shapely.geometry
 
 
@@ -19,3 +20,25 @@ def bounds_to_polygon(bounds):
         (bounds[2], bounds[3]),
         (bounds[0], bounds[3])
     ])
+
+
+def window_coords(window, transform):
+    """ Return Y/X coordinates for a given window and transform
+
+    Args:
+        window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel
+            space
+        transform (affine.Affine): Affine transform
+
+    Returns:
+        tuple: Y/X coordinates
+
+    """
+    x0, y0 = transform.xoff, transform.yoff
+    nx, ny = window[1][1] - window[1][0], window[0][1] - window[0][0]
+    dx, dy = transform.a, transform.e
+
+    coord_x = np.linspace(start=x0, num=nx, stop=(x0 + (nx - 1) * dx))
+    coord_y = np.linspace(start=y0, num=ny, stop=(y0 + (ny - 1) * dy))
+
+    return (coord_y, coord_x)
