@@ -34,6 +34,7 @@ dependencies:
     # Pipeline
     - dask
     - distributed
+    - decorator>=4.0.10
     # Plotting
     - matplotlib>=1.5
     # Interactive (OPTIONAL)
@@ -50,5 +51,4 @@ dependencies:
         - git+git://github.com/ceholden/glmnet-python.git@v2.0.1
         # Required but missing from conda
         - palettable>=2.0.0
-        - decorator>=4.0.10
         - toposort>=1.4

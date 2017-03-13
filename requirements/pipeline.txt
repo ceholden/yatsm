@@ -1,3 +1,4 @@
 dask
 distributed
 toposort
+decorator>=4.0.10

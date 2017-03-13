@@ -47,7 +47,7 @@ extras_require = {
         'pathlib',
     ],
     'accel': ['numba'],
-    'pipeline': ['dask', 'distributed', 'toposort'],
+    'pipeline': ['dask', 'distributed', 'toposort', 'decorator'],
     'viz': ['graphviz'],
     'docs': [
         'mock', 'click', 'click_plugins', 'sphinx>=1.4', 'sphinx_rtd_theme',
