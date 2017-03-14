@@ -4,15 +4,17 @@ import os
 
 import fiona
 import numpy as np
+from pathlib import Path
 import pytest
 import rasterio
 import shapely.geometry
 
 from yatsm.classification import roi
 
-DATA = os.path.join(os.path.dirname(__file__), 'data')
-TRAINING_ROI = os.path.join(DATA, 'training.geojson')
-TRAINING_RASTER = os.path.join(DATA, 'training.gtif')
+DATA = Path(__file__).absolute().parent.parent.joinpath('data')
+TRAINING_ROI = str(DATA.joinpath('training.geojson'))
+TRAINING_RASTER = str(DATA.joinpath('training.gtif'))
+TRAINING_FEATURE = 'code_1'
 
 
 @pytest.fixture()
@@ -32,7 +34,7 @@ def training_raster():
 def test_extract_roi_1(training_raster, training_roi):
     dat, label, xs, ys = next(roi.extract_roi(training_raster,
                                               training_roi,
-                                              feature_prop='code_1',
+                                              feature_prop=TRAINING_FEATURE,
                                               all_touched=False))
     geom = shapely.geometry.shape(training_roi[0]['geometry'])
     x_size, y_size = training_raster.res
