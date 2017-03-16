@@ -1,65 +1,144 @@
 """ Projection parameters
+
+.. todo::
+
+    I want to keep the interface using just `rasterio.crs.CRS` objects, but I
+    need to convert so many times. Consider:
+
+        1. caching conversion
+        2. move to OOP wrapper around CRS that defines these things,
+           perhaps use throughout project? I don't really want to muck...
+
 """
+from collections import OrderedDict
 import logging
-from pathlib import Path
-import pyproj
-import re
 
 from .utils import crs2osr
+from yatsm import errors
 
 logger = logging.getLogger(__name__)
 
 
-def epsg_code(crs):
-    """ Try to find EPSG code from a :ref:`rasterio.crs.CRS`
+PROJECTION_DEFS = {
+    # TODO: support more...
+    # TODO: does the order matter?
+    'albers_conical_equal_area': (
+        'false_easting',
+        'false_northing',
+        'latitude_of_projection_origin',
+        'longitude_of_central_meridian',
+        'standard_parallel',
+    ),
+    'transverse_mercator': (
+        'false_easting',
+        'false_northing',
+        'latitude_of_projection_origin',
+        'longitude_of_central_meridian',
+        'scale_factor',
+    ),
+    'universal_transverse_mercator': (
+        'utm_zone_number'
+    ),
+}
 
-    Uses `OSRGetAuthorityName` and `OSRGetAuthorityCode`
+ELLIPSOID_DEFS = (
+    'semi_major_axis',
+    'semi_minor_axis',
+    'inverse_flattening'
+)
+
+
+def _epsg_key(crs):
+    # "PROJCS", "GEOGCS", "GEOGCS|UNIT", NULL
+    if crs.is_geographic:
+        return 'GEOGCS'
+    elif crs.is_projected:
+        return 'PROJCS'
+    else:
+        return None
+
+
+def epsg_code(crs):
+    """ Return EPSG string (e.g., "epsg:32619") from a :ref:`rasterio.crs.CRS`
+
+    Uses `OSRGetAuthorityCode`
 
     Args:
         crs (rasterio.crs.CRS): CRS
 
     Returns:
-        str: [EPSG Authority]:[EPSG Code]
+        int: EPSG Code
     """
     crs_osr = crs2osr(crs)
-    # "PROJCS", "GEOGCS", "GEOGCS|UNIT", NULL
-    if crs.is_geographic:
-        key = 'GEOGCS'
-    elif crs.is_projected:
-        key = 'PROJCS'
-    else:
-        key = None
-    return '{0}:{1}'.format(crs_osr.GetAuthorityName(key),
-                            crs_osr.self.GetAuthorityCode(key)).lower()
+    key = _epsg_key(crs)
+    code = crs_osr.GetAuthorityCode(key)
+    return int(code) if code else code
 
 
-def crs_parameters(epsg_code):
-    """ Return projection parameters for a projection denoted by an EPSG code
+def crs_name(crs):
+    """ Return name of a CRS projection
 
     Args:
-        epsg_code (int): EPSG code for a projection
+        crs (rasterio.crs.CRS): CRS
 
     Returns
-        dict: Mapping projection names (str) to projection parameters
+        str: Lowercase projection name (see keys of :ref:`PROJECTION_DEFS`)
 
-    Raises
-        ValueError: Raise if EPSG code is not found in ``pyproj`` data file
     """
+    crs_osr = crs2osr(crs)
+    return crs_osr.GetAttrValue('PROJECTION').lower()
 
-    # Proj.4 parameters stored in 'epsg' data file
-    # Example:
-    # WGS 84 / UTM zone 19N
-    # <32619> +proj=utm +zone=19 +datum=WGS84 +units=m +no_defs  <>
-    epsg_data = Path(pyproj.pyproj_datadir).joinpath('epsg')
-    with open(str(epsg_data)) as f:
-        content = f.read()
 
-    match = re.search('(?<=<{0}>).*(?=<>)'.format(epsg_code), content)
-    if not match:
-        raise ValueError("Cannot find EPSG code {0} in pyproj data file"
-                         .format(epsg_code))
-    parameters = match.group().strip()
+def crs_long_name(crs):
+    """ Return name of a CRS / ellipsoid pair
 
-    parameters = dict(attr.split('=') for attr in
-                      parameters.replace('+', '').split(' ') if '=' in attr)
-    return parameters
+    Args:
+        crs (rasterio.crs.CRS): CRS
+
+    Returns
+        str: Lowercase projection name (see keys of :ref:`PROJECTION_DEFS`)
+
+    """
+    crs_osr = crs2osr(crs)
+    return crs_osr.GetAttrValue('PROJCS')
+
+
+def crs_parameters(crs):
+    """ Return projection parameters for a CRS
+
+    Args:
+        crs (rasterio.crs.CRS): CRS
+
+    Returns
+        OrderedDict: CRS parameters and values
+
+    Raise
+        yatsm.errors.TODO: Raise if CRS isn't supported yet
+    """
+    name = crs_name(crs)
+    osr_crs = crs2osr(crs)
+
+    if name not in PROJECTION_DEFS:
+        raise errors.TODO('Cannot handle "{0}" CRS types yet'.format(name))
+
+    return OrderedDict(
+        (parm, osr_crs.GetProjParm(parm))
+        for parm in PROJECTION_DEFS[name]
+    )
+
+
+def ellipsoid_parameters(crs):
+    """ Return ellipsoid parameters for a CRS
+
+    Args:
+        crs (rasterio.crs.CRS): CRS
+
+    Returns
+        OrderedDict: Ellipsoid parameters and values
+
+    """
+    osr_crs = crs2osr(crs)
+    return OrderedDict(
+        (parm, osr_crs.GetAttrValue(parm))
+        for parm in ELLIPSOID_DEFS
+    )

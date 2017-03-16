@@ -247,16 +247,16 @@ class GDALTimeSeries(object):
             values,
             name=name,
             dims=['time', 'band', 'y', 'x'],
-            coords=[dates, band_names, coords_y, coords_x, crs]
+            coords=[dates, band_names, coords_y, coords_x]
         )
-        # TODO: put var.attrs['grid_mapping'] into vars in da
+        da = da.assign_coords(crs=crs)
+
         da.attrs['grid_mapping'] = 'crs'
         da.attrs['proj4'] = self.crs.to_string()
         da.attrs['crs_wkt'] = self.crs.wkt
         da.attrs['transform'] = self.transform
         da.attrs['rs'] = self.res
         da.attrs['nodata'] = self.nodatavals
-        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
 
         return da
 

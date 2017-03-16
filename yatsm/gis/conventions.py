@@ -3,34 +3,9 @@
 import numpy as np
 import xarray as xr
 
+from yatsm.gis import projections
 from yatsm.gis.utils import crs2osr
 
-
-PROJ_DEFS = {
-    # TODO: support more...
-    'albers_conical_equal_area': (
-        'false_easting',
-        'false_northing',
-        'latitude_of_projection_origin',
-        'longitude_of_central_meridian',
-        'standard_parallel',
-    ),
-    'transverse_mercator': (
-        'false_easting',
-        'false_northing',
-        'latitude_of_projection_origin',
-        'longitude_of_central_meridian',
-        'scale_factor',
-    ),
-    'universal_transverse_mercator': (
-        'utm_zone_number'
-    ),
-}
-ELLIPSOID_DEFS = (
-    'semi_major_axis',
-    'semi_minor_axis',
-    'inverse_flattening'
-)
 
 COORD_DEFS = {
     'longitude': {
@@ -63,20 +38,15 @@ COORD_DEFS = {
 
 
 def make_xarray_crs(crs):
-    crs_osr = crs2osr(crs)
+    name = projections.crs_name(crs)
+    long_name = projections.crs_long_name(crs)
+    code = projections.epsg_code(crs) or 0
 
-    name = crs_osr.GetAttrValue('PROJECTION').lower()
-    proj_params_list = PROJ_DEFS[name]
-
-    da = xr.DataArray(np.array([0], dtype=np.int32), name='crs')
+    da = xr.DataArray(np.array(code, dtype=np.int32), name='crs')
     da.attrs['grid_mapping_name'] = name
-    da.attrs['long_name'] = crs_osr.GetAttrValue('PROJCS')
-    for param in proj_params_list:
-        da.attrs[param] = crs_osr.GetProjParm(param)
-    for param in ELLIPSOID_DEFS:
-        da.attrs[param] = crs_osr.GetAttrValue(param)
-
-    from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
+    da.attrs['long_name'] = long_name
+    da.attrs.update(projections.crs_parameters(crs))
+    da.attrs.update(projections.ellipsoid_parameters(crs))
 
     return da
 
