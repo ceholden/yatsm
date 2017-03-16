@@ -19,9 +19,9 @@ dependencies:
     # GDAL and IO
     - rasterio>=1.0*
     - fiona>=1.7.0
-    - shapely
-    - gdal
     - shapely>=1.5.16
+    - pyproj
+    - gdal
     - xarray>=0.8
     - pytables>=3.2
     # CLI

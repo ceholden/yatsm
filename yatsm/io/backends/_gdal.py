@@ -9,8 +9,10 @@ import pandas as pd
 import rasterio
 import xarray as xr
 
-from yatsm.gis import BoundingBox
-from yatsm.gis.utils import window_coords as _window_coords
+from yatsm.gis import (BoundingBox,
+                       window_coords as _window_coords,
+                       make_xarray_coords,
+                       make_xarray_crs)
 
 logger = logging.getLogger(__name__)
 
@@ -239,19 +241,22 @@ class GDALTimeSeries(object):
 
         values = self.read(indexes=indexes, out=out, window=window, time=time)
         coords_y, coords_x = self.window_coords(window)
+        crs = make_xarray_crs(self.crs)
 
         da = xr.DataArray(
             values,
             name=name,
             dims=['time', 'band', 'y', 'x'],
-            coords=[dates, band_names, coords_y, coords_x]
+            coords=[dates, band_names, coords_y, coords_x, crs]
         )
-
-        da.attrs['crs'] = self.crs.to_string()
+        # TODO: put var.attrs['grid_mapping'] into vars in da
+        da.attrs['grid_mapping'] = 'crs'
+        da.attrs['proj4'] = self.crs.to_string()
         da.attrs['crs_wkt'] = self.crs.wkt
         da.attrs['transform'] = self.transform
         da.attrs['rs'] = self.res
         da.attrs['nodata'] = self.nodatavals
+        from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
 
         return da
 
@@ -281,7 +286,7 @@ class GDALTimeSeries(object):
             tuple (np.ndarray, np.ndarray): Y and X coordinates for window
         """
         y, x = _window_coords(window, self.transform)
-        return y, x
+        return make_xarray_coords(y, x, self.crs)
 
     def window_bounds(self, window):
         """ Return coordinate bounds of a given window

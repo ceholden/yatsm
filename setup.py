@@ -37,6 +37,7 @@ extras_require = {
         'rasterio',
         'fiona',
         'shapely',
+        'pyproj',
         'xarray',
         'tables',
         'click',

@@ -10,6 +10,7 @@ patsy
 rasterio>=1.0*
 fiona
 shapely
+pyproj
 xarray>=0.8
 tables>=3.2
 click
