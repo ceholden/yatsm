@@ -1,7 +1,18 @@
 """ Geospatial utility functions
 """
 import numpy as np
+from osgeo import osr
 import shapely.geometry
+
+osr.UseExceptions()
+
+
+def crs2osr(crs):
+    """ Return `osgeo.osr.SpatialReference` of a `rasterio.crs.CRS`
+    """
+    crs_osr = osr.SpatialReference()
+    crs_osr.ImportFromWkt(crs.wkt)
+    return crs_osr
 
 
 def bounds_to_polygon(bounds):
