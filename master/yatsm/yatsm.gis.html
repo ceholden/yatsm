@@ -166,8 +166,10 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.gis.conventions.html">yatsm.gis.conventions module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.gis.convert.html">yatsm.gis.convert module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.gis.core.html">yatsm.gis.core module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.gis.projections.html">yatsm.gis.projections module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.gis.utils.html">yatsm.gis.utils module</a></li>
 </ul>
 </div>
@@ -639,6 +641,61 @@ geometry is valid, and &#8220;#ff3333&#8221; if invalid.</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="yatsm.gis.window_coords">
+<code class="descclassname">yatsm.gis.</code><code class="descname">window_coords</code><span class="sig-paren">(</span><em>window</em>, <em>transform</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/utils.html#window_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.window_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Y/X coordinates for a given window and transform</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.gis.window_coords.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.window_coords.params.window">¶</a> &#8211; Window ((ymin, ymax), (xmin, xmax)) in pixel
+space</li>
+<li><span class="target" id="yatsm.gis.window_coords.params.transform"></span><strong>transform</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.window_coords.params.transform">¶</a> &#8211; Affine transform</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Y/X coordinates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.gis.make_xarray_crs">
+<code class="descclassname">yatsm.gis.</code><code class="descname">make_xarray_crs</code><span class="sig-paren">(</span><em>crs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/conventions.html#make_xarray_crs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.make_xarray_crs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="yatsm.gis.make_xarray_coords">
+<code class="descclassname">yatsm.gis.</code><code class="descname">make_xarray_coords</code><span class="sig-paren">(</span><em>y</em>, <em>x</em>, <em>crs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/conventions.html#make_xarray_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.make_xarray_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <cite>y</cite> and <cite>x</cite> as <cite>xr.Variable</cite> useful for coordinates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.gis.make_xarray_coords.params.y"></span><strong>y</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.make_xarray_coords.params.y">¶</a> &#8211; Y</li>
+<li><span class="target" id="yatsm.gis.make_xarray_coords.params.x"></span><strong>x</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.make_xarray_coords.params.x">¶</a> &#8211; X</li>
+<li><span class="target" id="yatsm.gis.make_xarray_coords.params.crs"></span><strong>crs</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.make_xarray_coords.params.crs">¶</a> &#8211; Coordinate reference system</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Y and X</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 
@@ -656,7 +713,7 @@ geometry is valid, and &#8220;#ff3333&#8221; if invalid.</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 14, 2017, 11:27:40 PM.
+      Last updated on Mar 17, 2017, 1:54:20 AM.
 
     </p>
   </div>

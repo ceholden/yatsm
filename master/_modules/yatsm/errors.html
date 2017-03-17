@@ -164,7 +164,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for yatsm.errors</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">yatsm.version</span> <span class="k">import</span> <span class="n">__docs_version__</span>
+<span></span><span class="kn">from</span> <span class="nn">yatsm.version</span> <span class="k">import</span> <span class="p">(</span><span class="n">__docs_version__</span><span class="p">,</span>
+                           <span class="n">__repo_issues__</span><span class="p">,</span>
+                           <span class="n">__version__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="TSLengthException"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.TSLengthException">[docs]</a><span class="k">class</span> <span class="nc">TSLengthException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -206,6 +208,19 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> : &quot;</span><span class="si">{1}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_help</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TODO"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.TODO">[docs]</a><span class="k">class</span> <span class="nc">TODO</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
+
+    <span class="n">_help</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;This version (&quot;</span><span class="si">{version}</span><span class="s1">&quot;) has not yet implemented this &#39;</span>
+             <span class="s1">&#39;functionality. Please visit </span><span class="si">{issues}</span><span class="s1"> and copy and paste &#39;</span>
+             <span class="s1">&#39;the following message if you would like this feature to be &#39;</span>
+             <span class="s1">&#39;supported.&#39;</span>
+             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span> <span class="n">issues</span><span class="o">=</span><span class="n">__repo_issues__</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> : &quot;</span><span class="si">{1}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_help</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -221,7 +236,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 14, 2017, 11:27:40 PM.
+      Last updated on Mar 17, 2017, 1:54:20 AM.
 
     </p>
   </div>

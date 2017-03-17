@@ -167,7 +167,18 @@
 <span></span><span class="sd">&quot;&quot;&quot; Geospatial utility functions</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">osgeo</span> <span class="k">import</span> <span class="n">osr</span>
 <span class="kn">import</span> <span class="nn">shapely.geometry</span>
+
+<span class="n">osr</span><span class="o">.</span><span class="n">UseExceptions</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="crs2osr"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.utils.html#yatsm.gis.crs2osr">[docs]</a><span class="k">def</span> <span class="nf">crs2osr</span><span class="p">(</span><span class="n">crs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return `osgeo.osr.SpatialReference` of a `rasterio.crs.CRS`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">crs_osr</span> <span class="o">=</span> <span class="n">osr</span><span class="o">.</span><span class="n">SpatialReference</span><span class="p">()</span>
+    <span class="n">crs_osr</span><span class="o">.</span><span class="n">ImportFromWkt</span><span class="p">(</span><span class="n">crs</span><span class="o">.</span><span class="n">wkt</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">crs_osr</span></div>
 
 
 <div class="viewcode-block" id="bounds_to_polygon"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.utils.html#yatsm.gis.bounds_to_polygon">[docs]</a><span class="k">def</span> <span class="nf">bounds_to_polygon</span><span class="p">(</span><span class="n">bounds</span><span class="p">):</span>
@@ -223,7 +234,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 14, 2017, 11:27:40 PM.
+      Last updated on Mar 17, 2017, 1:54:20 AM.
 
     </p>
   </div>

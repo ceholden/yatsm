@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Mapping Changes &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.gis.conventions module &mdash; YATSM 0.7.dev0 documentation</title>
   
 
   
@@ -91,7 +91,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -139,14 +139,14 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Mapping Changes</li>
+      <li>yatsm.gis.conventions module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/map_changes.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.gis.conventions.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -160,35 +160,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="mapping-changes">
-<span id="guide-map-changes"></span><h1>Mapping Changes<a class="headerlink" href="#mapping-changes" title="Permalink to this headline">¶</a></h1>
-<p>To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the <span class="xref std std-ref">yatsm changemap</span>.</p>
-<div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<p>For example, consider these mapping situations:</p>
-<ol class="arabic">
-<li><p class="first">For each year from 2000 to 2010, create a map of the first change detected within the year:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>for y1 in $(seq 2000 2010); do
-    y2=$(expr $y1 + 1)
-    yatsm changemap first $y1-01-01 $y2-01-01 change_$y1-$y2.gtif
-done
-</pre></div>
-</div>
-</li>
-<li><p class="first">Create a map of the total number of changes, per pixel, for the 2000 to 2010 decade:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">yatsm</span> <span class="n">changemap</span> <span class="n">num</span> <span class="mi">2000</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">2010</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="n">changenumber_2000</span><span class="o">-</span><span class="mf">2010.</span><span class="n">gtif</span>
-</pre></div>
-</div>
-</li>
-</ol>
-</div>
-<div class="section" id="docs-todo">
-<h2>Docs TODO<a class="headerlink" href="#docs-todo" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Example images</li>
-<li>Explanation of <code class="docutils literal"><span class="pre">--root</span></code>, <code class="docutils literal"><span class="pre">--result</span></code>, and <code class="docutils literal"><span class="pre">--image</span></code> parameters</li>
+  <div class="section" id="module-yatsm.gis.conventions">
+<span id="yatsm-gis-conventions-module"></span><h1>yatsm.gis.conventions module<a class="headerlink" href="#module-yatsm.gis.conventions" title="Permalink to this headline">¶</a></h1>
+<p>Attempts to be as CF-complaint as required... so far</p>
+<dl class="function">
+<dt id="yatsm.gis.conventions.make_xarray_coords">
+<code class="descclassname">yatsm.gis.conventions.</code><code class="descname">make_xarray_coords</code><span class="sig-paren">(</span><em>y</em>, <em>x</em>, <em>crs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/conventions.html#make_xarray_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.conventions.make_xarray_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <cite>y</cite> and <cite>x</cite> as <cite>xr.Variable</cite> useful for coordinates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.gis.conventions.make_xarray_coords.params.y"></span><strong>y</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.conventions.make_xarray_coords.params.y">¶</a> &#8211; Y</li>
+<li><span class="target" id="yatsm.gis.conventions.make_xarray_coords.params.x"></span><strong>x</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.conventions.make_xarray_coords.params.x">¶</a> &#8211; X</li>
+<li><span class="target" id="yatsm.gis.conventions.make_xarray_coords.params.crs"></span><strong>crs</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.conventions.make_xarray_coords.params.crs">¶</a> &#8211; Coordinate reference system</li>
 </ul>
-</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Y and X</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.gis.conventions.make_xarray_crs">
+<code class="descclassname">yatsm.gis.conventions.</code><code class="descname">make_xarray_crs</code><span class="sig-paren">(</span><em>crs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/conventions.html#make_xarray_crs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.conventions.make_xarray_crs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 

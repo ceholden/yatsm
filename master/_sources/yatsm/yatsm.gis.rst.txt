@@ -6,8 +6,10 @@ Submodules
 
 .. toctree::
 
+   yatsm.gis.conventions
    yatsm.gis.convert
    yatsm.gis.core
+   yatsm.gis.projections
    yatsm.gis.utils
 
 Module contents
