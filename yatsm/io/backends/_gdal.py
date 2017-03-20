@@ -17,6 +17,11 @@ from yatsm.gis import (BoundingBox,
 logger = logging.getLogger(__name__)
 
 
+BLOCK_SHAPE_WARNING = ('Bands in "{f}" do not have the same block shapes. '
+                       'Reading will be very slow unless you re-process the '
+                       'to have uniform block shapes.')
+
+
 def parse_dataset_file(input_file, date_format, column_dtype=None):
     """ Return parsed dataset CSV file as pd.DataFrame
 
@@ -111,6 +116,10 @@ class GDALTimeSeries(object):
                 self.shape = src.shape
                 self.count = src.count
                 self.length = len(self.df)
+                block_shapes = set(src.block_shapes)
+                if len(block_shapes) != 1:
+                    logger.warning(BLOCK_SHAPE_WARNING.format(f=filename))
+                self.block_shapes = list(block_shapes)[0]
                 self.block_windows = list(src.block_windows())
                 self.nodatavals = src.nodatavals
                 # We only use one datatype for reading -- promote to largest
