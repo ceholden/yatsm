@@ -12,7 +12,7 @@ log = logging.getLogger()
 # Get version
 with open('yatsm/version.py') as f:
     for line in f:
-        if line.find('__version__') >= 0:
+        if line.startswith('__version__'):
             version = line.split("=")[1].strip()
             version = version.strip('"')
             version = version.strip("'")
