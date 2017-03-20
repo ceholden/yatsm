@@ -41,11 +41,11 @@ PROJECTION_DEFS = {
     ),
 }
 
-ELLIPSOID_DEFS = (
-    'semi_major_axis',
-    'semi_minor_axis',
-    'inverse_flattening'
-)
+ELLIPSOID_DEFS = OrderedDict((
+    ('semi_major_axis', 'GetSemiMajor'),
+    ('semi_minor_axis', 'GetSemiMinor'),
+    ('inverse_flattening', 'GetInvFlattening')
+))
 
 
 def _epsg_key(crs):
@@ -139,6 +139,6 @@ def ellipsoid_parameters(crs):
     """
     osr_crs = crs2osr(crs)
     return OrderedDict(
-        (parm, osr_crs.GetAttrValue(parm))
-        for parm in ELLIPSOID_DEFS
+        (key, getattr(osr_crs, func)())
+        for (key, func) in ELLIPSOID_DEFS.items()
     )
