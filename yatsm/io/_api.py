@@ -117,6 +117,8 @@ def read_and_preprocess(config, readers, window, out=None):
         # Add in metadata
         md = reader.get_metadata()
         ds = arr.to_dataset(dim='band')
+        for varname in ds.data_vars:  # attrs gone, so add them back in
+            ds[varname].attrs = arr.attrs.copy()
         ds.update(md)
 
         datasets[name] = ds

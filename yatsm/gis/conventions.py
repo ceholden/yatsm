@@ -44,14 +44,45 @@ CF_NC_ATTRS = OrderedDict((
 ))
 
 
+def georeference_variable(var, crs, transform):
+    """ Georeference an `xarray.Variable` (e.g., DataArray)
+
+    Args:
+        var (xarray.Variable): Variable
+        crs (CRS): Coordinate reference system
+        transform (Affine): Affine transform
+
+    Returns:
+        xarray.Variable: Georeferenced variable
+    """
+    var.attrs['grid_mapping'] = 'crs'
+    var.attrs['proj4'] = crs.to_string()
+    var.attrs['transform'] = transform
+
+    # For GDAL in case CF doesn't work
+    # http://www.gdal.org/frmt_netcdf.html
+    var.attrs['spatial_ref'] = crs.wkt
+    var.attrs['GeoTransform'] = transform.to_gdal()
+
+    return var
+
+
 def make_xarray_crs(crs):
+    """ Return an `xarray.DataArray` of CF-compliant CRS info
+
+    Args:
+        crs (CRS): CRS
+
+    Returns:
+        xarray.DataArray: "crs" variable holding CRS information
+    """
     name = projections.crs_name(crs)
-    long_name = projections.crs_long_name(crs)
     code = projections.epsg_code(crs) or 0
 
     da = xr.DataArray(np.array(code, dtype=np.int32), name='crs')
     da.attrs['grid_mapping_name'] = name
-    da.attrs['long_name'] = long_name
+
+    da.attrs.update(projections.crs_names(crs))
     da.attrs.update(projections.crs_parameters(crs))
     da.attrs.update(projections.ellipsoid_parameters(crs))
 

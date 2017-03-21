@@ -19,33 +19,43 @@ from yatsm import errors
 logger = logging.getLogger(__name__)
 
 # See:
+# https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
 # http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#appendix-grid-mappings
+#: dict: Mapping between CF<->OSGEO projection parameters for some projections
 PROJECTION_DEFS = {
-    # TODO: support more...
     'albers_conical_equal_area': (
-        'false_easting',
-        'false_northing',
-        'latitude_of_projection_origin',
-        'longitude_of_central_meridian',
-        'standard_parallel',
+        ('latitude_of_projection_origin', 'latitude_of_center'),
+        ('longitude_of_central_meridian', 'longitude_of_center'),
+        ('standard_parallel', ('standard_parallel_1', 'standard_parallel_2')),
+        ('false_easting', 'false_easting'),
+        ('false_northing', 'false_northing'),
     ),
     'transverse_mercator': (
-        'false_easting',
-        'false_northing',
-        'latitude_of_projection_origin',
-        'longitude_of_central_meridian',
-        'scale_factor',
+        ('latitude_of_projection_origin', 'latitude_of_origin'),
+        ('longitude_of_central_meridian', 'central_meridian'),
+        ('scale_factor_at_central_meridian', 'scale_factor'),
+        ('false_easting', 'false_easting'),
+        ('false_northing', 'false_northing'),
     ),
     'universal_transverse_mercator': (
-        'utm_zone_number'
+        ('utm_zone_number', 'utm_zone_number')
     ),
 }
+
+#: tuple: Mapping between CF <-> OSGEO projection attribute name definitions
+CRS_NAMES = (
+    ('horizontal_datum_name', 'GEOGCS|DATUM'),
+    ('reference_ellipsoid_name', 'GEOGCS|DATUM|ELLIPSOID'),
+    ('towgs84', 'GEOGCS|DATUM|TOWGS84'),
+    ('prime_meridian_name', 'GEOGCS|PRIMEM')
+)
 
 ELLIPSOID_DEFS = OrderedDict((
     ('semi_major_axis', 'GetSemiMajor'),
     ('semi_minor_axis', 'GetSemiMinor'),
     ('inverse_flattening', 'GetInvFlattening')
 ))
+# TODO: support more...
 
 
 def _epsg_key(crs):
@@ -100,7 +110,10 @@ def crs_long_name(crs):
 
     """
     crs_osr = crs2osr(crs)
-    return crs_osr.GetAttrValue('PROJCS')
+    if crs.is_projected:
+        return crs_osr.GetAttrValue('PROJCS')
+    elif crs.is_geographic:
+        return crs_osr.GetAttrValue('GEOGCS')
 
 
 def crs_parameters(crs):
@@ -122,9 +135,31 @@ def crs_parameters(crs):
         raise errors.TODO('Cannot handle "{0}" CRS types yet'.format(name))
 
     return OrderedDict(
-        (parm, osr_crs.GetProjParm(parm))
-        for parm in PROJECTION_DEFS[name]
+        (cf_parm, osr_crs.GetProjParm(osgeo_parm))
+        for (cf_parm, osgeo_parm) in PROJECTION_DEFS[name]
     )
+
+
+def crs_names(crs):
+    """ Return CF-compliant attributes to prevent "unknown" CRS/Ellipse/Geoid
+    Args:
+        crs (rasterio.crs.CRS): CRS
+
+    Returns
+        OrderedDict: CF attributes
+    """
+    osr_crs = crs2osr(crs)
+    attrs = OrderedDict()
+
+    long_name = crs_long_name(crs)
+    if crs.is_projected:
+        attrs['projected_coordinate_system_name'] = long_name
+    elif crs.is_geographic:
+        attrs['geographic_coordinate_system_name'] = long_name
+
+    for cf_parm, osgeo_parm in CRS_NAMES:
+        attrs[cf_parm] = osr_crs.GetAttrValue(osgeo_parm)
+    return attrs
 
 
 def ellipsoid_parameters(crs):

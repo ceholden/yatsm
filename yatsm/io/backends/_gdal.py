@@ -10,9 +10,11 @@ import rasterio
 import xarray as xr
 
 from yatsm.gis import (BoundingBox,
-                       window_coords as _window_coords,
+                       georeference_variable,
                        make_xarray_coords,
-                       make_xarray_crs)
+                       make_xarray_crs,
+                       window_coords as _window_coords)
+from yatsm.gis.conventions import CF_NC_ATTRS
 
 logger = logging.getLogger(__name__)
 
@@ -251,6 +253,7 @@ class GDALTimeSeries(object):
         values = self.read(indexes=indexes, out=out, window=window, time=time)
         coords_y, coords_x = self.window_coords(window)
         crs = make_xarray_crs(self.crs)
+        transform = rasterio.windows.transform(window, self.transform)
 
         da = xr.DataArray(
             values,
@@ -260,13 +263,13 @@ class GDALTimeSeries(object):
         )
         da = da.assign_coords(crs=crs)
 
-        da.attrs['grid_mapping'] = 'crs'
-        da.attrs['proj4'] = self.crs.to_string()
-        da.attrs['crs_wkt'] = self.crs.wkt
-        da.attrs['transform'] = self.transform
-        da.attrs['rs'] = self.res
+        da = georeference_variable(da, self.crs, transform)
+        da.attrs.update(CF_NC_ATTRS)
         da.attrs['nodata'] = self.nodatavals
-
+        # TODO: da.encoding
+        # TODO: _FillValue, scale_factor, add_offset here
+        # TODO: add chunksizes here? should be related to block_shapes
+        # TODO: zlib, complevel, etc in to_netcdf function
         return da
 
     def get_metadata(self, items=None):
