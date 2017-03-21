@@ -18,10 +18,10 @@ from yatsm import errors
 
 logger = logging.getLogger(__name__)
 
-
+# See:
+# http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#appendix-grid-mappings
 PROJECTION_DEFS = {
     # TODO: support more...
-    # TODO: does the order matter?
     'albers_conical_equal_area': (
         'false_easting',
         'false_northing',

@@ -1,5 +1,7 @@
 """ Attempts to be as CF-complaint as required... so far
 """
+from collections import OrderedDict
+
 import numpy as np
 import xarray as xr
 
@@ -35,6 +37,11 @@ COORD_DEFS = {
         'calendar': 'standard'
     }
 }
+
+
+CF_NC_ATTRS = OrderedDict((
+    ('Conventions', 'CF-1.6, YATSM'),
+))
 
 
 def make_xarray_crs(crs):
