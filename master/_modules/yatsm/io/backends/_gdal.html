@@ -166,9 +166,8 @@
   <h1>Source code for yatsm.io.backends._gdal</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Tools related to reading time series data using GDAL / rasterio</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -191,11 +190,13 @@
                        <span class="s1">&#39;to have uniform block shapes.&#39;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">parse_dataset_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="p">,</span> <span class="n">column_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">parse_dataset_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">date_column</span><span class="p">,</span> <span class="n">date_format</span><span class="p">,</span>
+                       <span class="n">column_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return parsed dataset CSV file as pd.DataFrame</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        input_file (str): CSV filename</span>
+<span class="sd">        date_column (str): Column containing datetime information</span>
 <span class="sd">        date_format (str): Format of date in input file</span>
 <span class="sd">        column_dtype (dict): Datatype format parsing options for</span>
 <span class="sd">            all or subset of columns passed as ``dtype`` argument to</span>
@@ -208,17 +209,19 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">date_format</span><span class="p">)</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
-                     <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span>
+                     <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="n">date_column</span><span class="p">],</span>
                      <span class="n">date_parser</span><span class="o">=</span><span class="n">_parser</span><span class="p">,</span>
                      <span class="n">dtype</span><span class="o">=</span><span class="n">column_dtype</span><span class="p">)</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">date_column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span>
 
-    <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">date_column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">date_column</span><span class="p">:</span> <span class="s1">&#39;date&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="n">_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">input_file</span><span class="p">))</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">,</span> <span class="n">_root</span><span class="p">),</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">])</span>
+    <span class="c1"># Handle relative paths</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]]</span>
 
     <span class="k">return</span> <span class="n">df</span>
 
@@ -250,13 +253,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_attrs_from_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="GDALTimeSeries.from_config"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.from_config">[docs]</a>    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">column_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<div class="viewcode-block" id="GDALTimeSeries.from_config"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.from_config">[docs]</a>    <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">date_column</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">column_dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Init time series dataset from file, as used by config</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            input_file (str): Filename of file containing time series</span>
 <span class="sd">                information to parse using :ref:`pandas.read_csv`</span>
+<span class="sd">            date_column (str): Column containing datetime information</span>
 <span class="sd">            date_format (str): If ``df`` is not specified, parse date column in</span>
 <span class="sd">                ``input_file`` with this date string format</span>
 <span class="sd">            column_dtype (dict[str, str]): Datatype format parsing options for</span>
@@ -266,6 +270,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">parse_dataset_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span>
+                                <span class="n">date_column</span><span class="o">=</span><span class="n">date_column</span><span class="p">,</span>
                                 <span class="n">date_format</span><span class="o">=</span><span class="n">date_format</span><span class="p">,</span>
                                 <span class="n">column_dtype</span><span class="o">=</span><span class="n">column_dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
@@ -491,7 +496,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 22, 2017, 7:20:39 PM.
+      Last updated on Mar 22, 2017, 7:23:29 PM.
 
     </p>
   </div>

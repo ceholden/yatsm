@@ -192,7 +192,7 @@ will be used as metadata available via <code class="docutils literal"><span clas
 </table>
 <dl class="classmethod">
 <dt id="yatsm.io.backends.GDALTimeSeries.from_config">
-<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>input_file</em>, <em>date_format='%Y%m%d'</em>, <em>column_dtype=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.from_config" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>input_file</em>, <em>date_column='date'</em>, <em>date_format='%Y%m%d'</em>, <em>column_dtype=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.from_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Init time series dataset from file, as used by config</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -201,6 +201,7 @@ will be used as metadata available via <code class="docutils literal"><span clas
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.input_file"></span><strong>input_file</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.input_file">¶</a> &#8211; Filename of file containing time series
 information to parse using <span class="xref std std-ref">pandas.read_csv</span></li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.date_column"></span><strong>date_column</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.date_column">¶</a> &#8211; Column containing datetime information</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.date_format"></span><strong>date_format</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.date_format">¶</a> &#8211; If <code class="docutils literal"><span class="pre">df</span></code> is not specified, parse date column in
 <code class="docutils literal"><span class="pre">input_file</span></code> with this date string format</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.from_config.params.column_dtype"></span><strong>column_dtype</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.from_config.params.column_dtype">¶</a> &#8211; Datatype format parsing options for
@@ -371,7 +372,7 @@ y_max)</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 22, 2017, 7:20:39 PM.
+      Last updated on Mar 22, 2017, 7:23:29 PM.
 
     </p>
   </div>
