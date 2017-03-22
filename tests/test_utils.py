@@ -29,3 +29,18 @@ def test_distribute_jobs_sequential(nrow, njob):
 def test_distribute_jobs_sequential_onejob(nrow, njob):
     with pytest.raises(ValueError):
         utils.distribute_jobs(nrow, nrow, njob, interlaced=False)
+
+
+# mkdir_p
+def test_mkdir_p_success(tmpdir):
+    utils.mkdir_p(tmpdir.join('test').strpath)
+
+
+def test_mkdir_p_succcess_exists(tmpdir):
+    utils.mkdir_p(tmpdir.join('test').strpath)
+    utils.mkdir_p(tmpdir.join('test').strpath)
+
+
+def test_mkdir_p_failure_permission(tmpdir):
+    with pytest.raises(OSError):
+        utils.mkdir_p('/asdf')
