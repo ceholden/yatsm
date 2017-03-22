@@ -241,7 +241,7 @@ def retrieve_tilespecs(filename=None):
     """
     filename = filename or Path(__file__).parent.joinpath('tile_specs.json')
 
-    with open(filename, 'r') as f:
+    with open(str(filename), 'r') as f:
         tilespecs = json.load(f)
 
     for key in tilespecs:
