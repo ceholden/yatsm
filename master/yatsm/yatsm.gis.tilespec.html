@@ -160,8 +160,184 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="yatsm-gis-tilespec-module">
-<h1>yatsm.gis.tilespec module<a class="headerlink" href="#yatsm-gis-tilespec-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-yatsm.gis.tilespec">
+<span id="yatsm-gis-tilespec-module"></span><h1>yatsm.gis.tilespec module<a class="headerlink" href="#module-yatsm.gis.tilespec" title="Permalink to this headline">¶</a></h1>
+<p>Predefined tile specifications and utilities for working with tile systems</p>
+<dl class="class">
+<dt id="yatsm.gis.tilespec.Tile">
+<em class="property">class </em><code class="descclassname">yatsm.gis.tilespec.</code><code class="descname">Tile</code><span class="sig-paren">(</span><em>bounds</em>, <em>crs</em>, <em>index</em>, <em>tilespec</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/tilespec.html#Tile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.tilespec.Tile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A tile</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><span class="target" id="yatsm.gis.tilespec.Tile.params.bounds"></span><strong>bounds</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.Tile.params.bounds">¶</a> &#8211; the bounding box of the tile</li>
+<li><span class="target" id="yatsm.gis.tilespec.Tile.params.crs"></span><strong>crs</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.Tile.params.crs">¶</a> &#8211; the coordinate reference system of the tile</li>
+<li><span class="target" id="yatsm.gis.tilespec.Tile.params.index"></span><strong>index</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.Tile.params.index">¶</a> &#8211; the index of this tile in the larger tile specification</li>
+<li><span class="target" id="yatsm.gis.tilespec.Tile.params.tilespec"></span><strong>tilespec</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.Tile.params.tilespec">¶</a> &#8211; the tile specification</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="yatsm.gis.tilespec.Tile.str_format">
+<code class="descname">str_format</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/tilespec.html#Tile.str_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.tilespec.Tile.str_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string .format&#8217;d with tile attributes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.tilespec.Tile.str_format.params.s"></span><strong>s</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.Tile.str_format.params.s">¶</a> &#8211; A string with format-compatible substitution fields</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A formatted string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="yatsm.gis.core.html#yatsm.gis.core.Georeference.str" title="yatsm.gis.core.Georeference.str">str</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.tilespec.Tile.geojson">
+<code class="descname">geojson</code><a class="headerlink" href="#yatsm.gis.tilespec.Tile.geojson" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; This tile&#8217;s geometry and crs represented as GeoJSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.tilespec.Tile.horizontal">
+<code class="descname">horizontal</code><a class="headerlink" href="#yatsm.gis.tilespec.Tile.horizontal" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The horizontal index of this tile in its tile specification</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.tilespec.Tile.polygon">
+<code class="descname">polygon</code><a class="headerlink" href="#yatsm.gis.tilespec.Tile.polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>shapely.geometry.Polygon</em> &#8211; This tile&#8217;s geometry</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.tilespec.Tile.transform">
+<code class="descname">transform</code><a class="headerlink" href="#yatsm.gis.tilespec.Tile.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Affine</em> &#8211; The <code class="docutils literal"><span class="pre">Affine</span></code> transform for the tile</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.gis.tilespec.Tile.vertical">
+<code class="descname">vertical</code><a class="headerlink" href="#yatsm.gis.tilespec.Tile.vertical" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The horizontal index of this tile in its tile specification</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.gis.tilespec.TileSpec">
+<em class="property">class </em><code class="descclassname">yatsm.gis.tilespec.</code><code class="descname">TileSpec</code><span class="sig-paren">(</span><em>ul</em>, <em>crs</em>, <em>res</em>, <em>size</em>, <em>desc=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/tilespec.html#TileSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.tilespec.TileSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A tile specification or tile scheme</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><span class="target" id="yatsm.gis.tilespec.TileSpec.params.ul"></span><strong>ul</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.params.ul">¶</a> &#8211; upper left X/Y coordinates</li>
+<li><span class="target" id="yatsm.gis.tilespec.TileSpec.params.crs"></span><strong>crs</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.params.crs">¶</a> &#8211; <code class="docutils literal"><span class="pre">rasterio</span></code> compatible coordinate system reference dict</li>
+<li><span class="target" id="yatsm.gis.tilespec.TileSpec.params.res"></span><strong>res</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.params.res">¶</a> &#8211; pixel X/Y resolution</li>
+<li><span class="target" id="yatsm.gis.tilespec.TileSpec.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.params.size">¶</a> &#8211; number of pixels in X/Y dimension of each tile</li>
+<li><span class="target" id="yatsm.gis.tilespec.TileSpec.params.desc"></span><strong>desc</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.params.desc">¶</a> &#8211; description of tile specification (default: None)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="yatsm.gis.tilespec.TileSpec.bounds_to_tiles">
+<code class="descname">bounds_to_tiles</code><span class="sig-paren">(</span><em>bounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/tilespec.html#TileSpec.bounds_to_tiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.tilespec.TileSpec.bounds_to_tiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield Tile objects for this TileSpec that intersect a given bounds</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is required that the input <code class="docutils literal"><span class="pre">bounds</span></code> be in the same
+coordinate reference system as <code class="docutils literal"><span class="pre">crs</span></code>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.tilespec.TileSpec.bounds_to_tiles.params.bounds"></span><strong>bounds</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.bounds_to_tiles.params.bounds">¶</a> &#8211; input bounds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>Tile</em> &#8211; the Tiles that intersect within a bounds</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.gis.tilespec.TileSpec.point_to_tile">
+<code class="descname">point_to_tile</code><span class="sig-paren">(</span><em>point</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/tilespec.html#TileSpec.point_to_tile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.tilespec.TileSpec.point_to_tile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#yatsm.gis.tilespec.Tile" title="yatsm.gis.tilespec.Tile"><code class="xref py py-class docutils literal"><span class="pre">Tile</span></code></a> containing a given point (x, y)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.tilespec.TileSpec.point_to_tile.params.point"></span><strong>point</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.point_to_tile.params.point">¶</a> &#8211; X/Y coordinates in tile specification&#8217;s CRS</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The intersecting :class`Tile`</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#yatsm.gis.tilespec.Tile" title="yatsm.gis.tilespec.Tile">Tile</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="yatsm.gis.tilespec.TileSpec.roi_to_tiles">
+<code class="descname">roi_to_tiles</code><span class="sig-paren">(</span><em>roi</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/tilespec.html#TileSpec.roi_to_tiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.tilespec.TileSpec.roi_to_tiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield tiles overlapping a Region of Interest <cite>shapely</cite> geometry</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.tilespec.TileSpec.roi_to_tiles.params.roi"></span><strong>roi</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.TileSpec.roi_to_tiles.params.roi">¶</a> &#8211; A geometry in the tile
+specifications&#8217; crs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><em>Tile</em> &#8211; A :class`Tile` that intersects the ROI</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.gis.tilespec.retrieve_tilespecs">
+<code class="descclassname">yatsm.gis.tilespec.</code><code class="descname">retrieve_tilespecs</code><span class="sig-paren">(</span><em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/tilespec.html#retrieve_tilespecs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.tilespec.retrieve_tilespecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve default tile specifications packaged within <code class="docutils literal"><span class="pre">tilezilla</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.gis.tilespec.retrieve_tilespecs.params.filename"></span><strong>filename</strong><a class="paramlink headerlink reference internal" href="#yatsm.gis.tilespec.retrieve_tilespecs.params.filename">¶</a> &#8211; Optionally, override default data location</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>default tilespecs packaged within <code class="docutils literal"><span class="pre">tilezilla</span></code> as TileSpec</dt>
+<dd>objects</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.gis.tilespec.TILESPECS">
+<code class="descclassname">yatsm.gis.tilespec.</code><code class="descname">TILESPECS</code><em class="property"> = {u'WELD_CONUS': &lt;TileSpec(desc=WELD_CONUS, ul=[-2565600.0, 3314800.0], crs=CRS({'init': u'epsg:5070', 'no_defs': True}), res=[30, 30], size=[5000, 5000])&gt;}</em><a class="headerlink" href="#yatsm.gis.tilespec.TILESPECS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; Built-in tile specifications available by default</p>
+</dd></dl>
+
 </div>
 
 
@@ -178,7 +354,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 22, 2017, 7:23:29 PM.
+      Last updated on Mar 22, 2017, 7:57:00 PM.
 
     </p>
   </div>
