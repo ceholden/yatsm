@@ -1,8 +1,7 @@
 """ Tools related to reading time series data using GDAL / rasterio
 """
-from functools import partial
 import logging
-import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -25,11 +24,13 @@ BLOCK_SHAPE_WARNING = ('Bands in "{f}" do not have the same block shapes. '
                        'to have uniform block shapes.')
 
 
-def parse_dataset_file(input_file, date_format, column_dtype=None):
+def parse_dataset_file(input_file, date_column, date_format,
+                       column_dtype=None):
     """ Return parsed dataset CSV file as pd.DataFrame
 
     Args:
         input_file (str): CSV filename
+        date_column (str): Column containing datetime information
         date_format (str): Format of date in input file
         column_dtype (dict): Datatype format parsing options for
             all or subset of columns passed as ``dtype`` argument to
@@ -42,17 +43,19 @@ def parse_dataset_file(input_file, date_format, column_dtype=None):
         return pd.datetime.strptime(x, date_format)
 
     df = pd.read_csv(input_file,
-                     parse_dates=['date'],
+                     parse_dates=[date_column],
                      date_parser=_parser,
                      dtype=column_dtype)
-    df.set_index('date', inplace=True, drop=False)
+    df.set_index(date_column, inplace=True, drop=False)
     df.index.name = 'time'
 
-    df.sort_values('date', inplace=True)
+    df.sort_values(date_column, inplace=True)
+    df.rename(columns={date_column: 'date'}, inplace=True)
 
-    if not os.path.isabs(df['filename'][0]):
-        _root = os.path.abspath(os.path.dirname(input_file))
-        df['filename'] = map(partial(os.path.join, _root), df['filename'])
+    # Handle relative paths
+    root = Path(input_file).parent.resolve()
+    if not Path(df['filename'][0]).is_absolute():
+        df['filename'] = [str(root.joinpath(f)) for f in df['filename']]
 
     return df
 
@@ -84,13 +87,14 @@ class GDALTimeSeries(object):
         self._init_attrs_from_file(self.df['filename'][0])
 
     @classmethod
-    def from_config(cls, input_file, date_format='%Y%m%d', column_dtype=None,
-                    **kwds):
+    def from_config(cls, input_file, date_column='date', date_format='%Y%m%d',
+                    column_dtype=None, **kwds):
         """ Init time series dataset from file, as used by config
 
         Args:
             input_file (str): Filename of file containing time series
                 information to parse using :ref:`pandas.read_csv`
+            date_column (str): Column containing datetime information
             date_format (str): If ``df`` is not specified, parse date column in
                 ``input_file`` with this date string format
             column_dtype (dict[str, str]): Datatype format parsing options for
@@ -100,6 +104,7 @@ class GDALTimeSeries(object):
 
         """
         df = parse_dataset_file(input_file,
+                                date_column=date_column,
                                 date_format=date_format,
                                 column_dtype=column_dtype)
         return cls(df, **kwds)

@@ -88,6 +88,8 @@ definitions:
             properties:
                 input_file:
                     type: string
+                date_column:
+                    type: string
                 date_format:
                     type: string
                 keep_open:
@@ -102,6 +104,7 @@ definitions:
             required:
                 - input_file
                 - date_format
+                - date_column
         AGDCv2:
             # TODO
             type: string

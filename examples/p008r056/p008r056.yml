@@ -22,6 +22,8 @@ data:
                     input_file: "$ROOT/Landsat.csv"
                     # Input date format
                     date_format: "%Y%j"
+                    # Input date column name
+                    date_column: date
                     # "dtype" argument to pandas.read_csv
                     # Allows you to specify the datatype of specific columns
                     column_dtype:
@@ -45,6 +47,7 @@ data:
                 GDAL:
                     input_file: "$ROOT/ALOS_hh.csv"
                     date_format: "%Y%m%d"
+                    date_column: date
                     column_dtype:
                         path: str
             band_names: [hh]
@@ -56,6 +59,7 @@ data:
                 GDAL:
                     input_file: "$ROOT/ALOS_hv.csv"
                     date_format: "%Y%m%d"
+                    date_column: date
                     column_dtype:
                         path: str
             band_names: [hv]
