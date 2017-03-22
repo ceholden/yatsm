@@ -15,6 +15,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+import click
 import click_plugins
 
 from yatsm.cli.main import cli as yatsm_cli
@@ -33,6 +34,7 @@ def make_destination(clean=True):
         p.rmdir()
     # Output directory
     help_docs_dst = source.joinpath('cli', 'usage')
+    click.echo('Writing to: %s' % help_docs_dst)
     try:
         if clean and help_docs_dst.exists():
             _rmtree(help_docs_dst)
@@ -79,15 +81,19 @@ if __name__ == '__main__':
             continue
         name = 'yatsm {}'.format(cmd.name) if cmd.name != 'cli' else 'yatsm'
         dst = help_docs_dst.joinpath('{}.txt'.format(name.replace(' ', '_')))
+        click.echo('Running "%s --help"' % str(name))
         cmd_help_to_rst(cmd, dst, name)
 
     # SCRIPTS IN yatsm/scripts
     script_dir = here.parent.parent.joinpath('scripts')
     os.environ['PATH'] += '%s%s' % (os.pathsep, str(script_dir))
-    for script in script_dir.glob('*'):  # ignores 'hidden' files
+    for script in itertools.chain(script_dir.glob('*.py'),
+                                  script_dir.glob('*.sh')):
         script_name = script_dir.joinpath(script).stem
         dst = help_docs_dst.joinpath('{}.txt'.format(script_name))
         with open(str(dst), 'w') as fid:
-            fid.write('$ {} -h\n'.format(script))
+            fid.write('$ {} --help\n'.format(script))
             fid.flush()
-            subprocess.Popen([script, '-h'], stdout=fid).communicate()
+            click.echo('Running "%s --help"' % str(script))
+            subprocess.Popen([script, '--help'], stdout=fid).communicate()
+    click.echo('Complete!')
