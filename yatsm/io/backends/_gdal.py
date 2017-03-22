@@ -15,6 +15,7 @@ from yatsm.gis import (BoundingBox,
                        make_xarray_crs,
                        window_coords as _window_coords)
 from yatsm.gis.conventions import CF_NC_ATTRS
+from yatsm.utils import np_promote_all_types
 
 logger = logging.getLogger(__name__)
 
@@ -113,26 +114,24 @@ class GDALTimeSeries(object):
                 self.bounds = src.bounds
                 self.res = src.res
                 self.ul = src.xy(0, 0, offset='ul')
+
                 self.height = src.height
                 self.width = src.width
                 self.shape = src.shape
                 self.count = src.count
                 self.length = len(self.df)
+
                 block_shapes = set(src.block_shapes)
                 if len(block_shapes) != 1:
                     logger.warning(BLOCK_SHAPE_WARNING.format(f=filename))
                 self.block_shapes = list(block_shapes)[0]
                 self.block_windows = list(src.block_windows())
+
                 self.nodatavals = src.nodatavals
+
                 # We only use one datatype for reading -- promote to largest
                 # if hetereogeneous
-                self.dtype = src.dtypes[0]
-                if not all([dt == self.dtype for dt in src.dtypes[1:]]):
-                    logger.warning('GDAL reader cannot read multiple data '
-                                   'types. Promoting memory allocation to '
-                                   'largest datatype of source bands')
-                    for dtype in src.dtypes[1:]:
-                        self.dtype = np.promote_types(self.dtype, dtype)
+                self.dtype = np_promote_all_types(*src.dtypes)
 
     @property
     def time(self):

@@ -14,6 +14,8 @@ try:
 except:
     from os import walk
 
+import numpy as np
+
 logger = logging.getLogger(__name__)
 
 
@@ -25,6 +27,16 @@ def to_number(string):
     except ValueError:
         n = float(string)
     return n
+
+
+def np_promote_all_types(*dtypes):
+    dtype = dtypes[0]
+    if not all([dt == dtype for dt in dtypes[1:]]):
+        logger.warning('Promoting memory allocation to largest '
+                       'datatype of source bands')
+        for dtype in dtypes[1:]:
+            dtype = np.promote_types(dtype, dtype)
+    return dtype
 
 
 # JOB SPECIFIC FUNCTIONS
