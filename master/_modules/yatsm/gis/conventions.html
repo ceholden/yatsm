@@ -166,6 +166,8 @@
   <h1>Source code for yatsm.gis.conventions</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Attempts to be as CF-complaint as required... so far</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
@@ -203,14 +205,51 @@
 <span class="p">}</span>
 
 
+<span class="n">CF_NC_ATTRS</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span>
+    <span class="p">(</span><span class="s1">&#39;Conventions&#39;</span><span class="p">,</span> <span class="s1">&#39;CF-1.6, YATSM&#39;</span><span class="p">),</span>
+<span class="p">))</span>
+
+
+<div class="viewcode-block" id="georeference_variable"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.conventions.html#yatsm.gis.georeference_variable">[docs]</a><span class="k">def</span> <span class="nf">georeference_variable</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">crs</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Georeference an `xarray.Variable` (e.g., DataArray)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        var (xarray.Variable): Variable</span>
+<span class="sd">        crs (CRS): Coordinate reference system</span>
+<span class="sd">        transform (Affine): Affine transform</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xarray.Variable: Georeferenced variable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;grid_mapping&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;crs&#39;</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;proj4&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">crs</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;crs_wkt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">crs</span><span class="o">.</span><span class="n">wkt</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;transform&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transform</span>
+
+    <span class="c1"># For GDAL in case CF doesn&#39;t work</span>
+    <span class="c1"># http://www.gdal.org/frmt_netcdf.html</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;spatial_ref&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">crs</span><span class="o">.</span><span class="n">wkt</span>
+    <span class="n">var</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;GeoTransform&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">to_gdal</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">var</span></div>
+
+
 <div class="viewcode-block" id="make_xarray_crs"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.conventions.html#yatsm.gis.make_xarray_crs">[docs]</a><span class="k">def</span> <span class="nf">make_xarray_crs</span><span class="p">(</span><span class="n">crs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return an `xarray.DataArray` of CF-compliant CRS info</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        crs (CRS): CRS</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xarray.DataArray: &quot;crs&quot; variable holding CRS information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">projections</span><span class="o">.</span><span class="n">crs_name</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
-    <span class="n">long_name</span> <span class="o">=</span> <span class="n">projections</span><span class="o">.</span><span class="n">crs_long_name</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
     <span class="n">code</span> <span class="o">=</span> <span class="n">projections</span><span class="o">.</span><span class="n">epsg_code</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
 
     <span class="n">da</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;crs&#39;</span><span class="p">)</span>
     <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;grid_mapping_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
-    <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">long_name</span>
+
+    <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">projections</span><span class="o">.</span><span class="n">crs_names</span><span class="p">(</span><span class="n">crs</span><span class="p">))</span>
     <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">projections</span><span class="o">.</span><span class="n">crs_parameters</span><span class="p">(</span><span class="n">crs</span><span class="p">))</span>
     <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">projections</span><span class="o">.</span><span class="n">ellipsoid_parameters</span><span class="p">(</span><span class="n">crs</span><span class="p">))</span>
 
@@ -255,7 +294,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 20, 2017, 4:34:18 PM.
+      Last updated on Mar 22, 2017, 7:20:39 PM.
 
     </p>
   </div>

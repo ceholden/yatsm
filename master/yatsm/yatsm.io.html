@@ -188,27 +188,6 @@ filesystem operations</li>
 </ul>
 </div></blockquote>
 <dl class="function">
-<dt id="yatsm.io.mkdir_p">
-<code class="descclassname">yatsm.io.</code><code class="descname">mkdir_p</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/_util.html#mkdir_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.mkdir_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a directory, ignoring error if it exists (i.e., <code class="docutils literal"><span class="pre">mkdir</span> <span class="pre">-p</span></code>)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><span class="target" id="yatsm.io.mkdir_p.params.d"></span><strong>d</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.mkdir_p.params.d">¶</a> &#8211; directory path to create</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#OSError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">OSError</span></code></a> &#8211; Raise OSError if cannot create directory for reasons other</li>
-<li>than it existing already (errno 13 &#8220;EEXIST&#8221;)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="yatsm.io.get_readers">
 <code class="descclassname">yatsm.io.</code><code class="descname">get_readers</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/_api.html#get_readers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.get_readers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a dict containing time series drivers described in config</p>
@@ -244,7 +223,7 @@ sections for each of the <code class="docutils literal"><span class="pre">reader
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 20, 2017, 4:34:18 PM.
+      Last updated on Mar 22, 2017, 7:20:39 PM.
 
     </p>
   </div>

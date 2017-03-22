@@ -168,6 +168,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
+<span class="kn">import</span> <span class="nn">errno</span>
 <span class="kn">import</span> <span class="nn">fnmatch</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -178,6 +179,8 @@
     <span class="kn">from</span> <span class="nn">scandir</span> <span class="k">import</span> <span class="n">walk</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">walk</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -190,6 +193,16 @@
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">n</span></div>
+
+
+<div class="viewcode-block" id="np_promote_all_types"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.np_promote_all_types">[docs]</a><span class="k">def</span> <span class="nf">np_promote_all_types</span><span class="p">(</span><span class="o">*</span><span class="n">dtypes</span><span class="p">):</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">dt</span> <span class="o">==</span> <span class="n">dtype</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Promoting memory allocation to largest &#39;</span>
+                       <span class="s1">&#39;datatype of source bands&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dtype</span></div>
 
 
 <span class="c1"># JOB SPECIFIC FUNCTIONS</span>
@@ -261,6 +274,26 @@
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="mkdir_p"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.mkdir_p">[docs]</a><span class="k">def</span> <span class="nf">mkdir_p</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Make a directory, ignoring error if it exists (i.e., ``mkdir -p``)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d (str): directory path to create</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        OSError: Raise OSError if cannot create directory for reasons other</span>
+<span class="sd">        than it existing already (errno 13 &quot;EEXIST&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="c1"># File exists</span>
+        <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">err</span></div>
+
+
 <span class="c1"># MISC UTILITIES</span>
 <div class="viewcode-block" id="copy_dict_filter_key"><a class="viewcode-back" href="../../yatsm/yatsm.utils.html#yatsm.utils.copy_dict_filter_key">[docs]</a><span class="k">def</span> <span class="nf">copy_dict_filter_key</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Copy a dict recursively, but only if key doesn&#39;t match regex pattern</span>
@@ -302,7 +335,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 20, 2017, 4:34:18 PM.
+      Last updated on Mar 22, 2017, 7:20:39 PM.
 
     </p>
   </div>

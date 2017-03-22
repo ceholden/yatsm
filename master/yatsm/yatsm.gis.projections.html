@@ -189,7 +189,7 @@ perhaps use throughout project? I don&#8217;t really want to muck...</li>
 </table>
 <dl class="docutils">
 <dt>Returns</dt>
-<dd>str: Lowercase projection name (see keys of <span class="xref std std-ref">PROJECTION_DEFS</span>)</dd>
+<dd>str: Lowercase projection name (see keys of <span class="xref std std-ref">CF_PROJECTION_DEFS</span>)</dd>
 </dl>
 </dd></dl>
 
@@ -207,7 +207,19 @@ perhaps use throughout project? I don&#8217;t really want to muck...</li>
 </table>
 <dl class="docutils">
 <dt>Returns</dt>
-<dd>str: Lowercase projection name (see keys of <span class="xref std std-ref">PROJECTION_DEFS</span>)</dd>
+<dd>str: Lowercase projection name (see keys of <span class="xref std std-ref">CF_PROJECTION_DEFS</span>)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.gis.projections.crs_names">
+<code class="descclassname">yatsm.gis.projections.</code><code class="descname">crs_names</code><span class="sig-paren">(</span><em>crs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/gis/projections.html#crs_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.gis.projections.crs_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return CF-compliant attributes to prevent &#8220;unknown&#8221; CRS/Ellipse/Geoid
+:param _sphinx_paramlinks_yatsm.gis.projections.crs_names.crs: CRS
+:type crs: rasterio.crs.CRS</p>
+<dl class="docutils">
+<dt>Returns</dt>
+<dd>OrderedDict: CF attributes</dd>
 </dl>
 </dd></dl>
 
@@ -268,6 +280,30 @@ perhaps use throughout project? I don&#8217;t really want to muck...</li>
 </table>
 </dd></dl>
 
+<dl class="data">
+<dt id="yatsm.gis.projections.CF_CRS_NAMES">
+<code class="descclassname">yatsm.gis.projections.</code><code class="descname">CF_CRS_NAMES</code><em class="property"> = (('horizontal_datum_name', 'GEOGCS|DATUM'), ('reference_ellipsoid_name', 'GEOGCS|DATUM|SPHEROID'), ('towgs84', 'GEOGCS|DATUM|TOWGS84'), ('prime_meridian_name', 'GEOGCS|PRIMEM'))</em><a class="headerlink" href="#yatsm.gis.projections.CF_CRS_NAMES" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em> &#8211; Mapping between CF &lt;-&gt; OSGEO projection attribute name definitions</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.gis.projections.CF_ELLIPSOID_DEFS">
+<code class="descclassname">yatsm.gis.projections.</code><code class="descname">CF_ELLIPSOID_DEFS</code><em class="property"> = (('semi_major_axis', 'GetSemiMajor'), ('semi_minor_axis', 'GetSemiMinor'), ('inverse_flattening', 'GetInvFlattening'))</em><a class="headerlink" href="#yatsm.gis.projections.CF_ELLIPSOID_DEFS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em> &#8211; mapping from CF ellipsoid parameter to SpatialReference method calls</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.gis.projections.CF_PROJECTION_DEFS">
+<code class="descclassname">yatsm.gis.projections.</code><code class="descname">CF_PROJECTION_DEFS</code><em class="property"> = {'albers_conic_equal_area': (('latitude_of_projection_origin', 'latitude_of_center'), ('longitude_of_central_meridian', 'longitude_of_center'), ('standard_parallel', ('standard_parallel_1', 'standard_parallel_2')), ('false_easting', 'false_easting'), ('false_northing', 'false_northing')), 'universal_transverse_mercator': ('utm_zone_number', 'utm_zone_number'), 'latitude_longitude': (), 'transverse_mercator': (('latitude_of_projection_origin', 'latitude_of_origin'), ('longitude_of_central_meridian', 'central_meridian'), ('scale_factor_at_central_meridian', 'scale_factor'), ('false_easting', 'false_easting'), ('false_northing', 'false_northing'))}</em><a class="headerlink" href="#yatsm.gis.projections.CF_PROJECTION_DEFS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; Mapping between CF &lt;-&gt; OSGEO projection parameters for projections</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="yatsm.gis.projections.CF_PROJECTION_NAMES">
+<code class="descclassname">yatsm.gis.projections.</code><code class="descname">CF_PROJECTION_NAMES</code><em class="property"> = {'Albers_Conic_Equal_Area': 'albers_conic_equal_area', 'Azimuthal_Equidistant': 'azimuthal_equidistant', 'Lambert_Azimuthal_Equal_Area': 'lambert_azimuthal_equal_area', 'Transverse_Mercator': 'transverse_mercator'}</em><a class="headerlink" href="#yatsm.gis.projections.CF_PROJECTION_NAMES" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> &#8211; Mapping between OSGEO &lt;-&gt; CF projection names</p>
+</dd></dl>
+
 </div>
 
 
@@ -284,7 +320,7 @@ perhaps use throughout project? I don&#8217;t really want to muck...</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 20, 2017, 4:34:18 PM.
+      Last updated on Mar 22, 2017, 7:20:39 PM.
 
     </p>
   </div>

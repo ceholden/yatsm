@@ -184,34 +184,59 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+<span class="c1"># See:</span>
+<span class="c1"># https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus</span>
+<span class="c1"># http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#appendix-grid-mappings</span>
 
-<span class="n">PROJECTION_DEFS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># TODO: support more...</span>
-    <span class="c1"># TODO: does the order matter?</span>
-    <span class="s1">&#39;albers_conical_equal_area&#39;</span><span class="p">:</span> <span class="p">(</span>
-        <span class="s1">&#39;false_easting&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;false_northing&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;latitude_of_projection_origin&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;standard_parallel&#39;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="s1">&#39;transverse_mercator&#39;</span><span class="p">:</span> <span class="p">(</span>
-        <span class="s1">&#39;false_easting&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;false_northing&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;latitude_of_projection_origin&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;scale_factor&#39;</span><span class="p">,</span>
-    <span class="p">),</span>
-    <span class="s1">&#39;universal_transverse_mercator&#39;</span><span class="p">:</span> <span class="p">(</span>
-        <span class="s1">&#39;utm_zone_number&#39;</span>
-    <span class="p">),</span>
+
+<span class="c1">#: dict: Mapping between OSGEO &lt;-&gt; CF projection names</span>
+<span class="n">CF_PROJECTION_NAMES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Albers_Conic_Equal_Area&#39;</span><span class="p">:</span> <span class="s1">&#39;albers_conic_equal_area&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Azimuthal_Equidistant&#39;</span><span class="p">:</span> <span class="s1">&#39;azimuthal_equidistant&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Lambert_Azimuthal_Equal_Area&#39;</span><span class="p">:</span> <span class="s1">&#39;lambert_azimuthal_equal_area&#39;</span><span class="p">,</span>
+    <span class="c1"># ...</span>
+    <span class="s1">&#39;Transverse_Mercator&#39;</span><span class="p">:</span> <span class="s1">&#39;transverse_mercator&#39;</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="n">ELLIPSOID_DEFS</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span>
+
+<span class="c1">#: dict: Mapping between CF &lt;-&gt; OSGEO projection parameters for projections</span>
+<span class="n">CF_PROJECTION_DEFS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;albers_conic_equal_area&#39;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;latitude_of_projection_origin&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude_of_center&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span> <span class="s1">&#39;longitude_of_center&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;standard_parallel&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;standard_parallel_1&#39;</span><span class="p">,</span> <span class="s1">&#39;standard_parallel_2&#39;</span><span class="p">)),</span>
+        <span class="p">(</span><span class="s1">&#39;false_easting&#39;</span><span class="p">,</span> <span class="s1">&#39;false_easting&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;false_northing&#39;</span><span class="p">,</span> <span class="s1">&#39;false_northing&#39;</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;transverse_mercator&#39;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;latitude_of_projection_origin&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude_of_origin&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span> <span class="s1">&#39;central_meridian&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;scale_factor_at_central_meridian&#39;</span><span class="p">,</span> <span class="s1">&#39;scale_factor&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;false_easting&#39;</span><span class="p">,</span> <span class="s1">&#39;false_easting&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;false_northing&#39;</span><span class="p">,</span> <span class="s1">&#39;false_northing&#39;</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;universal_transverse_mercator&#39;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;utm_zone_number&#39;</span><span class="p">,</span> <span class="s1">&#39;utm_zone_number&#39;</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;latitude_longitude&#39;</span><span class="p">:</span> <span class="p">(),</span>  <span class="c1"># None</span>
+<span class="p">}</span>
+
+<span class="c1">#: tuple: Mapping between CF &lt;-&gt; OSGEO projection attribute name definitions</span>
+<span class="n">CF_CRS_NAMES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s1">&#39;horizontal_datum_name&#39;</span><span class="p">,</span> <span class="s1">&#39;GEOGCS|DATUM&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;reference_ellipsoid_name&#39;</span><span class="p">,</span> <span class="s1">&#39;GEOGCS|DATUM|SPHEROID&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;towgs84&#39;</span><span class="p">,</span> <span class="s1">&#39;GEOGCS|DATUM|TOWGS84&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;prime_meridian_name&#39;</span><span class="p">,</span> <span class="s1">&#39;GEOGCS|PRIMEM&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1">#: tuple: mapping from CF ellipsoid parameter to SpatialReference method calls</span>
+<span class="n">CF_ELLIPSOID_DEFS</span> <span class="o">=</span> <span class="p">(</span>
     <span class="p">(</span><span class="s1">&#39;semi_major_axis&#39;</span><span class="p">,</span> <span class="s1">&#39;GetSemiMajor&#39;</span><span class="p">),</span>
     <span class="p">(</span><span class="s1">&#39;semi_minor_axis&#39;</span><span class="p">,</span> <span class="s1">&#39;GetSemiMinor&#39;</span><span class="p">),</span>
     <span class="p">(</span><span class="s1">&#39;inverse_flattening&#39;</span><span class="p">,</span> <span class="s1">&#39;GetInvFlattening&#39;</span><span class="p">)</span>
-<span class="p">))</span>
+<span class="p">)</span>
+<span class="c1"># TODO: support more...</span>
+<span class="c1"># TODO: proj4 mappings</span>
 
 
 <span class="k">def</span> <span class="nf">_epsg_key</span><span class="p">(</span><span class="n">crs</span><span class="p">):</span>
@@ -248,11 +273,21 @@
 <span class="sd">        crs (rasterio.crs.CRS): CRS</span>
 
 <span class="sd">    Returns</span>
-<span class="sd">        str: Lowercase projection name (see keys of :ref:`PROJECTION_DEFS`)</span>
+<span class="sd">        str: Lowercase projection name (see keys of :ref:`CF_PROJECTION_DEFS`)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">crs_osr</span> <span class="o">=</span> <span class="n">crs2osr</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">crs_osr</span><span class="o">.</span><span class="n">GetAttrValue</span><span class="p">(</span><span class="s1">&#39;PROJECTION&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+    <span class="k">if</span> <span class="n">crs</span><span class="o">.</span><span class="n">is_projected</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">crs_osr</span><span class="o">.</span><span class="n">GetAttrValue</span><span class="p">(</span><span class="s1">&#39;PROJECTION&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CF_PROJECTION_NAMES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">crs</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">TODO</span><span class="p">(</span><span class="s1">&#39;Cannot handle &quot;</span><span class="si">{0}</span><span class="s1">&quot; CRS types yet: </span><span class="si">{1}</span><span class="s1">&#39;</span>
+                                  <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">crs</span><span class="o">.</span><span class="n">to_string</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Unsupported CRS &quot;</span><span class="si">{0!r}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">crs</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">CF_PROJECTION_NAMES</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;latitude_longitude&#39;</span></div>
 
 
 <div class="viewcode-block" id="crs_long_name"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.projections.html#yatsm.gis.projections.crs_long_name">[docs]</a><span class="k">def</span> <span class="nf">crs_long_name</span><span class="p">(</span><span class="n">crs</span><span class="p">):</span>
@@ -262,11 +297,14 @@
 <span class="sd">        crs (rasterio.crs.CRS): CRS</span>
 
 <span class="sd">    Returns</span>
-<span class="sd">        str: Lowercase projection name (see keys of :ref:`PROJECTION_DEFS`)</span>
+<span class="sd">        str: Lowercase projection name (see keys of :ref:`CF_PROJECTION_DEFS`)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">crs_osr</span> <span class="o">=</span> <span class="n">crs2osr</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">crs_osr</span><span class="o">.</span><span class="n">GetAttrValue</span><span class="p">(</span><span class="s1">&#39;PROJCS&#39;</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">crs</span><span class="o">.</span><span class="n">is_projected</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">crs_osr</span><span class="o">.</span><span class="n">GetAttrValue</span><span class="p">(</span><span class="s1">&#39;PROJCS&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">crs</span><span class="o">.</span><span class="n">is_geographic</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">crs_osr</span><span class="o">.</span><span class="n">GetAttrValue</span><span class="p">(</span><span class="s1">&#39;GEOGCS&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="crs_parameters"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.projections.html#yatsm.gis.projections.crs_parameters">[docs]</a><span class="k">def</span> <span class="nf">crs_parameters</span><span class="p">(</span><span class="n">crs</span><span class="p">):</span>
@@ -284,13 +322,40 @@
     <span class="n">name</span> <span class="o">=</span> <span class="n">crs_name</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
     <span class="n">osr_crs</span> <span class="o">=</span> <span class="n">crs2osr</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PROJECTION_DEFS</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CF_PROJECTION_DEFS</span><span class="p">:</span>  <span class="c1"># TODO: proj4 support</span>
         <span class="k">raise</span> <span class="n">errors</span><span class="o">.</span><span class="n">TODO</span><span class="p">(</span><span class="s1">&#39;Cannot handle &quot;</span><span class="si">{0}</span><span class="s1">&quot; CRS types yet&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">parm</span><span class="p">,</span> <span class="n">osr_crs</span><span class="o">.</span><span class="n">GetProjParm</span><span class="p">(</span><span class="n">parm</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">parm</span> <span class="ow">in</span> <span class="n">PROJECTION_DEFS</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="p">)</span></div>
+    <span class="n">parms</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>  <span class="c1"># &quot;parm&quot; is eww, but ref to `GetProjParm`</span>
+    <span class="k">for</span> <span class="n">cf_parm</span><span class="p">,</span> <span class="n">osgeo_parm</span> <span class="ow">in</span> <span class="n">CF_PROJECTION_DEFS</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">osgeo_parm</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">parms</span><span class="p">[</span><span class="n">cf_parm</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">osr_crs</span><span class="o">.</span><span class="n">GetProjParm</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">osgeo_parm</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parms</span><span class="p">[</span><span class="n">cf_parm</span><span class="p">]</span> <span class="o">=</span> <span class="n">osr_crs</span><span class="o">.</span><span class="n">GetProjParm</span><span class="p">(</span><span class="n">osgeo_parm</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parms</span></div>
+
+
+<div class="viewcode-block" id="crs_names"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.projections.html#yatsm.gis.projections.crs_names">[docs]</a><span class="k">def</span> <span class="nf">crs_names</span><span class="p">(</span><span class="n">crs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return CF-compliant attributes to prevent &quot;unknown&quot; CRS/Ellipse/Geoid</span>
+<span class="sd">    Args:</span>
+<span class="sd">        crs (rasterio.crs.CRS): CRS</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">        OrderedDict: CF attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">osr_crs</span> <span class="o">=</span> <span class="n">crs2osr</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">long_name</span> <span class="o">=</span> <span class="n">crs_long_name</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">crs</span><span class="o">.</span><span class="n">is_projected</span><span class="p">:</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;projected_coordinate_system_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">long_name</span>
+    <span class="k">elif</span> <span class="n">crs</span><span class="o">.</span><span class="n">is_geographic</span><span class="p">:</span>
+        <span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;geographic_coordinate_system_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">long_name</span>
+
+    <span class="k">for</span> <span class="n">cf_parm</span><span class="p">,</span> <span class="n">osgeo_parm</span> <span class="ow">in</span> <span class="n">CF_CRS_NAMES</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">osr_crs</span><span class="o">.</span><span class="n">GetAttrValue</span><span class="p">(</span><span class="n">osgeo_parm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>  <span class="c1"># only record if not None so we can serialize</span>
+            <span class="n">attrs</span><span class="p">[</span><span class="n">cf_parm</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">attrs</span></div>
 
 
 <div class="viewcode-block" id="ellipsoid_parameters"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.projections.html#yatsm.gis.projections.ellipsoid_parameters">[docs]</a><span class="k">def</span> <span class="nf">ellipsoid_parameters</span><span class="p">(</span><span class="n">crs</span><span class="p">):</span>
@@ -306,7 +371,7 @@
     <span class="n">osr_crs</span> <span class="o">=</span> <span class="n">crs2osr</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span>
         <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">osr_crs</span><span class="p">,</span> <span class="n">func</span><span class="p">)())</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ELLIPSOID_DEFS</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="ow">in</span> <span class="n">CF_ELLIPSOID_DEFS</span>
     <span class="p">)</span></div>
 </pre></div>
 
@@ -323,7 +388,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 20, 2017, 4:34:18 PM.
+      Last updated on Mar 22, 2017, 7:20:39 PM.
 
     </p>
   </div>
