@@ -57,6 +57,7 @@ def georeference_variable(var, crs, transform):
     """
     var.attrs['grid_mapping'] = 'crs'
     var.attrs['proj4'] = crs.to_string()
+    var.attrs['crs_wkt'] = crs.wkt
     var.attrs['transform'] = transform
 
     # For GDAL in case CF doesn't work

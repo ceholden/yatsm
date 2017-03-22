@@ -21,9 +21,21 @@ logger = logging.getLogger(__name__)
 # See:
 # https://trac.osgeo.org/gdal/wiki/NetCDF_ProjectionTestingStatus
 # http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/build/cf-conventions.html#appendix-grid-mappings
-#: dict: Mapping between CF<->OSGEO projection parameters for some projections
-PROJECTION_DEFS = {
-    'albers_conical_equal_area': (
+
+
+#: dict: Mapping between OSGEO <-> CF projection names
+CF_PROJECTION_NAMES = {
+    'Albers_Conic_Equal_Area': 'albers_conic_equal_area',
+    'Azimuthal_Equidistant': 'azimuthal_equidistant',
+    'Lambert_Azimuthal_Equal_Area': 'lambert_azimuthal_equal_area',
+    # ...
+    'Transverse_Mercator': 'transverse_mercator',
+}
+
+
+#: dict: Mapping between CF <-> OSGEO projection parameters for projections
+CF_PROJECTION_DEFS = {
+    'albers_conic_equal_area': (
         ('latitude_of_projection_origin', 'latitude_of_center'),
         ('longitude_of_central_meridian', 'longitude_of_center'),
         ('standard_parallel', ('standard_parallel_1', 'standard_parallel_2')),
@@ -40,22 +52,25 @@ PROJECTION_DEFS = {
     'universal_transverse_mercator': (
         ('utm_zone_number', 'utm_zone_number')
     ),
+    'latitude_longitude': (),  # None
 }
 
 #: tuple: Mapping between CF <-> OSGEO projection attribute name definitions
-CRS_NAMES = (
+CF_CRS_NAMES = (
     ('horizontal_datum_name', 'GEOGCS|DATUM'),
-    ('reference_ellipsoid_name', 'GEOGCS|DATUM|ELLIPSOID'),
+    ('reference_ellipsoid_name', 'GEOGCS|DATUM|SPHEROID'),
     ('towgs84', 'GEOGCS|DATUM|TOWGS84'),
     ('prime_meridian_name', 'GEOGCS|PRIMEM')
 )
 
-ELLIPSOID_DEFS = OrderedDict((
+#: tuple: mapping from CF ellipsoid parameter to SpatialReference method calls
+CF_ELLIPSOID_DEFS = (
     ('semi_major_axis', 'GetSemiMajor'),
     ('semi_minor_axis', 'GetSemiMinor'),
     ('inverse_flattening', 'GetInvFlattening')
-))
+)
 # TODO: support more...
+# TODO: proj4 mappings
 
 
 def _epsg_key(crs):
@@ -92,11 +107,21 @@ def crs_name(crs):
         crs (rasterio.crs.CRS): CRS
 
     Returns
-        str: Lowercase projection name (see keys of :ref:`PROJECTION_DEFS`)
+        str: Lowercase projection name (see keys of :ref:`CF_PROJECTION_DEFS`)
 
     """
     crs_osr = crs2osr(crs)
-    return crs_osr.GetAttrValue('PROJECTION').lower()
+    if crs.is_projected:
+        name = crs_osr.GetAttrValue('PROJECTION')
+        if name not in CF_PROJECTION_NAMES:
+            if crs.is_valid:
+                raise errors.TODO('Cannot handle "{0}" CRS types yet: {1}'
+                                  .format(name, crs.to_string()))
+            else:
+                raise KeyError('Unsupported CRS "{0!r}"'.format(crs))
+        return CF_PROJECTION_NAMES[name]
+    else:
+        return 'latitude_longitude'
 
 
 def crs_long_name(crs):
@@ -106,7 +131,7 @@ def crs_long_name(crs):
         crs (rasterio.crs.CRS): CRS
 
     Returns
-        str: Lowercase projection name (see keys of :ref:`PROJECTION_DEFS`)
+        str: Lowercase projection name (see keys of :ref:`CF_PROJECTION_DEFS`)
 
     """
     crs_osr = crs2osr(crs)
@@ -131,13 +156,16 @@ def crs_parameters(crs):
     name = crs_name(crs)
     osr_crs = crs2osr(crs)
 
-    if name not in PROJECTION_DEFS:
+    if name not in CF_PROJECTION_DEFS:  # TODO: proj4 support
         raise errors.TODO('Cannot handle "{0}" CRS types yet'.format(name))
 
-    return OrderedDict(
-        (cf_parm, osr_crs.GetProjParm(osgeo_parm))
-        for (cf_parm, osgeo_parm) in PROJECTION_DEFS[name]
-    )
+    parms = OrderedDict()  # "parm" is eww, but ref to `GetProjParm`
+    for cf_parm, osgeo_parm in CF_PROJECTION_DEFS[name]:
+        if isinstance(osgeo_parm, (list, tuple)):
+            parms[cf_parm] = tuple(osr_crs.GetProjParm(p) for p in osgeo_parm)
+        else:
+            parms[cf_parm] = osr_crs.GetProjParm(osgeo_parm)
+    return parms
 
 
 def crs_names(crs):
@@ -157,8 +185,10 @@ def crs_names(crs):
     elif crs.is_geographic:
         attrs['geographic_coordinate_system_name'] = long_name
 
-    for cf_parm, osgeo_parm in CRS_NAMES:
-        attrs[cf_parm] = osr_crs.GetAttrValue(osgeo_parm)
+    for cf_parm, osgeo_parm in CF_CRS_NAMES:
+        value = osr_crs.GetAttrValue(osgeo_parm)
+        if value:  # only record if not None so we can serialize
+            attrs[cf_parm] = value
     return attrs
 
 
@@ -175,5 +205,5 @@ def ellipsoid_parameters(crs):
     osr_crs = crs2osr(crs)
     return OrderedDict(
         (key, getattr(osr_crs, func)())
-        for (key, func) in ELLIPSOID_DEFS.items()
+        for (key, func) in CF_ELLIPSOID_DEFS
     )

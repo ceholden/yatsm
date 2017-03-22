@@ -239,7 +239,7 @@ def retrieve_tilespecs(filename=None):
         dict: default tilespecs packaged within ``tilezilla`` as TileSpec
             objects
     """
-    filename = filename or Path(__file__).parent.joinpaths('tile_specs.json')
+    filename = filename or Path(__file__).parent.joinpath('tile_specs.json')
 
     with open(filename, 'r') as f:
         tilespecs = json.load(f)
