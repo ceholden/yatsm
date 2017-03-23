@@ -88,8 +88,10 @@ def relative_to(one, other):
               help='Tile specification')
 @click.option('--absolute/--relative', default=True, show_default=True,
               help='Write VRTs using absolute paths or paths relative to DST')
+@click.option('--suffix', default='_stack.vrt', show_default=True,
+              help='VRT filename suffix (after $(basename SRC .xml) is used)')
 @click.pass_context
-def tile_ESPA(ctx, srcs, dst, tilespec_name, absolute):
+def tile_ESPA(ctx, srcs, dst, tilespec_name, absolute, suffix):
     """ Create VRT tiles from some Landsat ESPA products
 
     NOTE: very "hard-coded" currently, but WIP to be generic
@@ -135,7 +137,7 @@ def tile_ESPA(ctx, srcs, dst, tilespec_name, absolute):
                 if oserr.errno != errno.EEXIST:
                     raise
 
-            vrt = dst_dir.joinpath(src.stem + '.vrt')
+            vrt = dst_dir.joinpath(src.stem + suffix)
 
             if not absolute:
                 os.chdir(str(vrt.parent))
