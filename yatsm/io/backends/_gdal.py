@@ -1,5 +1,6 @@
 """ Tools related to reading time series data using GDAL / rasterio
 """
+import datetime as dt
 import logging
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import pandas as pd
 import rasterio
 import xarray as xr
 
+from yatsm import __version__
 from yatsm.gis import (BoundingBox,
                        georeference_variable,
                        make_xarray_coords,
@@ -269,6 +271,9 @@ class GDALTimeSeries(object):
 
         da = georeference_variable(da, self.crs, transform)
         da.attrs.update(CF_NC_ATTRS)
+        da.attrs['history'] = ('Created by YATSM v{0} at {1}.'
+                               .format(__version__,
+                                       dt.datetime.now().isoformat()))
         da.attrs['nodata'] = self.nodatavals
         # TODO: da.encoding
         # TODO: _FillValue, scale_factor, add_offset here
