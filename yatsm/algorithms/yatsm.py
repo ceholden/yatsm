@@ -154,12 +154,14 @@ class YATSM(object):
                 being preprocessed and masked
 
         """
+        if not any([min_values, max_values, mask_band, mask_values]):
+            return X, Y, dates
+
         if min_values is None or max_values is None:
             valid = np.ones(dates.shape[0], dtype=np.bool)
         else:
             # Mask range of data
             valid = get_valid_mask(Y, min_values, max_values).astype(bool)
-
         # Apply mask band
         if mask_band is not None and mask_values is not None:
             idx_mask = mask_band - 1
