@@ -19,9 +19,12 @@ logger = logging.getLogger('yatsm')
 @options.arg_job_number
 @options.arg_total_jobs
 @options.opt_executor
+@click.option('--block_size', type=(int, int), default=(None, None),
+              help='Override dataset block size when reading')
 @options.opt_force_overwrite
 @click.pass_context
-def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
+def batch(ctx, config, job_number, total_jobs, executor, block_size,
+          force_overwrite):
     """ Run a YATSM pipeline on a dataset in batch mode
 
     The dataset is split into a number of subsets based on the structure of the
@@ -34,30 +37,32 @@ def batch(ctx, config, job_number, total_jobs, executor, force_overwrite):
           options.
     """
     # Imports inside CLI for speed
+    from yatsm.io.utils import block_windows
     from yatsm.utils import distribute_jobs
 
     # TODO: remove when not debugging
     import dask
     dask.set_options(get=dask.async.get_sync)
 
-
     # TODO: Better define how authoritative reader when using multiple datasets
     #       and choosing block shape (in config?)
     # TODO: Allow user to specify block shape in config (?)
-    block_windows = config.primary_reader.block_windows
-    job_idx = distribute_jobs(job_number, total_jobs, len(block_windows))
+    if block_size:
+        windows = list(block_windows(block_size, config.primary_reader.shape))
+    else:
+        windows = config.primary_reader.block_windows
 
-    logger.debug('Working on {} of {} block windows'
-                 .format(len(job_idx), len(block_windows)))
-
-    block_windows = [block_windows[i] for i in job_idx]
+    job_idx = distribute_jobs(job_number, total_jobs, len(windows))
+    job_windows = [windows[i] for i in job_idx]
+    logger.debug('Working on {0} of {1} block windows'
+                 .format(len(job_idx), len(windows)))
 
     force_overwrite = (force_overwrite or
                        config['pipeline'].get('overwrite', False))
 
-    # TODO: iterate over block_windows assigned to ``job_id``
+    # TODO: iterate over windows assigned to ``job_id``
     futures = {}
-    for idx, window in block_windows:
+    for idx, window in job_windows:
         future = executor.submit(batch_block,
                                  config=config,
                                  readers=config.readers,
