@@ -219,6 +219,16 @@
     <span class="n">coord_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">ny</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="p">(</span><span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dy</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">coord_y</span><span class="p">,</span> <span class="n">coord_x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="share_crs"><a class="viewcode-back" href="../../../yatsm/yatsm.gis.utils.html#yatsm.gis.share_crs">[docs]</a><span class="k">def</span> <span class="nf">share_crs</span><span class="p">(</span><span class="o">*</span><span class="n">crs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Check if multiple CRS as the same</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">crs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">_crs</span> <span class="ow">in</span> <span class="n">crs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">if</span> <span class="n">base</span> <span class="o">!=</span> <span class="n">_crs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
 </pre></div>
 
            </div>
@@ -234,7 +244,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 23, 2017, 2:41:34 AM.
+      Last updated on Mar 23, 2017, 3:12:09 AM.
 
     </p>
   </div>
