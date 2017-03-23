@@ -14,23 +14,28 @@ from yatsm.gis.tilespec import TILESPECS
 
 
 OLI = [
-    '*_sr_band*.tif',
-    '*_evi*.tif',
-    '*ndmi*.tif',
+    '*_sr_band2.tif',
+    '*_sr_band3.tif',
+    '*_sr_band4.tif',
+    '*_sr_band5.tif',
+    '*_sr_band6.tif',
+    '*_sr_band7.tif',
+    '*sr_evi.tif',
+    '*sr_nbr.tif',
     '*band10.tif',
     '*cfmask.tif'
 ]
 ETM = [
     '*_sr_band*.tif',
-    '*_evi*.tif',
-    '*ndmi*.tif',
+    '*_sr_evi.tif',
+    '*_sr_nbr.tif',
     '*band6.tif',
     '*cfmask.tif'
 ]
 TM = [
     '*_sr_band*.tif',
-    '*_evi*.tif',
-    '*ndmi*.tif',
+    '*_sr_evi.tif',
+    '*_sr_nbr.tif',
     '*band6.tif',
     '*cfmask.tif'
 ]
