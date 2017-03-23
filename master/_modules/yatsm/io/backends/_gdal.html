@@ -166,6 +166,7 @@
   <h1>Source code for yatsm.io.backends._gdal</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Tools related to reading time series data using GDAL / rasterio</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 
@@ -174,6 +175,7 @@
 <span class="kn">import</span> <span class="nn">rasterio</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
+<span class="kn">from</span> <span class="nn">yatsm</span> <span class="k">import</span> <span class="n">__version__</span>
 <span class="kn">from</span> <span class="nn">yatsm.gis</span> <span class="k">import</span> <span class="p">(</span><span class="n">BoundingBox</span><span class="p">,</span>
                        <span class="n">georeference_variable</span><span class="p">,</span>
                        <span class="n">make_xarray_coords</span><span class="p">,</span>
@@ -435,6 +437,9 @@
 
         <span class="n">da</span> <span class="o">=</span> <span class="n">georeference_variable</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
         <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">CF_NC_ATTRS</span><span class="p">)</span>
+        <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Created by YATSM v</span><span class="si">{0}</span><span class="s1"> at </span><span class="si">{1}</span><span class="s1">.&#39;</span>
+                               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">,</span>
+                                       <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
         <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodatavals</span>
         <span class="c1"># TODO: da.encoding</span>
         <span class="c1"># TODO: _FillValue, scale_factor, add_offset here</span>
@@ -496,7 +501,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 23, 2017, 12:27:56 AM.
+      Last updated on Mar 23, 2017, 2:40:39 AM.
 
     </p>
   </div>

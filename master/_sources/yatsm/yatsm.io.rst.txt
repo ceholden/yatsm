@@ -8,6 +8,13 @@ Subpackages
 
     yatsm.io.backends
 
+Submodules
+----------
+
+.. toctree::
+
+   yatsm.io.utils
+
 Module contents
 ---------------
 
