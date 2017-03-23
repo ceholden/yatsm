@@ -2,6 +2,7 @@
 """ Tile data
 """
 import errno
+import os
 from pathlib import Path
 import shutil
 
@@ -42,11 +43,32 @@ PATTERNS = {
 }
 
 
+CMD_GDALBUILDVRT = (
+    'gdalbuildvrt '
+    '-separate '
+    '-te {bounds.left} {bounds.bottom} {bounds.right} {bounds.top} '
+    '-overwrite '
+    '{vrt} '
+    '{images}'
+)
+
+
 def find_images(xml, patterns):
     for pattern in patterns:
-        s = xml.parent.glob(pattern)
-        for _s in sorted(s):
-            yield _s
+        results = xml.parent.glob(pattern)
+        for result in sorted(results):
+            yield result
+
+
+def relative_to(one, other):
+    root = '/'
+    for parent in one.parents:
+        if parent in other.parents:
+            root = parent
+            break
+    fwd = one.relative_to(root)
+    bwd = ('..', ) * (len(other.relative_to(root).parents) - 1)
+    return Path('.').joinpath(*bwd).joinpath(fwd)
 
 
 @click.command(short_help='Tile some data')
@@ -59,18 +81,15 @@ def find_images(xml, patterns):
 @click.option('--tilespec_name', default='LCMAP_ARD',
               type=click.Choice(TILESPECS.keys()), show_default=True,
               help='Tile specification')
+@click.option('--absolute/--relative', default=True, show_default=True,
+              help='Write VRTs using absolute paths or paths relative to DST')
 @click.pass_context
-def tile_ESPA(ctx, srcs, dst, tilespec_name):
+def tile_ESPA(ctx, srcs, dst, tilespec_name, absolute):
+    """ Create VRT tiles from some Landsat ESPA products
+
+    NOTE: very "hard-coded" currently, but WIP to be generic
+    """
     tilespec = TILESPECS[tilespec_name]
-    # xmin ymin xmax ymax
-    GDALBUILDVRT = (
-        'gdalbuildvrt '
-        '-separate '
-        '-te {bounds.left} {bounds.bottom} {bounds.right} {bounds.top} '
-        '-overwrite '
-        '{vrt} '
-        '{images}'
-    )
 
     dst = Path(dst)
     srcs = [Path(src) for src in srcs]
@@ -113,11 +132,16 @@ def tile_ESPA(ctx, srcs, dst, tilespec_name):
 
             vrt = dst_dir.joinpath(src.stem + '.vrt')
 
-            cmd_str = GDALBUILDVRT.format(
+            if not absolute:
+                os.chdir(str(vrt.parent))
+                imgs = [relative_to(img, vrt) for img in imgs]
+
+            cmd_str = CMD_GDALBUILDVRT.format(
                 bounds=tile.bounds,
-                vrt=vrt,
+                vrt=vrt if absolute else vrt.name,
                 images=' '.join([str(img) for img in imgs])
             )
+
             cmd = delegator.run(cmd_str)
             if cmd.return_code:
                 click.echo('Error writing to: {0}'.format(vrt))
