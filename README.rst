@@ -1,13 +1,17 @@
 Yet Another Timeseries Model (YATSM)
 ====================================
 
-Development: |Build Status| |Coverage Status| |RTFD|
++---------+-----------------------+--------------------------+---------------+-------+
+| Branch  |          CI           |         Coverage         |      Docs     |  DOI  |
++=========+=======================+==========================+===============+=======+
+| Develop |     |Build Status|    |     |Coverage Status|    |     |RTFD|    |       |
++---------+-----------------------+--------------------------+---------------+-------+
+| Stable  | |Build Status v0.6.x| | |Coverage Status v0.6.x| | |RTFD v0.6.x| | |DOI| |
++---------+-----------------------+--------------------------+---------------+-------+
+| *Chat*  |                                |Gitter|                                  |
++---------+-----------------------+--------------------------+---------------+-------+
 
-Stable: |Build Status v0.6.x| |Coverage Status v0.6.x| |RTFD v0.6.x|
-
-|DOI| |Gitter| |asv|
-
-About
++About
 -----
 
 Yet Another Timeseries Model (YATSM) is a Python package for utilizing a collection of timeseries algorithms and methods designed to monitor the land surface using remotely sensed imagery.
