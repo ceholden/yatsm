@@ -53,3 +53,13 @@ def window_coords(window, transform):
     coord_y = np.linspace(start=y0, num=ny, stop=(y0 + (ny - 1) * dy))
 
     return (coord_y, coord_x)
+
+
+def share_crs(*crs):
+    """ Check if multiple CRS as the same
+    """
+    base = crs[0]
+    for _crs in crs[1:]:
+        if base != _crs:
+            return False
+    return True

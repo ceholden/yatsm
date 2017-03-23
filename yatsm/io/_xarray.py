@@ -4,16 +4,12 @@ import logging
 import warnings
 
 import numpy as np
-import pandas as pd
 import xarray as xr
 
+from yatsm.errors import TODO
+from yatsm.gis import CRS, share_crs
+
 logger = logging.getLogger(__name__)
-
-
-def _where_with_attrs(arr, condition):
-    _arr = arr.where(condition)
-    _arr.attrs = arr.attrs
-    return _arr
 
 
 def apply_band_mask(arr, mask_band, mask_values):
@@ -27,13 +23,14 @@ def apply_band_mask(arr, mask_band, mask_values):
     Returns:
         xarray.DataArray: Masked version of `arr`
     """
+    # TODO: what if not 3d
     _shape = (arr.time.size, arr.y.size, arr.x.size)
     mask = np.in1d(arr.sel(band=mask_band), mask_values,
                    invert=True).reshape(_shape)
     mask = xr.DataArray(mask, dims=['time', 'y', 'x'],
                         coords=[arr.time, arr.y, arr.x])
 
-    return _where_with_attrs(arr, mask)
+    return arr.where(mask)
 
 
 def apply_range_mask(arr, min_values, max_values):
@@ -56,7 +53,7 @@ def apply_range_mask(arr, min_values, max_values):
     # Silence gt/lt/ge/le/eq with nan. See: http://stackoverflow.com/q/41130138
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
-        return _where_with_attrs(arr, ((arr >= mins) & (arr <= maxs)))
+        return arr.where(((arr >= mins) & (arr <= maxs)))
 
 
 def merge_data(data, merge_attrs=True):
@@ -72,36 +69,24 @@ def merge_data(data, merge_attrs=True):
     Returns:
         xr.Dataset: Merged xr.DataArray objects in one xr.Dataset
     """
+    # TODO: (re)projections
+    ds_crs = [CRS.from_string(ds.attrs['crs_wkt']) for ds in data]
+    if not share_crs(*ds_crs):
+        raise TODO('Cannot merge data with different CRS')
+
     datasets = [dat.to_dataset(dim='band') if isinstance(dat, xr.DataArray)
                 else dat for dat in data.values()]
 
-    ds = xr.merge(datasets, compat='minimal')
+    # TODO: be helpful when this fails with good error
+    ds = xr.merge(datasets, compat='no_conflicts')
 
-    # Overlapping but not conflicting variables can't be merged for now
-    # https://github.com/pydata/xarray/issues/835
-    # In meantime, check for dropped variables
-    dropped = set()
-    for _ds in datasets:
-        dropped.update(set(_ds.data_vars).difference(set(ds.data_vars)))
+    # Put attrs back on, first is authoritative
+    ds.attrs = datasets[0].attrs.copy()
+    for dataset in datasets[1:]:
+        for attr in dataset.attrs:
+            if attr not in ds.attrs:
+                ds.attrs[attr] = dataset[attr]
 
-    # TODO: refactor this and repeat for coords and vars
-    if dropped:
-        # dropped_vars = {}
-        for var in dropped:
-            dims = [_ds[var].dims for _ds in datasets if var in _ds]
-            if all([dims[0] == d for d in dims[1:]]):
-                # Combine
-                dfs = pd.concat([_ds[var].to_series()
-                                 for _ds in datasets
-                                 if var in _ds]).sort_index()
-                # Recreate with same index as `ds`
-                idx = ds.indexes[dfs.index.name]
-                dfs = dfs[~dfs.index.duplicated()].reindex(idx)
-                # Insert
-                ds[var] = xr.DataArray(dfs)
-            else:
-                logger.debug("Cannot restore dropped coord {} because "
-                             "dimensions are inconsistent across datasets")
-        # ds = ds.assign_coords(**ds.coords.merge(dropped_vars))
-
+    # TODO: probably going to need some long help message with try/except block
+    #       since merging could be hard
     return ds
