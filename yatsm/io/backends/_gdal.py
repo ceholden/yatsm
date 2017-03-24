@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import rasterio
+from rasterio.windows import Window
 import xarray as xr
 
 from yatsm import __version__
@@ -182,8 +183,9 @@ class GDALTimeSeries(object):
         Args:
             indexes (list[int] or int): One or more band numbers to retrieve.
                 If a `list`, returns a 3D array; otherwise a 2D
-            window (tuple): A pair (tuple) of pairs of ints specifying
-                the start and stop indices of the window rows and columns
+            window (rasterio.windows.Window): A pair (tuple) of pairs of
+                ints specifying the start and stop indices of the window rows
+                and columns
             time (slice): Time period slice
             out (np.ndarray): A NumPy array of pre-allocated memory to read
                 the time series into. Its shape should be::
@@ -238,8 +240,9 @@ class GDALTimeSeries(object):
             indexes (list[int]): Band indexes of each raster to read
             bands (list[str]): An alternative to ``indexes``, provide a list
                 of band names corresponding to :ref:`self.band_names`
-            window (tuple): A pair (tuple) of pairs of ints specifying
-                the start and stop indices of the window rows and columns
+            window (rasterio.windows.Window): A pair (tuple) of pairs of
+                ints specifying the start and stop indices of the window rows
+                and columns
             time (str, slice): A time or slice of time to subset the read
                 with (using a subset on :ref:`self.df`)
             name (str): Name of the xr.DataArray
@@ -268,6 +271,8 @@ class GDALTimeSeries(object):
             raise IndexError('{0.__class__.__name__} has {0.count} bands but '
                              'you asked for {1}'
                              .format(self, n_band))
+        if not window:
+            window = self.window_extent
 
         dates = (self.df.loc[time, 'date'] if time is not None
                  else self.df['date'])
@@ -313,26 +318,37 @@ class GDALTimeSeries(object):
             items = self.extra_md
         return xr.Dataset.from_dataframe(self.df[items])
 
-    def window_coords(self, window):
+    @property
+    def window_extent(self):
+        """ rasterio.window.Window: Dataset extent window
+        """
+        return Window(0, 0, self.width, self.height)
+
+    def window_coords(self, window=None):
         """ Return Y/X coordinates of a raster to pass to xarray
 
         Args:
-            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space
+            window (rasterio.windows.Window): A pair (tuple) of pairs of
+                ints specifying the start and stop indices of the window rows
+                and columns
 
         Returns:
             tuple (np.ndarray, np.ndarray): Y and X coordinates for window
         """
-        y, x = _window_coords(window, self.transform)
+        y, x = _window_coords(window or self.window_extent, self.transform)
         return make_xarray_coords(y, x, self.crs)
 
-    def window_bounds(self, window):
+    def window_bounds(self, window=None):
         """ Return coordinate bounds of a given window
 
         Args:
-            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space
+            window (rasterio.windows.Window): A pair (tuple) of pairs of
+                ints specifying the start and stop indices of the window rows
+                and columns
 
         Returns:
             BoundingBox: Window left, bottom, right, top (x_min, y_min, x_max,
             y_max)
         """
-        return BoundingBox(*rasterio.windows.bounds(window, self.transform))
+        return BoundingBox(*rasterio.windows.bounds(window or self.window_extent,
+                                                    self.transform))
