@@ -1,5 +1,8 @@
+""" Tests for `yatsm.utils`
+"""
 import numpy as np
 import pytest
+
 from yatsm import utils
 
 
@@ -44,3 +47,15 @@ def test_mkdir_p_succcess_exists(tmpdir):
 def test_mkdir_p_failure_permission(tmpdir):
     with pytest.raises(OSError):
         utils.mkdir_p('/asdf')
+
+
+# np_promote_all_types
+@pytest.mark.parametrize(('dtypes', 'ans'), [
+    ((np.uint8, np.int16), np.int16),
+    ((np.uint8, np.uint16, np.int16), np.int32),
+    ((np.uint8, np.uint16, np.int16, np.float), np.float),
+    ((np.uint8, np.float16, np.float32, np.float64), np.float64),
+])
+def test_np_promote_all_types(dtypes, ans):
+    test_ans = utils.np_promote_all_types(*dtypes)
+    assert test_ans == ans

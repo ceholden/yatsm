@@ -253,8 +253,6 @@ class GDALTimeSeries(object):
             IndexError: if `band_names` is specified but is not the same length
             as the number of bands, `self.count`
         """
-        n_band = len(indexes) if indexes else self.count
-
         if indexes:
             n_band = len(indexes)
             band_names = [self.band_names[i] for i in indexes]
@@ -263,7 +261,7 @@ class GDALTimeSeries(object):
             indexes = [(self.band_names.index(band) + 1) for band in bands]
             band_names = bands
 
-        elif len(band_names) > self.count:
+        if len(band_names) > self.count:
             raise IndexError('{0.__class__.__name__} has {0.count} bands but '
                              'you asked for {1}'
                              .format(self, n_band))
