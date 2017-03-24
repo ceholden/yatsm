@@ -34,8 +34,8 @@ def np_promote_all_types(*dtypes):
     if not all([dt == dtype for dt in dtypes[1:]]):
         logger.warning('Promoting memory allocation to largest '
                        'datatype of source bands')
-        for dtype in dtypes[1:]:
-            dtype = np.promote_types(dtype, dtype)
+        for _dtype in dtypes[1:]:
+            dtype = np.promote_types(dtype, _dtype)
     return dtype
 
 
