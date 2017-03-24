@@ -67,12 +67,13 @@ def find_images(xml, patterns):
 
 def relative_to(one, other):
     root = '/'
-    for parent in one.parents:
+    for parent in one.absolute().parents:
         if parent in other.parents:
             root = parent
             break
-    fwd = one.relative_to(root)
+    fwd = one.absolute().relative_to(root)
     bwd = ('..', ) * (len(other.relative_to(root).parents) - 1)
+
     return Path('.').joinpath(*bwd).joinpath(fwd)
 
 
