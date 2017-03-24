@@ -200,8 +200,8 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">dt</span> <span class="o">==</span> <span class="n">dtype</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Promoting memory allocation to largest &#39;</span>
                        <span class="s1">&#39;datatype of source bands&#39;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_dtype</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">_dtype</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">dtype</span></div>
 
 
@@ -335,7 +335,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 24, 2017, 7:40:15 PM.
+      Last updated on Mar 24, 2017, 8:34:04 PM.
 
     </p>
   </div>

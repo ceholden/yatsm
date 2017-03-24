@@ -419,8 +419,6 @@
 <span class="sd">            IndexError: if `band_names` is specified but is not the same length</span>
 <span class="sd">            as the number of bands, `self.count`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span> <span class="k">if</span> <span class="n">indexes</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
-
         <span class="k">if</span> <span class="n">indexes</span><span class="p">:</span>
             <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span>
             <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">]</span>
@@ -429,7 +427,7 @@
             <span class="n">indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">band</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]</span>
             <span class="n">band_names</span> <span class="o">=</span> <span class="n">bands</span>
 
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0.__class__.__name__}</span><span class="s1"> has </span><span class="si">{0.count}</span><span class="s1"> bands but &#39;</span>
                              <span class="s1">&#39;you asked for </span><span class="si">{1}</span><span class="s1">&#39;</span>
                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_band</span><span class="p">))</span>
@@ -516,7 +514,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 24, 2017, 7:40:15 PM.
+      Last updated on Mar 24, 2017, 8:34:04 PM.
 
     </p>
   </div>
