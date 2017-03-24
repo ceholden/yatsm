@@ -215,6 +215,8 @@ class GDALTimeSeries(object):
                          .format(shape))
             out = np.empty((shape), dtype=self.dtype)
 
+        # TODO: rasterio doesn't support multiple dtypes yet, so
+        #       either alert user or fix it ourselves with our wrapper
         for idx, src in enumerate(self._src(time=time)):
             _window = src.window(*coord_bounds, boundless=True)
             src.read(indexes=indexes,
@@ -258,7 +260,7 @@ class GDALTimeSeries(object):
             band_names = [self.band_names[i] for i in indexes]
         elif bands:
             n_band = len(bands)
-            indexes = [self.band_names.index(band) for band in bands]
+            indexes = [(self.band_names.index(band) + 1) for band in bands]
             band_names = bands
 
         elif len(band_names) > self.count:
