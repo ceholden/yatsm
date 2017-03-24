@@ -24,6 +24,8 @@ data:
                     date_format: "%Y%j"
                     # Input date column name
                     date_column: date
+                    # Band names
+                    band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
                     # "dtype" argument to pandas.read_csv
                     # Allows you to specify the datatype of specific columns
                     column_dtype:
@@ -32,8 +34,6 @@ data:
                     #   Can cut down on overhead of repeatedly opening files
                     #   assuming the OS lets users keep many open
                     keep_open: True
-            # Band names
-            band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
             # Mask band (e.g., Fmask)
             mask_band: fmask
             # List of integer values to mask within the mask band
@@ -48,9 +48,9 @@ data:
                     input_file: "$ROOT/ALOS_hh.csv"
                     date_format: "%Y%m%d"
                     date_column: date
+                    band_names: [hh]
                     column_dtype:
                         path: str
-            band_names: [hh]
             min_values: [-100]
             max_values: [-0.000001]
         ALOS_hv:
@@ -60,9 +60,9 @@ data:
                     input_file: "$ROOT/ALOS_hv.csv"
                     date_format: "%Y%m%d"
                     date_column: date
+                    band_names: [hv]
                     column_dtype:
                         path: str
-            band_names: [hv]
             min_values: [-100]
             max_values: [-0.000001]
 
@@ -135,4 +135,3 @@ pipeline:
                 data: [X_hv]
             config:
                 design: '1'
-
