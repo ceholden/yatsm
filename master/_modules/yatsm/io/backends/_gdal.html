@@ -294,6 +294,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">width</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">shape</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">count</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="p">:</span>
+                    <span class="n">pad</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="s1">&#39;Band_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">pad</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
 
                 <span class="n">block_shapes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">block_shapes</span><span class="p">)</span>
@@ -385,15 +390,19 @@
 
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="GDALTimeSeries.read_dataarray"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.read_dataarray">[docs]</a>    <span class="k">def</span> <span class="nf">read_dataarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                       <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">band_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GDALTimeSeries.read_dataarray"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.read_dataarray">[docs]</a>    <span class="k">def</span> <span class="nf">read_dataarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Read time series, usually inside of a window, as xarray.DataArray</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            indexes (list[int]): Band indexes of each raster to read</span>
+<span class="sd">            bands (list[str]): An alternative to ``indexes``, provide a list</span>
+<span class="sd">                of band names corresponding to :ref:`self.band_names`</span>
 <span class="sd">            window (tuple): A pair (tuple) of pairs of ints specifying</span>
 <span class="sd">                the start and stop indices of the window rows and columns</span>
+<span class="sd">            time (str, slice): A time or slice of time to subset the read</span>
+<span class="sd">                with (using a subset on :ref:`self.df`)</span>
 <span class="sd">            name (str): Name of the xr.DataArray</span>
-<span class="sd">            band_names (list[str]): Names of bands to use for xarray.DataArray</span>
 <span class="sd">            out (np.ndarray): A NumPy array of pre-allocated memory to read</span>
 <span class="sd">                the time series into. Its shape should be::</span>
 
@@ -409,13 +418,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span> <span class="k">if</span> <span class="n">indexes</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">band_names</span><span class="p">:</span>
-            <span class="n">pad</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">))</span>
-            <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Band_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">pad</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span>
-                          <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_band</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n_band</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Provided </span><span class="si">{0}</span><span class="s1"> band names but asked for </span><span class="si">{1}</span><span class="s1"> bands&#39;</span>
-                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">),</span> <span class="n">n_band</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">indexes</span><span class="p">:</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span>
+            <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">bands</span><span class="p">:</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
+            <span class="n">indexes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">band</span><span class="p">)</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]</span>
+            <span class="n">band_names</span> <span class="o">=</span> <span class="n">bands</span>
+
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0.__class__.__name__}</span><span class="s1"> has </span><span class="si">{0.count}</span><span class="s1"> bands but &#39;</span>
                              <span class="s1">&#39;you asked for </span><span class="si">{1}</span><span class="s1">&#39;</span>
@@ -503,7 +513,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 24, 2017, 5:24:22 PM.
+      Last updated on Mar 24, 2017, 5:32:32 PM.
 
     </p>
   </div>

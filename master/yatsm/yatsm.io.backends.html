@@ -275,17 +275,21 @@ the start and stop indices of the window rows and columns</li>
 
 <dl class="method">
 <dt id="yatsm.io.backends.GDALTimeSeries.read_dataarray">
-<code class="descname">read_dataarray</code><span class="sig-paren">(</span><em>indexes=None</em>, <em>out=None</em>, <em>window=None</em>, <em>time=None</em>, <em>name=None</em>, <em>band_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read_dataarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read_dataarray</code><span class="sig-paren">(</span><em>indexes=None</em>, <em>bands=None</em>, <em>window=None</em>, <em>time=None</em>, <em>name=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read_dataarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read time series, usually inside of a window, as xarray.DataArray</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.indexes"></span><strong>indexes</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.indexes">¶</a> &#8211; Band indexes of each raster to read</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.bands"></span><strong>bands</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.bands">¶</a> &#8211; An alternative to <code class="docutils literal"><span class="pre">indexes</span></code>, provide a list
+of band names corresponding to <span class="xref std std-ref">self.band_names</span></li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window">¶</a> &#8211; A pair (tuple) of pairs of ints specifying
 the start and stop indices of the window rows and columns</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.time"></span><strong>time</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.time">¶</a> &#8211; A time or slice of time to subset the read
+with (using a subset on <span class="xref std std-ref">self.df</span>)</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.name"></span><strong>name</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.name">¶</a> &#8211; Name of the xr.DataArray</li>
-<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.band_names"></span><strong>band_names</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.band_names">¶</a> &#8211; Names of bands to use for xarray.DataArray</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.out"></span><strong>out</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.out">¶</a> &#8211; <p>A NumPy array of pre-allocated memory to read
 the time series into. Its shape should be:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
@@ -373,7 +377,7 @@ y_max)</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 24, 2017, 5:24:22 PM.
+      Last updated on Mar 24, 2017, 5:32:32 PM.
 
     </p>
   </div>
