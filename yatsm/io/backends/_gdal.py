@@ -128,6 +128,11 @@ class GDALTimeSeries(object):
                 self.width = src.width
                 self.shape = src.shape
                 self.count = src.count
+                if not self.band_names:
+                    pad = len(str(self.count))
+                    self.band_names = [
+                        'Band_' + str(b).zfill(pad)
+                        for b in range(1, self.count + 1)]
                 self.length = len(self.df)
 
                 block_shapes = set(src.block_shapes)
@@ -219,15 +224,19 @@ class GDALTimeSeries(object):
 
         return out
 
-    def read_dataarray(self, indexes=None, out=None, window=None, time=None,
-                       name=None, band_names=None):
+    def read_dataarray(self, indexes=None, bands=None, window=None, time=None,
+                       name=None, out=None):
         """ Read time series, usually inside of a window, as xarray.DataArray
 
         Args:
+            indexes (list[int]): Band indexes of each raster to read
+            bands (list[str]): An alternative to ``indexes``, provide a list
+                of band names corresponding to :ref:`self.band_names`
             window (tuple): A pair (tuple) of pairs of ints specifying
                 the start and stop indices of the window rows and columns
+            time (str, slice): A time or slice of time to subset the read
+                with (using a subset on :ref:`self.df`)
             name (str): Name of the xr.DataArray
-            band_names (list[str]): Names of bands to use for xarray.DataArray
             out (np.ndarray): A NumPy array of pre-allocated memory to read
                 the time series into. Its shape should be::
 
@@ -243,13 +252,14 @@ class GDALTimeSeries(object):
         """
         n_band = len(indexes) if indexes else self.count
 
-        if not band_names:
-            pad = len(str(self.count))
-            band_names = ['Band_' + str(b).zfill(pad) for b in
-                          range(1, n_band + 1)]
-        if len(band_names) != n_band:
-            raise IndexError('Provided {0} band names but asked for {1} bands'
-                             .format(len(band_names), n_band))
+        if indexes:
+            n_band = len(indexes)
+            band_names = [self.band_names[i] for i in indexes]
+        elif bands:
+            n_band = len(bands)
+            indexes = [self.band_names.index(band) for band in bands]
+            band_names = bands
+
         elif len(band_names) > self.count:
             raise IndexError('{0.__class__.__name__} has {0.count} bands but '
                              'you asked for {1}'
