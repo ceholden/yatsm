@@ -5,6 +5,11 @@ from __future__ import print_function
 
 from collections import OrderedDict
 import datetime as dt
+try:
+    from scandir import walk as os_walk
+except ImportError:  # py3 or not installed
+    from os import walk as os_walk
+
 import os
 import re
 try:
@@ -22,7 +27,7 @@ DATETIME = 'datetime'
 
 
 def find(d, s=''):
-    for dirpath, dirnames, filenames in os.walk(str(d)):
+    for dirpath, dirnames, filenames in os_walk(str(d)):
         for filename in filenames:
             p = Path(os.path.join(dirpath, filename))
             if p.is_file() and (p.match(s) if s else True):
@@ -57,9 +62,11 @@ def extract_md(soup):
 
 
 @click.command()
-@click.argument('root', type=click.Path(file_okay=False, exists=True))
-@click.argument('output', type=click.Path(dir_okay=False, writable=True),
-                required=False)
+@click.argument('root', type=click.Path(file_okay=False, exists=True,
+                                        resolve_path=True))
+@click.argument('output', required=False,
+                type=click.Path(dir_okay=False, writable=True,
+                                resolve_path=True))
 @click.option('-o', '--to', type=click.Path(dir_okay=False, writable=True))
 @click.option('--img_pattern', default='*stack.*tif', show_default=True,
               type=str,
@@ -70,7 +77,7 @@ def extract_md(soup):
 def prep_ESPA_stack(ctx, root, output, to, img_pattern, absolute):
     output = output or to
     if output:  # otherwise goes to stdout
-        output = Path(output).resolve()
+        output = Path(output).absolute()
     elif not output and not absolute:
         click.echo('Cannot determine relative paths to STDOUT')
         raise click.Abort()
@@ -92,8 +99,13 @@ def prep_ESPA_stack(ctx, root, output, to, img_pattern, absolute):
 
     df = pd.DataFrame.from_records(df).sort_index()
     df[DATETIME] = pd.to_datetime(df[DATETIME])
-    _csv = df.to_csv(output, header=True, index=False, mode='w',
-                     date_format='%Y-%m-%dT%H:%M:%S.%f')
+    _csv = df.to_csv(
+        str(output),
+        header=True,
+        index=False,
+        mode='w',
+        date_format='%Y-%m-%dT%H:%M:%S.%f'
+    )
     click.echo(_csv)
 
 
