@@ -168,7 +168,8 @@ class GDALTimeSeries(object):
                 yield ds
         else:
             with rasterio.Env():  # TODO: pass options
-                for f in self.df['filename']:
+                for f in (self.df.loc[time, 'filename'] if time
+                          else self.df['filename']):
                     yield rasterio.open(f, 'r')
 
     def read(self, indexes=None, out=None, window=None, time=None):
@@ -204,7 +205,7 @@ class GDALTimeSeries(object):
                      window[0][1] - window[0][0],
                      window[1][1] - window[1][0])
         else:
-            from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
+            logger.debug('No window passed - calculating manually')
             shape = (self.length, self.count, ) + self.shape
             coord_bounds = self.bounds
 
