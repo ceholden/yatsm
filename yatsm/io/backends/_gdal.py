@@ -172,7 +172,7 @@ class GDALTimeSeries(object):
                           else self.df['filename']):
                     yield rasterio.open(f, 'r')
 
-    def read(self, indexes=None, out=None, window=None, time=None):
+    def read(self, indexes=None, window=None, time=None, out=None):
         """ Read time series, usually inside of a specified window
 
         .. todo::
@@ -182,18 +182,21 @@ class GDALTimeSeries(object):
         Args:
             indexes (list[int] or int): One or more band numbers to retrieve.
                 If a `list`, returns a 3D array; otherwise a 2D
+            window (tuple): A pair (tuple) of pairs of ints specifying
+                the start and stop indices of the window rows and columns
+            time (slice): Time period slice
             out (np.ndarray): A NumPy array of pre-allocated memory to read
                 the time series into. Its shape should be::
 
                 (len(observations), len(bands), len(rows), len(columns))
 
-            window (tuple): A pair (tuple) of pairs of ints specifying
-                the start and stop indices of the window rows and columns
-            time (slice): Time period slice
-
         Returns:
             np.ndarray: A NumPy array containing the time series data
         """
+        sources = list(self._src(time=time))
+        length = len(sources)
+        n_band = len(indexes) if indexes else self.count
+
         if window:
             # Parse geographic/projected coordinates from window query
             ((row_min, row_max), (col_min, col_max)) = window
@@ -201,12 +204,12 @@ class GDALTimeSeries(object):
             x_max, y_max = (col_max, row_min) * self.transform
             coord_bounds = (x_min, y_min, x_max, y_max)
 
-            shape = (self.length, self.count,
+            shape = (length, n_band,
                      window[0][1] - window[0][0],
                      window[1][1] - window[1][0])
         else:
             logger.debug('No window passed - calculating manually')
-            shape = (self.length, self.count, ) + self.shape
+            shape = (length, n_band, ) + self.shape
             coord_bounds = self.bounds
 
         if not isinstance(out, np.ndarray):
@@ -217,7 +220,7 @@ class GDALTimeSeries(object):
 
         # TODO: rasterio doesn't support multiple dtypes yet, so
         #       either alert user or fix it ourselves with our wrapper
-        for idx, src in enumerate(self._src(time=time)):
+        for idx, src in enumerate(sources):
             _window = src.window(*coord_bounds, boundless=True)
             src.read(indexes=indexes,
                      out=out[idx, ...],
