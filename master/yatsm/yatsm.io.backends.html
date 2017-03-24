@@ -167,7 +167,7 @@
 <p>Time series reader backends</p>
 <dl class="class">
 <dt id="yatsm.io.backends.GDALTimeSeries">
-<em class="property">class </em><code class="descclassname">yatsm.io.backends.</code><code class="descname">GDALTimeSeries</code><span class="sig-paren">(</span><em>df</em>, <em>keep_open=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.io.backends.</code><code class="descname">GDALTimeSeries</code><span class="sig-paren">(</span><em>df</em>, <em>band_names=None</em>, <em>keep_open=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>A time series that can be read in by GDAL</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -178,6 +178,7 @@
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.params.df"></span><strong>df</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.params.df">¶</a> &#8211; A Pandas dataframe describing time series. Requires
 keys &#8216;filename&#8217; and &#8216;date&#8217; be column names. Additional columns
 will be used as metadata available via <code class="docutils literal"><span class="pre">get_metadata</span></code>.</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.params.band_names"></span><strong>band_names</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.params.band_names">¶</a> &#8211; List of names to call each raster band</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.params.keep_open"></span><strong>keep_open</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.params.keep_open">¶</a> &#8211; Keep <code class="docutils literal"><span class="pre">rasterio</span></code> file descriptors open once opened?</li>
 </ul>
 </td>
@@ -372,7 +373,7 @@ y_max)</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 23, 2017, 3:29:50 PM.
+      Last updated on Mar 24, 2017, 5:24:22 PM.
 
     </p>
   </div>

@@ -235,19 +235,21 @@
 <span class="sd">        df (pd.DataFrame): A Pandas dataframe describing time series. Requires</span>
 <span class="sd">            keys &#39;filename&#39; and &#39;date&#39; be column names. Additional columns</span>
 <span class="sd">            will be used as metadata available via ``get_metadata``.</span>
+<span class="sd">        band_names (list[str]): List of names to call each raster band</span>
 <span class="sd">        keep_open (bool): Keep ``rasterio`` file descriptors open once opened?</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        TypeError: If the ``df`` is not a :ref:`pd.DataFrame`</span>
 <span class="sd">        KeyError: If the ``df`` does not contain &quot;date&quot; and &quot;filename&quot; keys</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">keep_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">band_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must provide a pandas.DataFrame&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">)]):</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;pd.DataFrame passed should contain &quot;date&quot; and &#39;</span>
                            <span class="s1">&#39;&quot;filename&quot; keys&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">band_names</span> <span class="o">=</span> <span class="n">band_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span> <span class="o">=</span> <span class="n">keep_open</span>
 
         <span class="c1"># Determine if input file has extra metadata</span>
@@ -501,7 +503,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 23, 2017, 3:29:50 PM.
+      Last updated on Mar 24, 2017, 5:24:22 PM.
 
     </p>
   </div>
