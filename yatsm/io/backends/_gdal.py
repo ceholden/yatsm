@@ -197,7 +197,10 @@ class GDALTimeSeries(object):
         """
         sources = list(self._src(time=time))
         length = len(sources)
-        n_band = len(indexes) if indexes else self.count
+        if indexes:
+            n_band = len(indexes if isinstance(indexes, (tuple, list)) else [indexes])
+        else:
+            n_band = self.count
 
         if window:
             # Parse geographic/projected coordinates from window query
@@ -260,7 +263,7 @@ class GDALTimeSeries(object):
             as the number of bands, `self.count`
         """
         if indexes:
-            n_band = len(indexes)
+            n_band = len(indexes if isinstance(indexes, (tuple, list)) else [indexes])
             band_names = [self.band_names[i] for i in indexes]
         elif bands:
             n_band = len(bands)
