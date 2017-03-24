@@ -56,11 +56,6 @@ definitions:
                     "$ref": "#/definitions/readers/reader/GDAL",
                     "$ref": "#/definitions/readers/reader/AGDCv2"
                 ]
-            band_names:
-                type: array
-                uniqueItems: true
-                items:
-                    type: string
             mask_band:
                 oneOf: [
                     type: string,
@@ -81,7 +76,6 @@ definitions:
                 default: []
         required:
             - reader
-            - band_names
     readers:
         GDAL:
             type: object
@@ -92,6 +86,11 @@ definitions:
                     type: string
                 date_format:
                     type: string
+                band_names:
+                    type: array
+                    uniqueItems: true
+                    items:
+                        type: string
                 keep_open:
                     type: boolean
                     default: True

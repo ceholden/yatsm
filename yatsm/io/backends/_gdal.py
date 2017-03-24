@@ -69,19 +69,21 @@ class GDALTimeSeries(object):
         df (pd.DataFrame): A Pandas dataframe describing time series. Requires
             keys 'filename' and 'date' be column names. Additional columns
             will be used as metadata available via ``get_metadata``.
+        band_names (list[str]): List of names to call each raster band
         keep_open (bool): Keep ``rasterio`` file descriptors open once opened?
 
     Raises:
         TypeError: If the ``df`` is not a :ref:`pd.DataFrame`
         KeyError: If the ``df`` does not contain "date" and "filename" keys
     """
-    def __init__(self, df, keep_open=False):
+    def __init__(self, df, band_names=None, keep_open=False):
         if not isinstance(df, pd.DataFrame):
             raise TypeError('Must provide a pandas.DataFrame')
         if not all([k in df.keys() for k in ('date', 'filename')]):
             raise KeyError('pd.DataFrame passed should contain "date" and '
                            '"filename" keys')
         self.df = df
+        self.band_names = band_names
         self.keep_open = keep_open
 
         # Determine if input file has extra metadata
