@@ -238,11 +238,12 @@ with coordinate dimenisons (time)</td>
 
 <dl class="method">
 <dt id="yatsm.io.backends.GDALTimeSeries.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>indexes=None</em>, <em>out=None</em>, <em>window=None</em>, <em>time=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read</code><span class="sig-paren">(</span><em>indexes=None</em>, <em>window=None</em>, <em>time=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read time series, usually inside of a specified window</p>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
-<p class="last">Allow reading of a subset of bands (make like <code class="docutils literal"><span class="pre">rasterio</span></code>)</p>
+<p class="last">Maybe pass a scheduler argument and some number of processes
+to use?</p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -251,15 +252,16 @@ with coordinate dimenisons (time)</td>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.indexes"></span><strong>indexes</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.indexes">¶</a> &#8211; One or more band numbers to retrieve.
 If a <cite>list</cite>, returns a 3D array; otherwise a 2D</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.window">¶</a> &#8211; A pair (tuple) of pairs of
+ints specifying the start and stop indices of the window rows
+and columns</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.time"></span><strong>time</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.time">¶</a> &#8211; Time period slice</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.out"></span><strong>out</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.out">¶</a> &#8211; <p>A NumPy array of pre-allocated memory to read
 the time series into. Its shape should be:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
 </pre></div>
 </div>
 </li>
-<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.window">¶</a> &#8211; A pair (tuple) of pairs of ints specifying
-the start and stop indices of the window rows and columns</li>
-<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read.params.time"></span><strong>time</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read.params.time">¶</a> &#8211; Time period slice</li>
 </ul>
 </td>
 </tr>
@@ -275,7 +277,7 @@ the start and stop indices of the window rows and columns</li>
 
 <dl class="method">
 <dt id="yatsm.io.backends.GDALTimeSeries.read_dataarray">
-<code class="descname">read_dataarray</code><span class="sig-paren">(</span><em>indexes=None</em>, <em>bands=None</em>, <em>window=None</em>, <em>time=None</em>, <em>name=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read_dataarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read_dataarray</code><span class="sig-paren">(</span><em>indexes=None</em>, <em>bands=None</em>, <em>window=None</em>, <em>time=None</em>, <em>name=None</em>, <em>out=None</em>, <em>encoding=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.read_dataarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read time series, usually inside of a window, as xarray.DataArray</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -285,8 +287,9 @@ the start and stop indices of the window rows and columns</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.indexes"></span><strong>indexes</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.indexes">¶</a> &#8211; Band indexes of each raster to read</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.bands"></span><strong>bands</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.bands">¶</a> &#8211; An alternative to <code class="docutils literal"><span class="pre">indexes</span></code>, provide a list
 of band names corresponding to <span class="xref std std-ref">self.band_names</span></li>
-<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window">¶</a> &#8211; A pair (tuple) of pairs of ints specifying
-the start and stop indices of the window rows and columns</li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.window">¶</a> &#8211; A pair (tuple) of pairs of
+ints specifying the start and stop indices of the window rows
+and columns</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.time"></span><strong>time</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.time">¶</a> &#8211; A time or slice of time to subset the read
 with (using a subset on <span class="xref std std-ref">self.df</span>)</li>
 <li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.name"></span><strong>name</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.name">¶</a> &#8211; Name of the xr.DataArray</li>
@@ -296,6 +299,8 @@ the time series into. Its shape should be:</p>
 </pre></div>
 </div>
 </li>
+<li><span class="target" id="yatsm.io.backends.GDALTimeSeries.read_dataarray.params.encoding"></span><strong>encoding</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.read_dataarray.params.encoding">¶</a> &#8211; Optionally, pass encoding information to
+xarray.DataArray</li>
 </ul>
 </td>
 </tr>
@@ -318,13 +323,15 @@ coordinate dimenisons (time, band, y, and x)</p>
 
 <dl class="method">
 <dt id="yatsm.io.backends.GDALTimeSeries.window_bounds">
-<code class="descname">window_bounds</code><span class="sig-paren">(</span><em>window</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.window_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.window_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">window_bounds</code><span class="sig-paren">(</span><em>window=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.window_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.window_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return coordinate bounds of a given window</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.io.backends.GDALTimeSeries.window_bounds.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.window_bounds.params.window">¶</a> &#8211; Window ((ymin, ymax), (xmin, xmax)) in pixel space</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.io.backends.GDALTimeSeries.window_bounds.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.window_bounds.params.window">¶</a> &#8211; A pair (tuple) of pairs of
+ints specifying the start and stop indices of the window rows
+and columns</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Window left, bottom, right, top (x_min, y_min, x_max,
 y_max)</td>
@@ -337,13 +344,15 @@ y_max)</td>
 
 <dl class="method">
 <dt id="yatsm.io.backends.GDALTimeSeries.window_coords">
-<code class="descname">window_coords</code><span class="sig-paren">(</span><em>window</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.window_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.window_coords" title="Permalink to this definition">¶</a></dt>
+<code class="descname">window_coords</code><span class="sig-paren">(</span><em>window=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/io/backends/_gdal.html#GDALTimeSeries.window_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.window_coords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return Y/X coordinates of a raster to pass to xarray</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.io.backends.GDALTimeSeries.window_coords.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.window_coords.params.window">¶</a> &#8211; Window ((ymin, ymax), (xmin, xmax)) in pixel space</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.io.backends.GDALTimeSeries.window_coords.params.window"></span><strong>window</strong><a class="paramlink headerlink reference internal" href="#yatsm.io.backends.GDALTimeSeries.window_coords.params.window">¶</a> &#8211; A pair (tuple) of pairs of
+ints specifying the start and stop indices of the window rows
+and columns</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Y and X coordinates for window</td>
 </tr>
@@ -357,6 +366,12 @@ y_max)</td>
 <dt id="yatsm.io.backends.GDALTimeSeries.time">
 <code class="descname">time</code><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.time" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yatsm.io.backends.GDALTimeSeries.window_extent">
+<code class="descname">window_extent</code><a class="headerlink" href="#yatsm.io.backends.GDALTimeSeries.window_extent" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>rasterio.window.Window</em> &#8211; Dataset extent window</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -377,7 +392,7 @@ y_max)</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 24, 2017, 8:34:04 PM.
+      Last updated on Mar 25, 2017, 3:52:18 PM.
 
     </p>
   </div>

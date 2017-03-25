@@ -173,6 +173,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">rasterio.windows</span> <span class="k">import</span> <span class="n">Window</span>
 <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 
 <span class="kn">from</span> <span class="nn">yatsm</span> <span class="k">import</span> <span class="n">__version__</span>
@@ -338,28 +339,36 @@
                           <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]):</span>
                     <span class="k">yield</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GDALTimeSeries.read"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GDALTimeSeries.read"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Read time series, usually inside of a specified window</span>
 
 <span class="sd">        .. todo::</span>
 
-<span class="sd">            Allow reading of a subset of bands (make like ``rasterio``)</span>
+<span class="sd">            Maybe pass a scheduler argument and some number of processes</span>
+<span class="sd">            to use?</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            indexes (list[int] or int): One or more band numbers to retrieve.</span>
 <span class="sd">                If a `list`, returns a 3D array; otherwise a 2D</span>
+<span class="sd">            window (rasterio.windows.Window): A pair (tuple) of pairs of</span>
+<span class="sd">                ints specifying the start and stop indices of the window rows</span>
+<span class="sd">                and columns</span>
+<span class="sd">            time (slice): Time period slice</span>
 <span class="sd">            out (np.ndarray): A NumPy array of pre-allocated memory to read</span>
 <span class="sd">                the time series into. Its shape should be::</span>
 
 <span class="sd">                (len(observations), len(bands), len(rows), len(columns))</span>
 
-<span class="sd">            window (tuple): A pair (tuple) of pairs of ints specifying</span>
-<span class="sd">                the start and stop indices of the window rows and columns</span>
-<span class="sd">            time (slice): Time period slice</span>
-
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: A NumPy array containing the time series data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">))</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">indexes</span><span class="p">:</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">indexes</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+
         <span class="k">if</span> <span class="n">window</span><span class="p">:</span>
             <span class="c1"># Parse geographic/projected coordinates from window query</span>
             <span class="p">((</span><span class="n">row_min</span><span class="p">,</span> <span class="n">row_max</span><span class="p">),</span> <span class="p">(</span><span class="n">col_min</span><span class="p">,</span> <span class="n">col_max</span><span class="p">))</span> <span class="o">=</span> <span class="n">window</span>
@@ -367,12 +376,12 @@
             <span class="n">x_max</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">col_max</span><span class="p">,</span> <span class="n">row_min</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span>
             <span class="n">coord_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">y_max</span><span class="p">)</span>
 
-            <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">n_band</span><span class="p">,</span>
                      <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
                      <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No window passed - calculating manually&#39;</span><span class="p">)</span>
-            <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">n_band</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
             <span class="n">coord_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -383,7 +392,7 @@
 
         <span class="c1"># TODO: rasterio doesn&#39;t support multiple dtypes yet, so</span>
         <span class="c1">#       either alert user or fix it ourselves with our wrapper</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
             <span class="n">_window</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">window</span><span class="p">(</span><span class="o">*</span><span class="n">coord_bounds</span><span class="p">,</span> <span class="n">boundless</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">indexes</span><span class="o">=</span><span class="n">indexes</span><span class="p">,</span>
                      <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
@@ -394,15 +403,16 @@
         <span class="k">return</span> <span class="n">out</span></div>
 
 <div class="viewcode-block" id="GDALTimeSeries.read_dataarray"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.read_dataarray">[docs]</a>    <span class="k">def</span> <span class="nf">read_dataarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indexes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                       <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                       <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Read time series, usually inside of a window, as xarray.DataArray</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            indexes (list[int]): Band indexes of each raster to read</span>
 <span class="sd">            bands (list[str]): An alternative to ``indexes``, provide a list</span>
 <span class="sd">                of band names corresponding to :ref:`self.band_names`</span>
-<span class="sd">            window (tuple): A pair (tuple) of pairs of ints specifying</span>
-<span class="sd">                the start and stop indices of the window rows and columns</span>
+<span class="sd">            window (rasterio.windows.Window): A pair (tuple) of pairs of</span>
+<span class="sd">                ints specifying the start and stop indices of the window rows</span>
+<span class="sd">                and columns</span>
 <span class="sd">            time (str, slice): A time or slice of time to subset the read</span>
 <span class="sd">                with (using a subset on :ref:`self.df`)</span>
 <span class="sd">            name (str): Name of the xr.DataArray</span>
@@ -410,6 +420,8 @@
 <span class="sd">                the time series into. Its shape should be::</span>
 
 <span class="sd">                ((len(observations), len(bands), len(rows), len(columns))</span>
+<span class="sd">            encoding (dict): Optionally, pass encoding information to</span>
+<span class="sd">                xarray.DataArray</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            xarray.DataArray: A DataArray containing the time series data with</span>
@@ -420,7 +432,7 @@
 <span class="sd">            as the number of bands, `self.count`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">indexes</span><span class="p">:</span>
-            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">indexes</span><span class="p">])</span>
             <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">bands</span><span class="p">:</span>
             <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
@@ -431,6 +443,8 @@
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0.__class__.__name__}</span><span class="s1"> has </span><span class="si">{0.count}</span><span class="s1"> bands but &#39;</span>
                              <span class="s1">&#39;you asked for </span><span class="si">{1}</span><span class="s1">&#39;</span>
                              <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_band</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">window</span><span class="p">:</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_extent</span>
 
         <span class="n">dates</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                  <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
@@ -444,8 +458,10 @@
             <span class="n">values</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">],</span>
-            <span class="n">coords</span><span class="o">=</span><span class="p">[</span><span class="n">dates</span><span class="p">,</span> <span class="n">band_names</span><span class="p">,</span> <span class="n">coords_y</span><span class="p">,</span> <span class="n">coords_x</span><span class="p">]</span>
+            <span class="n">coords</span><span class="o">=</span><span class="p">[</span><span class="n">dates</span><span class="p">,</span> <span class="n">band_names</span><span class="p">,</span> <span class="n">coords_y</span><span class="p">,</span> <span class="n">coords_x</span><span class="p">],</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span>
         <span class="p">)</span>
+        <span class="c1"># TODO: turn these steps into generic &quot;georeference&quot; xr</span>
         <span class="n">da</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">)</span>
 
         <span class="n">da</span> <span class="o">=</span> <span class="n">georeference_variable</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span>
@@ -453,9 +469,14 @@
         <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Created by YATSM v</span><span class="si">{0}</span><span class="s1"> at </span><span class="si">{1}</span><span class="s1">.&#39;</span>
                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">,</span>
                                        <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()))</span>
-        <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodatavals</span>
+        <span class="n">da</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s1">&#39;nodata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodatavals</span><span class="p">)[</span><span class="n">indexes</span><span class="p">]</span>
         <span class="c1"># TODO: da.encoding</span>
-        <span class="c1"># TODO: _FillValue, scale_factor, add_offset here</span>
+        <span class="c1"># TODO: _FillValue, scale_factor, add_offset somewhere else (!)</span>
+        <span class="c1">#       because _FillValue/etc are only 1 value per &quot;variable&quot;,</span>
+        <span class="c1">#       and I don&#39;t know what we&#39;d do here if the `bands` in</span>
+        <span class="c1">#       the DataArray had different _FillValue</span>
+        <span class="c1">#       Probably better to pass as array under non-CF names (e.g.,</span>
+        <span class="c1">#       nodata)</span>
         <span class="c1"># TODO: add chunksizes here? should be related to block_shapes</span>
         <span class="c1"># TODO: zlib, complevel, etc in to_netcdf function</span>
         <span class="k">return</span> <span class="n">da</span></div>
@@ -476,29 +497,40 @@
             <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_md</span>
         <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">items</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="GDALTimeSeries.window_coords"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.window_coords">[docs]</a>    <span class="k">def</span> <span class="nf">window_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">window_extent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; rasterio.window.Window: Dataset extent window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Window</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GDALTimeSeries.window_coords"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.window_coords">[docs]</a>    <span class="k">def</span> <span class="nf">window_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return Y/X coordinates of a raster to pass to xarray</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space</span>
+<span class="sd">            window (rasterio.windows.Window): A pair (tuple) of pairs of</span>
+<span class="sd">                ints specifying the start and stop indices of the window rows</span>
+<span class="sd">                and columns</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple (np.ndarray, np.ndarray): Y and X coordinates for window</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_window_coords</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_window_coords</span><span class="p">(</span><span class="n">window</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_extent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">make_xarray_coords</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GDALTimeSeries.window_bounds"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.window_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">window_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+<div class="viewcode-block" id="GDALTimeSeries.window_bounds"><a class="viewcode-back" href="../../../../yatsm/yatsm.io.backends.html#yatsm.io.backends.GDALTimeSeries.window_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">window_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return coordinate bounds of a given window</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            window (tuple): Window ((ymin, ymax), (xmin, xmax)) in pixel space</span>
+<span class="sd">            window (rasterio.windows.Window): A pair (tuple) of pairs of</span>
+<span class="sd">                ints specifying the start and stop indices of the window rows</span>
+<span class="sd">                and columns</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            BoundingBox: Window left, bottom, right, top (x_min, y_min, x_max,</span>
 <span class="sd">            y_max)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">BoundingBox</span><span class="p">(</span><span class="o">*</span><span class="n">rasterio</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">))</span></div></div>
+        <span class="k">return</span> <span class="n">BoundingBox</span><span class="p">(</span><span class="o">*</span><span class="n">rasterio</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">window</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_extent</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">))</span></div></div>
 </pre></div>
 
            </div>
@@ -514,7 +546,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Mar 24, 2017, 8:34:04 PM.
+      Last updated on Mar 25, 2017, 3:52:18 PM.
 
     </p>
   </div>
