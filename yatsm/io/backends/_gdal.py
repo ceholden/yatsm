@@ -178,7 +178,8 @@ class GDALTimeSeries(object):
 
         .. todo::
 
-            Allow reading of a subset of bands (make like ``rasterio``)
+            Maybe pass a scheduler argument and some number of processes
+            to use?
 
         Args:
             indexes (list[int] or int): One or more band numbers to retrieve.
@@ -236,7 +237,7 @@ class GDALTimeSeries(object):
         return out
 
     def read_dataarray(self, indexes=None, bands=None, window=None, time=None,
-                       name=None, out=None):
+                       name=None, out=None, encoding=None):
         """ Read time series, usually inside of a window, as xarray.DataArray
 
         Args:
@@ -253,6 +254,8 @@ class GDALTimeSeries(object):
                 the time series into. Its shape should be::
 
                 ((len(observations), len(bands), len(rows), len(columns))
+            encoding (dict): Optionally, pass encoding information to
+                xarray.DataArray
 
         Returns:
             xarray.DataArray: A DataArray containing the time series data with
@@ -289,8 +292,10 @@ class GDALTimeSeries(object):
             values,
             name=name,
             dims=['time', 'band', 'y', 'x'],
-            coords=[dates, band_names, coords_y, coords_x]
+            coords=[dates, band_names, coords_y, coords_x],
+            encoding=encoding
         )
+        # TODO: turn these steps into generic "georeference" xr
         da = da.assign_coords(crs=crs)
 
         da = georeference_variable(da, self.crs, transform)
@@ -298,9 +303,14 @@ class GDALTimeSeries(object):
         da.attrs['history'] = ('Created by YATSM v{0} at {1}.'
                                .format(__version__,
                                        dt.datetime.now().isoformat()))
-        da.attrs['nodata'] = self.nodatavals
+        da.attrs['nodata'] = np.asarray(self.nodatavals)[indexes]
         # TODO: da.encoding
-        # TODO: _FillValue, scale_factor, add_offset here
+        # TODO: _FillValue, scale_factor, add_offset somewhere else (!)
+        #       because _FillValue/etc are only 1 value per "variable",
+        #       and I don't know what we'd do here if the `bands` in
+        #       the DataArray had different _FillValue
+        #       Probably better to pass as array under non-CF names (e.g.,
+        #       nodata)
         # TODO: add chunksizes here? should be related to block_shapes
         # TODO: zlib, complevel, etc in to_netcdf function
         return da
