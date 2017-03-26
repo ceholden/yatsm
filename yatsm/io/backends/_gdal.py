@@ -3,6 +3,7 @@
 import datetime as dt
 import logging
 from pathlib import Path
+import six
 
 import numpy as np
 import pandas as pd
@@ -157,20 +158,26 @@ class GDALTimeSeries(object):
         """
         KEY = '_src'
 
+        rows = self.df.loc[time] if time else self.df
+        if isinstance(rows, pd.Series):
+            rows = pd.DataFrame([rows])
+
         if self.keep_open:
             if KEY not in self.df:
-                self.df[KEY] = None
+                self.df[KEY] = None  # init it as blank
+
             with rasterio.Env():  # TODO: pass options
-                null = (self.df[KEY] if time is None else
-                        self.df.loc[time, KEY]).isnull()
-                self.df.loc[null, KEY] = [rasterio.open(f, 'r') for f in
-                                          self.df.loc[null, 'filename']]
-            for ds in self.df[KEY] if time is None else self.df.loc[time, KEY]:
+                null = rows.index[rows[KEY].isnull()]
+
+                self.df.loc[null.index, KEY] = [
+                    rasterio.open(f, 'r') for f in
+                    self.df.loc[null, 'filename']
+                ]
+            for ds in rows[KEY]:
                 yield ds
         else:
             with rasterio.Env():  # TODO: pass options
-                for f in (self.df.loc[time, 'filename'] if time
-                          else self.df['filename']):
+                for f in rows['filename']:
                     yield rasterio.open(f, 'r')
 
     def read(self, indexes=None, window=None, time=None, out=None):
@@ -198,10 +205,17 @@ class GDALTimeSeries(object):
         """
         sources = list(self._src(time=time))
         length = len(sources)
-        if indexes:
-            n_band = len(indexes if isinstance(indexes, (tuple, list)) else [indexes])
+        if list(indexes):
+            n_band = len(indexes if isinstance(indexes, (tuple, list))
+                         else [indexes])
         else:
             n_band = self.count
+
+        if list(indexes) == list(range(1, self.count + 1)):
+            logger.debug('You asked for all bands in expected order, and '
+                         'therefore it will be treated as `None` in '
+                         '`src.read` call')
+            indexes = None
 
         if window:
             # Parse geographic/projected coordinates from window query
@@ -282,6 +296,8 @@ class GDALTimeSeries(object):
 
         dates = (self.df.loc[time, 'date'] if time is not None
                  else self.df['date'])
+        if not hasattr(dates, '__iter__'):
+            dates = [dates]
 
         values = self.read(indexes=indexes, out=out, window=window, time=time)
         coords_y, coords_x = self.window_coords(window)
@@ -303,7 +319,7 @@ class GDALTimeSeries(object):
         da.attrs['history'] = ('Created by YATSM v{0} at {1}.'
                                .format(__version__,
                                        dt.datetime.now().isoformat()))
-        da.attrs['nodata'] = np.asarray(self.nodatavals)[indexes]
+        da.attrs['nodata'] = np.asarray(self.nodatavals)[np.array(indexes) - 1]
         # TODO: da.encoding
         # TODO: _FillValue, scale_factor, add_offset somewhere else (!)
         #       because _FillValue/etc are only 1 value per "variable",
