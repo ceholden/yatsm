@@ -347,6 +347,24 @@ class GDALTimeSeries(object):
             items = self.extra_md
         return xr.Dataset.from_dataframe(self.df[items])
 
+    def encoding(self, indexes=None, bands=None, zlib=True, complevel=4):
+        if isinstance(bands, six.string_types):
+            bands = [bands]
+        if indexes:
+            bands = [self.band_names[i - 1] for i in indexes]
+        if bands is None:
+            bands = self.band_names
+
+        encoding = {}
+        for band in bands:
+            encoding[band] = {
+                'dtype': self.dtype,
+                'complevel': complevel,
+                'zlib': zlib,
+                'chunksizes': (1, ) + self.block_shapes
+            }
+        return encoding
+
     @property
     def window_extent(self):
         """ rasterio.window.Window: Dataset extent window
