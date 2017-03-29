@@ -169,7 +169,7 @@ class GDALTimeSeries(object):
             with rasterio.Env():  # TODO: pass options
                 null = rows.index[rows[KEY].isnull()]
 
-                self.df.loc[null.index, KEY] = [
+                self.df.loc[null, KEY] = [
                     rasterio.open(f, 'r') for f in
                     self.df.loc[null, 'filename']
                 ]
