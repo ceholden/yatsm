@@ -7,8 +7,8 @@ import click
 
 # Configure logging
 DEFAULT_LOG_FORMAT = ('%(asctime)s %(levelname)s %(name)s '
-                       '%(module)s.%(funcName)s:%(lineno)s '
-                       '%(message)s')
+                      '%(module)s.%(funcName)s:%(lineno)s '
+                      '%(message)s')
 DEFAULT_LOG_TIME_FORMAT = '%H:%M:%S'
 
 
@@ -24,7 +24,9 @@ class ColorFormatter(logging.Formatter):
 
     def format(self, record):
         if not record.exc_info:
-            record = copy.copy(record)
+            # TODO: copy.copy seems very slow here for frequent use but
+            #       haven't tested yet
+            # record = copy.copy(record)
             style = self.colors.get(record.levelname.lower(), {})
             record.levelname = click.style(record.levelname, **style)
         return logging.Formatter.format(self, record)
@@ -60,4 +62,4 @@ def config_logging(level, config=None):
 
         if level <= logging.INFO:  # silence rasterio
             logging.getLogger('rasterio').setLevel(logging.INFO)
-
+    return logger

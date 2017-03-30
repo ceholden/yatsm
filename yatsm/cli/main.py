@@ -67,7 +67,7 @@ _context = dict(
                             iter_entry_points('yatsm.cli'))
 @click.group(help='YATSM command line interface', context_settings=_context)
 @click.version_option(yatsm.__version__)
-@click.option('--num_threads', metavar='<threads>', default=1, type=int,
+@click.option('--num_threads', default=1, type=int,
               show_default=True, callback=options.valid_int_gt_zero,
               help='Number of threads for OPENBLAS/MKL/OMP used in NumPy')
 @cligj.verbose_opt
@@ -76,7 +76,7 @@ _context = dict(
 def cli(ctx, num_threads, verbose, quiet):
     verbosity = verbose - quiet
     level = max(10, 30 - 10 * verbosity)
-    config_logging(level, config=None)  # TODO: dictConfig file arg
+    logger = config_logging(level, config=None)  # TODO: dictConfig file arg
     ctx.obj = {}
     ctx.obj['verbosity'] = verbosity
 
