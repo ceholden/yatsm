@@ -69,9 +69,8 @@ def _callback_arg_config(ctx, param, value):
     try:
         config = Config.from_file(value)
     except Exception as err:
-        logger.exception('Cannot parse config file %s' % value, err)
-        click.BadParameter('Cannot parse config file %s' % value)
-        raise
+        logger.exception('Cannot parse config file: "{0}"'.format(value))
+        raise click.BadParameter('Cannot parse config file %s' % value)
     else:
         return config
 

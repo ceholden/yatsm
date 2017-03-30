@@ -5,35 +5,18 @@ type: object
 properties:
     version:
         type: string
-        # TODO: pattern:
+    # TODO: pattern:
     data:
         "$ref": "#/definitions/data"
-    results:
-        type: object
-        properties:
-            output:
-                type: string
-            output_prefix:
-                type: string
-                default: 'yatsm_r{row_off:04d}_{num_rows:04d}_c{col_off:04d}_{num_cols:04d}.h5'
-            required:
-                - output
-    pipeline:
-        type: object
-        properties:
-            overwrite:
-                type: boolean
-                default: True
-            tasks:
-                "$ref": "#/definitions/tasks"
+required:
+    - version
+additionalProperties: False
 
 definitions:
     data:
         type: object
+        description: "Datasets"
         properties:
-            cache_dir:
-                type: string
-                default: ''
             primary:
                 type: string
             datasets:
@@ -41,8 +24,11 @@ definitions:
                 minProperties: 1
                 patternProperties:
                     # Datasets can be labeled anything the user wants...
-                    '.*':
+                    ".*":
                         "$ref": "#/definitions/datasets"
+            cache_dir:
+                type: string
+                default: ""
         required:
             - datasets
             - primary
@@ -50,23 +36,15 @@ definitions:
     datasets:
         type: object
         properties:
-            reader:
-                type: object
-                oneOf: [
-                    "$ref": "#/definitions/readers/reader/GDAL",
-                    "$ref": "#/definitions/readers/reader/AGDCv2"
-                ]
             mask_band:
-                oneOf: [
-                    type: string,
-                    type: 'null'
-                ]
-                default: ''
+                oneOf:
+                    - type: string
+                    - type: "null"
+                default: ""
             mask_values:
-                oneOf: [
-                    "$ref": "#/types/array_num",
-                    type: 'null'
-                ]
+                oneOf:
+                    - "$ref": "#/types/array_num"
+                    - type: "null"
                 default: []
             min_values:
                 "$ref": "#/types/array_num"
@@ -98,34 +76,17 @@ definitions:
                     type: object
                     minProperties: 1
                     patternProperties:
-                        '.*':
+                        ".*":
                             type: string
             required:
                 - input_file
                 - date_format
                 - date_column
-        AGDCv2:
-            # TODO
+                - band_names
+            additionalProperties: False
+        AGDCv2:  # TODO
             type: string
-        reader:
-            GDAL:
-                properties:
-                    name:
-                        enum: ['GDAL']
-                    GDAL:
-                        "$ref": "#/definitions/readers/GDAL"
-                dependencies:
-                    name: ['GDAL']
-            AGDCv2:
-                properties:
-                    name:
-                        enum: ['AGDCv2']
-                    AGDCv2:
-                        "$ref": "#/definitions/readers/AGDCv2"
-                dependencies:
-                    name: ['AGDCv2']
-    tasks:
-        # TODO
+    tasks:  # TODO
         type: object
 
 types:

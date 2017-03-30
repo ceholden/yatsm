@@ -17,17 +17,15 @@ PARSERS = []
 
 def _validate_config(config):
     try:
-        schema = yaml.load(
-            pkgutil.get_data('yatsm', 'config/config_schema.yaml'),
-            Loader=SafeLoader
-        )
+        schema_data = pkgutil.get_data('yatsm', 'config/config_schema.yaml')
+        schema = yaml.load(schema_data, Loader=SafeLoader)
         config = validate_with_defaults(config, schema)
     except jsonschema.ValidationError as exc:
-        raise InvalidConfigurationException(exc)
+        raise InvalidConfigurationException(exc.message)
     return config
 
 
-def validate_and_parse_configfile(path, parsers=None):
+def parse_config(path, parsers=None):
     """ Validate and parse configuration file
 
     Args:
@@ -45,6 +43,11 @@ def validate_and_parse_configfile(path, parsers=None):
 
     with open(path, 'rb') as fid:
         config = yaml.load(fid, Loader=SafeLoader)
+
+    if not isinstance(config, dict):
+        raise InvalidConfigurationException('Could not parse configuration '
+                                            'file "{0}" to a `dict`'
+                                            .format(path))
 
     config = expand_envvars(config)
     config = _validate_config(config)

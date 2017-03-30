@@ -40,7 +40,7 @@ class PipelineConfigurationNotFound(KeyError):
              .format(__docs_version__, 'guide/pipeline.html#errors'))
 
     def __init__(self, msg, *args, **kwds):
-        msg = '{0} : "{1}"'.format(self._help, msg)
+        msg = '{0} : "{1!r}"'.format(self._help, msg)
         super(KeyError, self).__init__(msg, *args[1:], **kwds)
 
 

@@ -5,7 +5,7 @@ import functools
 import itertools
 import logging
 
-from yatsm.config import validate_and_parse_configfile
+from yatsm.config import parse_config
 from yatsm.errors import PipelineConfigurationNotFound
 from yatsm.io import get_readers
 from yatsm.pipeline import Pipe, Pipeline
@@ -41,7 +41,7 @@ class Config(object):  # TODO: rename?
     def from_file(cls, filename):
         """ Return this configuration as customized ``dict`` container
         """
-        c = validate_and_parse_configfile(filename)
+        c = parse_config(filename)
         return cls(c)
 
     # READERS
