@@ -47,7 +47,7 @@ def batch(ctx, config, job_number, total_jobs, executor, block_size,
     # TODO: Better define how authoritative reader when using multiple datasets
     #       and choosing block shape (in config?)
     # TODO: Allow user to specify block shape in config (?)
-    if block_size:
+    if block_size[0] and block_size[1]:
         windows = list(block_windows(block_size, config.primary_reader.shape))
     else:
         windows = config.primary_reader.block_windows
