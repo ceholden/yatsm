@@ -159,7 +159,5 @@ And as with ``pip``, you need to install ``YATSM``:
    :target: https://zenodo.org/badge/latestdoi/6804/ceholden/yatsm
 .. |Gitter| image:: https://badges.gitter.im/Join%20Chat.svg
    :target: https://gitter.im/ceholden/yatsm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge
-.. |asv| image:: http://img.shields.io/badge/benchmarked%20by-asv-green.svg?style=flat
-   :target: http://ceholden.github.io/yatsm/bench/
 .. _GDAL: http://gdal.org/
 .. _conda: http://conda.pydata.org/docs/

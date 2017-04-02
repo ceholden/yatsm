@@ -11,4 +11,4 @@ Download link:
 > tar -f HFR1_Tower.tar
 ```
 
-[Map](https://github.com/ceholden/yatsm/blob/master/examples/HFR1/HFR1_Tower.yaml)
+[Map](https://github.com/ceholden/yatsm/blob/master/examples/HFR1/HFR1_Tower.geojson)
