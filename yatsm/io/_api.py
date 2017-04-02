@@ -4,8 +4,6 @@ from collections import OrderedDict
 import datetime as dt
 import logging
 
-import six
-
 from ._xarray import (apply_band_mask, apply_range_mask, merge_data)
 from .backends import READERS
 
@@ -22,12 +20,18 @@ def get_readers(config):
     Returns:
         dict: Time series drivers
     """
-    return OrderedDict((
-        (name, get_reader(**cfg['reader'])) for name, cfg in config.items()
-    ))
+    drivers = OrderedDict()
+
+    for name, cfg in config.items():
+        logger.debug('Finding reader "{0}": {1}'.format(name, cfg))
+        reader_name = cfg['reader']['name']
+        reader_cfg = cfg['reader'].get('config', {})
+        drivers[name] = get_reader(reader_name, **reader_cfg)
+
+    return drivers
 
 
-def get_reader(name=None, **kwargs):
+def get_reader(name, **kwds):
     """ Initialize a time series reader
 
     Function signature is flexible to allow for direct parameterization of
@@ -45,32 +49,25 @@ def get_reader(name=None, **kwargs):
     .. code:: python
 
         # Passed as kwargs
-        reader = get_reader(**{'GDAL': {'input_file': 'my_images.csv'}})
+        cfg = {'input_file': 'my_images.csv'}
+        reader = get_reader('GDAL', **cfg)
 
     Args:
         name (str): Optionally, provide the name of the backend
+        kwds (dict): Keyword arguments used to create the driver, passed
+            either to ``__init__`` or ``from_config``
 
     Raises:
-        ValueError: if `name` and **kwargs aren't properly specified
         KeyError: when asking for a reader that doesn't exist
     """
-    if isinstance(name, six.string_types) and isinstance(kwargs, dict):
-        if name in kwargs.keys():
-            kwargs = kwargs[name]
-    elif name is None and kwargs:
-        name, kwargs = kwargs.popitem()
-    else:
-        raise ValueError('"name" must either be a `str` or None, with '
-                         'reader options specified by kwargs')
-
     reader_cls = READERS.get(name, None)
     if not reader_cls:
-        raise KeyError('Unknown time series reader "{}"'.format(name))
+        raise KeyError('Unknown time series reader: "{0}"'.format(name))
 
     if hasattr(reader_cls, 'from_config'):
-        return reader_cls.from_config(**kwargs)
+        return reader_cls.from_config(**kwds)
     else:
-        return reader_cls(**kwargs)
+        return reader_cls(**kwds)
 
 
 def read_and_preprocess(config, readers, window, out=None):
