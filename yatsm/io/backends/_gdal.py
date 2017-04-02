@@ -280,12 +280,16 @@ class GDALTimeSeries(object):
             as the number of bands, `self.count`
         """
         if indexes:
-            n_band = len(indexes if isinstance(indexes, (tuple, list)) else [indexes])
+            n_band = len(indexes if isinstance(indexes, (tuple, list))
+                         else [indexes])
             band_names = [self.band_names[i] for i in indexes]
         elif bands:
             n_band = len(bands)
             indexes = [(self.band_names.index(band) + 1) for band in bands]
             band_names = bands
+        else:
+            indexes = list(range(1, self.count + 1))
+            band_names = self.band_names
 
         if len(band_names) > self.count:
             raise IndexError('{0.__class__.__name__} has {0.count} bands but '
