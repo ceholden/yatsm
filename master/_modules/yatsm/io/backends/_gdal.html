@@ -335,7 +335,7 @@
             <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>  <span class="c1"># TODO: pass options</span>
                 <span class="n">null</span> <span class="o">=</span> <span class="n">rows</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="n">KEY</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">null</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">KEY</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">null</span><span class="p">,</span> <span class="n">KEY</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">null</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">]</span>
                 <span class="p">]</span>
@@ -580,7 +580,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:18:20 PM.
+      Last updated on Apr 2, 2017, 9:57:12 PM.
 
     </p>
   </div>
