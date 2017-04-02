@@ -1,5 +1,5 @@
-yatsm.pipeline.tasks.classify module
-====================================
+yatsm\.pipeline\.tasks\.classify module
+=======================================
 
 .. automodule:: yatsm.pipeline.tasks.classify
     :members:

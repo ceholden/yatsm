@@ -1,5 +1,5 @@
-yatsm.pipeline.tasks.stash module
-=================================
+yatsm\.pipeline\.tasks\.stash module
+====================================
 
 .. automodule:: yatsm.pipeline.tasks.stash
     :members:

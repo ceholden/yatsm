@@ -1,5 +1,5 @@
-yatsm.regression.design module
-==============================
+yatsm\.regression\.design module
+================================
 
 .. automodule:: yatsm.regression.design
     :members:

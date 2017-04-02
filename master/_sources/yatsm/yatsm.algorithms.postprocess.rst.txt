@@ -1,5 +1,5 @@
-yatsm.algorithms.postprocess module
-===================================
+yatsm\.algorithms\.postprocess module
+=====================================
 
 .. automodule:: yatsm.algorithms.postprocess
     :members:

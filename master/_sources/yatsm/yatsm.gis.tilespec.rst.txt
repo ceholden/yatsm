@@ -1,5 +1,5 @@
-yatsm.gis.tilespec module
-=========================
+yatsm\.gis\.tilespec module
+===========================
 
 .. automodule:: yatsm.gis.tilespec
     :members:

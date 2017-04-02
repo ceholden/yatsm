@@ -1,5 +1,5 @@
-yatsm.gis package
-=================
+yatsm\.gis package
+==================
 
 Submodules
 ----------

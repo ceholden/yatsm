@@ -1,5 +1,5 @@
-yatsm.mapping.core module
-=========================
+yatsm\.mapping\.core module
+===========================
 
 .. automodule:: yatsm.mapping.core
     :members:

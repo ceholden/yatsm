@@ -1,5 +1,5 @@
-yatsm.results.utils module
-==========================
+yatsm\.results\.utils module
+============================
 
 .. automodule:: yatsm.results.utils
     :members:

@@ -1,5 +1,5 @@
-yatsm.pipeline.tasks.change module
-==================================
+yatsm\.pipeline\.tasks\.change module
+=====================================
 
 .. automodule:: yatsm.pipeline.tasks.change
     :members:

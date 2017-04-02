@@ -1,5 +1,5 @@
-yatsm.gis.core module
-=====================
+yatsm\.gis\.core module
+=======================
 
 .. automodule:: yatsm.gis.core
     :members:

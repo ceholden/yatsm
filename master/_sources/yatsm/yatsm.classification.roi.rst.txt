@@ -1,5 +1,5 @@
-yatsm.classification.roi module
-===============================
+yatsm\.classification\.roi module
+=================================
 
 .. automodule:: yatsm.classification.roi
     :members:

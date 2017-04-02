@@ -1,5 +1,5 @@
-yatsm.regression.cran module
-============================
+yatsm\.regression\.cran module
+==============================
 
 .. automodule:: yatsm.regression.cran
     :members:

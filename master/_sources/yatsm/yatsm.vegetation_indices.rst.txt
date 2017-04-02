@@ -1,5 +1,5 @@
-yatsm.vegetation_indices module
-===============================
+yatsm\.vegetation\_indices module
+=================================
 
 .. automodule:: yatsm.vegetation_indices
     :members:

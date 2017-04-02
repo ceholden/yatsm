@@ -1,5 +1,5 @@
-yatsm.api module
-================
+yatsm\.api module
+=================
 
 .. automodule:: yatsm.api
     :members:

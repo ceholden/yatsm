@@ -1,5 +1,5 @@
-yatsm.regression package
-========================
+yatsm\.regression package
+=========================
 
 Submodules
 ----------

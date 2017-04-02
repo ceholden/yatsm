@@ -1,5 +1,5 @@
-yatsm.io.backends package
-=========================
+yatsm\.io\.backends package
+===========================
 
 Module contents
 ---------------

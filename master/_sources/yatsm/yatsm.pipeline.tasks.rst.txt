@@ -1,5 +1,5 @@
-yatsm.pipeline.tasks package
-============================
+yatsm\.pipeline\.tasks package
+==============================
 
 Submodules
 ----------

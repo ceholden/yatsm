@@ -1,5 +1,5 @@
-yatsm.cli.map module
-====================
+yatsm\.cli\.map module
+======================
 
 .. automodule:: yatsm.cli.map
     :members:

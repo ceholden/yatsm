@@ -1,5 +1,5 @@
-yatsm.cli.options module
-========================
+yatsm\.cli\.options module
+==========================
 
 .. automodule:: yatsm.cli.options
     :members:

@@ -1,5 +1,5 @@
-yatsm.gis.conventions module
-============================
+yatsm\.gis\.conventions module
+==============================
 
 .. automodule:: yatsm.gis.conventions
     :members:

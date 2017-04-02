@@ -1,5 +1,5 @@
-yatsm.pipeline.language module
-==============================
+yatsm\.pipeline\.language module
+================================
 
 .. automodule:: yatsm.pipeline.language
     :members:

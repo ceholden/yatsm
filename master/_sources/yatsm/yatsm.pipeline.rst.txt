@@ -1,5 +1,5 @@
-yatsm.pipeline package
-======================
+yatsm\.pipeline package
+=======================
 
 Subpackages
 -----------

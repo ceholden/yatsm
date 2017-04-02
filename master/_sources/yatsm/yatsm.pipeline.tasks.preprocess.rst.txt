@@ -1,5 +1,5 @@
-yatsm.pipeline.tasks.preprocess module
-======================================
+yatsm\.pipeline\.tasks\.preprocess module
+=========================================
 
 .. automodule:: yatsm.pipeline.tasks.preprocess
     :members:

@@ -1,5 +1,5 @@
-yatsm.pipeline.tasks.postprocess module
-=======================================
+yatsm\.pipeline\.tasks\.postprocess module
+==========================================
 
 .. automodule:: yatsm.pipeline.tasks.postprocess
     :members:

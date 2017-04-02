@@ -1,5 +1,5 @@
-yatsm.gis.projections module
-============================
+yatsm\.gis\.projections module
+==============================
 
 .. automodule:: yatsm.gis.projections
     :members:

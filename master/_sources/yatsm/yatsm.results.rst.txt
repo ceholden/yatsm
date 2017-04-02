@@ -1,5 +1,5 @@
-yatsm.results package
-=====================
+yatsm\.results package
+======================
 
 Submodules
 ----------

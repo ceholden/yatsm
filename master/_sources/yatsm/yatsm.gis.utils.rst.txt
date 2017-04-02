@@ -1,5 +1,5 @@
-yatsm.gis.utils module
-======================
+yatsm\.gis\.utils module
+========================
 
 .. automodule:: yatsm.gis.utils
     :members:

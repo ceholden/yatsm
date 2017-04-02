@@ -1,5 +1,5 @@
-yatsm.mapping package
-=====================
+yatsm\.mapping package
+======================
 
 Submodules
 ----------

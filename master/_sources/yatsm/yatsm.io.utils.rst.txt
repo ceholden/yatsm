@@ -1,5 +1,5 @@
-yatsm.io.utils module
-=====================
+yatsm\.io\.utils module
+=======================
 
 .. automodule:: yatsm.io.utils
     :members:

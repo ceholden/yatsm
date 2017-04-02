@@ -1,5 +1,5 @@
-yatsm.plots module
-==================
+yatsm\.plots module
+===================
 
 .. automodule:: yatsm.plots
     :members:

@@ -1,5 +1,5 @@
-yatsm.config package
-====================
+yatsm\.config package
+=====================
 
 Module contents
 ---------------

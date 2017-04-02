@@ -1,5 +1,5 @@
-yatsm.accel module
-==================
+yatsm\.accel module
+===================
 
 .. automodule:: yatsm.accel
     :members:

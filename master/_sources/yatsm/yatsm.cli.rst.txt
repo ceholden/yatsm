@@ -1,5 +1,5 @@
-yatsm.cli package
-=================
+yatsm\.cli package
+==================
 
 Submodules
 ----------

@@ -1,5 +1,5 @@
-yatsm.cli.batch module
-======================
+yatsm\.cli\.batch module
+========================
 
 .. automodule:: yatsm.cli.batch
     :members:
