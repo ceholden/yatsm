@@ -203,16 +203,28 @@ class GDALTimeSeries(object):
 
         Returns:
             np.ndarray: A NumPy array containing the time series data
+
+        Raises:
+            ValueError: Raise if any ``indexes`` passed are invalid (
+            GDAL-based indexes start on 1)
+
         """
+        # Time query
         sources = list(self._src(time=time))
         length = len(sources)
-        if list(indexes):
-            n_band = len(indexes if isinstance(indexes, (tuple, list))
-                         else [indexes])
-        else:
-            n_band = self.count
 
-        if list(indexes) == list(range(1, self.count + 1)):
+        # Parse indexes
+        if indexes is None:
+            n_band = self.count
+        else:
+            if not hasattr(indexes, '__iter__'):
+                indexes = [indexes]
+            n_band = len(indexes)
+            if any([i <= 0 for i in indexes]):
+                raise ValueError('Band indexes for GDAL/rasterio start on 1 '
+                                 '("{0}" provided)'.format(indexes))
+
+        if indexes == list(range(1, self.count + 1)):
             logger.debug('You asked for all bands in expected order, and '
                          'therefore it will be treated as `None` in '
                          '`src.read` call')
