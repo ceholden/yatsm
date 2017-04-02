@@ -17,13 +17,13 @@ data:
             # Type of reader for this dataset (GDAL)
             reader:
                 name: GDAL
-                GDAL:
+                config:
                     # Text file containing dates and images
-                    input_file: "$ROOT/Landsat.csv"
-                    # Input date format
-                    date_format: "%Y%j"
+                    input_file: "$ROOT/images.csv"
                     # Input date column name
-                    date_column: date
+                    date_column: datetime
+                    # Input date format
+                    date_format: "%Y-%m-%dT%H:%M:%S.%f"
                     # Band names
                     band_names: [blue, green, red, nir, swir1, swir2, temp, fmask]
                     # "dtype" argument to pandas.read_csv
@@ -32,8 +32,9 @@ data:
                         path: str
                     # Keep references to input files open throughout process
                     #   Can cut down on overhead of repeatedly opening files
-                    #   assuming the OS lets users keep many open
-                    keep_open: True
+                    #   assuming the OS lets users keep many open (see
+                    #   `ulimit -n`)
+                    keep_open: False 
             # Mask band (e.g., Fmask)
             mask_band: fmask
             # List of integer values to mask within the mask band
@@ -41,30 +42,6 @@ data:
             # Valid range of band data
             min_values: [0, 0, 0, 0, 0, 0, -100, 0]
             max_values: [10000, 10000, 10000, 10000, 10000, 10000, 16000, 255]
-        ALOS_hh:
-            reader:
-                name: GDAL
-                GDAL:
-                    input_file: "$ROOT/ALOS_hh.csv"
-                    date_format: "%Y%m%d"
-                    date_column: date
-                    band_names: [hh]
-                    column_dtype:
-                        path: str
-            min_values: [-100]
-            max_values: [-0.000001]
-        ALOS_hv:
-            reader:
-                name: GDAL
-                GDAL:
-                    input_file: "$ROOT/ALOS_hv.csv"
-                    date_format: "%Y%m%d"
-                    date_column: date
-                    band_names: [hv]
-                    column_dtype:
-                        path: str
-            min_values: [-100]
-            max_values: [-0.000001]
 
 results:
     # Output location
@@ -75,30 +52,6 @@ results:
 pipeline:
     overwrite: False
     tasks:
-        fuse_resid:
-            task: pixel_FuseResid
-            require:
-                data: [ndmi, ndvi, hh, hv, X_optical, X_hh, X_hv]
-            output:
-                record: [fuse_resid]
-            config:
-                init:
-                    mv_method: plurality
-                    span_time: 365
-                    span_train: 1
-                    min_sigma: [0.0, 0.1, 0.1]
-                    ewma_lambda_: 0.5
-                    ewma_crit: 4.0
-                    ewma_std_type: SD
-                fit:
-                    Ys: [
-                        [ndmi, hh, hv],
-                        [ndvi, hh, hv]
-                    ]
-                    Xs: [
-                        [X_optical, X_hh, X_hv],
-                        [X_optical, X_hh, X_hv]
-                    ]
         ndvi:
             task: norm_diff
             require:
@@ -119,19 +72,12 @@ pipeline:
                 data: [X_optical]
             config:
                 design: '1 + ordinal + harm(ordinal, 1)'
-        X_hh:
-            task: dmatrix
+        CCDCesque:
+            task: pixel_CCDCesque
             require:
-                data: [hh]
+                data: [red, nir, swir1]
             output:
-                data: [X_hh]
+                record: [ccdc]
             config:
-                design: '1'
-        X_hv:
-            task: dmatrix
-            require:
-                data: [hv]
-            output:
-                data: [X_hv]
-            config:
-                design: '1'
+                init:
+                    consecutive: 7
