@@ -70,7 +70,7 @@ def merge_data(data, merge_attrs=True):
         xr.Dataset: Merged xr.DataArray objects in one xr.Dataset
     """
     # TODO: (re)projections
-    ds_crs = [CRS.from_string(ds.attrs['crs_wkt']) for ds in data]
+    ds_crs = [CRS.from_string(data[ds].attrs['crs_wkt']) for ds in data]
     if not share_crs(*ds_crs):
         raise TODO('Cannot merge data with different CRS')
 
