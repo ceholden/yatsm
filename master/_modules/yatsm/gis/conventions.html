@@ -206,7 +206,7 @@
 
 
 <span class="n">CF_NC_ATTRS</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">((</span>
-    <span class="p">(</span><span class="s1">&#39;Conventions&#39;</span><span class="p">,</span> <span class="s1">&#39;CF-1.6, YATSM&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;Conventions&#39;</span><span class="p">,</span> <span class="s1">&#39;CF-1.7, YATSM&#39;</span><span class="p">),</span>
 <span class="p">))</span>
 
 
@@ -271,7 +271,7 @@
         <span class="n">y_attrs</span><span class="p">,</span> <span class="n">x_attrs</span> <span class="o">=</span> <span class="n">COORD_DEFS</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span> <span class="n">COORD_DEFS</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">crs</span><span class="o">.</span><span class="n">is_projected</span><span class="p">:</span>
         <span class="n">crs_osr</span> <span class="o">=</span> <span class="n">crs2osr</span><span class="p">(</span><span class="n">crs</span><span class="p">)</span>
-        <span class="n">units</span> <span class="o">=</span> <span class="n">crs_osr</span><span class="o">.</span><span class="n">GetLinearUnitsName</span><span class="p">()</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">crs_osr</span><span class="o">.</span><span class="n">GetLinearUnitsName</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">y_attrs</span><span class="p">,</span> <span class="n">x_attrs</span> <span class="o">=</span> <span class="n">COORD_DEFS</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">COORD_DEFS</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
         <span class="n">y_attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">],</span> <span class="n">x_attrs</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span><span class="p">,</span> <span class="n">units</span>
 
@@ -294,7 +294,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

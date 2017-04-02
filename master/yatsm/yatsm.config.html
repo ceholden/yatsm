@@ -166,18 +166,70 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.config" title="Permalink to this headline">¶</a></h2>
 <p>Utilities for parsing YATSM configuration files</p>
 <dl class="function">
-<dt id="yatsm.config.validate_and_parse_configfile">
-<code class="descclassname">yatsm.config.</code><code class="descname">validate_and_parse_configfile</code><span class="sig-paren">(</span><em>path</em>, <em>parsers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/config/_parse.html#validate_and_parse_configfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config.validate_and_parse_configfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validate and parse configuration file</p>
+<dt id="yatsm.config.load_config">
+<code class="descclassname">yatsm.config.</code><code class="descname">load_config</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/config/_parse.html#load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely load a YATSM configuration file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><span class="target" id="yatsm.config.load_config.params.path"></span><strong>path</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.load_config.params.path">¶</a> &#8211; Filename</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Configuration data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">InvalidConfigurationException</span></code> &#8211; Raise if filename provided</li>
+<li>cannot be parsed into a <cite>dict</cite> by <span class="xref std std-ref">yaml.load</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.config.parse_config">
+<code class="descclassname">yatsm.config.</code><code class="descname">parse_config</code><span class="sig-paren">(</span><em>data</em>, <em>parsers=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/config/_parse.html#parse_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config.parse_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse a configuration file</p>
+<p>By default, parsing includes filling in any environment variables
+used in <span class="xref std std-ref">data</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.config.validate_and_parse_configfile.params.path"></span><strong>path</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.validate_and_parse_configfile.params.path">¶</a> &#8211; Filename</li>
-<li><span class="target" id="yatsm.config.validate_and_parse_configfile.params.parsers"></span><strong>parsers</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.validate_and_parse_configfile.params.parsers">¶</a> &#8211; A list of functions to apply over a configuration
-(<code class="docutils literal"><span class="pre">dict</span></code>) before returning</li>
+<li><span class="target" id="yatsm.config.parse_config.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.parse_config.params.data">¶</a> &#8211; Configuration data in a <cite>dict</cite></li>
+<li><span class="target" id="yatsm.config.parse_config.params.parsers"></span><strong>parsers</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.parse_config.params.parsers">¶</a> &#8211; A list of functions to apply over <span class="xref std std-ref">data</span>
+before returning. Defaults to <span class="xref std std-ref">PARSERS</span>.</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Configuration data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)">dict</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.config.validate_config">
+<code class="descclassname">yatsm.config.</code><code class="descname">validate_config</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/config/_parse.html#validate_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.config.validate_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate and parse configuration file</p>
+<p>Checks against schema defined in <cite>yatsm/config/config_schema.yaml</cite>
+and will fill in default values missing from user input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><span class="target" id="yatsm.config.validate_config.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#yatsm.config.validate_config.params.data">¶</a> &#8211; A configuration <cite>dict</cite> to validate</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Configuration data</p>
@@ -235,7 +287,7 @@ dictionary</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

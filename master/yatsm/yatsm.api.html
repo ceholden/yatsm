@@ -165,9 +165,21 @@
 <p>Helper class for dealing with configuration files</p>
 <dl class="class">
 <dt id="yatsm.api.Config">
-<em class="property">class </em><code class="descclassname">yatsm.api.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/api.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.api.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">yatsm.api.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>config</em>, <em>validate=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/api.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.api.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Your go-to list of things to do</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><span class="target" id="yatsm.api.Config.params.config"></span><strong>config</strong><a class="paramlink headerlink reference internal" href="#yatsm.api.Config.params.config">¶</a> &#8211; A <cite>dict</cite> representing a YATSM configuration file</li>
+<li><span class="target" id="yatsm.api.Config.params.validate"></span><strong>validate</strong><a class="paramlink headerlink reference internal" href="#yatsm.api.Config.params.validate">¶</a> &#8211; Valdiate <span class="xref std std-ref">config</span> against expected schema</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="yatsm.api.Config.find_results">
 <code class="descname">find_results</code><span class="sig-paren">(</span><em>output=None</em>, <em>output_prefix=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/api.html#Config.find_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.api.Config.find_results" title="Permalink to this definition">¶</a></dt>
@@ -321,7 +333,7 @@ stored</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

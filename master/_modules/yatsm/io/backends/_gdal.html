@@ -244,6 +244,9 @@
 <span class="sd">        TypeError: If the ``df`` is not a :ref:`pd.DataFrame`</span>
 <span class="sd">        KeyError: If the ``df`` does not contain &quot;date&quot; and &quot;filename&quot; keys</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_SRC_KEY</span> <span class="o">=</span> <span class="s1">&#39;_src&#39;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">band_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_open</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Must provide a pandas.DataFrame&#39;</span><span class="p">)</span>
@@ -322,24 +325,22 @@
     <span class="k">def</span> <span class="nf">_src</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An optionally memoized generator on time series datasets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">KEY</span> <span class="o">=</span> <span class="s1">&#39;_src&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SRC_KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_SRC_KEY</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># init it as blank</span>
 
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">time</span><span class="p">]</span> <span class="k">if</span> <span class="n">time</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
             <span class="n">rows</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">rows</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_open</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">KEY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">KEY</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># init it as blank</span>
-
             <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>  <span class="c1"># TODO: pass options</span>
-                <span class="n">null</span> <span class="o">=</span> <span class="n">rows</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="n">KEY</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span>
+                <span class="n">null</span> <span class="o">=</span> <span class="n">rows</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">rows</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_SRC_KEY</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">null</span><span class="p">,</span> <span class="n">KEY</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">null</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SRC_KEY</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">null</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">]</span>
                 <span class="p">]</span>
-            <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="n">KEY</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">ds</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_SRC_KEY</span><span class="p">]:</span>
                 <span class="k">yield</span> <span class="n">ds</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">Env</span><span class="p">():</span>  <span class="c1"># TODO: pass options</span>
@@ -368,16 +369,28 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            np.ndarray: A NumPy array containing the time series data</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: Raise if any ``indexes`` passed are invalid (</span>
+<span class="sd">            GDAL-based indexes start on 1)</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Time query</span>
         <span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_src</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">))</span>
         <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">indexes</span><span class="p">):</span>
-            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
-                         <span class="k">else</span> <span class="p">[</span><span class="n">indexes</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">n_band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
 
-        <span class="k">if</span> <span class="nb">list</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="c1"># Parse indexes</span>
+        <span class="k">if</span> <span class="n">indexes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+                <span class="n">indexes</span> <span class="o">=</span> <span class="p">[</span><span class="n">indexes</span><span class="p">]</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Band indexes for GDAL/rasterio start on 1 &#39;</span>
+                                 <span class="s1">&#39;(&quot;</span><span class="si">{0}</span><span class="s1">&quot; provided)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">indexes</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">indexes</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;You asked for all bands in expected order, and &#39;</span>
                          <span class="s1">&#39;therefore it will be treated as `None` in &#39;</span>
                          <span class="s1">&#39;`src.read` call&#39;</span><span class="p">)</span>
@@ -446,12 +459,16 @@
 <span class="sd">            as the number of bands, `self.count`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">indexes</span><span class="p">:</span>
-            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">indexes</span><span class="p">])</span>
+            <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indexes</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
+                         <span class="k">else</span> <span class="p">[</span><span class="n">indexes</span><span class="p">])</span>
             <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">bands</span><span class="p">:</span>
             <span class="n">n_band</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bands</span><span class="p">)</span>
             <span class="n">indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">band</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">]</span>
             <span class="n">band_names</span> <span class="o">=</span> <span class="n">bands</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">indexes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">band_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_names</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">band_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0.__class__.__name__}</span><span class="s1"> has </span><span class="si">{0.count}</span><span class="s1"> bands but &#39;</span>
@@ -462,8 +479,8 @@
 
         <span class="n">dates</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                  <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
-            <span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">dates</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;dates&#39;</span><span class="p">)</span>
 
         <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">indexes</span><span class="o">=</span><span class="n">indexes</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">)</span>
         <span class="n">coords_y</span><span class="p">,</span> <span class="n">coords_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_coords</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
@@ -523,11 +540,13 @@
 
         <span class="n">encoding</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">band</span><span class="p">)</span>
             <span class="n">encoding</span><span class="p">[</span><span class="n">band</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
                 <span class="s1">&#39;complevel&#39;</span><span class="p">:</span> <span class="n">complevel</span><span class="p">,</span>
                 <span class="s1">&#39;zlib&#39;</span><span class="p">:</span> <span class="n">zlib</span><span class="p">,</span>
-                <span class="s1">&#39;chunksizes&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_shapes</span>
+                <span class="s1">&#39;chunksizes&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">block_shapes</span><span class="p">,</span>
+                <span class="s1">&#39;_FillValue&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodatavals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
             <span class="p">}</span>
         <span class="k">return</span> <span class="n">encoding</span></div>
 
@@ -580,7 +599,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

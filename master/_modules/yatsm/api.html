@@ -171,8 +171,9 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">yatsm.config</span> <span class="k">import</span> <span class="n">validate_and_parse_configfile</span>
-<span class="kn">from</span> <span class="nn">yatsm.errors</span> <span class="k">import</span> <span class="n">PipelineConfigurationNotFound</span>
+<span class="kn">from</span> <span class="nn">yatsm.config</span> <span class="k">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">parse_config</span><span class="p">,</span> <span class="n">validate_config</span>
+<span class="kn">from</span> <span class="nn">yatsm.errors</span> <span class="k">import</span> <span class="p">(</span><span class="n">InvalidConfigurationException</span><span class="p">,</span>
+                          <span class="n">PipelineConfigurationNotFound</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">yatsm.io</span> <span class="k">import</span> <span class="n">get_readers</span>
 <span class="kn">from</span> <span class="nn">yatsm.pipeline</span> <span class="k">import</span> <span class="n">Pipe</span><span class="p">,</span> <span class="n">Pipeline</span>
 <span class="kn">from</span> <span class="nn">yatsm.results</span> <span class="k">import</span> <span class="n">HDF5ResultsStore</span>
@@ -196,19 +197,26 @@
 
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../yatsm/yatsm.api.html#yatsm.api.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>  <span class="c1"># TODO: rename?</span>
     <span class="sd">&quot;&quot;&quot; Your go-to list of things to do</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict): A `dict` representing a YATSM configuration file</span>
+<span class="sd">        validate (bool): Valdiate :ref:`config` against expected schema</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">SECTIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;pipeline&#39;</span><span class="p">,</span> <span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">validate_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Config.from_file"><a class="viewcode-back" href="../../yatsm/yatsm.api.html#yatsm.api.Config.from_file">[docs]</a>    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return this configuration as customized ``dict`` container</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">validate_and_parse_configfile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">c</span><span class="p">)</span></div>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">validate_config</span><span class="p">(</span><span class="n">parse_config</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">config</span><span class="p">)</span></div>
 
     <span class="c1"># READERS</span>
     <span class="nd">@_cached_property</span>
@@ -353,7 +361,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

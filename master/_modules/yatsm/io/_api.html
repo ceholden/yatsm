@@ -170,8 +170,6 @@
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">six</span>
-
 <span class="kn">from</span> <span class="nn">._xarray</span> <span class="k">import</span> <span class="p">(</span><span class="n">apply_band_mask</span><span class="p">,</span> <span class="n">apply_range_mask</span><span class="p">,</span> <span class="n">merge_data</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.backends</span> <span class="k">import</span> <span class="n">READERS</span>
 
@@ -188,12 +186,18 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Time series drivers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">((</span>
-        <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">get_reader</span><span class="p">(</span><span class="o">**</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;reader&#39;</span><span class="p">]))</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-    <span class="p">))</span></div>
+    <span class="n">drivers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Finding reader &quot;</span><span class="si">{0}</span><span class="s1">&quot;: </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cfg</span><span class="p">))</span>
+        <span class="n">reader_name</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;reader&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">reader_cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;reader&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">drivers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">reader_name</span><span class="p">,</span> <span class="o">**</span><span class="n">reader_cfg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">drivers</span></div>
 
 
-<span class="k">def</span> <span class="nf">get_reader</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_reader</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Initialize a time series reader</span>
 
 <span class="sd">    Function signature is flexible to allow for direct parameterization of</span>
@@ -211,32 +215,25 @@
 <span class="sd">    .. code:: python</span>
 
 <span class="sd">        # Passed as kwargs</span>
-<span class="sd">        reader = get_reader(**{&#39;GDAL&#39;: {&#39;input_file&#39;: &#39;my_images.csv&#39;}})</span>
+<span class="sd">        cfg = {&#39;input_file&#39;: &#39;my_images.csv&#39;}</span>
+<span class="sd">        reader = get_reader(&#39;GDAL&#39;, **cfg)</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name (str): Optionally, provide the name of the backend</span>
+<span class="sd">        kwds (dict): Keyword arguments used to create the driver, passed</span>
+<span class="sd">            either to ``__init__`` or ``from_config``</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        ValueError: if `name` and **kwargs aren&#39;t properly specified</span>
 <span class="sd">        KeyError: when asking for a reader that doesn&#39;t exist</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">name</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;&quot;name&quot; must either be a `str` or None, with &#39;</span>
-                         <span class="s1">&#39;reader options specified by kwargs&#39;</span><span class="p">)</span>
-
     <span class="n">reader_cls</span> <span class="o">=</span> <span class="n">READERS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">reader_cls</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Unknown time series reader &quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Unknown time series reader: &quot;</span><span class="si">{0}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">reader_cls</span><span class="p">,</span> <span class="s1">&#39;from_config&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">reader_cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reader_cls</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">reader_cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reader_cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">read_and_preprocess</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">readers</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -268,7 +265,7 @@
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">readers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_dataarray</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span>
-                                    <span class="n">band_names</span><span class="o">=</span><span class="n">reader</span><span class="o">.</span><span class="n">band_names</span><span class="p">,</span>
+                                    <span class="n">bands</span><span class="o">=</span><span class="n">reader</span><span class="o">.</span><span class="n">band_names</span><span class="p">,</span>
                                     <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;mask_band&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;mask_values&#39;</span><span class="p">]:</span>
@@ -309,7 +306,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

@@ -178,47 +178,82 @@
 <span class="kn">from</span> <span class="nn">yatsm.errors</span> <span class="k">import</span> <span class="n">InvalidConfigurationException</span>
 
 
-<span class="n">PARSERS</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">PARSERS</span> <span class="o">=</span> <span class="p">[</span><span class="n">expand_envvars</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_validate_config</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">schema</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
-            <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">,</span> <span class="s1">&#39;config/config_schema.yaml&#39;</span><span class="p">),</span>
-            <span class="n">Loader</span><span class="o">=</span><span class="n">SafeLoader</span>
-        <span class="p">)</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">validate_with_defaults</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">InvalidConfigurationException</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">config</span>
-
-
-<div class="viewcode-block" id="validate_and_parse_configfile"><a class="viewcode-back" href="../../../yatsm/yatsm.config.html#yatsm.config.validate_and_parse_configfile">[docs]</a><span class="k">def</span> <span class="nf">validate_and_parse_configfile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parsers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Validate and parse configuration file</span>
+<div class="viewcode-block" id="load_config"><a class="viewcode-back" href="../../../yatsm/yatsm.config.html#yatsm.config.load_config">[docs]</a><span class="k">def</span> <span class="nf">load_config</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Safely load a YATSM configuration file</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path (str): Filename</span>
-<span class="sd">        parsers (list): A list of functions to apply over a configuration</span>
-<span class="sd">            (``dict``) before returning</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Configuration data</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        InvalidConfigurationException: Raise if filename provided</span>
+<span class="sd">        cannot be parsed into a `dict` by :ref:`yaml.load`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">SafeLoader</span><span class="p">)</span>
+
+    <span class="c1"># yaml.load won&#39;t complain if it gets garbage, but return type</span>
+    <span class="c1"># won&#39;t be a dict</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">InvalidConfigurationException</span><span class="p">(</span><span class="s1">&#39;Could not parse configuration &#39;</span>
+                                            <span class="s1">&#39;file &quot;</span><span class="si">{0}</span><span class="s1">&quot; to a `dict`&#39;</span>
+                                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="validate_config"><a class="viewcode-back" href="../../../yatsm/yatsm.config.html#yatsm.config.validate_config">[docs]</a><span class="k">def</span> <span class="nf">validate_config</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Validate and parse configuration file</span>
+
+<span class="sd">    Checks against schema defined in `yatsm/config/config_schema.yaml`</span>
+<span class="sd">    and will fill in default values missing from user input.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict): A configuration `dict` to validate</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Configuration data</span>
+
 <span class="sd">    Raises:</span>
 <span class="sd">        InvalidConfigurationException: Raise if configuration file does not</span>
 <span class="sd">        validate against an expected schema</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">schema_data</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">,</span> <span class="s1">&#39;config/config_schema.yaml&#39;</span><span class="p">)</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">schema_data</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">SafeLoader</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">validate_with_defaults</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InvalidConfigurationException</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_config"><a class="viewcode-back" href="../../../yatsm/yatsm.config.html#yatsm.config.parse_config">[docs]</a><span class="k">def</span> <span class="nf">parse_config</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parsers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read and parse a configuration file</span>
+
+<span class="sd">    By default, parsing includes filling in any environment variables</span>
+<span class="sd">    used in :ref:`data`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict): Configuration data in a `dict`</span>
+<span class="sd">        parsers (list): A list of functions to apply over :ref:`data`</span>
+<span class="sd">            before returning. Defaults to :ref:`PARSERS`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Configuration data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">parsers</span><span class="p">:</span>
         <span class="n">parsers</span> <span class="o">=</span> <span class="n">PARSERS</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">SafeLoader</span><span class="p">)</span>
-
-    <span class="n">config</span> <span class="o">=</span> <span class="n">expand_envvars</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">_validate_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">expand_envvars</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">parse</span> <span class="ow">in</span> <span class="n">parsers</span><span class="p">:</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">config</span></div>
+    <span class="k">return</span> <span class="n">data</span></div>
 </pre></div>
 
            </div>
@@ -234,7 +269,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

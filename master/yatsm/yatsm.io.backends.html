@@ -273,7 +273,13 @@ the time series into. Its shape should be:</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A NumPy array containing the time series data</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.ndarray</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> &#8211; Raise if any <code class="docutils literal"><span class="pre">indexes</span></code> passed are invalid (</li>
+<li>GDAL-based indexes start on 1)</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -397,7 +403,7 @@ and columns</td>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

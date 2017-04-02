@@ -179,6 +179,10 @@
                <span class="n">attr_funcs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">query_kwds</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Populate `out` from data queried from saved record model results</span>
 
+<span class="sd">    .. todo::</span>
+
+<span class="sd">        Make this dask friendly on 1 result at a time so we can run in parallel</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        out (np.ndarray): 2D or 3D (nband x nrow x ncol) array to fill result</span>
 <span class="sd">            data into</span>
@@ -216,8 +220,6 @@
     <span class="k">for</span> <span class="n">_result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">_result</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">table</span><span class="p">:</span>
-                    <span class="kn">from</span> <span class="nn">IPython.core.debugger</span> <span class="k">import</span> <span class="n">Pdb</span><span class="p">;</span> <span class="n">Pdb</span><span class="p">()</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>  <span class="c1"># NOQA</span>
                 <span class="n">segs</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="o">**</span><span class="n">query_kwds</span><span class="p">)</span>
                 <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">rowcol</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>
                                                  <span class="n">segs</span><span class="p">[</span><span class="s1">&#39;px&#39;</span><span class="p">],</span>
@@ -244,7 +246,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 2, 2017, 9:57:12 PM.
+      Last updated on Apr 2, 2017, 11:05:40 PM.
 
     </p>
   </div>

@@ -18,6 +18,7 @@ Subpackages
     yatsm.regression
     yatsm.results
     yatsm.structural_break
+    yatsm.visualization
 
 Submodules
 ----------
@@ -29,7 +30,6 @@ Submodules
    yatsm.errors
    yatsm.executor
    yatsm.masking
-   yatsm.plots
    yatsm.tslib
    yatsm.utils
    yatsm.vegetation_indices
