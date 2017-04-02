@@ -1,4 +1,4 @@
-""" Utilities for configuration file validation via jsonschema
+""" Utilities for configuration file handling
 """
 import logging
 import os

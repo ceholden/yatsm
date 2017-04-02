@@ -5,8 +5,9 @@ import functools
 import itertools
 import logging
 
-from yatsm.config import parse_config
-from yatsm.errors import PipelineConfigurationNotFound
+from yatsm.config import load_config, parse_config, validate_config
+from yatsm.errors import (InvalidConfigurationException,
+                          PipelineConfigurationNotFound)
 from yatsm.io import get_readers
 from yatsm.pipeline import Pipe, Pipeline
 from yatsm.results import HDF5ResultsStore
@@ -30,19 +31,26 @@ def _checked_property(prop):
 
 class Config(object):  # TODO: rename?
     """ Your go-to list of things to do
+
+    Args:
+        config (dict): A `dict` representing a YATSM configuration file
+        validate (bool): Valdiate :ref:`config` against expected schema
     """
 
     SECTIONS = ('version', 'pipeline', 'tasks', 'results', 'data', )
 
-    def __init__(self, config):
+    def __init__(self, config, validate=True):
+        if validate:
+            config = validate_config(config)
         self._config = copy.deepcopy(config)
 
     @classmethod
     def from_file(cls, filename):
         """ Return this configuration as customized ``dict`` container
         """
-        c = parse_config(filename)
-        return cls(c)
+        data = load_config(filename)
+        config = validate_config(parse_config(data))
+        return cls(config)
 
     # READERS
     @_cached_property
