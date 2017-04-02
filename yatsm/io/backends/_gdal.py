@@ -78,6 +78,9 @@ class GDALTimeSeries(object):
         TypeError: If the ``df`` is not a :ref:`pd.DataFrame`
         KeyError: If the ``df`` does not contain "date" and "filename" keys
     """
+
+    _SRC_KEY = '_src'
+
     def __init__(self, df, band_names=None, keep_open=False):
         if not isinstance(df, pd.DataFrame):
             raise TypeError('Must provide a pandas.DataFrame')
@@ -156,24 +159,22 @@ class GDALTimeSeries(object):
     def _src(self, time=None):
         """ An optionally memoized generator on time series datasets
         """
-        KEY = '_src'
+        if self._SRC_KEY not in self.df and self.keep_open:
+            self.df[self._SRC_KEY] = None  # init it as blank
 
         rows = self.df.loc[time] if time else self.df
         if isinstance(rows, pd.Series):
             rows = pd.DataFrame([rows])
 
         if self.keep_open:
-            if KEY not in self.df:
-                self.df[KEY] = None  # init it as blank
-
             with rasterio.Env():  # TODO: pass options
-                null = rows.index[rows[KEY].isnull()]
+                null = rows.index[rows[self._SRC_KEY].isnull()]
 
-                self.df.loc[null, KEY] = [
+                self.df.loc[null, self._SRC_KEY] = [
                     rasterio.open(f, 'r') for f in
                     self.df.loc[null, 'filename']
                 ]
-            for ds in rows[KEY]:
+            for ds in rows[self._SRC_KEY]:
                 yield ds
         else:
             with rasterio.Env():  # TODO: pass options
