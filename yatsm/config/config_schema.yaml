@@ -8,9 +8,10 @@ properties:
     # TODO: pattern:
     data:
         "$ref": "#/definitions/data"
+    pipeline:
+        "$ref": "#/definitions/pipeline"
 required:
     - version
-additionalProperties: False
 
 definitions:
     data:
@@ -36,6 +37,13 @@ definitions:
     datasets:
         type: object
         properties:
+            reader:
+                type: object
+                properites:
+                    name:
+                        oneOf: [GDAL, AGDCv2]
+                required:
+                    - name
             mask_band:
                 oneOf:
                     - type: string
@@ -86,9 +94,42 @@ definitions:
             additionalProperties: False
         AGDCv2:  # TODO
             type: string
+    pipeline:
+        type: object
+        description: Specify the tasks to run in a computational pipeline
+        properties:
+            overwrite:
+                type: boolean
+                default: True
+            tasks:
+                "$ref": "#/definitions/tasks"
+        required:
+            - tasks
     tasks:  # TODO
         type: object
-
+        description: A list of task to compute
+        properties:
+            task:
+                type: string
+            require:
+                "$ref": "#/definitions/task_spec"
+            output:
+                "$ref": "#/definitions/task_spec"
+            config:
+                type: object
+    task_spec:
+        type: object
+        description: A specification that a task does or needs something
+        properties:
+            data:
+                "$ref": "#/types/array_str"
+            record:
+                "$ref": "#/types/array_str"
+            cache:
+                "$ref": "#/types/array_str"
+        minProperties: 1
+        maxProperties: 3
+        additionalProperties: False
 types:
     array_num:
         type: array
