@@ -13,6 +13,10 @@ def result_map(out, results, table, attr_columns,
                attr_funcs=None, **query_kwds):
     """ Populate `out` from data queried from saved record model results
 
+    .. todo::
+
+        Make this dask friendly on 1 result at a time so we can run in parallel
+
     Args:
         out (np.ndarray): 2D or 3D (nband x nrow x ncol) array to fill result
             data into
@@ -50,8 +54,6 @@ def result_map(out, results, table, attr_columns,
     for _result in results:
         try:
             with _result as result:
-                if not table:
-                    from IPython.core.debugger import Pdb; Pdb().set_trace()  # NOQA
                 segs = result.query(table, columns=columns, **query_kwds)
                 y, x = rasterio.transform.rowcol(result.transform,
                                                  segs['px'],
