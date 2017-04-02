@@ -40,7 +40,7 @@ COORD_DEFS = {
 
 
 CF_NC_ATTRS = OrderedDict((
-    ('Conventions', 'CF-1.6, YATSM'),
+    ('Conventions', 'CF-1.7, YATSM'),
 ))
 
 
@@ -105,7 +105,7 @@ def make_xarray_coords(y, x, crs):
         y_attrs, x_attrs = COORD_DEFS['latitude'], COORD_DEFS['longitude']
     elif crs.is_projected:
         crs_osr = crs2osr(crs)
-        units = crs_osr.GetLinearUnitsName()
+        units = crs_osr.GetLinearUnitsName().lower()
         y_attrs, x_attrs = COORD_DEFS['y'], COORD_DEFS['x']
         y_attrs['units'], x_attrs['units'] = units, units
 
