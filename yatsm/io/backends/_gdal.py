@@ -301,8 +301,8 @@ class GDALTimeSeries(object):
 
         dates = (self.df.loc[time, 'date'] if time is not None
                  else self.df['date'])
-        if not hasattr(dates, '__iter__'):
-            dates = [dates]
+        if not isinstance(dates, pd.Series):
+            dates = pd.Series(dates, name='dates')
 
         values = self.read(indexes=indexes, out=out, window=window, time=time)
         coords_y, coords_x = self.window_coords(window)
