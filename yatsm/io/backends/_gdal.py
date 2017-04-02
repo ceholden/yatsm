@@ -362,11 +362,13 @@ class GDALTimeSeries(object):
 
         encoding = {}
         for band in bands:
+            idx = self.band_names.index(band)
             encoding[band] = {
                 'dtype': self.dtype,
                 'complevel': complevel,
                 'zlib': zlib,
-                'chunksizes': (1, ) + self.block_shapes
+                'chunksizes': (1, ) + self.block_shapes,
+                '_FillValue': self.nodatavals[idx]
             }
         return encoding
 
