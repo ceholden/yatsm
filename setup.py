@@ -50,6 +50,7 @@ extras_require = {
     'accel': ['numba'],
     'pipeline': ['dask', 'distributed', 'toposort', 'decorator'],
     'viz': ['graphviz'],
+    'scripts': ['click', 'beautifulsoup4', 'lxml'],
     'docs': [
         'mock', 'click', 'click_plugins', 'sphinx>=1.4', 'sphinx_rtd_theme',
         'sphinxcontrib-bibtex', 'sphinx-paramlinks'

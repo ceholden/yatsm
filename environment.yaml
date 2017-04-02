@@ -35,6 +35,9 @@ dependencies:
     - dask
     - distributed
     - decorator>=4.0.10
+    # Scripts (OPTIONAL)
+    - beautifulsoup4
+    - lxml
     # Plotting
     - matplotlib>=1.5
     # Interactive (OPTIONAL)
