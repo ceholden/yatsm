@@ -99,7 +99,7 @@ def read_and_preprocess(config, readers, window, out=None):
     for name, cfg in config.items():
         reader = readers[name]
         arr = reader.read_dataarray(window=window,
-                                    band_names=reader.band_names,
+                                    bands=reader.band_names,
                                     out=out)
 
         if cfg['mask_band'] and cfg['mask_values']:
