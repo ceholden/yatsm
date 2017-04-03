@@ -20,7 +20,7 @@ import pandas as pd
 from ..regression.cran import CRAN_spline
 from ..vegetation_indices import EVI
 
-logger = logging.getLogger('yatsm')
+logger = logging.getLogger(__name__)
 
 
 #: tuple: Tuple containing the results of the long term mean phenology

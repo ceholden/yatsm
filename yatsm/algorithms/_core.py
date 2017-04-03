@@ -59,7 +59,7 @@ def broken_ep(ep, exc, *args, **kwargs):
     """ Delay error due to broken entry point until it executes
     """
     import logging
-    logger = logging.getLogger('yatsm')
+    logger = logging.getLogger(__name__)
     logger.critical('Trying to import "{0.name}" algorithm entry point '
                     'raised a {1}'.format(ep, exc))
     raise exc

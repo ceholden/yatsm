@@ -12,7 +12,7 @@ import statsmodels.api as sm
 
 from ..regression.diagnostics import rmse
 
-logger = logging.getLogger('yatsm')
+logger = logging.getLogger(__name__)
 
 
 def date2index(dates, d):

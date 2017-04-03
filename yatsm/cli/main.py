@@ -15,8 +15,6 @@ import click
 import click_plugins
 import cligj
 
-logger = logging.getLogger('yatsm')
-
 
 # NumPy/etc linear algebra multithreading related variables
 NP_THREAD_VARS = [

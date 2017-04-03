@@ -53,12 +53,14 @@ def config_logging(level, config=None):
         handler.setFormatter(formatter)
 
         logger = logging.getLogger('yatsm')
-        logger.addHandler(handler)
+        logger.handlers = [handler]
         logger.setLevel(level)
+        logger.propagate = False
 
         logger_algo = logging.getLogger('yatsm.algo')
         logger_algo.addHandler(handler)
         logger_algo.setLevel(level + 10)
+        logger_algo.propagate = False
 
         if level <= logging.INFO:  # silence rasterio
             logging.getLogger('rasterio').setLevel(logging.INFO)
