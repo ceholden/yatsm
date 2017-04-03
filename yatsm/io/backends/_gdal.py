@@ -210,8 +210,10 @@ class GDALTimeSeries(object):
 
         """
         # Time query
-        sources = list(self._src(time=time))
-        length = len(sources)
+        if time:
+            length = self.df.loc[time].shape[0]
+        else:
+            length = self.length
 
         # Parse indexes
         if indexes is None:
@@ -253,7 +255,7 @@ class GDALTimeSeries(object):
 
         # TODO: rasterio doesn't support multiple dtypes yet, so
         #       either alert user or fix it ourselves with our wrapper
-        for idx, src in enumerate(sources):
+        for idx, src in enumerate(self._src(time=time)):
             _window = src.window(*coord_bounds, boundless=True)
             src.read(indexes=indexes,
                      out=out[idx, ...],
