@@ -38,12 +38,16 @@ definitions:
         type: object
         properties:
             reader:
-                type: object
-                properites:
+                properties:
                     name:
-                        oneOf: [GDAL, AGDCv2]
+                        enum: ["GDAL", "AGDCv2"]
+                    config:
+                        oneOf:
+                            - "$ref": "#/definitions/readers/GDAL"
+                            - "$ref": "#/definitions/readers/AGDCv2"
                 required:
                     - name
+                    - config
             mask_band:
                 oneOf:
                     - type: string
