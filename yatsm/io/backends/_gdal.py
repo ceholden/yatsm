@@ -211,7 +211,7 @@ class GDALTimeSeries(object):
         """
         # Time query
         if time:
-            length = self.df.loc[time].shape[0]
+            length = np.atleast_2d(self.df.loc[time]).shape[0]
         else:
             length = self.length
 
