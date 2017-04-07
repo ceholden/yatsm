@@ -58,12 +58,14 @@ from ._logger import config_logging
 # YATSM CLI group
 _context = dict(
     token_normalize_func=lambda x: x.lower(),
-    help_option_names=['--help', '-h']
+    help_option_names=['--help', '-h'],
+    auto_envvar_prefix='YATSM'
 )
 
 @click_plugins.with_plugins(ep for ep in
                             iter_entry_points('yatsm.cli'))
-@click.group(help='YATSM command line interface', context_settings=_context)
+@click.group(context_settings=_context)
+@options.opt_config
 @click.version_option(yatsm.__version__)
 @click.option('--num_threads', default=1, type=int,
               show_default=True, callback=options.valid_int_gt_zero,
@@ -71,10 +73,21 @@ _context = dict(
 @cligj.verbose_opt
 @cligj.quiet_opt
 @click.pass_context
-def cli(ctx, num_threads, verbose, quiet):
+def cli(ctx, config, num_threads, verbose, quiet):
+    """ YATSM Applications
+
+    Note:
+    Be sure to specify the configuration file you want to work with as
+    ``yatsm -C CONFIG_FILE [COMMAND]``. You might also consider defining
+    the path to the configuration file as an environment variable,
+    ``YATSM_CONFIG``. Defining this variable allows YATSM to retrieve
+    the location of your configuration file without the need to explicitly
+    include the ``-C`` when you write ``yatsm [COMMAND...]`` commands,
+    simplifying interactive use.
+    """
     verbosity = verbose - quiet
     level = max(10, 30 - 10 * verbosity)
     logger = config_logging(level, config=None)  # TODO: dictConfig file arg
-    ctx.obj = {}
+    ctx.obj = ctx.obj or {}
     ctx.obj['verbosity'] = verbosity
-
+    ctx.obj['config'] = config
