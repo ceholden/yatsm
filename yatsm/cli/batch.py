@@ -15,7 +15,6 @@ logger = logging.getLogger('yatsm')
 
 
 @click.command(short_help='Run a YATSM pipeline on a dataset in batch mode')
-@options.arg_config
 @options.arg_job_number
 @options.arg_total_jobs
 @options.opt_executor
@@ -23,7 +22,7 @@ logger = logging.getLogger('yatsm')
               help='Override dataset block size when reading')
 @options.opt_force_overwrite
 @click.pass_context
-def batch(ctx, config, job_number, total_jobs, executor, block_size,
+def batch(ctx, job_number, total_jobs, executor, block_size,
           force_overwrite):
     """ Run a YATSM pipeline on a dataset in batch mode
 
@@ -36,6 +35,7 @@ def batch(ctx, config, job_number, total_jobs, executor, block_size,
     TODO: Users may override the size of the subsets using command line
           options.
     """
+    config = options.fetch_config(ctx)
     # Imports inside CLI for speed
     from yatsm.io.utils import block_windows
     from yatsm.utils import distribute_jobs

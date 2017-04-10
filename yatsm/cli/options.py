@@ -2,6 +2,7 @@
 import datetime as dt
 import functools
 import logging
+import os
 
 import click
 from rasterio.rio.options import bounds_opt as opt_bounds  # NOQA
@@ -63,18 +64,38 @@ def callback_nodata(ctx, param, value):
                                      param=param, param_hint='nodata')
 
 
-# ARGUMENTS
-def _callback_arg_config(ctx, param, value):
+# Config handling
+def fetch_config(ctx):
+    """ Fetch ``config`` option and return :ref:`yatsm.api.Config`
+    """
+    config_file = ctx.obj and ctx.obj.get('config', None)
+    if not config_file:
+        _opts = dict((o.name, o) for o in ctx.parent.command.params)
+        raise click.BadParameter('Must specify configuration file',
+                                 ctx=ctx.parent, param=_opts['config'])
+
     from yatsm.api import Config
     try:
-        config = Config.from_file(value)
+        config = Config.from_file(config_file)
     except Exception as err:
-        logger.exception('Cannot parse config file: "{0}"'.format(value))
-        raise click.BadParameter('Cannot parse config file %s' % value)
+        logger.exception('Cannot parse config file: "{0}"'.format(config_file))
+        raise click.BadParameter('Cannot parse config file %s' % config_file)
     else:
         return config
 
 
+opt_config = click.option(
+    '--config', '-C',
+    type=click.Path(exists=True, readable=True,
+                    dir_okay=False, resolve_path=True),
+    default=lambda: os.environ.get('YATSM_CONFIG', ''),
+    allow_from_autoenv=True,
+    nargs=1,
+    help='YATSM configuration file [default: ${YATSM_CONFIG}]'
+)
+
+
+# ARGUMENTS
 def _arg_date(name, date_format_key='date_format', **kwds):
     def _arg_date(f):
         def callback(ctx, param, value):
@@ -111,14 +132,6 @@ def arg_job_number(f):
     return click.argument('job_number', nargs=1, callback=callback)(f)
 
 
-arg_config = click.argument(
-    'config',
-    nargs=1,
-    type=click.Path(exists=True, readable=True,
-                    dir_okay=False, resolve_path=True),
-    callback=_callback_arg_config)
-
-
 arg_output = click.argument(
     'output',
     type=click.Path(writable=True, dir_okay=False,
@@ -128,7 +141,8 @@ arg_output = click.argument(
 arg_total_jobs = click.argument(
     'total_jobs',
     nargs=1,
-    type=click.INT)
+    type=click.INT
+)
 
 
 arg_date = _arg_date('date', date_format_key='date_format')
@@ -237,7 +251,6 @@ mapping_decorations = functools.partial(_combined_decorations,
 
 
 # SEGMENT HANDLING
-
 # Use segment after DATE
 opt_after = click.option('--after', is_flag=True,
                          help='Use time segment after DATE if needed')

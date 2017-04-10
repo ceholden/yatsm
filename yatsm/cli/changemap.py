@@ -28,7 +28,6 @@ def changemap(ctx):
 
 
 @changemap.command(short_help="Date of first change")
-@options.arg_config
 @options.arg_start_date
 @options.arg_end_date
 @options.arg_output
@@ -37,12 +36,13 @@ def changemap(ctx):
 @options.mapping_decorations
 @options.opt_date_format
 @options.opt_map_date_format
-def first(ctx, config, start_date, end_date, output,
+def first(ctx, start_date, end_date, output,
           table, bounds,
           driver, nodata, creation_options, force_overwrite,
           date_format, map_date_format):
     """ Date of first change
     """
+    config = options.fetch_config(ctx)
     # TODO: make this an input...
     # TODO: mapping between
     #           * output band # and total # bands
