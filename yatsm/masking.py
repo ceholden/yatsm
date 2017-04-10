@@ -48,8 +48,8 @@ def multitemp_mask(x, Y, n_year, crit=400,
     green_RLM = rlm.RLM(M=rlm.bisquare, maxiter=maxiter).fit(X, green)
     swir1_RLM = rlm.RLM(M=rlm.bisquare, maxiter=maxiter).fit(X, swir1)
 
-    mask = ((green - green_RLM.predict(X) < crit) *
-            (swir1 - swir1_RLM.predict(X) > -crit))
+    mask = ((green - green_RLM.predict(X) > crit) +
+            (swir1 - swir1_RLM.predict(X) < -crit))
 
     return mask
 
