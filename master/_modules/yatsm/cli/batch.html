@@ -181,7 +181,6 @@
 
 
 <span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s1">&#39;Run a YATSM pipeline on a dataset in batch mode&#39;</span><span class="p">)</span>
-<span class="nd">@options</span><span class="o">.</span><span class="n">arg_config</span>
 <span class="nd">@options</span><span class="o">.</span><span class="n">arg_job_number</span>
 <span class="nd">@options</span><span class="o">.</span><span class="n">arg_total_jobs</span>
 <span class="nd">@options</span><span class="o">.</span><span class="n">opt_executor</span>
@@ -189,7 +188,7 @@
               <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Override dataset block size when reading&#39;</span><span class="p">)</span>
 <span class="nd">@options</span><span class="o">.</span><span class="n">opt_force_overwrite</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
-<span class="k">def</span> <span class="nf">batch</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">job_number</span><span class="p">,</span> <span class="n">total_jobs</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">batch</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">job_number</span><span class="p">,</span> <span class="n">total_jobs</span><span class="p">,</span> <span class="n">executor</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span>
           <span class="n">force_overwrite</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Run a YATSM pipeline on a dataset in batch mode</span>
 
@@ -202,6 +201,7 @@
 <span class="sd">    TODO: Users may override the size of the subsets using command line</span>
 <span class="sd">          options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">fetch_config</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
     <span class="c1"># Imports inside CLI for speed</span>
     <span class="kn">from</span> <span class="nn">yatsm.io.utils</span> <span class="k">import</span> <span class="n">block_windows</span>
     <span class="kn">from</span> <span class="nn">yatsm.utils</span> <span class="k">import</span> <span class="n">distribute_jobs</span>
@@ -341,7 +341,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 6, 2017, 6:00:01 PM.
+      Last updated on Apr 10, 2017, 8:05:27 PM.
 
     </p>
   </div>

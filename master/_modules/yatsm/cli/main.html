@@ -224,12 +224,14 @@
 <span class="c1"># YATSM CLI group</span>
 <span class="n">_context</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="n">token_normalize_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
-    <span class="n">help_option_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="s1">&#39;-h&#39;</span><span class="p">]</span>
+    <span class="n">help_option_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="s1">&#39;-h&#39;</span><span class="p">],</span>
+    <span class="n">auto_envvar_prefix</span><span class="o">=</span><span class="s1">&#39;YATSM&#39;</span>
 <span class="p">)</span>
 
 <span class="nd">@click_plugins</span><span class="o">.</span><span class="n">with_plugins</span><span class="p">(</span><span class="n">ep</span> <span class="k">for</span> <span class="n">ep</span> <span class="ow">in</span>
                             <span class="n">iter_entry_points</span><span class="p">(</span><span class="s1">&#39;yatsm.cli&#39;</span><span class="p">))</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;YATSM command line interface&#39;</span><span class="p">,</span> <span class="n">context_settings</span><span class="o">=</span><span class="n">_context</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">_context</span><span class="p">)</span>
+<span class="nd">@options</span><span class="o">.</span><span class="n">opt_config</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">version_option</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--num_threads&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
               <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">valid_int_gt_zero</span><span class="p">,</span>
@@ -237,13 +239,24 @@
 <span class="nd">@cligj</span><span class="o">.</span><span class="n">verbose_opt</span>
 <span class="nd">@cligj</span><span class="o">.</span><span class="n">quiet_opt</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
-<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">num_threads</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">quiet</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cli</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">num_threads</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">quiet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; YATSM Applications</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">    Be sure to specify the configuration file you want to work with as</span>
+<span class="sd">    ``yatsm -C CONFIG_FILE [COMMAND]``. You might also consider defining</span>
+<span class="sd">    the path to the configuration file as an environment variable,</span>
+<span class="sd">    ``YATSM_CONFIG``. Defining this variable allows YATSM to retrieve</span>
+<span class="sd">    the location of your configuration file without the need to explicitly</span>
+<span class="sd">    include the ``-C`` when you write ``yatsm [COMMAND...]`` commands,</span>
+<span class="sd">    simplifying interactive use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbose</span> <span class="o">-</span> <span class="n">quiet</span>
     <span class="n">level</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">verbosity</span><span class="p">)</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">config_logging</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># TODO: dictConfig file arg</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;verbosity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">verbosity</span>
-
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span>
 </pre></div>
 
            </div>
@@ -259,7 +272,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 6, 2017, 6:00:01 PM.
+      Last updated on Apr 10, 2017, 8:05:27 PM.
 
     </p>
   </div>
