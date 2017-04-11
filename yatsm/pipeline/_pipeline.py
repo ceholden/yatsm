@@ -198,17 +198,18 @@ class Pipeline(object):
         self.eager_pipeline, self.pipeline = self._split_eager(self.tasks)
 
     @classmethod
-    def from_config(cls, config, pipe, overwrite=True):
+    def from_config(cls, config, pipe=None, overwrite=True):
         """ Initialize a pipeline from a configuration and some data
 
         Args:
             config (dict): Pipeline configuration
-            pipe (dict): "record" and "data" datasets
+            pipe (Pipe): "record" and "data" datasets
             overwrite (bool): Overwrite pre-existing results
 
         Returns:
             Pipeline: Pipeline of tasks
         """
+        pipe = pipe or Pipe()
         # Get sorted order based on config and input data
         task_names = config_to_tasks(config, pipe, overwrite=overwrite)
         tasks = OrderedDict(
