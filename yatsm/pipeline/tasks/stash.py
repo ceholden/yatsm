@@ -4,8 +4,8 @@ import logging
 
 from sklearn.externals import joblib as jl
 
-from yatsm.pipeline.tasks._validation import (eager_task, requires, outputs,
-                                              version)
+from ._validation import eager_task, requires, outputs, version
+from ..language import STASH
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +22,7 @@ def sklearn_load(pipe, require, output, config=None):
     Returns:
         sklearn.base.BaseEstimator: Estimator
     """
-    pipe.cache[output['cache'][0]] = jl.load(config['filename'])
+    pipe.cache[output[STASH][0]] = jl.load(config['filename'])
     return pipe
 
 
@@ -36,6 +36,7 @@ def sklearn_dump(pipe, require, output, config=None):
         filename (str): Filename to write to
 
     """
-    jl.dump(config['filename'], pipe.cache[output['cache'][0]],
+    jl.dump(config['filename'],
+            pipe.stash[output[STASH][0]],
             compress=config.get('compress', 3))
     return pipe
