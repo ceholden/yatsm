@@ -42,6 +42,10 @@ class _Executor(object):
         raise NotImplementedError('Subclass should do this')
 
     @staticmethod
+    def result(future):
+        raise NotImplementedError('Subclass should do this')
+
+    @staticmethod
     def as_completed(futures):
         raise NotImplementedError('Subclass should do this')
 
@@ -54,29 +58,42 @@ class SyncExecutor(_Executor):
     """
 
     def submit(self, func, *args, **kwds):
-        future = self._result(Future(), func, *args, **kwds)
+        future = Future()
+        future._work_item = (func, args, kwds, )
         return future
 
     @staticmethod
-    def _result(future, func, *args, **kwds):
-        if not future.set_running_or_notify_cancel():
-            return
-        try:
-            result = func(*args, **kwds)
-        except Exception as e:
-            if PY2:
-                tb = sys.exc_info()
-                future.set_exception_info(e, tb[2])
+    def _run(future):
+        if hasattr(future, '_work_item'):
+            func, args, kwds = future._work_item
+            if not future.set_running_or_notify_cancel():
+                return future
+            try:
+                result = func(*args, **kwds)
+            except Exception as e:
+                if PY2:
+                    tb = sys.exc_info()
+                    future.set_exception_info(e, tb[2])
+                else:
+                    future.set_exception(e)
             else:
-                future.set_exception(e)
+                future.set_result(result)
+            return future
         else:
-            future.set_result(result)
-        return future
+            logger.debug('This future passed "{0}" does not look like a '
+                         'Future created with this class (missing '
+                         '`_work_item` attribute)')
+            return future
 
     @staticmethod
     def as_completed(futures):
         for future in futures:
-            yield future
+            yield SyncExecutor._run(future)
+
+    @staticmethod
+    def result(future):
+        future = SyncExecutor._run(future)
+        return future.result()
 
     def shutdown(self, timeout=10, futures=None):
         return
@@ -95,6 +112,10 @@ class ConcurrentExecutor(_Executor):
     def as_completed(futures):
         return as_completed(futures)
 
+    @staticmethod
+    def result(future):
+        return future.result()
+
     def shutdown(self, timeout=10, futures=None):
         self._executor.shutdown(wait=timeout > 0)
 
@@ -111,6 +132,10 @@ class DistributedExecutor(_Executor):
     @staticmethod
     def as_completed(futures):
         return distributed.as_completed(futures)
+
+    @staticmethod
+    def result(future):
+        return future.result()
 
     def shutdown(self, timeout=10, futures=None):
         self._executor.cancel(futures)
