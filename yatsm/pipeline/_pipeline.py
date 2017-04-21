@@ -8,10 +8,10 @@ from dask import delayed
 import xarray as xr
 
 from yatsm.errors import PipelineConfigurationError as PCError
-from yatsm.pipeline._topology import config_to_tasks
-from yatsm.pipeline.language import (CONFIG, TASK, REQUIRE, OUTPUT,
-                                     PIPE_CONTENTS)
-from yatsm.pipeline.tasks import PIPELINE_TASKS, SEGMENT_TASKS
+
+from ._topology import config_to_tasks
+from ._registry import find_tasks
+from .language import CONFIG, TASK, REQUIRE, OUTPUT, PIPE_CONTENTS
 
 logger = logging.getLogger(__name__)
 
@@ -92,19 +92,24 @@ class Task(object):
         self.name = name
         self.func = func
         self.funcname = self.func.__name__
-        if self.func in SEGMENT_TASKS.values():
-            self.create_group = True
-        else:
-            self.create_group = False
         self.require = require
         self.output = output
         self.config = config
 
     @classmethod
-    def from_config(cls, name, config):
+    def from_config(cls, name, config, definitions=None):
+        """
+
+        .. todo::
+
+            Allow user to pass list of acceptable tasks, but default
+            to ones found by :ref:`find_tasks`
+
+        """
+        definitions = definitions or find_tasks()
         task = config[TASK]
         try:
-            func = PIPELINE_TASKS[task]
+            func = definitions[task]
         except KeyError as ke:
             logger.exception("Unknown pipeline task '{}'".format(task), ke)
             raise
@@ -117,9 +122,15 @@ class Task(object):
     # TODO: maybe there is eager in time, eager in space?
     @property
     def is_eager(self):
-        """ Can this task be executed on all pixels (x/y) at once?
+        """ bool: can this task be executed on all pixels (x/y) at once?
         """
         return getattr(self.func, 'is_eager', False)
+
+    @property
+    def create_group(self):
+        """ bool: Does this task create a segment (and needs a group)?
+        """
+        return getattr(self.func, 'is_segmenter', False)
 
     def record_dependencies(self, tasks):
         """ Return a list of ``Task`` that this ``Task`` is dependent upon

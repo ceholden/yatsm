@@ -54,7 +54,7 @@ output specifications are required.
 .. code-block:: python
 
     @requires(data=[str, str],
-             record=(False, [str]))
+              record=(False, [str]))
     def some_task(work, require, output, **config):
         ...
 
@@ -73,20 +73,6 @@ from yatsm.errors import PipelineConfigurationError as PCError
 logger = logging.getLogger(__name__)
 
 REQUIRED_BY_DEFAULT = True
-
-
-def eager_task(func):
-    """ A task decorator that declares it can compute all pixels at once
-    """
-    func.is_eager = True
-    return func
-
-
-def version(version_str):
-    def decorator(func):
-        func.version = version_str
-        return func
-    return decorator
 
 
 def _parse_signature(signature, req_len=None):

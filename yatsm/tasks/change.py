@@ -1,11 +1,15 @@
 """ Functional wrappers around change detection algorithms
 """
 from yatsm.algorithms import CCDCesque
-from yatsm.pipeline.tasks._validation import outputs, requires, version
-from yatsm.pipeline.language import RECORD
+from yatsm.pipeline import (
+    language,
+    task_version, segment_task,
+    outputs, requires
+)
 
 
-@version(CCDCesque.__algorithm__)
+@task_version(CCDCesque.__algorithm__)
+@segment_task
 @requires(data=[])
 @outputs(record=[str])
 def pixel_CCDCesque(pipe, require, output, config=None):
@@ -31,14 +35,14 @@ def pixel_CCDCesque(pipe, require, output, config=None):
         yatsm.pipeline.Pipe: Piped output
 
     """
-    XY = pipe.data[require['data']].dropna('time', how='any')
-    X = XY[require['data'][0]]
-    Y = XY[require['data'][1:]].to_array()
+    XY = pipe.data[require[language.DATA]].dropna('time', how='any')
+    X = XY[require[language.DATA][0]]
+    Y = XY[require[language.DATA][1:]].to_array()
 
     model = CCDCesque(**config.get('init', {}))
     model.py, model.px = Y.y, Y.x
 
     model = model.fit(X, Y.values, XY['ordinal'])
-    pipe.record[output[RECORD][0]] = model.record
+    pipe.record[output[language.RECORD][0]] = model.record
 
     return pipe

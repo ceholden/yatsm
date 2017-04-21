@@ -71,6 +71,9 @@ def _pipe_deps(pipe):
     Returns:
         dict: Dependency graph for data or results inside of `pipe`
     """
+    # TODO: represent the data as coming from _somewhere_
+    #       e.g., so it's represented on Pipeline.visualize()
+    # TODO: this should be class method?
     dsk = {PIPE: set()}  # no dependencies for pipe item
     deps = _format_deps(dict((item, pipe.get(item, {}).keys())
                              for item in PIPE_CONTENTS))
@@ -111,11 +114,27 @@ def _config_to_deps(config, dsk=None, overwrite=True):
                 logger.debug('Task already computed and not overwrite - not '
                              'adding: {}'.format(task))
 
-        # If this task didn't provide any new data/record, cull it
+        # TODO: maybe we don't want to cull tasks, because they
+        #           * might have important side effects (e.g., IO)
+        #           * overwrite data (e.g., masking provides and
+        #             requires `data: ['nir']`)
         if not task_needed:
-            logger.debug('Culling task {} because everything it provides is '
-                         'already calculated (e.g., from cache)'.format(task))
-            del dsk[task]
+            if not prov:
+                logger.debug('Would cull "{0}" but task does not claim it '
+                             'provides anything so we will assume it has '
+                             'side-effects'.format(task))
+            elif all([p in deps for p in prov]):
+                logger.debug('Would cull "{0}" but task provides what it also '
+                             'requires, so we assume it overwrites data '
+                             '(which currently is not well supported)'
+                             .format(task))
+            else:
+                # Special cases aside, cull tasks that don't do anything
+                logger.debug('Culling task "{0}" because everything it '
+                             'provides is already calculated (e.g., from '
+                             'cache)'.format(task))
+                del dsk[task]
+            from IPython.core.debugger import Pdb; Pdb().set_trace()  #
 
     return dsk
 
@@ -143,7 +162,7 @@ def validate_dependencies(tasks, dsk):
     return tasks
 
 
-def config_to_tasks(config, pipe, overwrite=True):
+def config_to_tasks(config, pipe, overwrite=False):
     """ Return a list of tasks from a pipeline specification
 
     Args:
@@ -156,6 +175,7 @@ def config_to_tasks(config, pipe, overwrite=True):
         list: Tasks to run from the pipeline specification, given in the
             order required to fullfill all dependencies
     """
+    # TODO: this is bad design. used only from Pipeline.from_config
     dsk = _config_to_deps(config, dsk=_pipe_deps(pipe), overwrite=overwrite)
 
     tasks = [task for task in toposort.toposort_flatten(dsk)
