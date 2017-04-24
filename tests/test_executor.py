@@ -57,6 +57,8 @@ def cluster(request):
     try:
         from distributed import LocalCluster
     except ImportError:
-        return None
+        yield None
     else:
-        return LocalCluster()
+        cluster = LocalCluster()
+        yield cluster
+        cluster.close()
