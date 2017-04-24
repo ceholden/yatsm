@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def apply_band_mask(arr, mask_band, mask_values):
-    """ Mask all `bands` in `arr` based on some mask values in a band
+    """ Mask all `band` in `arr` based on some mask values in a band
 
     Args:
         arr (xarray.DataArray): Data array to mask
@@ -23,8 +23,8 @@ def apply_band_mask(arr, mask_band, mask_values):
     Returns:
         xarray.DataArray: Masked version of `arr`
     """
-    # TODO: what if not 3d
-    _shape = (arr.time.size, arr.y.size, arr.x.size)
+    _dims = {'time', 'y', 'x'}  # TODO: define these coords somewhere?
+    _shape = (arr[dim].size for dim in _dims.intersection(arr.dims))
     mask = np.in1d(arr.sel(band=mask_band), mask_values,
                    invert=True).reshape(_shape)
     mask = xr.DataArray(mask, dims=['time', 'y', 'x'],
