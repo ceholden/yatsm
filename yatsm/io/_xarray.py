@@ -23,12 +23,14 @@ def apply_band_mask(arr, mask_band, mask_values):
     Returns:
         xarray.DataArray: Masked version of `arr`
     """
-    _dims = {'time', 'y', 'x'}  # TODO: define these coords somewhere?
-    _shape = (arr[dim].size for dim in _dims.intersection(arr.dims))
+    _dims = ('time', 'y', 'x', )  # TODO: define these coords somewhere?
+    dims = tuple((dim for dim in _dims if dim in arr.dims))
+    shape = tuple((arr[dim].size for dim in dims))
+    coords = tuple((arr[dim] for dim in dims))
+
     mask = np.in1d(arr.sel(band=mask_band), mask_values,
-                   invert=True).reshape(_shape)
-    mask = xr.DataArray(mask, dims=['time', 'y', 'x'],
-                        coords=[arr.time, arr.y, arr.x])
+                   invert=True).reshape(shape)
+    mask = xr.DataArray(mask, dims=dims, coords=coords)
 
     return arr.where(mask)
 
@@ -36,24 +38,49 @@ def apply_band_mask(arr, mask_band, mask_values):
 def apply_range_mask(arr, min_values, max_values):
     """ Mask a DataArray based on a range of acceptable values
 
+    Minimum and maximum values may be passed in one of three ways:
+
+        1. Pass a single number and the function will use this number as the
+           minimum/maximum value for all bands
+        2. Pass a dictionary, and the range mask will be applied on these bands
+        3. Pass a sequence of numbers that is the same length as the number of
+           bands in ``arr``
+
     Args:
         arr (xarray.DataArray): Data array to mask
-        min_values (sequence): Minimum values per `band` in `arr`
-        max_values (sequence): Maximum values per `band` in `arr`
+        min_values (float/int, sequence, or dict): Minimum values
+        max_values (float/int, sequence, or dict): Maximum values
 
     Returns:
         xarray.DataArray: Masked version of `arr`
     """
-    # If we turn these into DataArrays, magic happens
-    maxs = xr.DataArray(np.asarray(max_values, dtype=arr.dtype),
-                        dims=['band'], coords=[arr.coords['band']])
-    mins = xr.DataArray(np.asarray(min_values, dtype=arr.dtype),
-                        dims=['band'], coords=[arr.coords['band']])
+    def _parse(arr, value):
+        if isinstance(value, (int, float)):
+            return arr.band, [value] * len(arr.band)
+        elif isinstance(value, dict):
+            return list(value.keys()), list(value.values()),
+        elif isinstance(value, (tuple, list)):
+            return arr.band, value
+        else:
+            raise TypeError('Must specify `min_values` or `max_values` as '
+                            'either a number (int, float), a sequence of '
+                            'numbers, or as a `dict` mapping band names '
+                            'to numbers')
 
-    # Silence gt/lt/ge/le/eq with nan. See: http://stackoverflow.com/q/41130138
+    min_names, mins = _parse(arr, min_values)
+    max_names, maxes = _parse(arr, max_values)
+
+    # If we turn these into DataArrays, magic (axis alignment) happens
+    mins = xr.DataArray(np.asarray(mins, dtype=arr.dtype),
+                        dims=['band'], coords=[min_names])
+    maxes = xr.DataArray(np.asarray(maxes, dtype=arr.dtype),
+                         dims=['band'], coords=[max_names])
+
+    # Silence gt/lt/ge/le/eq with nan.
+    # See: http://stackoverflow.com/q/41130138
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
-        return arr.where(((arr >= mins) & (arr <= maxs)))
+        return arr.where(((arr >= mins) & (arr <= maxes)))
 
 
 def merge_data(data, merge_attrs=True):
