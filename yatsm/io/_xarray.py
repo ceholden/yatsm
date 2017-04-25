@@ -12,13 +12,14 @@ from yatsm.gis import CRS, share_crs
 logger = logging.getLogger(__name__)
 
 
-def apply_band_mask(arr, mask_band, mask_values):
+def apply_band_mask(arr, mask_band, mask_values, drop=False):
     """ Mask all `band` in `arr` based on some mask values in a band
 
     Args:
         arr (xarray.DataArray): Data array to mask
         mask_band (str): Name of `band` in `arr` to use for masking
         mask_values (sequence): Sequence of values to mask
+        drop (bool): Drop observations masked by :meth:`xr.Dataset.where`
 
     Returns:
         xarray.DataArray: Masked version of `arr`
@@ -32,10 +33,10 @@ def apply_band_mask(arr, mask_band, mask_values):
                    invert=True).reshape(shape)
     mask = xr.DataArray(mask, dims=dims, coords=coords)
 
-    return arr.where(mask)
+    return arr.where(mask, drop=drop)
 
 
-def apply_range_mask(arr, min_values, max_values):
+def apply_range_mask(arr, min_values, max_values, drop=False):
     """ Mask a DataArray based on a range of acceptable values
 
     Minimum and maximum values may be passed in one of three ways:
@@ -50,6 +51,7 @@ def apply_range_mask(arr, min_values, max_values):
         arr (xarray.DataArray): Data array to mask
         min_values (float/int, sequence, or dict): Minimum values
         max_values (float/int, sequence, or dict): Maximum values
+        drop (bool): Drop observations masked by :meth:`xr.Dataset.where`
 
     Returns:
         xarray.DataArray: Masked version of `arr`
@@ -80,7 +82,7 @@ def apply_range_mask(arr, min_values, max_values):
     # See: http://stackoverflow.com/q/41130138
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
-        return arr.where(((arr >= mins) & (arr <= maxes)))
+        return arr.where(((arr >= mins) & (arr <= maxes)), drop=drop)
 
 
 def merge_data(data, merge_attrs=True):
