@@ -113,7 +113,10 @@ class Task(object):
         except KeyError as ke:
             logger.exception("Unknown pipeline task '{}'".format(task), ke)
             raise
-        return cls(name, func, config[REQUIRE], config[OUTPUT],
+        return cls(name,
+                   func,
+                   config.get(REQUIRE, {}),
+                   config.get(OUTPUT, {}),
                    **config.get(CONFIG, {}))
 
     def curry(self):

@@ -99,11 +99,11 @@ def _config_to_deps(config, dsk=None, overwrite=True):
 
     for task, spec in config.items():
         # Add in task requirements
-        deps = _format_deps(spec[REQUIRE])
+        deps = _format_deps(spec.get(REQUIRE, {}))
         dsk[task] = dsk[task].union(deps)
 
         # Add in items provided by task
-        prov = _format_deps(spec[OUTPUT])
+        prov = _format_deps(spec.get(OUTPUT, {}))
         task_needed = False
         for _prov in prov:
             if overwrite or _prov not in dsk:
