@@ -14,7 +14,15 @@ from . import options
 logger = logging.getLogger('yatsm')
 
 
-@click.command(short_help='Run a YATSM pipeline on a dataset in batch mode')
+@click.group(short_help='Run a YATSM pipeline on a dataset in batch mode')
+@click.pass_context
+def batch(ctx):
+    """ Run a YATSM pipeline on a dataset in batch mode
+    """
+    pass
+
+
+@batch.command(short_help='Run a YATSM pipeline over image blocks')
 @options.arg_job_number
 @options.arg_total_jobs
 @options.opt_executor
@@ -22,7 +30,7 @@ logger = logging.getLogger('yatsm')
               help='Override dataset block size when reading')
 @options.opt_force_overwrite
 @click.pass_context
-def batch(ctx, job_number, total_jobs, executor, block_size,
+def block(ctx, job_number, total_jobs, executor, block_size,
           force_overwrite):
     """ Run a YATSM pipeline on a dataset in batch mode
 
