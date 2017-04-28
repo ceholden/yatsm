@@ -1,0 +1,24 @@
+# Example of a pipeline where data is read explicitly
+version: "0.7.0"
+
+pipeline:
+    overwrite: False
+    tasks:
+        read:
+            task: xarray_open
+            output:
+                data: [blue, green, red, nir, swir1, swir2, temp, cfmask]
+            config:
+                filename: tests/data/HRF1_Block_0-10_0-10.nc
+        ndvi:
+            task: norm_diff
+            require:
+                data: [nir, red]
+            output:
+                data: [ndvi]
+        ndmi:
+            task: norm_diff
+            require:
+                data: [nir, swir1]
+            output:
+                data: [ndmi]

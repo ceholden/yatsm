@@ -1,0 +1,17 @@
+# Example of a pipeline that has missing dependencies
+version: 0.7.0
+
+pipeline:
+    tasks:
+        ndvi:
+            task: norm_diff
+            require:
+                data: [nir, red]
+            output:
+                data: [ndvi]
+        ccdc:
+            task: ccdc
+            require:
+                data: [red, nir, swir1, ndmi]
+            output:
+                record: [ccdc]

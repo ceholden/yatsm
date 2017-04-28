@@ -37,40 +37,40 @@ def test_pipe_deps(arg, answer):
     assert sorted(deps) == sorted(answer)
 
 
-def test_config_to_deps_1(config_1):
-    dsk = topo._config_to_deps(config_1)
+def test_config_to_deps_1(tasks1):
+    dsk = topo._config_to_deps(tasks1)
     for lhs, rhs in dsk.items():
         assert (lhs.startswith('data-') or lhs.startswith('record-') or
-                lhs in config_1)
+                lhs in tasks1)
 
 
-def test_config_to_deps_1_dsk(config_1):
+def test_config_to_deps_1_dsk(tasks1):
     dsk = {
         'pipe': set([]),
         'data-red': set(['pipe']),
         'data-nir': set(['pipe'])
     }
-    dsk = topo._config_to_deps(config_1, dsk)
+    dsk = topo._config_to_deps(tasks1, dsk)
 
     assert 'pipe' in dsk
     for lhs, rsh in dsk.items():
         if lhs != 'pipe':
             assert (lhs.startswith('data-') or lhs.startswith('record-')
-                    or lhs in config_1)
+                    or lhs in tasks1)
 
 
-def test_validate_dependencies_1(config_1, pipe_defn):
+def test_validate_dependencies_1(tasks1, pipe_defn):
     tasks = ['merged']
     dsk = topo._pipe_deps(pipe_defn)
-    dsk = topo._config_to_deps(config_1, dsk)
+    dsk = topo._config_to_deps(tasks1, dsk)
 
     topo.validate_dependencies(tasks, dsk)
 
 
-def test_validate_dependencies_fail(config_3, pipe_defn):
+def test_validate_dependencies_fail(tasks3, pipe_defn):
     tasks = ['ccdc']
     dsk = topo._pipe_deps(pipe_defn)
-    dsk = topo._config_to_deps(config_3, dsk)
+    dsk = topo._config_to_deps(tasks3, dsk)
     # This one should fail -- missing NDMI calculation
     with pytest.raises(KeyError) as exc:
         topo.validate_dependencies(tasks, dsk)
