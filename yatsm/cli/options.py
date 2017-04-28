@@ -88,7 +88,7 @@ opt_config = click.option(
     '--config', '-C',
     type=click.Path(exists=True, readable=True,
                     dir_okay=False, resolve_path=True),
-    default=lambda: os.environ.get('YATSM_CONFIG', ''),
+    default=lambda: os.environ.get('YATSM_CONFIG', None),
     allow_from_autoenv=True,
     nargs=1,
     help='YATSM configuration file [default: ${YATSM_CONFIG}]'
