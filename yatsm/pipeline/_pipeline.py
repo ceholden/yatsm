@@ -275,26 +275,28 @@ class Pipeline(object):
 
     # TODO: test without using dask.delayed, just function wrapping
     #       ... curious about the dask overhead
-    def run_eager(self, pipe, **compute_kwds):
+    def run_eager(self, pipe=None, **compute_kwds):
         """ Run eager steps
 
         Args:
             pipe (Pipe): Pipeline data
 
         """
+        pipe = pipe or Pipe()
         pipeline = self.delayed(self.eager_pipeline, pipe)
         if pipeline is not None:
             return pipeline.compute(**compute_kwds)
         else:
             return pipe
 
-    def run(self, pipe, check_eager=True, **compute_kwds):
+    def run(self, pipe=None, check_eager=True, **compute_kwds):
         """ Run all steps
 
         Args:
             pipe (Pipe): Pipeline data
 
         """
+        pipe = pipe or Pipe()
         # Check if pipe contains "eager" pipeline outputs
         if check_eager and not self._check_eager(self.eager_pipeline, pipe):
             logger.warning('Triggering eager compute')
