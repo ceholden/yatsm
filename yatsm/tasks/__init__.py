@@ -11,6 +11,7 @@
 
 """
 from .change import pixel_CCDCesque
+from .io import xarray_open
 from .preprocess import dmatrix, norm_diff
 from .stash import sklearn_dump, sklearn_load
 
@@ -18,6 +19,8 @@ from .stash import sklearn_dump, sklearn_load
 __all__ = [
     # change
     'pixel_CCDCesque',
+    # IO
+    'xarray_open',
     # preprocess
     'dmatrix',
     'norm_diff',

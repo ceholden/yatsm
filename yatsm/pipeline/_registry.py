@@ -33,6 +33,10 @@ def find_tasks():
     from yatsm import tasks
 
     pipeline_tasks = {
+        # CHANGE
+        'pixel_CCDCesque': tasks.pixel_CCDCesque,
+        # IO
+        'xarray_open': tasks.xarray_open,
         # STASH
         'sklearn_load': tasks.sklearn_load,
         'sklearn_dump': tasks.sklearn_dump,
