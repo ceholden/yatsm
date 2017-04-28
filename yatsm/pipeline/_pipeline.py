@@ -11,7 +11,10 @@ from yatsm.errors import PipelineConfigurationError as PCError
 
 from ._topology import config_to_tasks
 from ._registry import find_tasks
-from .language import CONFIG, TASK, REQUIRE, OUTPUT, PIPE_CONTENTS
+from .language import (
+    CONFIG, TASK, REQUIRE, OUTPUT,
+    DATA, RECORD, STASH, PIPE_CONTENTS
+)
 
 logger = logging.getLogger(__name__)
 
@@ -178,20 +181,28 @@ class Task(object):
 
     @property
     def require_data(self):
-        return self.require.get('data', [])
+        return self.require.get(DATA, [])
 
     @property
     def require_record(self):
-        return self.require.get('record', [])
+        return self.require.get(RECORD, [])
+
+    @property
+    def require_stash(self):
+        return self.require.get(STASH, [])
 
     @property
     def output_data(self):
-        return self.output.get('data', [])
+        return self.output.get(DATA, [])
 
     @property
     def output_record(self):
         """ str: name of 'record' output"""
-        return self.output.get('record', [None])[0]
+        return self.output.get(RECORD, [None])[0]
+
+    @property
+    def output_stash(self):
+        return self.output.get(STASH, [None])
 
     def __repr__(self):
         return ('<{0.__class__.__name__} "{0.name}": {0.func.__name__}'
