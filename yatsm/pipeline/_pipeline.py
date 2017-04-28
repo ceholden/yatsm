@@ -257,6 +257,9 @@ class Pipeline(object):
             dask.delayed.Delayed: A delayed pipeline ready to be executed
 
         """
+        if not tasks:  # guard empty task list
+            return None
+
         pl = delayed(tasks[0].curry(), name=tasks[0].name)(
             pipe,
             dask_key_name=tasks[0].name
@@ -280,7 +283,10 @@ class Pipeline(object):
 
         """
         pipeline = self.delayed(self.eager_pipeline, pipe)
-        return pipeline.compute(**compute_kwds)
+        if pipeline is not None:
+            return pipeline.compute(**compute_kwds)
+        else:
+            return pipe
 
     def run(self, pipe, check_eager=True, **compute_kwds):
         """ Run all steps
@@ -293,8 +299,12 @@ class Pipeline(object):
         if check_eager and not self._check_eager(self.eager_pipeline, pipe):
             logger.warning('Triggering eager compute')
             pipe = self.run_eager(pipe)
+
         pipeline = self.delayed(self.pipeline, pipe)
-        return pipeline.compute(**compute_kwds)
+        if pipeline is not None:
+            return pipeline.compute(**compute_kwds)
+        else:
+            return pipe
 
     def visualize(self, pipe, filename=None, rankdir='LR', **visualize_kwds):
         """ Show the Dask task graph as a Graphviz plot
@@ -359,15 +369,15 @@ class Pipeline(object):
         """
         for eager_task in tasks:
             data, rec = eager_task.output_data, eager_task.output_record
-            has_data = [output in pipe['data'] for output in data]
-            has_rec = rec in pipe['record']
-            if not all(has_data) and not has_rec:
+            has_data = [output in pipe[DATA] for output in data]
+            has_rec = rec in pipe[RECORD] or rec is None
+            if not all(has_data) or not has_rec:
                 missing = [item for item, has in zip(data, has_data)
                            if not has]
                 if not has_rec:
                     missing.append(rec)
-                logger.warning('Eager task {t} has missing output: {m}'
-                               .format(t=eager_task.funcname, m=missing))
+                logger.debug('Eager task {t} has not yet computed: {m}'
+                             .format(t=eager_task.funcname, m=missing))
                 return False
         return True
 
