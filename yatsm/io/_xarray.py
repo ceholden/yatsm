@@ -56,12 +56,15 @@ def apply_range_mask(arr, min_values, max_values, drop=False):
     Returns:
         xarray.DataArray: Masked version of `arr`
     """
+    assert 'time' in arr.dims
+
     def _parse(arr, value):
         if isinstance(value, (int, float)):
             return arr.band, [value] * len(arr.band)
         elif isinstance(value, dict):
             return list(value.keys()), list(value.values()),
         elif isinstance(value, (tuple, list)):
+            # TODO: check length
             return arr.band, value
         else:
             raise TypeError('Must specify `min_values` or `max_values` as '
@@ -82,7 +85,8 @@ def apply_range_mask(arr, min_values, max_values, drop=False):
     # See: http://stackoverflow.com/q/41130138
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
-        return arr.where(((arr >= mins) & (arr <= maxes)), drop=drop)
+        mask = ((arr >= mins) & (arr <= maxes)).all(dim='band')
+        return arr.where(mask, drop=drop)
 
 
 def merge_data(data, merge_attrs=True):
