@@ -1,5 +1,6 @@
 """ Helper functions for :ref:`xarray.Dataset` and `xarray.DataArray` objects
 """
+from collections import OrderedDict
 import logging
 import warnings
 
@@ -36,7 +37,7 @@ def apply_band_mask(arr, mask_band, mask_values, drop=False):
     return arr.where(mask, drop=drop)
 
 
-def apply_range_mask(arr, min_values, max_values, drop=False):
+def apply_range_mask(arr, min_values, max_values, drop=False, how='all'):
     """ Mask a DataArray based on a range of acceptable values
 
     Minimum and maximum values may be passed in one of three ways:
@@ -52,40 +53,61 @@ def apply_range_mask(arr, min_values, max_values, drop=False):
         min_values (float/int, sequence, or dict): Minimum values
         max_values (float/int, sequence, or dict): Maximum values
         drop (bool): Drop observations masked by :meth:`xr.Dataset.where`
+        how (str): Drop or mask observations across bands depending if
+            `any` or `all` of the observations are out of range. Using
+            `any` will drop as many or more observations than `all`.
 
     Returns:
         xarray.DataArray: Masked version of `arr`
     """
     assert 'time' in arr.dims
+    assert how in ('any', 'all'), "`how` must be `all` or `any`"
 
     def _parse(arr, value):
         if isinstance(value, (int, float)):
-            return arr.band, [value] * len(arr.band)
+            return OrderedDict(((band.item(), value) for band in arr.band))
         elif isinstance(value, dict):
-            return list(value.keys()), list(value.values()),
+            return value
         elif isinstance(value, (tuple, list)):
-            # TODO: check length
-            return arr.band, value
+            if len(value) != len(arr.band):
+                raise ValueError('Must provide a value for each band when '
+                                 'using a `list` or `tuple`. Got {n} values '
+                                 'for an array with {b} bands'
+                                 .format(n=len(value), b=len(arr.band)))
+            return dict(zip(arr.band, value))
         else:
             raise TypeError('Must specify `min_values` or `max_values` as '
                             'either a number (int, float), a sequence of '
                             'numbers, or as a `dict` mapping band names '
                             'to numbers')
 
-    min_names, mins = _parse(arr, min_values)
-    max_names, maxes = _parse(arr, max_values)
+    dt_info = (np.iinfo(arr.dtype) if arr.dtype.kind == 'i' else
+               np.finfo(arr.dtype))
+
+    _mins = _parse(arr, min_values)
+    _maxs = _parse(arr, max_values)
+
+    bands = set(_mins).union(set(_maxs))
+
+    mins = OrderedDict(((b, _mins.get(b, dt_info.min)) for b in bands))
+    maxs = OrderedDict(((b, _maxs.get(b, dt_info.max)) for b in bands))
 
     # If we turn these into DataArrays, magic (axis alignment) happens
-    mins = xr.DataArray(np.asarray(mins, dtype=arr.dtype),
-                        dims=['band'], coords=[min_names])
-    maxes = xr.DataArray(np.asarray(maxes, dtype=arr.dtype),
-                         dims=['band'], coords=[max_names])
+    mins = xr.DataArray(np.asarray(list(mins.values()), dtype=arr.dtype),
+                        dims=['band'], coords={'band': list(mins)})
+    maxs = xr.DataArray(np.asarray(list(maxs.values()), dtype=arr.dtype),
+                        dims=['band'], coords={'band': list(maxs)})
 
     # Silence gt/lt/ge/le/eq with nan.
     # See: http://stackoverflow.com/q/41130138
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', RuntimeWarning)
-        mask = ((arr >= mins) & (arr <= maxes)).all(dim='band')
+
+        # Remember we want the inverse because mask==1 is "good" obs
+        mask = ((arr >= mins) & (arr <= maxs))
+        mask = (mask.any(dim='band') if how == 'any'  # all bad to drop
+                else mask.all(dim='band'))  # all good to keep
+
         return arr.where(mask, drop=drop)
 
 

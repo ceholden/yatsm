@@ -1,18 +1,20 @@
-from functools import partial
 import os
 from pathlib import Path
 from tempfile import mkdtemp
+
+import yaml  # noqa
 
 if os.environ.get('TRAVIS'):
     # use agg backend on TRAVIS for testing so DISPLAY isn't required
     import matplotlib as mpl
     mpl.use('agg')
 
-
+# We wait to import anything that might deal with matplotlib until
+# after we've set the backend...
 import numpy as np  # noqa
 import pandas as pd  # noqa
 import pytest  # noqa
-import yaml  # noqa
+import xarray as xr  # noqa
 
 HERE = Path(__file__).resolve().parent
 DATA = HERE.joinpath('data')
@@ -27,6 +29,32 @@ def airquality(request):
     airquality = airquality.dropna()
 
     return airquality
+
+
+@pytest.fixture(scope='module')
+def HRF1_filename():
+    return str(DATA.joinpath('HRF1_Block_0-10_0-10.nc'))
+
+
+@pytest.fixture(scope='module')
+def HRF1_data_vars():
+    return ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp', 'fmask']
+
+
+@pytest.fixture(scope='module')
+def HRF1_ds(HRF1_filename):
+    """ Harvard Forest Research tower footprint dataset (unmasked/unscaled)
+
+    Tip: Use `xr.decode_cf` to apply the masking and scaling
+    """
+    return xr.open_dataset(HRF1_filename, mask_and_scale=False)
+
+
+@pytest.fixture(scope='module')
+def HRF1_da(HRF1_ds, HRF1_data_vars):
+    """ xr.DataArray of just the `HRF1_data_vars`
+    """
+    return HRF1_ds[HRF1_data_vars].to_array('band')
 
 
 # PIPELINES
