@@ -119,10 +119,11 @@ def batch_block(config, readers, window, overwrite=False):
                     record=pipe.get('record', None))
 
     logger.info('Working on window: {}'.format(window))
-    data = io.read_and_preprocess(config['data']['datasets'],
-                                  readers,
-                                  window,
-                                  out=None)
+
+    data = io.read_all_window(config['data']['datasets'],
+                              readers,
+                              window,
+                              out=None)
 
     store_kwds = {
         'window': window,
