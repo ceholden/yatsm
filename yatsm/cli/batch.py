@@ -28,6 +28,7 @@ def batch(ctx):
 @options.opt_executor
 @click.pass_context
 def debug(ctx, job_number, total_jobs, executor):
+    import yatsm  # NOQA
     from yatsm.pipeline import Pipe
 
     try:
@@ -38,12 +39,18 @@ def debug(ctx, job_number, total_jobs, executor):
         logger.info('Could not import `IPython`. Using built-in debugger')
 
     config = options.fetch_config(ctx)
-    pipe = Pipe()
-    pl = config.get_pipeline(pipe)
-
     pdb.set_trace()
 
-    piped = pl.run(pipe)
+    yatsm.io.read_all_window(config.data['datasets'],
+                             config.readers,
+                             ((0, 10), (0, 10)))
+
+    pipe = Pipe()
+    pl = config.get_pipeline(pipe)
+    pdb.set_trace()
+
+    piped = pl.run(pipe)  # NOQA
+    pdb.set_trace()
 
 
 @batch.command(short_help='Run a YATSM pipeline over image blocks')
