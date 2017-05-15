@@ -31,8 +31,6 @@ install:
     # Create conda matching requirements
     - conda env create -n test -f environment.yaml
     - source activate test
-    # Temp fix for broken ICU with conda-forge & r channels
-    - CFLAGS="-I${CONDA_PREFIX}/include ${CFLAGS}" pip install rpy2
     # Install YATSM, with all dependencies
     - "pip install -e .[all]"
     # Info

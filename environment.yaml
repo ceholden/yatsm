@@ -48,7 +48,7 @@ dependencies:
     # Accelerated functions w/ numba (OPTIONAL)
     - numba>=0.27.0
     # Python interface to R (OPTIONAL)
-    - r-base
+    - rpy2
     - pip:
         # GLMNET (OPTIONAL)
         - git+git://github.com/ceholden/glmnet-python.git@v2.0.1
