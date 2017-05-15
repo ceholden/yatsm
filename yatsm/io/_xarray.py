@@ -74,7 +74,7 @@ def apply_range_mask(arr, min_values, max_values, drop=False, how='all'):
                                  'using a `list` or `tuple`. Got {n} values '
                                  'for an array with {b} bands'
                                  .format(n=len(value), b=len(arr.band)))
-            return dict(zip(arr.band, value))
+            return dict(zip(arr.band.values, value))
         else:
             raise TypeError('Must specify `min_values` or `max_values` as '
                             'either a number (int, float), a sequence of '
