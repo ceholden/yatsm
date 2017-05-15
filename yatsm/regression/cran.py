@@ -2,14 +2,15 @@
 """
 import numpy as np
 from rpy2.robjects.packages import importr
-import rpy2.robjects.numpy2ri
+from rpy2.robjects import numpy2ri, pandas2ri
 
-rpy2.robjects.numpy2ri.activate()
+numpy2ri.activate()
+pandas2ri.activate()
 
 Rstats = importr('stats')
 
 
-def CRAN_spline(x, y, spar=0.55):
+def CRAN_spline(x, y, w=None, **kwds):
     """ Return a prediction function for a smoothing spline from R
 
     Use `rpy2` package to fit a smoothing spline using "smooth.spline".
@@ -17,7 +18,7 @@ def CRAN_spline(x, y, spar=0.55):
     Args:
         x (np.ndarray): independent variable
         y (np.ndarray): dependent variable
-        spar (float): smoothing parameter
+        w (np.ndarray): weights for each observation in `x`/`y`
 
     Returns:
         callable: prediction function of smoothing spline that provides
@@ -33,6 +34,9 @@ def CRAN_spline(x, y, spar=0.55):
             y_smooth = pred_spl(np.arange(1, 366))
 
     """
-    spl = Rstats.smooth_spline(x, y, spar=spar)
+    if w is not None:
+        spl = Rstats.smooth_spline(x, y, w, **kwds)
+    else:
+        spl = Rstats.smooth_spline(x, y, **kwds)
 
     return lambda _x: np.array(Rstats.predict_smooth_spline(spl, _x)[1])
