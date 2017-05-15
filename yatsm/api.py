@@ -19,6 +19,10 @@ logger = logging.getLogger(__name__)
 
 def _checked_property(prop):
     """ Check a :class:`yatsm.Config` for a certain property
+
+    Motivation is to allow user to be selective with properties
+    described, and to provide a nice error message if they try
+    to do something requiring something they didn't describe.
     """
     @functools.wraps(prop)
     def wrapper(self):

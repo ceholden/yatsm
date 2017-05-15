@@ -107,7 +107,8 @@ def _config_to_deps(config, dsk=None, overwrite=True):
         task_needed = False
         for _prov in prov:
             if overwrite or _prov not in dsk:
-                logger.debug('Adding task: {}'.format(task))
+                logger.debug('Adding task "{0}" to compute "{1}"'
+                             .format(task, _prov))
                 dsk[_prov].add(task)
                 task_needed = True
             else:
@@ -134,7 +135,6 @@ def _config_to_deps(config, dsk=None, overwrite=True):
                              'provides is already calculated (e.g., from '
                              'cache)'.format(task))
                 del dsk[task]
-            from IPython.core.debugger import Pdb; Pdb().set_trace()  #
 
     return dsk
 

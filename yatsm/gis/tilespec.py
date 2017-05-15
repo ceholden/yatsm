@@ -97,6 +97,20 @@ class TileSpec(object):
             self._tiles[index] = Tile(bounds, self.crs, index, self)
         return self._tiles[index]
 
+    def point_to_tile(self, point):
+        """ Return a :class:`Tile` containing a given point (x, y)
+
+        Args:
+            point (tuple): X/Y coordinates in tile specification's CRS
+        Returns:
+            Tile: The intersecting :class`Tile`
+        """
+        px, py = self.size[0] * self.res[0], self.size[1] * self.res[1]
+        _x = int((point[0] - self.ul[0]) // px)
+        _y = int((self.ul[1] - point[1]) // py)
+
+        return self._index_to_tile((_y, _x))
+
     def bounds_to_tiles(self, bounds):
         """ Yield Tile objects for this TileSpec that intersect a given bounds
 
@@ -113,20 +127,6 @@ class TileSpec(object):
         """
         grid_ys, grid_xs = self._frame_bounds(bounds)
         return self._yield_tiles(grid_ys, grid_xs, bounds)
-
-    def point_to_tile(self, point):
-        """ Return a :class:`Tile` containing a given point (x, y)
-
-        Args:
-            point (tuple): X/Y coordinates in tile specification's CRS
-        Returns:
-            Tile: The intersecting :class`Tile`
-        """
-        px, py = self.size[0] * self.res[0], self.size[1] * self.res[1]
-        _x = int((point[0] - self.ul[0]) // px)
-        _y = int((self.ul[1] - point[1]) // py)
-
-        return self._index_to_tile((_y, _x))
 
     def roi_to_tiles(self, roi):
         """ Yield tiles overlapping a Region of Interest `shapely` geometry

@@ -165,6 +165,6 @@ def batch_block(config, readers, window, overwrite=False):
         if record_results:
             store.write_result(pipeline, record_results,
                                overwrite=overwrite)
+
         # TODO: write out cached data
         return store.filename
-
