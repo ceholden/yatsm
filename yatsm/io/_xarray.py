@@ -54,8 +54,9 @@ def apply_range_mask(arr, min_values, max_values, drop=False, how='all'):
         max_values (float/int, sequence, or dict): Maximum values
         drop (bool): Drop observations masked by :meth:`xr.Dataset.where`
         how (str): Drop or mask observations across bands depending if
-            `any` or `all` of the observations are out of range. Using
-            `any` will drop as many or more observations than `all`.
+            `any` or `all` of the observations are inside of range. Requiring
+            `all` observations to be inside of the range will mask more
+            observations than requiring that `any` observation is good.
 
     Returns:
         xarray.DataArray: Masked version of `arr`
