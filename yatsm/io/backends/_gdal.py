@@ -320,8 +320,9 @@ class GDALTimeSeries(object):
 
         values = self.read(indexes=indexes, out=out, window=window, time=time)
         coords_y, coords_x = self.window_coords(window)
-        crs = make_xarray_crs(self.crs)
         transform = rasterio.windows.transform(window, self.transform)
+
+        crs_var = make_xarray_crs(self.crs, transform)
 
         da = xr.DataArray(
             values,
@@ -331,7 +332,7 @@ class GDALTimeSeries(object):
             encoding=encoding
         )
         # TODO: turn these steps into generic "georeference" xr
-        da = da.assign_coords(crs=crs)
+        da = da.assign_coords(crs=crs_var)
 
         da = georeference_variable(da, self.crs, transform)
         da.attrs.update(CF_NC_ATTRS)

@@ -60,19 +60,15 @@ def georeference_variable(var, crs, transform):
     var.attrs['crs_wkt'] = crs.wkt
     var.attrs['transform'] = transform
 
-    # For GDAL in case CF doesn't work
-    # http://www.gdal.org/frmt_netcdf.html
-    var.attrs['spatial_ref'] = crs.wkt
-    var.attrs['GeoTransform'] = transform.to_gdal()
-
     return var
 
 
-def make_xarray_crs(crs):
+def make_xarray_crs(crs, transform):
     """ Return an `xarray.DataArray` of CF-compliant CRS info
 
     Args:
         crs (CRS): CRS
+        transform (Affine): Affine transform
 
     Returns:
         xarray.DataArray: "crs" variable holding CRS information
@@ -86,6 +82,11 @@ def make_xarray_crs(crs):
     da.attrs.update(projections.crs_names(crs))
     da.attrs.update(projections.crs_parameters(crs))
     da.attrs.update(projections.ellipsoid_parameters(crs))
+
+    # For GDAL in case CF doesn't work
+    # http://www.gdal.org/frmt_netcdf.html
+    da.attrs['spatial_ref'] = crs.wkt
+    da.attrs['GeoTransform'] = transform.to_gdal()
 
     return da
 
