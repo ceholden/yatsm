@@ -367,13 +367,24 @@ class GDALTimeSeries(object):
             items = self.extra_md
         return xr.Dataset.from_dataframe(self.df[items])
 
-    def encoding(self, indexes=None, bands=None, zlib=True, complevel=4):
+    def encoding(self, indexes=None, bands=None,
+                 zlib=True, complevel=4, chunksize=None):
         if isinstance(bands, six.string_types):
             bands = [bands]
         if indexes:
             bands = [self.band_names[i - 1] for i in indexes]
         if bands is None:
             bands = self.band_names
+
+        if chunksize is None:
+            chunksize = (1, ) + self.block_shapes
+        elif isinstance(chunksize, (tuple, list)):
+            if len(chunksize) == 1:
+                chunksize = (1, chunksize, chunksize)
+            elif len(chunksize) == 2:
+                chunksize = (1, ) + chunksize
+        else:
+            raise ValueError('`chunksize` must be a tuple or list')
 
         encoding = {}
         for band in bands:
@@ -382,7 +393,7 @@ class GDALTimeSeries(object):
                 'dtype': self.dtype,
                 'complevel': complevel,
                 'zlib': zlib,
-                'chunksizes': (1, ) + self.block_shapes,
+                'chunksizes': chunksize,
                 '_FillValue': self.nodatavals[idx]
             }
         return encoding
