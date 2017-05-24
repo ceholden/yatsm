@@ -81,9 +81,6 @@ entry_points = '''
 
     [yatsm.algorithms.change]
     CCDCesque=yatsm.algorithms.ccdc:CCDCesque
-
-    [yatsm.pipeline.tasks]
-    norm_diff = yatsm.tasks.preprocess:norm_diff
 '''
 
 desc = ('Algorithms for remote sensing land cover and condition monitoring '
