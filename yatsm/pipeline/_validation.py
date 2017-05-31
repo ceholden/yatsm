@@ -130,8 +130,19 @@ def _parse_signature(signature, req_len=None):
 
 
 def _validate_specification(spec, signature):
+    """ Validate a resource specificaftion against an expected signature
+
+    Returns:
+        bool: True if signature is valid
+    Raises:
+        TypeError: if the specification or signature is incorrectly specified
+        ValueError: if the specification does not adhere to the signature
+    """
     if not isinstance(spec, dict):
-        raise TypeError("Specification should be a dictionary")
+        raise TypeError(
+            "Specification and signature should be a `dict` "
+            "(got {0} and {1})".format(type(spec), type(signature))
+        )
 
     for name, (required, desc) in signature.items():
         if required and name not in spec:
@@ -147,6 +158,7 @@ def _validate_specification(spec, signature):
                         "Specification requires {n} elements ({desc}) but "
                         "{n2} elements were passed"
                         .format(n=len(desc), desc=desc, n2=len(value)))
+    return True
 
 
 def check(name, **signature):
