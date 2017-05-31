@@ -59,13 +59,13 @@ output specifications are required.
         ...
 
 """
-from collections import Iterable
 import functools
 import inspect
 import logging
 
 import decorator
 from future.utils import raise_from
+import numpy as np
 
 from yatsm.pipeline.language import PIPE_CONTENTS, REQUIRE, OUTPUT, STASH
 from yatsm.errors import PipelineConfigurationError as PCError
@@ -73,6 +73,8 @@ from yatsm.errors import PipelineConfigurationError as PCError
 logger = logging.getLogger(__name__)
 
 REQUIRED_BY_DEFAULT = True
+
+LIST_LIKE = (list, tuple, np.ndarray)
 
 
 def _parse_signature(signature, req_len=None):
@@ -139,7 +141,7 @@ def _validate_specification(spec, signature):
             value = spec[name]
             # If the specification description has a specific length
             # requirement
-            if isinstance(desc, Iterable):
+            if isinstance(desc, LIST_LIKE):
                 if desc and len(value) != len(desc):
                     raise ValueError(
                         "Specification requires {n} elements ({desc}) but "
