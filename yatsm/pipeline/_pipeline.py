@@ -8,10 +8,13 @@ from dask import delayed
 import xarray as xr
 
 from yatsm.errors import PipelineConfigurationError as PCError
-from yatsm.pipeline._topology import config_to_tasks
-from yatsm.pipeline.language import (CONFIG, TASK, REQUIRE, OUTPUT,
-                                     PIPE_CONTENTS)
-from yatsm.pipeline.tasks import PIPELINE_TASKS, SEGMENT_TASKS
+
+from ._topology import config_to_tasks
+from ._registry import find_tasks
+from .language import (
+    CONFIG, TASK, REQUIRE, OUTPUT,
+    DATA, RECORD, STASH, PIPE_CONTENTS
+)
 
 logger = logging.getLogger(__name__)
 
@@ -92,23 +95,31 @@ class Task(object):
         self.name = name
         self.func = func
         self.funcname = self.func.__name__
-        if self.func in SEGMENT_TASKS.values():
-            self.create_group = True
-        else:
-            self.create_group = False
         self.require = require
         self.output = output
         self.config = config
 
     @classmethod
-    def from_config(cls, name, config):
+    def from_config(cls, name, config, definitions=None):
+        """
+
+        .. todo::
+
+            Allow user to pass list of acceptable tasks, but default
+            to ones found by :ref:`find_tasks`
+
+        """
+        definitions = definitions or find_tasks()
         task = config[TASK]
         try:
-            func = PIPELINE_TASKS[task]
+            func = definitions[task]
         except KeyError as ke:
             logger.exception("Unknown pipeline task '{}'".format(task), ke)
             raise
-        return cls(name, func, config[REQUIRE], config[OUTPUT],
+        return cls(name,
+                   func,
+                   config.get(REQUIRE, {}),
+                   config.get(OUTPUT, {}),
                    **config.get(CONFIG, {}))
 
     def curry(self):
@@ -117,9 +128,15 @@ class Task(object):
     # TODO: maybe there is eager in time, eager in space?
     @property
     def is_eager(self):
-        """ Can this task be executed on all pixels (x/y) at once?
+        """ bool: can this task be executed on all pixels (x/y) at once?
         """
         return getattr(self.func, 'is_eager', False)
+
+    @property
+    def create_group(self):
+        """ bool: Does this task create a segment (and needs a group)?
+        """
+        return getattr(self.func, 'is_segmenter', False)
 
     def record_dependencies(self, tasks):
         """ Return a list of ``Task`` that this ``Task`` is dependent upon
@@ -164,20 +181,28 @@ class Task(object):
 
     @property
     def require_data(self):
-        return self.require.get('data', [])
+        return self.require.get(DATA, [])
 
     @property
     def require_record(self):
-        return self.require.get('record', [])
+        return self.require.get(RECORD, [])
+
+    @property
+    def require_stash(self):
+        return self.require.get(STASH, [])
 
     @property
     def output_data(self):
-        return self.output.get('data', [])
+        return self.output.get(DATA, [])
 
     @property
     def output_record(self):
         """ str: name of 'record' output"""
-        return self.output.get('record', [None])[0]
+        return self.output.get(RECORD, [None])[0]
+
+    @property
+    def output_stash(self):
+        return self.output.get(STASH, [None])
 
     def __repr__(self):
         return ('<{0.__class__.__name__} "{0.name}": {0.func.__name__}'
@@ -198,17 +223,18 @@ class Pipeline(object):
         self.eager_pipeline, self.pipeline = self._split_eager(self.tasks)
 
     @classmethod
-    def from_config(cls, config, pipe, overwrite=True):
+    def from_config(cls, config, pipe=None, overwrite=True):
         """ Initialize a pipeline from a configuration and some data
 
         Args:
             config (dict): Pipeline configuration
-            pipe (dict): "record" and "data" datasets
+            pipe (Pipe): "record" and "data" datasets
             overwrite (bool): Overwrite pre-existing results
 
         Returns:
             Pipeline: Pipeline of tasks
         """
+        pipe = pipe or Pipe()
         # Get sorted order based on config and input data
         task_names = config_to_tasks(config, pipe, overwrite=overwrite)
         tasks = OrderedDict(
@@ -231,6 +257,9 @@ class Pipeline(object):
             dask.delayed.Delayed: A delayed pipeline ready to be executed
 
         """
+        if not tasks:  # guard empty task list
+            return None
+
         pl = delayed(tasks[0].curry(), name=tasks[0].name)(
             pipe,
             dask_key_name=tasks[0].name
@@ -246,29 +275,38 @@ class Pipeline(object):
 
     # TODO: test without using dask.delayed, just function wrapping
     #       ... curious about the dask overhead
-    def run_eager(self, pipe, **compute_kwds):
+    def run_eager(self, pipe=None, **compute_kwds):
         """ Run eager steps
 
         Args:
             pipe (Pipe): Pipeline data
 
         """
+        pipe = pipe or Pipe()
         pipeline = self.delayed(self.eager_pipeline, pipe)
-        return pipeline.compute(**compute_kwds)
+        if pipeline is not None:
+            return pipeline.compute(**compute_kwds)
+        else:
+            return pipe
 
-    def run(self, pipe, check_eager=True, **compute_kwds):
+    def run(self, pipe=None, check_eager=True, **compute_kwds):
         """ Run all steps
 
         Args:
             pipe (Pipe): Pipeline data
 
         """
+        pipe = pipe or Pipe()
         # Check if pipe contains "eager" pipeline outputs
         if check_eager and not self._check_eager(self.eager_pipeline, pipe):
             logger.warning('Triggering eager compute')
             pipe = self.run_eager(pipe)
+
         pipeline = self.delayed(self.pipeline, pipe)
-        return pipeline.compute(**compute_kwds)
+        if pipeline is not None:
+            return pipeline.compute(**compute_kwds)
+        else:
+            return pipe
 
     def visualize(self, pipe, filename=None, rankdir='LR', **visualize_kwds):
         """ Show the Dask task graph as a Graphviz plot
@@ -333,15 +371,15 @@ class Pipeline(object):
         """
         for eager_task in tasks:
             data, rec = eager_task.output_data, eager_task.output_record
-            has_data = [output in pipe['data'] for output in data]
-            has_rec = rec in pipe['record']
-            if not all(has_data) and not has_rec:
+            has_data = [output in pipe[DATA] for output in data]
+            has_rec = rec in pipe[RECORD] or rec is None
+            if not all(has_data) or not has_rec:
                 missing = [item for item, has in zip(data, has_data)
                            if not has]
                 if not has_rec:
                     missing.append(rec)
-                logger.warning('Eager task {t} has missing output: {m}'
-                               .format(t=eager_task.funcname, m=missing))
+                logger.debug('Eager task {t} has not yet computed: {m}'
+                             .format(t=eager_task.funcname, m=missing))
                 return False
         return True
 

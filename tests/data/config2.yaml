@@ -1,0 +1,17 @@
+# Example of a minimally working pipeline that runs CCDC
+version: "0.7.0"
+
+pipeline:
+    tasks:
+        ndvi:
+            task: 
+            require:
+                data: [nir, red]
+            output:
+                data: [ndvi]
+        ccdc:
+            task: ccdc
+            require:
+                data: [red, nir, swir1, ndvi]
+            output:
+                record: [ccdc]

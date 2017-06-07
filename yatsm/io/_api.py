@@ -70,22 +70,20 @@ def get_reader(name, **kwds):
         return reader_cls(**kwds)
 
 
-def read_and_preprocess(config, readers, window, out=None):
+def read_all_window(config, readers, window,
+                    band_mask=True, range_mask=True, out=None):
     """ Read and preprocess a window of data from multiple readers
-
-    Note:
-        To get a time series of a single pixel out of this:
-
-    .. code:: python
-
-        arr.isel(x=0, y=0).dropna('time')
 
     Args:
         config (dict): ``dataset`` entry in a YATSM configuration file with
             sections for each of the ``readers``
         readers (list): A list of reader backends (e.g., ``GDAL``)
         window (tuple): A pair of (tuple) of pairs of ints specifying the
-            start and stop indices of teh window rows and columns
+            start and stop indices of the window rows and columns
+        band_mask (bool): Mask observations using a mask band
+            (see :ref:`apply_band_mask`)
+        range_mask (bool): Mask observations that are outside of some range
+            (see :ref:`apply_range_mask`)
         out (np.ndarray): A NumPy array of pre-allocated memory to read the
             time series into. Its shape should be:
 
@@ -102,12 +100,12 @@ def read_and_preprocess(config, readers, window, out=None):
                                     bands=reader.band_names,
                                     out=out)
 
-        if cfg['mask_band'] and cfg['mask_values']:
+        if band_mask and cfg['mask_band'] and cfg['mask_values']:
             logger.debug('Applying mask band to "{}"'.format(name))
             arr = apply_band_mask(arr, cfg['mask_band'], cfg['mask_values'])
 
         # Min/Max values -- done here for now
-        if cfg['min_values'] and cfg['max_values']:
+        if range_mask and cfg['min_values'] and cfg['max_values']:
             logger.debug('Applying range mask to "{}"'.format(name))
             arr = apply_range_mask(arr, cfg['min_values'], cfg['max_values'])
 

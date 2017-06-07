@@ -3,8 +3,8 @@
 import pytest
 import toolz
 
-from yatsm.pipeline.tasks._validation import (check, requires, outputs,
-                                              REQUIRE, OUTPUT)
+from yatsm.pipeline._validation import (check, requires, outputs,
+                                        REQUIRE, OUTPUT)
 from yatsm.errors import PipelineConfigurationError
 
 
@@ -44,7 +44,7 @@ def test_check_fail_2():
     f = check(REQUIRE, data=(True, ['red', 'nir']))(func_sig)
     with pytest.raises(PipelineConfigurationError) as exc:
         f({}, 'not a dict', {})
-    assert 'should be a dictionary' in str(exc)
+    assert 'should be a `dict`' in str(exc)
 
 
 def test_check_fail_3():

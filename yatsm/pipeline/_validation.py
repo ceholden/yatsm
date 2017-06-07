@@ -54,18 +54,18 @@ output specifications are required.
 .. code-block:: python
 
     @requires(data=[str, str],
-             record=(False, [str]))
+              record=(False, [str]))
     def some_task(work, require, output, **config):
         ...
 
 """
-from collections import Iterable
 import functools
 import inspect
 import logging
 
 import decorator
 from future.utils import raise_from
+import numpy as np
 
 from yatsm.pipeline.language import PIPE_CONTENTS, REQUIRE, OUTPUT, STASH
 from yatsm.errors import PipelineConfigurationError as PCError
@@ -74,19 +74,7 @@ logger = logging.getLogger(__name__)
 
 REQUIRED_BY_DEFAULT = True
 
-
-def eager_task(func):
-    """ A task decorator that declares it can compute all pixels at once
-    """
-    func.is_eager = True
-    return func
-
-
-def version(version_str):
-    def decorator(func):
-        func.version = version_str
-        return func
-    return decorator
+LIST_LIKE = (list, tuple, np.ndarray)
 
 
 def _parse_signature(signature, req_len=None):
@@ -142,8 +130,19 @@ def _parse_signature(signature, req_len=None):
 
 
 def _validate_specification(spec, signature):
+    """ Validate a resource specificaftion against an expected signature
+
+    Returns:
+        bool: True if signature is valid
+    Raises:
+        TypeError: if the specification or signature is incorrectly specified
+        ValueError: if the specification does not adhere to the signature
+    """
     if not isinstance(spec, dict):
-        raise TypeError("Specification should be a dictionary")
+        raise TypeError(
+            "Specification and signature should be a `dict` "
+            "(got {0} and {1})".format(type(spec), type(signature))
+        )
 
     for name, (required, desc) in signature.items():
         if required and name not in spec:
@@ -153,12 +152,13 @@ def _validate_specification(spec, signature):
             value = spec[name]
             # If the specification description has a specific length
             # requirement
-            if isinstance(desc, Iterable):
+            if isinstance(desc, LIST_LIKE):
                 if desc and len(value) != len(desc):
                     raise ValueError(
                         "Specification requires {n} elements ({desc}) but "
                         "{n2} elements were passed"
                         .format(n=len(desc), desc=desc, n2=len(value)))
+    return True
 
 
 def check(name, **signature):

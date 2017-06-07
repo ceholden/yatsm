@@ -14,7 +14,46 @@ from . import options
 logger = logging.getLogger('yatsm')
 
 
-@click.command(short_help='Run a YATSM pipeline on a dataset in batch mode')
+@click.group(short_help='Run a YATSM pipeline on a dataset in batch mode')
+@click.pass_context
+def batch(ctx):
+    """ Run a YATSM pipeline on a dataset in batch mode
+    """
+    pass
+
+
+@batch.command(short_help='Debug a YATSM pipeline')
+@options.arg_job_number
+@options.arg_total_jobs
+@options.opt_executor
+@click.pass_context
+def debug(ctx, job_number, total_jobs, executor):
+    import yatsm  # NOQA
+    from yatsm.pipeline import Pipe
+
+    try:
+        from IPython.core.debugger import Pdb
+        pdb = Pdb()
+    except ImportError:
+        import pdb
+        logger.info('Could not import `IPython`. Using built-in debugger')
+
+    config = options.fetch_config(ctx)
+    pdb.set_trace()
+
+    yatsm.io.read_all_window(config.data['datasets'],
+                             config.readers,
+                             ((0, 10), (0, 10)))
+
+    pipe = Pipe()
+    pl = config.get_pipeline(pipe)
+    pdb.set_trace()
+
+    piped = pl.run(pipe)  # NOQA
+    pdb.set_trace()
+
+
+@batch.command(short_help='Run a YATSM pipeline over image blocks')
 @options.arg_job_number
 @options.arg_total_jobs
 @options.opt_executor
@@ -22,7 +61,7 @@ logger = logging.getLogger('yatsm')
               help='Override dataset block size when reading')
 @options.opt_force_overwrite
 @click.pass_context
-def batch(ctx, job_number, total_jobs, executor, block_size,
+def block(ctx, job_number, total_jobs, executor, block_size,
           force_overwrite):
     """ Run a YATSM pipeline on a dataset in batch mode
 
@@ -106,15 +145,12 @@ def batch_block(config, readers, window, overwrite=False):
 
     logger = logging.getLogger('yatsm')
 
-    def sel_pix(pipe, y, x):
-        return Pipe(data=pipe['data'].sel(y=y, x=x),
-                    record=pipe.get('record', None))
-
     logger.info('Working on window: {}'.format(window))
-    data = io.read_and_preprocess(config['data']['datasets'],
-                                  readers,
-                                  window,
-                                  out=None)
+
+    data = io.read_all_window(config['data']['datasets'],
+                              readers,
+                              window,
+                              out=None)
 
     store_kwds = {
         'window': window,
@@ -124,12 +160,10 @@ def batch_block(config, readers, window, overwrite=False):
     }
 
     # TODO: guess for number of records to store
-    # from IPython.core.debugger import Pdb; Pdb().set_trace()
     with HDF5ResultsStore.from_window(**store_kwds) as store:
         # TODO: read this from pre-existing results
         pipe = Pipe(data=data)
         pipeline = config.get_pipeline(pipe, overwrite=overwrite)
-        from IPython.core.debugger import Pdb; Pdb().set_trace()
 
         # TODO: finish checking for resume
         if store.completed(pipeline) and not overwrite:
@@ -143,7 +177,7 @@ def batch_block(config, readers, window, overwrite=False):
         for i, (y, x) in enumerate(product(data.y.values, data.x.values)):
             logger.debug('Processing pixel {pct:>4.2f}%: y/x {y}/{x}'
                          .format(pct=i / n_ * 100, y=y, x=x))
-            pix_pipe = sel_pix(pipe, y, x)
+            pix_pipe = pipe.pixel(y, x)
 
             result = pipeline.run(pix_pipe, check_eager=False)
 
@@ -157,6 +191,6 @@ def batch_block(config, readers, window, overwrite=False):
         if record_results:
             store.write_result(pipeline, record_results,
                                overwrite=overwrite)
+
         # TODO: write out cached data
         return store.filename
-
