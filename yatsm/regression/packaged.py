@@ -20,7 +20,7 @@ _packaged = pkg_resources.resource_filename(
 if pkg_resources.resource_exists(__package__,
                                  os.path.join('pickles', 'pickles.json')):
     with open(_packaged, 'r') as f:
-        packaged_regressions = json.load(f).keys()
+        packaged_regressions = list(json.load(f).keys())
 
 
 def find_packaged_regressor(name):

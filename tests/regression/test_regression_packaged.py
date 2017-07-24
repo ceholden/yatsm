@@ -9,7 +9,7 @@ from yatsm.regression import packaged
 
 
 @pytest.mark.parametrize('name', packaged.packaged_regressions,
-                         ids=packaged.packaged_regressions)
+                         ids=list(packaged.packaged_regressions))
 def test_packaged_regressors(name):
     fname = packaged.find_packaged_regressor(name)
     assert os.path.isfile(fname)

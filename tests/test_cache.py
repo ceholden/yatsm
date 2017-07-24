@@ -141,7 +141,10 @@ def test_update_cache_file_add_obs(cachefile, example_cache,
 
     # Test and clean update
     np.testing.assert_equal(test_Y[:, :size_2, :], updated['Y'])
-    np.testing.assert_equal(test_IDs[:size_2], updated['image_IDs'])
+    np.testing.assert_equal(
+        test_IDs[:size_2].astype(updated['image_IDs'].dtype),
+        updated['image_IDs']
+    )
 
     os.remove('test.npz')
     os.remove('test_new.npz')
