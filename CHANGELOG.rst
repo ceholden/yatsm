@@ -5,6 +5,12 @@ All notable changes will appear in this log that begins with the release of ``v0
 
 For information on the style of this change log, see `keepachangelog.com <http://keepachangelog.com/>`__.
 
+`v0.6.3 <https://github.com/ceholden/yatsm/compare/v0.6.2...v0.6.3>`__ - 2017-07-24
+-----------------------------------------------------------------------------------
+
+Updates to deployment information (e.g., conda ``environment.yaml``) and some fixes for Python 3.
+
+
 `v0.6.2 <https://github.com/ceholden/yatsm/compare/v0.6.1...v0.6.2>`__ - 2017-01-18
 -----------------------------------------------------------------------------------
 
