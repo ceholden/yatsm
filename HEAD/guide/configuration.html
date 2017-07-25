@@ -310,14 +310,14 @@ options include:</p>
 <span class="c1"># Parameters common to all timeseries analysis models within YATSM package</span>
 <span class="l l-Scalar l-Scalar-Plain">YATSM</span><span class="p p-Indicator">:</span>
     <span class="l l-Scalar l-Scalar-Plain">algorithm</span><span class="p p-Indicator">:</span> <span class="s">&quot;CCDCesque&quot;</span>
-    <span class="l l-Scalar l-Scalar-Plain">prediction</span><span class="p p-Indicator">:</span> <span class="s">&quot;GLMNET_Lasso20&quot;</span>
+    <span class="l l-Scalar l-Scalar-Plain">prediction</span><span class="p p-Indicator">:</span> <span class="s">&quot;glmnet_Lasso20&quot;</span>
     <span class="l l-Scalar l-Scalar-Plain">design_matrix</span><span class="p p-Indicator">:</span> <span class="s">&quot;1</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">x</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">harm(x,</span><span class="nv"> </span><span class="s">1)</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">harm(x,</span><span class="nv"> </span><span class="s">2)</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">harm(x,</span><span class="nv"> </span><span class="s">3)&quot;</span>
     <span class="l l-Scalar l-Scalar-Plain">reverse</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
     <span class="l l-Scalar l-Scalar-Plain">commission_alpha</span><span class="p p-Indicator">:</span>
     <span class="c1"># Re-fit each segment, adding new coefficients &amp; RMSE info to record</span>
     <span class="l l-Scalar l-Scalar-Plain">refit</span><span class="p p-Indicator">:</span>
-        <span class="l l-Scalar l-Scalar-Plain">prefix</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">robust</span><span class="p p-Indicator">]</span>
-        <span class="l l-Scalar l-Scalar-Plain">prediction</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">RLM</span><span class="p p-Indicator">]</span>
+        <span class="l l-Scalar l-Scalar-Plain">prefix</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">rlm_</span><span class="p p-Indicator">]</span>
+        <span class="l l-Scalar l-Scalar-Plain">prediction</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">rlm_maxiter10</span><span class="p p-Indicator">]</span>
         <span class="l l-Scalar l-Scalar-Plain">stay_regularized</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">True</span><span class="p p-Indicator">]</span>
 
 <span class="c1"># Parameters for CCDCesque algorithm -- referenced by &quot;algorithm&quot; key in YATSM</span>
@@ -334,29 +334,6 @@ options include:</p>
         <span class="l l-Scalar l-Scalar-Plain">slope_test</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
         <span class="l l-Scalar l-Scalar-Plain">remove_noise</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
         <span class="l l-Scalar l-Scalar-Plain">dynamic_rmse</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
-
-<span class="c1"># Regression estimators</span>
-<span class="l l-Scalar l-Scalar-Plain">LassoCV</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_LassoCV_n50.pkl&quot;</span>
-    <span class="l l-Scalar l-Scalar-Plain">fit</span><span class="p p-Indicator">:</span>  <span class="c1"># optional arguments to the ``fit`` method of the predictor</span>
-
-<span class="l l-Scalar l-Scalar-Plain">Lasso20</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_Lasso20.pkl&quot;</span>
-
-<span class="l l-Scalar l-Scalar-Plain">OLS</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/OLS.pkl&quot;</span>
-
-<span class="l l-Scalar l-Scalar-Plain">GLMNET_LassoCV</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n50.pkl&quot;</span>
-
-<span class="l l-Scalar l-Scalar-Plain">GLMNET_Lasso20</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl&quot;</span>
-    <span class="l l-Scalar l-Scalar-Plain">fit</span><span class="p p-Indicator">:</span>
-        <span class="c1"># 8 penalties for 8 coefficients</span>
-        <span class="l l-Scalar l-Scalar-Plain">penalties</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">0</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">]</span>
-
-<span class="l l-Scalar l-Scalar-Plain">RLM</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/ceholden/Documents/yatsm/yatsm/regression/pickles/rlm_maxiter10.pkl&quot;</span>
 
 <span class="c1"># Section for phenology fitting</span>
 <span class="l l-Scalar l-Scalar-Plain">phenology</span><span class="p p-Indicator">:</span>
@@ -376,16 +353,6 @@ options include:</p>
         <span class="c1"># Upper and lower percentiles of EVI used for max/min scaling</span>
         <span class="l l-Scalar l-Scalar-Plain">q_min</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
         <span class="l l-Scalar l-Scalar-Plain">q_max</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">90</span>
-
-<span class="c1"># Section for segmentation</span>
-<span class="l l-Scalar l-Scalar-Plain">segment</span><span class="p p-Indicator">:</span>
-    <span class="c1"># Segmentation image</span>
-    <span class="l l-Scalar l-Scalar-Plain">segmentation</span><span class="p p-Indicator">:</span>
-    <span class="c1"># Resegmentation threshold (0 turns off resegmentation)</span>
-    <span class="l l-Scalar l-Scalar-Plain">resegment_crit</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
-    <span class="c1"># Resegmentation size thresholds</span>
-    <span class="l l-Scalar l-Scalar-Plain">resegment_minpix</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>
-    <span class="l l-Scalar l-Scalar-Plain">resegment_maxpix</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">50</span>
 
 <span class="c1"># Section for training and classification</span>
 <span class="l l-Scalar l-Scalar-Plain">classification</span><span class="p p-Indicator">:</span>
@@ -427,7 +394,7 @@ options include:</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Jul 25, 2017, 3:48:31 PM.
+      Last updated on Jul 25, 2017, 3:54:07 PM.
 
     </p>
   </div>
