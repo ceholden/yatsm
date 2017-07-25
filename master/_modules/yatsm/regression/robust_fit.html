@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.robust_fit &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.regression.robust_fit &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -93,6 +93,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -189,8 +200,8 @@
 
 
 <span class="c1"># Weight scaling methods</span>
-<span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<div class="viewcode-block" id="bisquare"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.bisquare">[docs]</a><span class="k">def</span> <span class="nf">bisquare</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">4.685</span><span class="p">):</span>
+<div class="viewcode-block" id="bisquare"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.bisquare">[docs]</a><span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bisquare</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">4.685</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns weighting for each residual using bisquare weight function</span>
 
@@ -208,28 +219,29 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">resid</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span></div>
 
 
-<span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<div class="viewcode-block" id="mad"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.mad">[docs]</a><span class="k">def</span> <span class="nf">mad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.6745</span><span class="p">):</span>
+<div class="viewcode-block" id="mad"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.mad">[docs]</a><span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">mad</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">0.6745</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns Median-Absolute-Deviation (MAD) of some data</span>
+<span class="sd">    Returns Median-Absolute-Deviation (MAD) for residuals</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        resid (np.ndarray): Observations (e.g., residuals)</span>
+<span class="sd">        resid (np.ndarray): residuals</span>
 <span class="sd">        c (float): scale factor to get to ~standard normal (default: 0.6745)</span>
 <span class="sd">                 (i.e. 1 / 0.75iCDF ~= 1.4826 = 1 / 0.6745)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        float: MAD &#39;robust&#39; standard deivation  estimate</span>
+<span class="sd">        float: MAD &#39;robust&#39; variance estimate</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        http://en.wikipedia.org/wiki/Median_absolute_deviation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Return median absolute deviation adjusted sigma</span>
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">c</span></div>
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">resid</span><span class="p">))</span> <span class="o">/</span> <span class="n">c</span></div>
 
 
 <span class="c1"># UTILITY FUNCTIONS</span>
-<span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># np.any prevents nopython</span>
+<span class="nd">@try_jit</span><span class="p">()</span>
 <span class="k">def</span> <span class="nf">_check_converge</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">))</span>
 
@@ -263,7 +275,7 @@
 
 
 <span class="c1"># Robust regression</span>
-<div class="viewcode-block" id="RLM"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.RLM">[docs]</a><span class="k">class</span> <span class="nc">RLM</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseEstimator</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">RLM</span><span class="p">(</span><span class="n">sklearn</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseEstimator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Robust Linear Model using Iterative Reweighted Least Squares (RIRLS)</span>
 
 <span class="sd">    Perform robust fitting regression via iteratively reweighted least squares</span>
@@ -308,7 +320,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-<div class="viewcode-block" id="RLM.fit"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.RLM.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fit a model predicting y from X design matrix</span>
 
 <span class="sd">        Args:</span>
@@ -338,9 +350,9 @@
             <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">converged</span> <span class="o">=</span> <span class="n">_check_converge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">_coef</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="RLM.predict"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.RLM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Predict yhat using model</span>
 
 <span class="sd">        Args:</span>
@@ -350,7 +362,7 @@
 <span class="sd">            np.ndarray: 1D yhat prediction</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span></div>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">((</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -358,7 +370,7 @@
                  <span class="s2">&quot; * Intercept = </span><span class="si">%.5f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
                  <span class="n">numpy</span><span class="o">.</span><span class="n">array_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
-                 <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span><span class="p">))</span></div>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span><span class="p">))</span>
 </pre></div>
 
            </div>
@@ -374,7 +386,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -396,7 +408,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -406,7 +418,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

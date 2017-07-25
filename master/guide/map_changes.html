@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Mapping Changes &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>Mapping Changes &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,9 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/>
+        <link rel="next" title="Classification" href="classification.html"/>
+        <link rel="prev" title="Mapping Derived Information" href="map_static.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +68,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -90,8 +92,23 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Mapping Changes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docs-todo">Docs TODO</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -162,7 +179,7 @@
             
   <div class="section" id="mapping-changes">
 <span id="guide-map-changes"></span><h1>Mapping Changes<a class="headerlink" href="#mapping-changes" title="Permalink to this headline">¶</a></h1>
-<p>To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the <span class="xref std std-ref">yatsm changemap</span>.</p>
+<p>To visualize change information it is often useful to create maps of the date when a pixel changes or to map the total number of changes detected within a desired range of dates. These maps can be created using the <a class="reference internal" href="../cli/yatsm_changemap.html#yatsm-changemap"><span class="std std-ref">yatsm changemap</span></a>.</p>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>For example, consider these mapping situations:</p>
@@ -199,13 +216,22 @@ done
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classification.html" class="btn btn-neutral float-right" title="Classification" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="map_static.html" class="btn btn-neutral" title="Mapping Derived Information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -227,7 +253,7 @@ done
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -237,7 +263,7 @@ done
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

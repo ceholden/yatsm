@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Science Models &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>Science Models &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,9 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../index.html"/>
+        <link rel="next" title="CCDCesque" href="ccdcesque.html"/>
+        <link rel="prev" title="Timeseries Model Specification" href="../model_specification.html"/> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -66,7 +68,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -90,8 +92,25 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Science Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#models">Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ccdcesque.html">CCDCesque</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
@@ -162,7 +181,7 @@
             
   <div class="section" id="science-models">
 <span id="guide-models"></span><h1>Science Models<a class="headerlink" href="#science-models" title="Permalink to this headline">¶</a></h1>
-<p>The time series model run using the YATSM package command line interface (i.e., <span class="xref std std-ref">yatsm_line</span> and <span class="xref std std-ref">yatsm_pixel</span>) is specified in the configuration file using the <code class="docutils literal"><span class="pre">YATSM['algorithm']</span></code> key:</p>
+<p>The time series model run using the YATSM package command line interface (i.e., <a class="reference internal" href="../../cli/yatsm_line.html#yatsm-line"><span class="std std-ref">yatsm line</span></a> and <a class="reference internal" href="../../cli/yatsm_pixel.html#yatsm-pixel"><span class="std std-ref">yatsm pixel</span></a>) is specified in the configuration file using the <code class="docutils literal"><span class="pre">YATSM['algorithm']</span></code> key:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">YATSM</span><span class="p p-Indicator">:</span>
     <span class="l l-Scalar l-Scalar-Plain">algorithm</span><span class="p p-Indicator">:</span> <span class="s">&quot;AN_ALGORITHM&quot;</span>
     <span class="l l-Scalar l-Scalar-Plain">...</span>
@@ -191,13 +210,22 @@
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ccdcesque.html" class="btn btn-neutral float-right" title="CCDCesque" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../model_specification.html" class="btn btn-neutral" title="Timeseries Model Specification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -219,7 +247,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -229,7 +257,7 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

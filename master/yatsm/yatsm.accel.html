@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.accel module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.accel module &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -165,7 +176,7 @@
 <p>Decorator <code class="docutils literal"><span class="pre">try_jit</span></code> accelerates computation via Numba, when available</p>
 <dl class="function">
 <dt id="yatsm.accel.try_jit">
-<code class="descclassname">yatsm.accel.</code><code class="descname">try_jit</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/accel.html#try_jit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.accel.try_jit" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.accel.</code><code class="descname">try_jit</code><span class="sig-paren">(</span><em>f</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/accel.html#try_jit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.accel.try_jit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply numba.jit to function <code class="docutils literal"><span class="pre">f</span></code> if Numba is available</p>
 <p>Accepts arguments to Numba jit function (signature, nopython, etc.).</p>
 <p>Examples:</p>
@@ -193,7 +204,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -215,7 +226,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -225,7 +236,7 @@
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

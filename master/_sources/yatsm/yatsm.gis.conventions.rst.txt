@@ -1,7 +1,0 @@
-yatsm\.gis\.conventions module
-==============================
-
-.. automodule:: yatsm.gis.conventions
-    :members:
-    :undoc-members:
-    :show-inheritance:

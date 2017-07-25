@@ -1,12 +1,16 @@
-yatsm\.mapping package
-======================
+yatsm.mapping package
+=====================
 
 Submodules
 ----------
 
 .. toctree::
 
-   yatsm.mapping.core
+   yatsm.mapping.changes
+   yatsm.mapping.classification
+   yatsm.mapping.phenology
+   yatsm.mapping.prediction
+   yatsm.mapping.utils
 
 Module contents
 ---------------

@@ -9,5 +9,4 @@ the datasets should be organized and prepared by viewing two example datasets
 located `here <https://github.com/ceholden/landsat_stack>`_.
 
 The issue tracker on Github is being used to track additions to this
-documentation section. Please see
-`ticket 34 <https://github.com/ceholden/yatsm/issues/34>`_.
+documentation section. Please see :issue:`34`.

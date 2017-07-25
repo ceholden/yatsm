@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python Module Index &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>Python Module Index &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="index.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="index.html"/>
  
 
 
@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -95,6 +95,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cli/scripts.html">Command Line Utilities</a></li>
@@ -203,17 +214,22 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.api.html#module-yatsm.api"><code class="xref">yatsm.api</code></a></td><td>
+       <a href="yatsm/yatsm.algorithms.yatsm.html#module-yatsm.algorithms.yatsm"><code class="xref">yatsm.algorithms.yatsm</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.classification.html#module-yatsm.classification"><code class="xref">yatsm.classification</code></a></td><td>
+       <a href="yatsm/yatsm.cache.html#module-yatsm.cache"><code class="xref">yatsm.cache</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.classification.roi.html#module-yatsm.classification.roi"><code class="xref">yatsm.classification.roi</code></a></td><td>
+       <a href="yatsm/yatsm.classifiers.html#module-yatsm.classifiers"><code class="xref">yatsm.classifiers</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.classifiers.diagnostics.html#module-yatsm.classifiers.diagnostics"><code class="xref">yatsm.classifiers.diagnostics</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -223,12 +239,27 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.cli.batch.html#module-yatsm.cli.batch"><code class="xref">yatsm.cli.batch</code></a></td><td>
+       <a href="yatsm/yatsm.cli.cache.html#module-yatsm.cli.cache"><code class="xref">yatsm.cli.cache</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="yatsm/yatsm.cli.changemap.html#module-yatsm.cli.changemap"><code class="xref">yatsm.cli.changemap</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.cli.classify.html#module-yatsm.cli.classify"><code class="xref">yatsm.cli.classify</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.cli.console.html#module-yatsm.cli.console"><code class="xref">yatsm.cli.console</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.cli.line.html#module-yatsm.cli.line"><code class="xref">yatsm.cli.line</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -248,7 +279,12 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.config.html#module-yatsm.config"><code class="xref">yatsm.config</code></a></td><td>
+       <a href="yatsm/yatsm.cli.pixel.html#module-yatsm.cli.pixel"><code class="xref">yatsm.cli.pixel</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.config_parser.html#module-yatsm.config_parser"><code class="xref">yatsm.config_parser</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -258,57 +294,27 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.executor.html#module-yatsm.executor"><code class="xref">yatsm.executor</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.gis.html#module-yatsm.gis"><code class="xref">yatsm.gis</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.gis.conventions.html#module-yatsm.gis.conventions"><code class="xref">yatsm.gis.conventions</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.gis.convert.html#module-yatsm.gis.convert"><code class="xref">yatsm.gis.convert</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.gis.core.html#module-yatsm.gis.core"><code class="xref">yatsm.gis.core</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.gis.projections.html#module-yatsm.gis.projections"><code class="xref">yatsm.gis.projections</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.gis.tilespec.html#module-yatsm.gis.tilespec"><code class="xref">yatsm.gis.tilespec</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.gis.utils.html#module-yatsm.gis.utils"><code class="xref">yatsm.gis.utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
        <a href="yatsm/yatsm.io.html#module-yatsm.io"><code class="xref">yatsm.io</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.io.backends.html#module-yatsm.io.backends"><code class="xref">yatsm.io.backends</code></a></td><td>
+       <a href="yatsm/yatsm.io.helpers.html#module-yatsm.io.helpers"><code class="xref">yatsm.io.helpers</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.io.utils.html#module-yatsm.io.utils"><code class="xref">yatsm.io.utils</code></a></td><td>
+       <a href="yatsm/yatsm.io.readers.html#module-yatsm.io.readers"><code class="xref">yatsm.io.readers</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.io.stack_line_readers.html#module-yatsm.io.stack_line_readers"><code class="xref">yatsm.io.stack_line_readers</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.log_yatsm.html#module-yatsm.log_yatsm"><code class="xref">yatsm.log_yatsm</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -318,7 +324,27 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.mapping.core.html#module-yatsm.mapping.core"><code class="xref">yatsm.mapping.core</code></a></td><td>
+       <a href="yatsm/yatsm.mapping.changes.html#module-yatsm.mapping.changes"><code class="xref">yatsm.mapping.changes</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.mapping.classification.html#module-yatsm.mapping.classification"><code class="xref">yatsm.mapping.classification</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.mapping.phenology.html#module-yatsm.mapping.phenology"><code class="xref">yatsm.mapping.phenology</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.mapping.prediction.html#module-yatsm.mapping.prediction"><code class="xref">yatsm.mapping.prediction</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.mapping.utils.html#module-yatsm.mapping.utils"><code class="xref">yatsm.mapping.utils</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -338,52 +364,12 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.html#module-yatsm.pipeline"><code class="xref">yatsm.pipeline</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.language.html#module-yatsm.pipeline.language"><code class="xref">yatsm.pipeline.language</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.tasks.html#module-yatsm.pipeline.tasks"><code class="xref">yatsm.pipeline.tasks</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.tasks.change.html#module-yatsm.pipeline.tasks.change"><code class="xref">yatsm.pipeline.tasks.change</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.tasks.classify.html#module-yatsm.pipeline.tasks.classify"><code class="xref">yatsm.pipeline.tasks.classify</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.tasks.postprocess.html#module-yatsm.pipeline.tasks.postprocess"><code class="xref">yatsm.pipeline.tasks.postprocess</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.tasks.preprocess.html#module-yatsm.pipeline.tasks.preprocess"><code class="xref">yatsm.pipeline.tasks.preprocess</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.pipeline.tasks.stash.html#module-yatsm.pipeline.tasks.stash"><code class="xref">yatsm.pipeline.tasks.stash</code></a></td><td>
+       <a href="yatsm/yatsm.plots.html#module-yatsm.plots"><code class="xref">yatsm.plots</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="yatsm/yatsm.regression.html#module-yatsm.regression"><code class="xref">yatsm.regression</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.regression.cran.html#module-yatsm.regression.cran"><code class="xref">yatsm.regression.cran</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -398,32 +384,32 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.regression.packaged.html#module-yatsm.regression.packaged"><code class="xref">yatsm.regression.packaged</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.regression.pickles.html#module-yatsm.regression.pickles"><code class="xref">yatsm.regression.pickles</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.regression.pickles.serialize.html#module-yatsm.regression.pickles.serialize"><code class="xref">yatsm.regression.pickles.serialize</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="yatsm/yatsm.regression.recresid.html#module-yatsm.regression.recresid"><code class="xref">yatsm.regression.recresid</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
        <a href="yatsm/yatsm.regression.robust_fit.html#module-yatsm.regression.robust_fit"><code class="xref">yatsm.regression.robust_fit</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
        <a href="yatsm/yatsm.regression.transforms.html#module-yatsm.regression.transforms"><code class="xref">yatsm.regression.transforms</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.results.html#module-yatsm.results"><code class="xref">yatsm.results</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.results.utils.html#module-yatsm.results.utils"><code class="xref">yatsm.results.utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.structural_break.html#module-yatsm.structural_break"><code class="xref">yatsm.structural_break</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="yatsm/yatsm.tslib.html#module-yatsm.tslib"><code class="xref">yatsm.tslib</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -456,7 +442,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -478,7 +464,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -488,7 +474,7 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

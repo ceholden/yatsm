@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Integration of user-provided time series algorithms &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>Integration of user-provided time series algorithms &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,9 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../index.html"/>
+        <link rel="next" title="Command Line Utilities" href="../../cli/scripts.html"/>
+        <link rel="prev" title="Long Term Mean Phenology" href="../phenology.html"/> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -66,7 +68,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -90,8 +92,23 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Integration of user-provided time series algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#behind-the-scenes">Behind the scenes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References:</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
@@ -165,10 +182,10 @@
 <p>The YATSM package provides some time series algorithms as part of the
 project, but developers can also build and integrate their own algorithms
 into the suite of time series algorithms that can be utilized by programs like
-<span class="xref std std-ref">yatsm line</span> or <span class="xref std std-ref">yatsm pixel</span>.</p>
-<p>YATSM uses the <a class="reference external" href="https://pythonhosted.org/setuptools/setuptools.html">setuptools</a> module concept of &#8220;entry points&#8221; to
+<a class="reference internal" href="../../cli/yatsm_line.html#yatsm-line"><span class="std std-ref">yatsm line</span></a> or <a class="reference internal" href="../../cli/yatsm_pixel.html#yatsm-pixel"><span class="std std-ref">yatsm pixel</span></a>.</p>
+<p>YATSM uses the <a class="reference external" href="https://pythonhosted.org/setuptools/setuptools.html">setuptools</a> module concept of “entry points” to
 enumerate time series algorithms. YATSM algorithms are registered into a
-group based on the type of algorithm &#8211; there are entry point groups for
+group based on the type of algorithm – there are entry point groups for
 algorithms that find change as separate from algorithsm which postprocess
 existing change results. Both categories link an entry point name to a
 class or function usable within the YATSM package. For example, from the
@@ -177,10 +194,10 @@ class or function usable within the YATSM package. For example, from the
 <span class="n">CCDCesque</span><span class="o">=</span><span class="n">yatsm</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">ccdc</span><span class="p">:</span><span class="n">CCDCesque</span>
 </pre></div>
 </div>
-<p>This entry point definition links the name of the algorithm, &#8220;CCDCesque&#8221;, to
+<p>This entry point definition links the name of the algorithm, “CCDCesque”, to
 the module (<a class="reference internal" href="../../yatsm/yatsm.algorithms.ccdc.html#module-yatsm.algorithms.ccdc" title="yatsm.algorithms.ccdc"><code class="xref py py-mod docutils literal"><span class="pre">yatsm.algorithms.ccdc</span></code></a>) containing the relevant
 time series algorithm class, <a class="reference internal" href="../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-class docutils literal"><span class="pre">yatsm.algorithms.ccdc.CCDCesque</span></code></a>. Users
-select the &#8220;CCDCesque&#8221; algorithm by defining it their configuration files.</p>
+select the “CCDCesque” algorithm by defining it their configuration files.</p>
 <p>Using entry points, you can create your own algorithms, distribute them in
 separate Python packages, and YATSM will be able to find them and enable them
 to work within the YATSM package.</p>
@@ -213,13 +230,22 @@ including additional algorithms via <a class="reference external" href="https://
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../cli/scripts.html" class="btn btn-neutral float-right" title="Command Line Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../phenology.html" class="btn btn-neutral" title="Long Term Mean Phenology" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -241,7 +267,7 @@ including additional algorithms via <a class="reference external" href="https://
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -251,7 +277,7 @@ including additional algorithms via <a class="reference external" href="https://
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

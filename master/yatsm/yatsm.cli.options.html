@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.options module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.cli.options module &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -165,22 +176,12 @@
 <p>YATSM command line interface</p>
 <dl class="function">
 <dt id="yatsm.cli.options.arg_date">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">arg_date</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.cli.options.arg_date" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="yatsm.cli.options.arg_end_date">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">arg_end_date</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.cli.options.arg_end_date" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">yatsm.cli.options.</code><code class="descname">arg_date</code><span class="sig-paren">(</span><em>var='date'</em>, <em>metavar='&lt;date&gt;'</em>, <em>date_frmt_key='date_frmt'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#arg_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.arg_date" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="yatsm.cli.options.arg_job_number">
 <code class="descclassname">yatsm.cli.options.</code><code class="descname">arg_job_number</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#arg_job_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.arg_job_number" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="yatsm.cli.options.arg_start_date">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">arg_start_date</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="headerlink" href="#yatsm.cli.options.arg_start_date" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -190,38 +191,19 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.cli.options.callback_nodata">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">callback_nodata</code><span class="sig-paren">(</span><em>ctx</em>, <em>param</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#callback_nodata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.callback_nodata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Nodata handling</p>
-</dd></dl>
+<dt id="yatsm.cli.options.opt_exampleimg">
+<code class="descclassname">yatsm.cli.options.</code><code class="descname">opt_exampleimg</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#opt_exampleimg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.opt_exampleimg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
-<dt id="yatsm.cli.options.fetch_config">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">fetch_config</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#fetch_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.fetch_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch <code class="docutils literal"><span class="pre">config</span></code> option and return <span class="xref std std-ref">yatsm.api.Config</span></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.cli.options.opt_map_date_format">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">opt_map_date_format</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#opt_map_date_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.opt_map_date_format" title="Permalink to this definition">¶</a></dt>
+<dt id="yatsm.cli.options.opt_resultdir">
+<code class="descclassname">yatsm.cli.options.</code><code class="descname">opt_resultdir</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#opt_resultdir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.opt_resultdir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="yatsm.cli.options.valid_int_gt_zero">
 <code class="descclassname">yatsm.cli.options.</code><code class="descname">valid_int_gt_zero</code><span class="sig-paren">(</span><em>ctx</em>, <em>param</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/cli/options.html#valid_int_gt_zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cli.options.valid_int_gt_zero" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validator for integers &gt; 0 (value &gt;= 1)</p>
-</dd></dl>
-
-<dl class="data">
-<dt id="yatsm.cli.options.mapping_decorations">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">mapping_decorations</code><em class="property"> = &lt;functools.partial object&gt;</em><a class="headerlink" href="#yatsm.cli.options.mapping_decorations" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>callable</em> &#8211; Decorator that combines all Click options from <span class="xref std std-ref">opts_mapping</span></p>
-</dd></dl>
-
-<dl class="data">
-<dt id="yatsm.cli.options.opts_mapping">
-<code class="descclassname">yatsm.cli.options.</code><code class="descname">opts_mapping</code><em class="property"> = (&lt;function pass_context&gt;, &lt;function decorator&gt;, &lt;function decorator&gt;, &lt;function decorator&gt;, &lt;function decorator&gt;)</em><a class="headerlink" href="#yatsm.cli.options.opts_mapping" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple</em> &#8211; Collection of optional arguments used in map scripts</p>
 </dd></dl>
 
 </div>
@@ -240,7 +222,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -262,7 +244,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -272,7 +254,7 @@
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

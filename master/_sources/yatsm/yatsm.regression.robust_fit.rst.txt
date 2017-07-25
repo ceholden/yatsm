@@ -1,5 +1,5 @@
-yatsm\.regression\.robust\_fit module
-=====================================
+yatsm.regression.robust_fit module
+==================================
 
 .. automodule:: yatsm.regression.robust_fit
     :members:

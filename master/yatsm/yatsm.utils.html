@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.utils module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.utils module &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -162,17 +173,58 @@
             
   <div class="section" id="module-yatsm.utils">
 <span id="yatsm-utils-module"></span><h1>yatsm.utils module<a class="headerlink" href="#module-yatsm.utils" title="Permalink to this headline">¶</a></h1>
-<p>Utility functions</p>
-<dl class="function">
-<dt id="yatsm.utils.cached_property">
-<code class="descclassname">yatsm.utils.</code><code class="descname">cached_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#cached_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.cached_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cache a class property (e.g., that requires a lookup)</p>
-</dd></dl>
-
 <dl class="function">
 <dt id="yatsm.utils.copy_dict_filter_key">
 <code class="descclassname">yatsm.utils.</code><code class="descname">copy_dict_filter_key</code><span class="sig-paren">(</span><em>d</em>, <em>regex</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#copy_dict_filter_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.copy_dict_filter_key" title="Permalink to this definition">¶</a></dt>
-<dd><p>Copy a dict recursively, but only if key doesn&#8217;t match regex pattern</p>
+<dd><p>Copy a dict recursively, but only if key doesn’t match regex pattern</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.utils.csvfile_to_dataframe">
+<code class="descclassname">yatsm.utils.</code><code class="descname">csvfile_to_dataframe</code><span class="sig-paren">(</span><em>input_file</em>, <em>date_format='%Y%j'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#csvfile_to_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.csvfile_to_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return sorted filenames of images from input text file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_file</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – text file of dates and files</li>
+<li><strong>date_format</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – format of dates in file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">pd.DataFrame of dates, sensor IDs, and filenames</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.utils.date2index">
+<code class="descclassname">yatsm.utils.</code><code class="descname">date2index</code><span class="sig-paren">(</span><em>dates</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#date2index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.date2index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns index of sorted array <cite>dates</cite> containing the date <cite>d</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dates</strong> (<em>np.ndarray</em>) – array of dates (or numbers really) in sorted order</li>
+<li><strong>d</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – number to search for</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">index of <cite>dates</cite> containing value <cite>d</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)">int</a></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -184,10 +236,10 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.utils.distribute_jobs.params.job_number"></span><strong>job_number</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.distribute_jobs.params.job_number">¶</a> &#8211; 0-indexed processor to distribute jobs to</li>
-<li><span class="target" id="yatsm.utils.distribute_jobs.params.total_jobs"></span><strong>total_jobs</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.distribute_jobs.params.total_jobs">¶</a> &#8211; total number of processors running jobs</li>
-<li><span class="target" id="yatsm.utils.distribute_jobs.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.distribute_jobs.params.n">¶</a> &#8211; number of tasks (e.g., lines in image, regions in segment)</li>
-<li><span class="target" id="yatsm.utils.distribute_jobs.params.interlaced"></span><strong>interlaced</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.distribute_jobs.params.interlaced">¶</a> &#8211; interlace job assignment (default: True)</li>
+<li><strong>job_number</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – 0-indexed processor to distribute jobs to</li>
+<li><strong>total_jobs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – total number of processors running jobs</li>
+<li><strong>n</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of tasks (e.g., lines in image, regions in segment)</li>
+<li><strong>interlaced</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – interlace job assignment (default: True)</li>
 </ul>
 </td>
 </tr>
@@ -197,7 +249,7 @@
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">np.ndarray</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> &#8211; raise error if <cite>job_number</cite> and <cite>total_jobs</cite> specified
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> – raise error if <cite>job_number</cite> and <cite>total_jobs</cite> specified
 result in no jobs being assinged (happens if <cite>job_number</cite> and
 <cite>total_jobs</cite> are both 1)</p>
 </td>
@@ -207,24 +259,23 @@ result in no jobs being assinged (happens if <cite>job_number</cite> and
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.utils.find">
-<code class="descclassname">yatsm.utils.</code><code class="descname">find</code><span class="sig-paren">(</span><em>location</em>, <em>pattern</em>, <em>regex=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.find" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a sorted list of files matching pattern</p>
+<dt id="yatsm.utils.find_results">
+<code class="descclassname">yatsm.utils.</code><code class="descname">find_results</code><span class="sig-paren">(</span><em>location</em>, <em>pattern</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#find_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.find_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create list of result files and return sorted</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.utils.find.params.location"></span><strong>location</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.find.params.location">¶</a> &#8211; Directory location to search</li>
-<li><span class="target" id="yatsm.utils.find.params.pattern"></span><strong>pattern</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.find.params.pattern">¶</a> &#8211; Search pattern for files</li>
-<li><span class="target" id="yatsm.utils.find.params.regex"></span><strong>regex</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.find.params.regex">¶</a> &#8211; True if <code class="docutils literal"><span class="pre">pattern</span></code> is a regular expression</li>
+<li><strong>location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – directory location to search</li>
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – glob style search pattern for results</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of file paths for files found</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of file paths for results found</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)">list</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">results (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)">list</a>)</p>
 </td>
 </tr>
 </tbody>
@@ -232,20 +283,41 @@ result in no jobs being assinged (happens if <cite>job_number</cite> and
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.utils.mkdir_p">
-<code class="descclassname">yatsm.utils.</code><code class="descname">mkdir_p</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#mkdir_p"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.mkdir_p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a directory, ignoring error if it exists (i.e., <code class="docutils literal"><span class="pre">mkdir</span> <span class="pre">-p</span></code>)</p>
+<dt id="yatsm.utils.get_image_IDs">
+<code class="descclassname">yatsm.utils.</code><code class="descname">get_image_IDs</code><span class="sig-paren">(</span><em>filenames</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#get_image_IDs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.get_image_IDs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns image IDs for each filename (basename of dirname of file)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><span class="target" id="yatsm.utils.mkdir_p.params.d"></span><strong>d</strong><a class="paramlink headerlink reference internal" href="#yatsm.utils.mkdir_p.params.d">¶</a> &#8211; directory path to create</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filenames</strong> (<em>iterable</em>) – filenames to return image IDs for</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">image IDs for each file in <cite>filenames</cite></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.utils.get_output_name">
+<code class="descclassname">yatsm.utils.</code><code class="descname">get_output_name</code><span class="sig-paren">(</span><em>dataset_config</em>, <em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#get_output_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.get_output_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns output name for specified config and line number</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset_config</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – configuration information about the dataset</li>
+<li><strong>line</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – line of the dataset for output</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#OSError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">OSError</span></code></a> &#8211; Raise OSError if cannot create directory for reasons other</li>
-<li>than it existing already (errno 13 &#8220;EEXIST&#8221;)</li>
-</ul>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">output filename</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">filename (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)">str</a>)</p>
 </td>
 </tr>
 </tbody>
@@ -253,14 +325,38 @@ result in no jobs being assinged (happens if <cite>job_number</cite> and
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.utils.np_promote_all_types">
-<code class="descclassname">yatsm.utils.</code><code class="descname">np_promote_all_types</code><span class="sig-paren">(</span><em>*dtypes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#np_promote_all_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.np_promote_all_types" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="yatsm.utils.is_integer">
+<code class="descclassname">yatsm.utils.</code><code class="descname">is_integer</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#is_integer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.is_integer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if <cite>s</cite> is an integer</p>
+</dd></dl>
 
 <dl class="function">
-<dt id="yatsm.utils.to_number">
-<code class="descclassname">yatsm.utils.</code><code class="descname">to_number</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#to_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.to_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert string to most appropriate number</p>
+<dt id="yatsm.utils.iter_records">
+<code class="descclassname">yatsm.utils.</code><code class="descname">iter_records</code><span class="sig-paren">(</span><em>records</em>, <em>warn_on_empty=False</em>, <em>yield_filename=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#iter_records"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.iter_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates over records, returning result NumPy array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>records</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List containing filenames of results</li>
+<li><strong>warn_on_empty</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Log warning if result contained no
+result records (default: False)</li>
+<li><strong>yield_filename</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Yield the filename and the record</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last"><em>np.ndarray or tuple</em> – Result saved in record and the filename, if desired</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.utils.write_output">
+<code class="descclassname">yatsm.utils.</code><code class="descname">write_output</code><span class="sig-paren">(</span><em>raster</em>, <em>output</em>, <em>image_ds</em>, <em>gdal_frmt</em>, <em>ndv</em>, <em>band_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/utils.html#write_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.utils.write_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write raster to output file</p>
 </dd></dl>
 
 </div>
@@ -279,7 +375,7 @@ result in no jobs being assinged (happens if <cite>job_number</cite> and
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -301,7 +397,7 @@ result in no jobs being assinged (happens if <cite>job_number</cite> and
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -311,7 +407,7 @@ result in no jobs being assinged (happens if <cite>job_number</cite> and
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

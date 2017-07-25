@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.postprocess module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.algorithms.postprocess module &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -194,8 +205,8 @@ values from all <code class="docutils literal"><span class="pre">model.test_indi
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.algorithms.postprocess.commission_test.params.yatsm"></span><strong>yatsm</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.commission_test.params.yatsm">¶</a> &#8211; fitted YATSM model to check for commission errors</li>
-<li><span class="target" id="yatsm.algorithms.postprocess.commission_test.params.alpha"></span><strong>alpha</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.commission_test.params.alpha">¶</a> &#8211; significance level for F-statistic (default: 0.10)</li>
+<li><strong>yatsm</strong> (<em>YATSM model</em>) – fitted YATSM model to check for commission errors</li>
+<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – significance level for F-statistic (default: 0.10)</li>
 </ul>
 </td>
 </tr>
@@ -215,31 +226,11 @@ values from all <code class="docutils literal"><span class="pre">model.test_indi
 </dd></dl>
 
 <dl class="function">
-<dt id="yatsm.algorithms.postprocess.date2index">
-<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">date2index</code><span class="sig-paren">(</span><em>dates</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#date2index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.date2index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns index of sorted array <cite>dates</cite> containing the date <cite>d</cite>
-:param _sphinx_paramlinks_yatsm.algorithms.postprocess.date2index.dates: array of dates (or numbers really) in sorted order
-:type dates: np.ndarray
-:param _sphinx_paramlinks_yatsm.algorithms.postprocess.date2index.d: number to search for
-:type d: int, float</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">index of <cite>dates</cite> containing value <cite>d</cite></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)">int</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="yatsm.algorithms.postprocess.omission_test">
 <code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">omission_test</code><span class="sig-paren">(</span><em>model</em>, <em>crit=0.05</em>, <em>behavior='ANY'</em>, <em>indices=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/postprocess.html#omission_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.omission_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add omitted breakpoint into records based on residual stationarity</p>
 <p>Uses recursive residuals within a CUMSUM test to check if each model
-has omitted a &#8220;structural change&#8221; (e.g., land cover change). Returns
+has omitted a “structural change” (e.g., land cover change). Returns
 an array of True or False for each timeseries segment record depending
 on result from <cite>statsmodels.stats.diagnostic.breaks_cusumolsresid</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -247,13 +238,13 @@ on result from <cite>statsmodels.stats.diagnostic.breaks_cusumolsresid</cite>.</
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.algorithms.postprocess.omission_test.params.crit"></span><strong>crit</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.omission_test.params.crit">¶</a> &#8211; Critical p-value for rejection of null
+<li><strong>crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Critical p-value for rejection of null
 hypothesis that data contain no structural change</li>
-<li><span class="target" id="yatsm.algorithms.postprocess.omission_test.params.behavior"></span><strong>behavior</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.omission_test.params.behavior">¶</a> &#8211; Method for dealing with multiple
+<li><strong>behavior</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Method for dealing with multiple
 <cite>test_indices</cite>. <cite>ANY</cite> will return True if any one test index
 rejects the null hypothesis. <cite>ALL</cite> will only return True if ALL
 test indices reject the null hypothesis.</li>
-<li><span class="target" id="yatsm.algorithms.postprocess.omission_test.params.indices"></span><strong>indices</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.omission_test.params.indices">¶</a> &#8211; Array indices to test. User provided
+<li><strong>indices</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array indices to test. User provided
 indices must be a subset of <cite>model.test_indices</cite>.</li>
 </ul>
 </td>
@@ -284,14 +275,14 @@ function is called.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.algorithms.postprocess.refit_record.params.model"></span><strong>model</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.refit_record.params.model">¶</a> &#8211; YATSM model to refit</li>
-<li><span class="target" id="yatsm.algorithms.postprocess.refit_record.params.prefix"></span><strong>prefix</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.refit_record.params.prefix">¶</a> &#8211; prefix for refitted coefficient and RMSE (don&#8217;t include
+<li><strong>model</strong> (<em>YATSM model</em>) – YATSM model to refit</li>
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – prefix for refitted coefficient and RMSE (don’t include
 underscore as it will be added)</li>
-<li><span class="target" id="yatsm.algorithms.postprocess.refit_record.params.estimator"></span><strong>estimator</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.refit_record.params.estimator">¶</a> &#8211; instance of a scikit-learn compatible estimator
+<li><strong>estimator</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><em>object</em></a>) – instance of a scikit-learn compatible estimator
 object</li>
-<li><span class="target" id="yatsm.algorithms.postprocess.refit_record.params.fitopt"></span><strong>fitopt</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.refit_record.params.fitopt">¶</a> &#8211; dict of options for the <code class="docutils literal"><span class="pre">fit</span></code> method of the
+<li><strong>fitopt</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – dict of options for the <code class="docutils literal"><span class="pre">fit</span></code> method of the
 <code class="docutils literal"><span class="pre">estimator</span></code> provided (default: None)</li>
-<li><span class="target" id="yatsm.algorithms.postprocess.refit_record.params.keep_regularized"></span><strong>keep_regularized</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.postprocess.refit_record.params.keep_regularized">¶</a> &#8211; do not use features with coefficient
+<li><strong>keep_regularized</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – do not use features with coefficient
 estimates that are fit to 0 (i.e., if using L1 regularization)</li>
 </ul>
 </td>
@@ -327,7 +318,7 @@ estimates that are fit to 0 (i.e., if using L1 regularization)</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -349,7 +340,7 @@ estimates that are fit to 0 (i.e., if using L1 regularization)</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -359,7 +350,7 @@ estimates that are fit to 0 (i.e., if using L1 regularization)</li>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

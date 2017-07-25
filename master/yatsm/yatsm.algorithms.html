@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms package &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.algorithms package &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -168,6 +179,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.algorithms.ccdc.html">yatsm.algorithms.ccdc module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.algorithms.postprocess.html">yatsm.algorithms.postprocess module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.algorithms.yatsm.html">yatsm.algorithms.yatsm module</a></li>
 </ul>
 </div>
 </div>
@@ -181,39 +193,6 @@
 </ul>
 </dd>
 </dl>
-<dl class="class">
-<dt id="yatsm.algorithms.Segment">
-<em class="property">class </em><code class="descclassname">yatsm.algorithms.</code><code class="descname">Segment</code><a class="reference internal" href="../_modules/yatsm/algorithms/_core.html#Segment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.Segment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
-<p>YATSM Time Series Segment as NumPy Structured Array</p>
-<dl class="classmethod">
-<dt id="yatsm.algorithms.Segment.barebones">
-<em class="property">classmethod </em><code class="descname">barebones</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/_core.html#Segment.barebones"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.Segment.barebones" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a barebones, minimum required fields, Segment</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="yatsm.algorithms.Segment.from_example">
-<em class="property">classmethod </em><code class="descname">from_example</code><span class="sig-paren">(</span><em>**attrs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/algorithms/_core.html#Segment.from_example"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.Segment.from_example" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a Segment from example name=value pairs</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><span class="target" id="yatsm.algorithms.Segment.from_example.params.attrs"></span><strong>attrs</strong><a class="paramlink headerlink reference internal" href="#yatsm.algorithms.Segment.from_example.params.attrs">¶</a> &#8211; Collection of Segment attributes to
-use in Segment definition</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">An empty structured <span class="xref std std-ref">np.ndarray</span> with data types
-for default segment attributes and any others listed in <code class="docutils literal"><span class="pre">attrs</span></code></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#yatsm.algorithms.Segment" title="yatsm.algorithms.Segment">Segment</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 </div>
 
@@ -231,7 +210,7 @@ for default segment attributes and any others listed in <code class="docutils li
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -253,7 +232,7 @@ for default segment attributes and any others listed in <code class="docutils li
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -263,7 +242,7 @@ for default segment attributes and any others listed in <code class="docutils li
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

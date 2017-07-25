@@ -1,5 +1,5 @@
-yatsm\.errors module
-====================
+yatsm.errors module
+===================
 
 .. automodule:: yatsm.errors
     :members:

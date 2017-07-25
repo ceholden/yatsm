@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.algorithms.ccdc &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.algorithms.ccdc &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -93,6 +93,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -173,13 +184,14 @@
 
 <span class="kn">import</span> <span class="nn">sklearn.linear_model</span>
 
+<span class="kn">from</span> <span class="nn">.yatsm</span> <span class="k">import</span> <span class="n">YATSM</span>
 <span class="kn">from</span> <span class="nn">..accel</span> <span class="k">import</span> <span class="n">try_jit</span>
 <span class="kn">from</span> <span class="nn">..errors</span> <span class="k">import</span> <span class="n">TSLengthException</span>
 <span class="kn">from</span> <span class="nn">..masking</span> <span class="k">import</span> <span class="n">smooth_mask</span><span class="p">,</span> <span class="n">multitemp_mask</span>
 <span class="kn">from</span> <span class="nn">..regression.diagnostics</span> <span class="k">import</span> <span class="n">rmse</span>
 
 <span class="c1"># Setup</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm.algo&#39;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm_algo&#39;</span><span class="p">)</span>
 
 
 <span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -195,7 +207,7 @@
             <span class="p">)</span>
 
 
-<div class="viewcode-block" id="CCDCesque"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque">[docs]</a><span class="k">class</span> <span class="nc">CCDCesque</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="CCDCesque"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque">[docs]</a><span class="k">class</span> <span class="nc">CCDCesque</span><span class="p">(</span><span class="n">YATSM</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Initialize a CCDC-like model for data X (spectra) and Y (dates)</span>
 
 <span class="sd">    An unofficial and unvalidated port of the Continuous Change Detection and</span>
@@ -243,10 +255,6 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.0.0&#39;</span>
-    <span class="n">__name</span> <span class="o">=</span> <span class="s1">&#39;yatsm-ccdcesque&#39;</span>
-    <span class="n">__algorithm__</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">__name</span><span class="p">,</span> <span class="n">__version__</span><span class="p">])</span>
-
     <span class="n">ndays</span> <span class="o">=</span> <span class="mf">365.25</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -258,17 +266,8 @@
                  <span class="n">remove_noise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">green_band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">swir1_band</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                  <span class="n">dynamic_rmse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">slope_test</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">idx_slope</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">test_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">test_indices</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">estimator</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">estimator</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">estimator_fit</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fit&#39;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># leave empty, fill in during `fit`</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_record</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_series</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">px</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;px&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">py</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Parent sets up test_indices and lm</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CCDCesque</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">test_indices</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Store model hyperparameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">consecutive</span> <span class="o">=</span> <span class="n">consecutive</span>
@@ -361,7 +360,9 @@
 <span class="sd">            dates (numpy.ndarray): ordinal dates for each observation in X/Y</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            CCDCesque: Returns ``self``</span>
+<span class="sd">            numpy.ndarray: NumPy structured array containing timeseries</span>
+<span class="sd">                model attribute information</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="o">!=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;X/Y/dates must have same number of observations&#39;</span><span class="p">)</span>
@@ -429,7 +430,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitoring</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span></div>
 
 <div class="viewcode-block" id="CCDCesque.reset"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Reset state information required for model fittings</span>
@@ -760,113 +761,7 @@
             <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
             <span class="n">_rmse</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">i_doy</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">_X</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">_rmse</span></div>
-
-<span class="c1"># From (former) parent</span>
-<div class="viewcode-block" id="CCDCesque.fit_models"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.fit_models">[docs]</a>    <span class="k">def</span> <span class="nf">fit_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">bands</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Fit timeseries models for `bands` within `Y` for a given `X`</span>
-
-<span class="sd">        Updates or initializes fit for ``self.models``</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            X (numpy.ndarray): design matrix (number of observations x number</span>
-<span class="sd">                of features)</span>
-<span class="sd">            Y (numpy.ndarray): independent variable matrix (number of series x</span>
-<span class="sd">                number of observations) observation in the X design matrix</span>
-<span class="sd">            bands (iterable): Subset of bands of `Y` to fit. If None are</span>
-<span class="sd">                provided, fit all bands in Y</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">bands</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">bands</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_series</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="p">:]</span>
-
-            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">estimator_fit</span><span class="p">)</span>
-
-            <span class="c1"># Add in RMSE calculation</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">rmse</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
-
-            <span class="c1"># Add intercept to intercept term of design matrix</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">coef</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span></div>
-
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Iterate over the timeseries segment records</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">record</span>
-
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Return the number of segments in this timeseries model</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">)</span>
-
-<div class="viewcode-block" id="CCDCesque.setup"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Setup model for input dataset and (optionally) return design matrix</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            df (pandas.DataFrame): Pandas dataframe containing dataset</span>
-<span class="sd">                attributes (e.g., dates, image ID, path/row, metadata, etc.)</span>
-<span class="sd">            config (dict): YATSM configuration dictionary from user, including</span>
-<span class="sd">                &#39;dataset&#39; and &#39;YATSM&#39; sub-configurations</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            numpy.ndarray or None: return design matrix if used by algorithm</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;design_matrix&#39;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">X</span></div>
-
-<div class="viewcode-block" id="CCDCesque.preprocess"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span>
-                   <span class="n">min_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                   <span class="n">mask_band</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Preprocess a unit area of data (e.g., pixel, segment, etc.)</span>
-
-<span class="sd">        This preprocessing step will remove all observations that either</span>
-<span class="sd">        fall outside of the minimum/maximum range of the data or are flagged</span>
-<span class="sd">        for masking in the ``mask_band`` variable in ``Y``. If ``min_values``</span>
-<span class="sd">        or ``max_values`` are not specified, this masking step is skipped.</span>
-<span class="sd">        Similarly, masking based on a QA/QC or cloud mask will not be performed</span>
-<span class="sd">        if ``mask_band`` or ``mask_values`` are not provided.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            X (numpy.ndarray): design matrix (number of observations x number</span>
-<span class="sd">                of features)</span>
-<span class="sd">            Y (numpy.ndarray): independent variable matrix (number of series x</span>
-<span class="sd">                number of observations)</span>
-<span class="sd">            dates (numpy.ndarray): ordinal dates for each observation in X/Y</span>
-<span class="sd">            min_values (np.ndarray): Minimum possible range of values for each</span>
-<span class="sd">                variable in Y (optional)</span>
-<span class="sd">            max_values (np.ndarray): Maximum possible range of values for each</span>
-<span class="sd">                variable in Y (optional)</span>
-<span class="sd">            mask_band (int): The mask band in Y (optional)</span>
-<span class="sd">            mask_values (sequence): A list or np.ndarray of values in the</span>
-<span class="sd">                ``mask_band`` to mask (optional)</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            tuple (np.ndarray, np.ndarray, np.ndarray): X, Y, and dates after</span>
-<span class="sd">                being preprocessed and masked</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">min_values</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">max_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Mask range of data</span>
-            <span class="n">valid</span> <span class="o">=</span> <span class="n">get_valid_mask</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">min_values</span><span class="p">,</span> <span class="n">max_values</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-
-        <span class="c1"># Apply mask band</span>
-        <span class="k">if</span> <span class="n">mask_band</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mask_values</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">idx_mask</span> <span class="o">=</span> <span class="n">mask_band</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="n">valid</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">idx_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">mask_values</span><span class="p">,</span>
-                             <span class="n">invert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-
-        <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">idx_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:,</span> <span class="n">valid</span><span class="p">]</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">dates</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span></div></div>
+        <span class="k">return</span> <span class="n">_rmse</span></div></div>
 </pre></div>
 
            </div>
@@ -882,7 +777,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -904,7 +799,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -914,7 +809,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

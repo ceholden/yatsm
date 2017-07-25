@@ -1,5 +1,5 @@
-yatsm\.cli\.changemap module
-============================
+yatsm.cli.changemap module
+==========================
 
 .. automodule:: yatsm.cli.changemap
     :members:

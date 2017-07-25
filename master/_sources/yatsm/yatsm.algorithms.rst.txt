@@ -1,5 +1,5 @@
-yatsm\.algorithms package
-=========================
+yatsm.algorithms package
+========================
 
 Submodules
 ----------
@@ -8,6 +8,7 @@ Submodules
 
    yatsm.algorithms.ccdc
    yatsm.algorithms.postprocess
+   yatsm.algorithms.yatsm
 
 Module contents
 ---------------

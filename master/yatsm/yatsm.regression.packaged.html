@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.packaged module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.regression.packaged module &mdash; YATSM 0.6.3 documentation</title>
   
 
+  
+  
   
   
 
@@ -35,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -84,7 +87,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
@@ -112,8 +118,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -122,23 +130,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>yatsm.regression.packaged module</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.regression.packaged module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.regression.packaged.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.regression.packaged.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -152,11 +179,11 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">ivar packaged_regressions:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">regression estimators packaged within
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">regression estimators packaged within
 <code class="docutils literal"><span class="pre">YATSM</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">vartype packaged_regressions:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body">list</td>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">list</td>
 </tr>
 </tbody>
 </table>
@@ -170,7 +197,7 @@ available pre-packaged regressors</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><span class="target" id="yatsm.regression.packaged.find_packaged_regressor.params.name"></span><strong>name</strong><a class="paramlink headerlink reference internal" href="#yatsm.regression.packaged.find_packaged_regressor.params.name">¶</a> &#8211; name of packaged regression object</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – name of packaged regression object</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">path to packaged regression method</p>
@@ -180,8 +207,8 @@ available pre-packaged regressors</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> &#8211; raise KeyError if user specifies unknown regressor</li>
-<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code></a> &#8211; raise IOError if the packaged regressor cannot be found</li>
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#KeyError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code></a> – raise KeyError if user specifies unknown regressor</li>
+<li><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#IOError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code></a> – raise IOError if the packaged regressor cannot be found</li>
 </ul>
 </td>
 </tr>
@@ -193,6 +220,9 @@ available pre-packaged regressors</p>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -202,7 +232,7 @@ available pre-packaged regressors</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -224,16 +254,17 @@ available pre-packaged regressors</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

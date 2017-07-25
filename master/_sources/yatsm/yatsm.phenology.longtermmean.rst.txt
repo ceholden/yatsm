@@ -1,5 +1,5 @@
-yatsm\.phenology\.longtermmean module
-=====================================
+yatsm.phenology.longtermmean module
+===================================
 
 .. automodule:: yatsm.phenology.longtermmean
     :members:

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm package &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm package &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -170,66 +181,54 @@
 <li class="toctree-l2"><a class="reference internal" href="yatsm.algorithms.html#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.algorithms.ccdc.html">yatsm.algorithms.ccdc module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.algorithms.postprocess.html">yatsm.algorithms.postprocess module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.algorithms.yatsm.html">yatsm.algorithms.yatsm module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.algorithms.html#module-yatsm.algorithms">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.classification.html">yatsm.classification package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.classification.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.classification.roi.html">yatsm.classification.roi module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.classifiers.html">yatsm.classifiers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.classifiers.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.classifiers.diagnostics.html">yatsm.classifiers.diagnostics module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.classification.html#module-yatsm.classification">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.classifiers.html#module-yatsm.classifiers">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.cli.html">yatsm.cli package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.cli.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.batch.html">yatsm.cli.batch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.cache.html">yatsm.cli.cache module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.cli.changemap.html">yatsm.cli.changemap module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.classify.html">yatsm.cli.classify module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.console.html">yatsm.cli.console module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.line.html">yatsm.cli.line module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.cli.main.html">yatsm.cli.main module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.cli.map.html">yatsm.cli.map module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.cli.options.html">yatsm.cli.options module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.pixel.html">yatsm.cli.pixel module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.cli.train.html">yatsm.cli.train module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.cli.html#module-yatsm.cli">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.config.html">yatsm.config package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.config.html#module-yatsm.config">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.gis.html">yatsm.gis package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.gis.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.gis.conventions.html">yatsm.gis.conventions module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.gis.convert.html">yatsm.gis.convert module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.gis.core.html">yatsm.gis.core module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.gis.projections.html">yatsm.gis.projections module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.gis.tilespec.html">yatsm.gis.tilespec module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.gis.utils.html">yatsm.gis.utils module</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.gis.html#module-yatsm.gis">Module contents</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.io.html">yatsm.io package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.io.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.io.backends.html">yatsm.io.backends package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="yatsm.io.backends.html#module-yatsm.io.backends">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.io.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.io.utils.html">yatsm.io.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.io.helpers.html">yatsm.io.helpers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.io.readers.html">yatsm.io.readers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.io.stack_line_readers.html">yatsm.io.stack_line_readers module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.io.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.io.html#module-yatsm.io">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.html">yatsm.mapping package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.mapping.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.mapping.core.html">yatsm.mapping.core module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.mapping.changes.html">yatsm.mapping.changes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.mapping.classification.html">yatsm.mapping.classification module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.mapping.phenology.html">yatsm.mapping.phenology module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.mapping.prediction.html">yatsm.mapping.prediction module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.mapping.utils.html">yatsm.mapping.utils module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.mapping.html#module-yatsm.mapping">Module contents</a></li>
@@ -243,51 +242,28 @@
 <li class="toctree-l2"><a class="reference internal" href="yatsm.phenology.html#module-yatsm.phenology">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.pipeline.html">yatsm.pipeline package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.pipeline.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.pipeline.tasks.html">yatsm.pipeline.tasks package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="yatsm.pipeline.tasks.html#submodules">Submodules</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="yatsm.pipeline.tasks.change.html">yatsm.pipeline.tasks.change module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="yatsm.pipeline.tasks.classify.html">yatsm.pipeline.tasks.classify module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="yatsm.pipeline.tasks.postprocess.html">yatsm.pipeline.tasks.postprocess module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="yatsm.pipeline.tasks.preprocess.html">yatsm.pipeline.tasks.preprocess module</a></li>
-<li class="toctree-l5"><a class="reference internal" href="yatsm.pipeline.tasks.stash.html">yatsm.pipeline.tasks.stash module</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="yatsm.pipeline.tasks.html#module-yatsm.pipeline.tasks">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.pipeline.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.pipeline.language.html">yatsm.pipeline.language module</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.pipeline.html#module-yatsm.pipeline">Module contents</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.regression.html">yatsm.regression package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yatsm.regression.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.pickles.html">yatsm.regression.pickles package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="yatsm.regression.pickles.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="yatsm.regression.pickles.serialize.html">yatsm.regression.pickles.serialize module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="yatsm.regression.pickles.html#module-yatsm.regression.pickles">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.regression.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.cran.html">yatsm.regression.cran module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.regression.design.html">yatsm.regression.design module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.regression.diagnostics.html">yatsm.regression.diagnostics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.packaged.html">yatsm.regression.packaged module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yatsm.regression.recresid.html">yatsm.regression.recresid module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.regression.robust_fit.html">yatsm.regression.robust_fit module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="yatsm.regression.transforms.html">yatsm.regression.transforms module</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="yatsm.regression.html#module-yatsm.regression">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.results.html">yatsm.results package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.results.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="yatsm.results.utils.html">yatsm.results.utils module</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.results.html#module-contents">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.structural_break.html">yatsm.structural_break package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="yatsm.structural_break.html#module-yatsm.structural_break">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -298,11 +274,12 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.accel.html">yatsm.accel module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.api.html">yatsm.api module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.cache.html">yatsm.cache module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.config_parser.html">yatsm.config_parser module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.errors.html">yatsm.errors module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.executor.html">yatsm.executor module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.log_yatsm.html">yatsm.log_yatsm module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.masking.html">yatsm.masking module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.tslib.html">yatsm.tslib module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.plots.html">yatsm.plots module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.utils.html">yatsm.utils module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.vegetation_indices.html">yatsm.vegetation_indices module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yatsm.version.html">yatsm.version module</a></li>
@@ -311,7 +288,6 @@
 </div>
 <div class="section" id="module-yatsm">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm" title="Permalink to this headline">¶</a></h2>
-<p>YATSM</p>
 </div>
 </div>
 
@@ -329,7 +305,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -351,7 +327,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -361,7 +337,7 @@
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

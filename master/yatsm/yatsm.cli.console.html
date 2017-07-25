@@ -8,9 +8,11 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.console module &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.cli.console module &mdash; YATSM 0.6.3 documentation</title>
   
 
+  
+  
   
   
 
@@ -35,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -44,6 +46,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -63,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -84,7 +87,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
@@ -112,8 +118,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">YATSM</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
       </nav>
 
 
@@ -122,23 +130,42 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-    <li>yatsm.cli.console module</li>
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.cli.console module</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.cli.console.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/yatsm/yatsm.cli.console.rst" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -164,11 +191,11 @@ interpreter with access to a variety of objects in local memory.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><span class="target" id="yatsm.cli.console.open_interpreter.params.model"></span><strong>model</strong><a class="paramlink headerlink reference internal" href="#yatsm.cli.console.open_interpreter.params.model">¶</a> &#8211; Pass YATSM model to work with</li>
-<li><span class="target" id="yatsm.cli.console.open_interpreter.params.message"></span><strong>message</strong><a class="paramlink headerlink reference internal" href="#yatsm.cli.console.open_interpreter.params.message">¶</a> &#8211; Additional message to pass to user in banner</li>
-<li><span class="target" id="yatsm.cli.console.open_interpreter.params.variables"></span><strong>variables</strong><a class="paramlink headerlink reference internal" href="#yatsm.cli.console.open_interpreter.params.variables">¶</a> &#8211; Variables available in (I)Python
+<li><strong>model</strong> (<em>YATSM model</em>) – Pass YATSM model to work with</li>
+<li><strong>message</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Additional message to pass to user in banner</li>
+<li><strong>variables</strong> (<em>dict of objects</em><em>, </em><em>optional</em>) – Variables available in (I)Python
 session</li>
-<li><span class="target" id="yatsm.cli.console.open_interpreter.params.funcs"></span><strong>funcs</strong><a class="paramlink headerlink reference internal" href="#yatsm.cli.console.open_interpreter.params.funcs">¶</a> &#8211; Functions available in (I)Python
+<li><strong>funcs</strong> (<em>dict of callable</em><em>, </em><em>optional</em>) – Functions available in (I)Python
 session</li>
 </ul>
 </td>
@@ -181,6 +208,9 @@ session</li>
 
 
            </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -190,7 +220,7 @@ session</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Feb 8, 2017, 2:15:26 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -212,16 +242,17 @@ session</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

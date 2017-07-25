@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.regression.transforms &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.regression.transforms &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -93,6 +93,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -174,7 +185,7 @@
 <span class="kn">from</span> <span class="nn">patsy</span> <span class="k">import</span> <span class="n">stateful_transform</span>
 
 
-<div class="viewcode-block" id="Harmonic"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic">[docs]</a><span class="k">class</span> <span class="nc">Harmonic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Harmonic"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic">[docs]</a><span class="k">class</span> <span class="nc">Harmonic</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Transform `x` into seasonal harmonics with a given frequency</span>
 
 <span class="sd">    Args:</span>
@@ -185,13 +196,13 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">365.25</span>
 
-<div class="viewcode-block" id="Harmonic.memorize_chunk"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic.memorize_chunk">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+<div class="viewcode-block" id="Harmonic.memorize_chunk"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.memorize_chunk">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Harmonic.memorize_finish"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic.memorize_finish">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Harmonic.memorize_finish"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.memorize_finish">[docs]</a>    <span class="k">def</span> <span class="nf">memorize_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Harmonic.transform"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.Harmonic.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+<div class="viewcode-block" id="Harmonic.transform"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.transforms.html#yatsm.regression.transforms.Harmonic.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
@@ -218,7 +229,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -240,7 +251,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -250,7 +261,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

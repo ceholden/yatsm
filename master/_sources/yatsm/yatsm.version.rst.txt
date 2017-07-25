@@ -1,5 +1,5 @@
-yatsm\.version module
-=====================
+yatsm.version module
+====================
 
 .. automodule:: yatsm.version
     :members:

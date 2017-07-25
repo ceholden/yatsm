@@ -1,5 +1,5 @@
-yatsm\.cli\.main module
-=======================
+yatsm.cli.main module
+=====================
 
 .. automodule:: yatsm.cli.main
     :members:

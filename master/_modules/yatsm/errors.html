@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.errors &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.errors &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../index.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -93,6 +93,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
@@ -164,12 +175,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for yatsm.errors</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">yatsm.version</span> <span class="k">import</span> <span class="p">(</span><span class="n">__docs_version__</span><span class="p">,</span>
-                           <span class="n">__repo_issues__</span><span class="p">,</span>
-                           <span class="n">__version__</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="TSLengthException"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.TSLengthException">[docs]</a><span class="k">class</span> <span class="nc">TSLengthException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="TSLengthException"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.TSLengthException">[docs]</a><span></span><span class="k">class</span> <span class="nc">TSLengthException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Exception stating timeseries does not contain enough observations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
@@ -183,44 +189,6 @@
 <div class="viewcode-block" id="AlgorithmNotFoundException"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.AlgorithmNotFoundException">[docs]</a><span class="k">class</span> <span class="nc">AlgorithmNotFoundException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Custom exception for algorithm config files without handlers &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="InvalidConfigurationException"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.InvalidConfigurationException">[docs]</a><span class="k">class</span> <span class="nc">InvalidConfigurationException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="PipelineConfigurationError"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.PipelineConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">PipelineConfigurationError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Exception for invalid ``require``/``output`` specification in pipeline</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="PipelineConfigurationNotFound"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.PipelineConfigurationNotFound">[docs]</a><span class="k">class</span> <span class="nc">PipelineConfigurationNotFound</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Exception for uses requiring missing information</span>
-
-<span class="sd">    Provides help message with link to configuration docs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: finish help message &amp; docs</span>
-    <span class="n">_help</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Missing configuration information required to accomplish task. &#39;</span>
-             <span class="s1">&#39;Please consult </span><span class="si">{0}</span><span class="s1">/</span><span class="si">{1}</span><span class="s1"> for more information&#39;</span>
-             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__docs_version__</span><span class="p">,</span> <span class="s1">&#39;guide/pipeline.html#errors&#39;</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> : &quot;</span><span class="si">{1!r}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_help</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="TODO"><a class="viewcode-back" href="../../yatsm/yatsm.errors.html#yatsm.errors.TODO">[docs]</a><span class="k">class</span> <span class="nc">TODO</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">):</span>
-
-    <span class="n">_help</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;This version (&quot;</span><span class="si">{version}</span><span class="s1">&quot;) has not yet implemented this &#39;</span>
-             <span class="s1">&#39;functionality. Please visit </span><span class="si">{issues}</span><span class="s1"> and copy and paste &#39;</span>
-             <span class="s1">&#39;the following message if you would like this feature to be &#39;</span>
-             <span class="s1">&#39;supported.&#39;</span>
-             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span> <span class="n">issues</span><span class="o">=</span><span class="n">__repo_issues__</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> : &quot;</span><span class="si">{1}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_help</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -236,7 +204,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -258,7 +226,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -268,7 +236,7 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

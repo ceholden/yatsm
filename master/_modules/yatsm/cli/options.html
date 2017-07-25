@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.cli.options &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.cli.options &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -93,6 +93,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -165,17 +176,10 @@
             
   <h1>Source code for yatsm.cli.options</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; YATSM command line interface &quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-<span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">from</span> <span class="nn">rasterio.rio.options</span> <span class="k">import</span> <span class="n">bounds_opt</span> <span class="k">as</span> <span class="n">opt_bounds</span>  <span class="c1"># NOQA</span>
-
-<span class="kn">from</span> <span class="nn">yatsm.executor</span> <span class="k">import</span> <span class="n">get_executor</span><span class="p">,</span> <span class="n">EXECUTOR_DEFAULTS</span><span class="p">,</span> <span class="n">EXECUTOR_TYPES</span>
-
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="c1"># CLI VALIDATORS</span>
@@ -198,6 +202,144 @@
         <span class="k">return</span> <span class="n">_validator</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
+<span class="c1"># CLI ARGUMENTS</span>
+<span class="n">arg_config_file</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span>
+    <span class="s1">&#39;config&#39;</span><span class="p">,</span>
+    <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">readable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">dir_okay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;config&gt;&#39;</span><span class="p">)</span>
+
+
+<span class="n">arg_output</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span>
+    <span class="s1">&#39;output&#39;</span><span class="p">,</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;output&gt;&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">writable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dir_okay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">resolve_path</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+
+<span class="n">arg_total_jobs</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span>
+    <span class="s1">&#39;total_jobs&#39;</span><span class="p">,</span>
+    <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;total_jobs&gt;&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="arg_date"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.arg_date">[docs]</a><span class="k">def</span> <span class="nf">arg_date</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;date&gt;&#39;</span><span class="p">,</span> <span class="n">date_frmt_key</span><span class="o">=</span><span class="s1">&#39;date_frmt&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_arg_date</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">date_frmt_key</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">ClickException</span><span class="p">(</span>
+                    <span class="s1">&#39;Need to use `date_format_opt` when using `date_arg`&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span>
+                    <span class="s1">&#39;Cannot parse </span><span class="si">{v}</span><span class="s1"> to date with format </span><span class="si">{f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">v</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;date_frmt&#39;</span><span class="p">]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="n">metavar</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_arg_date</span></div>
+
+
+<div class="viewcode-block" id="arg_job_number"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.arg_job_number">[docs]</a><span class="k">def</span> <span class="nf">arg_job_number</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Must specify an integer &gt;= 0&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Must specify an integer &gt;= 0&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;job_number&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
+                          <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;job_number&gt;&#39;</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
+
+
+<span class="c1"># CLI OPTIONS</span>
+<span class="n">opt_date_format</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s1">&#39;--date&#39;</span><span class="p">,</span> <span class="s1">&#39;date_frmt&#39;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;format&gt;&#39;</span><span class="p">,</span>
+    <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">is_eager</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input date format&#39;</span><span class="p">)</span>
+
+
+<span class="n">opt_format</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--format&#39;</span><span class="p">,</span> <span class="s1">&#39;gdal_frmt&#39;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;GTiff&#39;</span><span class="p">,</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;driver&gt;&#39;</span><span class="p">,</span>
+    <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output format driver&#39;</span><span class="p">)</span>
+
+
+<span class="n">opt_nodata</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s1">&#39;--ndv&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;NoDataValue&gt;&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output NoDataValue&#39;</span><span class="p">)</span>
+
+
+<span class="n">opt_rootdir</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s1">&#39;--root&#39;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span>
+    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;directory&gt;&#39;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Root timeseries directory&#39;</span><span class="p">,</span>
+    <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file_okay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">readable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">resolve_path</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="opt_exampleimg"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.opt_exampleimg">[docs]</a><span class="k">def</span> <span class="nf">opt_exampleimg</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Check if file qualifies alone</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check if path relative to root qualifies</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Cannot find example image &#39;</span>
+                                         <span class="s1">&#39;&quot;</span><span class="si">{f}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">_value</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Found example image but cannot &#39;</span>
+                                         <span class="s1">&#39;read from &quot;</span><span class="si">{f}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">_value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">_value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--image&#39;</span><span class="p">,</span> <span class="s1">&#39;-i&#39;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;example_img&#39;</span><span class="p">,</span>
+                        <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;image&gt;&#39;</span><span class="p">,</span>
+                        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Example timeseries image&#39;</span><span class="p">,</span>
+                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="opt_resultdir"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.opt_resultdir">[docs]</a><span class="k">def</span> <span class="nf">opt_resultdir</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Check if path qualifies alone</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check if path relative to root qualifies</span>
+            <span class="n">_value</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Cannot find result directory &#39;</span>
+                                         <span class="s1">&#39;&quot;</span><span class="si">{d}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">_value</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Found result directory but cannot &#39;</span>
+                                     <span class="s1">&#39;read from &quot;</span><span class="si">{d}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="o">=</span><span class="n">_value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">_value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--result&#39;</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;YATSM&#39;</span><span class="p">,</span>
+                        <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;directory&gt;&#39;</span><span class="p">,</span>
+                        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Directory of results&#39;</span><span class="p">,</span>
+                        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
+
+
 <span class="c1"># CALLBACKS</span>
 <div class="viewcode-block" id="callback_dict"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.callback_dict">[docs]</a><span class="k">def</span> <span class="nf">callback_dict</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Call back for dict style arguments (e.g., KEY=VALUE)</span>
@@ -215,233 +357,6 @@
                 <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="k">return</span> <span class="n">d</span></div>
-
-
-<div class="viewcode-block" id="callback_nodata"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.callback_nodata">[docs]</a><span class="k">def</span> <span class="nf">callback_nodata</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Nodata handling</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">,</span> <span class="s1">&#39;na&#39;</span><span class="p">,</span> <span class="s1">&#39;nan&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{!r}</span><span class="s1"> is not a number&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">),</span>
-                                     <span class="n">param</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">param_hint</span><span class="o">=</span><span class="s1">&#39;nodata&#39;</span><span class="p">)</span></div>
-
-
-<span class="c1"># Config handling</span>
-<div class="viewcode-block" id="fetch_config"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.fetch_config">[docs]</a><span class="k">def</span> <span class="nf">fetch_config</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Fetch ``config`` option and return :ref:`yatsm.api.Config`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">config_file</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span> <span class="ow">and</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">config_file</span><span class="p">:</span>
-        <span class="n">_opts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">o</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Must specify configuration file&#39;</span><span class="p">,</span>
-                                 <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="n">_opts</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">])</span>
-
-    <span class="kn">from</span> <span class="nn">yatsm.api</span> <span class="k">import</span> <span class="n">Config</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Cannot parse config file: &quot;</span><span class="si">{0}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_file</span><span class="p">))</span>
-        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Cannot parse config file </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">config_file</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">config</span></div>
-
-
-<span class="n">opt_config</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="s1">&#39;-C&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">readable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">dir_okay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-    <span class="n">default</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;YATSM_CONFIG&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-    <span class="n">allow_from_autoenv</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;YATSM configuration file [default: $</span><span class="si">{YATSM_CONFIG}</span><span class="s1">]&#39;</span>
-<span class="p">)</span>
-
-
-<span class="c1"># ARGUMENTS</span>
-<span class="k">def</span> <span class="nf">_arg_date</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">date_format_key</span><span class="o">=</span><span class="s1">&#39;date_format&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">_arg_date</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span>
-                                             <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">date_format_key</span><span class="p">])</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">ClickException</span><span class="p">(</span>
-                    <span class="s1">&#39;Need to use `date_format_opt` when using `date_arg`&#39;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span>
-                    <span class="s1">&#39;Cannot parse </span><span class="si">{v}</span><span class="s1"> to date with format </span><span class="si">{f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">v</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;date_format&#39;</span><span class="p">]))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">value</span>
-        <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_arg_date</span>
-
-
-<div class="viewcode-block" id="arg_job_number"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.arg_job_number">[docs]</a><span class="k">def</span> <span class="nf">arg_job_number</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Must specify an integer &gt;= 0&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;Must specify an integer &gt;= 0&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">value</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">value</span> <span class="o">-</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;job_number&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
-
-
-<span class="n">arg_output</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span>
-    <span class="s1">&#39;output&#39;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">writable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dir_okay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">resolve_path</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-
-
-<span class="n">arg_total_jobs</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span>
-    <span class="s1">&#39;total_jobs&#39;</span><span class="p">,</span>
-    <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span>
-<span class="p">)</span>
-
-
-<span class="n">arg_date</span> <span class="o">=</span> <span class="n">_arg_date</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">date_format_key</span><span class="o">=</span><span class="s1">&#39;date_format&#39;</span><span class="p">)</span>
-<span class="n">arg_start_date</span> <span class="o">=</span> <span class="n">_arg_date</span><span class="p">(</span><span class="s1">&#39;start_date&#39;</span><span class="p">,</span> <span class="n">date_format_key</span><span class="o">=</span><span class="s1">&#39;date_format&#39;</span><span class="p">)</span>
-<span class="n">arg_end_date</span> <span class="o">=</span> <span class="n">_arg_date</span><span class="p">(</span><span class="s1">&#39;end_date&#39;</span><span class="p">,</span> <span class="n">date_format_key</span><span class="o">=</span><span class="s1">&#39;date_format&#39;</span><span class="p">)</span>
-
-
-<span class="c1"># OPTIONS</span>
-<span class="n">opt_date_format</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s1">&#39;--date_format&#39;</span><span class="p">,</span> <span class="s1">&#39;--dformat&#39;</span><span class="p">,</span> <span class="s1">&#39;date_format&#39;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
-    <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">is_eager</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Input date format&#39;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="opt_map_date_format"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.options.html#yatsm.cli.options.opt_map_date_format">[docs]</a><span class="k">def</span> <span class="nf">opt_map_date_format</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="c1"># TODO: this needs to ensure conversion if required, because</span>
-        <span class="c1">#       results dates eventually won&#39;t always be in ordinal</span>
-        <span class="c1">#       date format (in fact, it makes little sense because</span>
-        <span class="c1">#       basically nothing in Python uses it, except certain</span>
-        <span class="c1">#       regression models for historic reasons)</span>
-        <span class="c1">#       See: `yatsm.tslib.datetime2int`</span>
-        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ordinal&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s1">&#39;ordinal&#39;</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">test_dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="nb">int</span><span class="p">(</span><span class="n">test_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">{0}</span><span class="s1">&quot; is not a valid date format string for &#39;</span>
-                       <span class="s1">&#39;parameter &quot;</span><span class="si">{1}</span><span class="s1">&quot;: </span><span class="si">{2!r}</span><span class="s1">&#39;</span>
-                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">metavar</span><span class="p">,</span> <span class="n">exc</span><span class="p">))</span>
-                <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">value</span>
-        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">BadParameter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> must be a valid `datetime.strftime` &#39;</span>
-                                 <span class="s1">&#39;format string or &quot;ordinal&quot;&#39;</span>
-                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">metavar</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s1">&#39;--map_date_format&#39;</span><span class="p">,</span> <span class="s1">&#39;--mdformat&#39;</span><span class="p">,</span> <span class="s1">&#39;map_date_format&#39;</span><span class="p">,</span>
-        <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output map date format (&quot;ordinal&quot; or a date fstring)&#39;</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span></div>
-
-
-<span class="n">opt_format</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="s1">&#39;--format&#39;</span><span class="p">,</span> <span class="s1">&#39;--driver&#39;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;GTiff&#39;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output format driver&quot;</span><span class="p">)</span>
-
-
-<span class="n">opt_creation_options</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s1">&#39;--co&#39;</span><span class="p">,</span> <span class="s1">&#39;--profile&#39;</span><span class="p">,</span> <span class="s1">&#39;creation_options&#39;</span><span class="p">,</span>
-    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;NAME=VALUE&#39;</span><span class="p">,</span>
-    <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">callback</span><span class="o">=</span><span class="n">callback_dict</span><span class="p">,</span>
-    <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Driver specific creation options.&quot;</span>
-         <span class="s2">&quot;See the documentation for the selected output driver for &quot;</span>
-         <span class="s2">&quot;more information.&quot;</span><span class="p">)</span>
-
-
-<span class="n">opt_force_overwrite</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s1">&#39;--force-overwrite&#39;</span><span class="p">,</span> <span class="s1">&#39;force_overwrite&#39;</span><span class="p">,</span>
-    <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Always overwrite an existing output file.&quot;</span><span class="p">)</span>
-
-
-<span class="n">opt_nodata</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s1">&#39;--nodata&#39;</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback_nodata</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="s1">&#39;-9999&#39;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;NUMBER|nan&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Set a Nodata value.&quot;</span><span class="p">)</span>
-
-
-<span class="c1"># COMBINED DECORATOR SHORTCUTS</span>
-<span class="k">def</span> <span class="nf">_combined_decorations</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">optargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">optargs</span> <span class="o">=</span> <span class="n">optargs</span> <span class="ow">or</span> <span class="p">[]</span>
-
-    <span class="n">new_func</span> <span class="o">=</span> <span class="n">func</span>
-    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">optargs</span><span class="p">:</span>
-        <span class="n">new_func</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">new_func</span><span class="p">)</span>
-
-    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">new_func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">new_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">decorator</span>
-
-
-<span class="c1"># TODO: --bounds, --like, etc?</span>
-<span class="c1">#: tuple: Collection of optional arguments used in map scripts</span>
-<span class="n">opts_mapping</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">click</span><span class="o">.</span><span class="n">pass_context</span><span class="p">,</span>  <span class="c1"># ctx</span>
-    <span class="n">opt_force_overwrite</span><span class="p">,</span>  <span class="c1"># force_overwrite</span>
-    <span class="n">opt_format</span><span class="p">,</span>  <span class="c1"># driver</span>
-    <span class="n">opt_nodata</span><span class="p">,</span>  <span class="c1"># nodata</span>
-    <span class="n">opt_creation_options</span><span class="p">,</span>  <span class="c1"># co</span>
-<span class="p">)</span>
-
-
-<span class="c1">#: callable: Decorator that combines all Click options from :ref:`opts_mapping`</span>
-<span class="n">mapping_decorations</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_combined_decorations</span><span class="p">,</span>
-                                        <span class="n">optargs</span><span class="o">=</span><span class="n">opts_mapping</span><span class="p">)</span>
-
-
-<span class="c1"># SEGMENT HANDLING</span>
-<span class="c1"># Use segment after DATE</span>
-<span class="n">opt_after</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--after&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                         <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use time segment after DATE if needed&#39;</span><span class="p">)</span>
-
-
-<span class="c1"># Use segment before DATE</span>
-<span class="n">opt_before</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--before&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                          <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use time segment before DATE if needed&#39;</span><span class="p">)</span>
-
-
-<span class="c1"># Output QA/QC band?</span>
-<span class="n">opt_qa_band</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--qa&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Add QA band identifying segment type&#39;</span><span class="p">)</span>
-
-
-<span class="c1"># EXECUTOR</span>
-<span class="n">opt_executor</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s1">&#39;--executor&#39;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="n">EXECUTOR_TYPES</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">None</span><span class="p">),</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">(</span><span class="n">EXECUTOR_TYPES</span><span class="p">),</span> <span class="nb">str</span><span class="p">),</span>
-    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Pipeline executor (e.g., </span><span class="si">{}</span><span class="s1">)&#39;</span>
-         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
-                 <span class="ow">in</span> <span class="n">EXECUTOR_DEFAULTS</span><span class="o">.</span><span class="n">items</span><span class="p">()])),</span>
-    <span class="n">callback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">get_executor</span><span class="p">(</span><span class="o">*</span><span class="n">value</span><span class="p">)</span>
-<span class="p">)</span>
 </pre></div>
 
            </div>
@@ -457,7 +372,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -479,7 +394,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -489,7 +404,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

@@ -1,5 +1,5 @@
-yatsm\.masking module
-=====================
+yatsm.masking module
+====================
 
 .. automodule:: yatsm.masking
     :members:

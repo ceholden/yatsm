@@ -1,7 +1,0 @@
-yatsm\.gis\.tilespec module
-===========================
-
-.. automodule:: yatsm.gis.tilespec
-    :members:
-    :undoc-members:
-    :show-inheritance:

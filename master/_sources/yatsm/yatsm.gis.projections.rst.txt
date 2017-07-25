@@ -1,7 +1,0 @@
-yatsm\.gis\.projections module
-==============================
-
-.. automodule:: yatsm.gis.projections
-    :members:
-    :undoc-members:
-    :show-inheritance:

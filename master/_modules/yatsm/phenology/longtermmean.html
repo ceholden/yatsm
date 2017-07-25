@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.phenology.longtermmean &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.phenology.longtermmean &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../../../index.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -93,6 +93,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
@@ -174,27 +185,24 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">math</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.lib.recfunctions</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">..regression.cran</span> <span class="k">import</span> <span class="n">CRAN_spline</span>
+<span class="c1"># Grab `stats` package from R for smoothing spline</span>
+<span class="kn">from</span> <span class="nn">rpy2</span> <span class="k">import</span> <span class="n">robjects</span> <span class="k">as</span> <span class="n">ro</span>
+<span class="kn">from</span> <span class="nn">rpy2.robjects.packages</span> <span class="k">import</span> <span class="n">importr</span>
+<span class="kn">import</span> <span class="nn">rpy2.robjects.numpy2ri</span>
+
+<span class="n">rpy2</span><span class="o">.</span><span class="n">robjects</span><span class="o">.</span><span class="n">numpy2ri</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+<span class="n">Rstats</span> <span class="o">=</span> <span class="n">importr</span><span class="p">(</span><span class="s1">&#39;stats&#39;</span><span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">..vegetation_indices</span> <span class="k">import</span> <span class="n">EVI</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-
-
-<span class="c1">#: tuple: Tuple containing the results of the long term mean phenology</span>
-<span class="c1">#         transition date calculation</span>
-<span class="n">LongTermMeanPhenologyResults</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;LongTermMeanPhenologyResults&#39;</span><span class="p">,</span> <span class="p">[</span>
-    <span class="s1">&#39;springDOY&#39;</span><span class="p">,</span> <span class="s1">&#39;autumnDOY&#39;</span><span class="p">,</span> <span class="s1">&#39;peakEVIDOY&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;peakEVI&#39;</span><span class="p">,</span> <span class="s1">&#39;corrcoef&#39;</span><span class="p">,</span> <span class="s1">&#39;smoothEVI&#39;</span>
-<span class="p">])</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="group_years"><a class="viewcode-back" href="../../../yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.group_years">[docs]</a><span class="k">def</span> <span class="nf">group_years</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
@@ -231,23 +239,52 @@
 <span class="sd">    will be removed.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        evi (pd.Series): EVI values</span>
+<span class="sd">        evi (np.ndarray): EVI values</span>
 <span class="sd">        periods (np.ndarray): intervals of years to group and scale together</span>
 <span class="sd">        qmin (float, optional): lower quantile for scaling (default: 10)</span>
 <span class="sd">        qmax (float, optional): upper quantile for scaling (default: 90)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        pd.Series: scaled EVI array</span>
+<span class="sd">        np.ndarray: scaled EVI array</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_evi</span> <span class="o">=</span> <span class="n">evi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">periods</span><span class="p">):</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="n">periods</span> <span class="o">==</span> <span class="n">u</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">periods</span> <span class="o">==</span> <span class="n">u</span><span class="p">)</span>
         <span class="n">evi_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">evi</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">qmin</span><span class="p">)</span>
         <span class="n">evi_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">evi</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">qmax</span><span class="p">)</span>
         <span class="n">_evi</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">evi</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="n">evi_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">evi_max</span> <span class="o">-</span> <span class="n">evi_min</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">_evi</span></div>
+
+
+<div class="viewcode-block" id="CRAN_spline"><a class="viewcode-back" href="../../../yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.CRAN_spline">[docs]</a><span class="k">def</span> <span class="nf">CRAN_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">spar</span><span class="o">=</span><span class="mf">0.55</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return a prediction function for a smoothing spline from R</span>
+
+<span class="sd">    Use `rpy2` package to fit a smoothing spline using &quot;smooth.spline&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (np.ndarray): independent variable</span>
+<span class="sd">        y (np.ndarray): dependent variable</span>
+<span class="sd">        spar (float): smoothing parameter</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        callable: prediction function of smoothing spline that provides</span>
+<span class="sd">            smoothed estimates of the dependent variable given an input</span>
+<span class="sd">            independent variable array</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">      Fit a smoothing spline for y ~ x and predict for days in year:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            pred_spl = CRAN_spline(x, y)</span>
+<span class="sd">            y_smooth = pred_spl(np.arange(1, 366))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spl</span> <span class="o">=</span> <span class="n">Rstats</span><span class="o">.</span><span class="n">smooth_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">spar</span><span class="o">=</span><span class="n">spar</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">_x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Rstats</span><span class="o">.</span><span class="n">predict_smooth_spline</span><span class="p">(</span><span class="n">spl</span><span class="p">,</span> <span class="n">_x</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="halfmax"><a class="viewcode-back" href="../../../yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.halfmax">[docs]</a><span class="k">def</span> <span class="nf">halfmax</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -267,7 +304,6 @@
         <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">))</span></div>
 
 
-<span class="c1"># TODO: delete</span>
 <div class="viewcode-block" id="ordinal2yeardoy"><a class="viewcode-back" href="../../../yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.ordinal2yeardoy">[docs]</a><span class="k">def</span> <span class="nf">ordinal2yeardoy</span><span class="p">(</span><span class="n">ordinal</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert ordinal dates to two arrays of year and doy</span>
 
@@ -281,98 +317,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_date</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">_d</span><span class="p">)</span> <span class="k">for</span> <span class="n">_d</span> <span class="ow">in</span> <span class="n">ordinal</span><span class="p">]</span>
     <span class="n">yeardoy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">ordinal</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
-    <span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_d</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_year</span> <span class="k">for</span> <span class="n">_d</span> <span class="ow">in</span> <span class="n">_date</span><span class="p">])</span>
-    <span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_d</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span> <span class="k">for</span> <span class="n">_d</span> <span class="ow">in</span> <span class="n">_date</span><span class="p">])</span>
+    <span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">_d</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">_d</span> <span class="ow">in</span> <span class="n">_date</span><span class="p">])</span>
+    <span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">_d</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%j&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">_d</span> <span class="ow">in</span> <span class="n">_date</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="n">yeardoy</span></div>
-
-
-<div class="viewcode-block" id="longtermmeanphenology"><a class="viewcode-back" href="../../../yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.longtermmeanphenology">[docs]</a><span class="k">def</span> <span class="nf">longtermmeanphenology</span><span class="p">(</span><span class="n">evi</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">year_interval</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                          <span class="n">q_min</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">q_max</span><span class="o">=</span><span class="mf">90.</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Calculate the long term mean phenology transition dates</span>
-
-<span class="sd">    EVI should be scaled within [0, 1]. Values outside of this range will be</span>
-<span class="sd">    removed before processing.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        evi (pd.Series): EVI values in a Pandas Series. The index should be</span>
-<span class="sd">            the date of each observation</span>
-<span class="sd">        periods (pd.Series): User provided groupings to scale EVI time series</span>
-<span class="sd">            with. If not provided, groupings will be calculated based on</span>
-<span class="sd">            ``year_interval``.</span>
-<span class="sd">        year_interval (int): number of years to group together when</span>
-<span class="sd">            normalizing EVI to upper and lower percentiles of EVI within the</span>
-<span class="sd">            group</span>
-<span class="sd">        q_min (float): lower percentile for scaling EVI</span>
-<span class="sd">        q_max (float): upper percentile for scaling EVI</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        LongTermMeanPhenologyResults: Named tuple of phenological transition</span>
-<span class="sd">            dates and diagnostics</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">evi</span> <span class="o">=</span> <span class="n">evi</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">evi</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">evi</span> <span class="o">&gt;=</span> <span class="mf">0.</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">evi</span> <span class="o">&lt;=</span> <span class="mf">1.</span><span class="p">)]</span>
-
-    <span class="c1"># Calculate year-to-year groupings for EVI normalization</span>
-    <span class="k">if</span> <span class="n">periods</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">periods</span> <span class="o">=</span> <span class="n">group_years</span><span class="p">(</span><span class="n">evi</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">year_interval</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">periods</span> <span class="o">=</span> <span class="n">periods</span><span class="p">[</span><span class="n">evi</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
-    <span class="n">evi_norm</span> <span class="o">=</span> <span class="n">scale_EVI</span><span class="p">(</span><span class="n">evi</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span> <span class="n">qmin</span><span class="o">=</span><span class="n">q_min</span><span class="p">,</span> <span class="n">qmax</span><span class="o">=</span><span class="n">q_max</span><span class="p">)</span>
-
-    <span class="c1"># Mask out np.nan</span>
-    <span class="n">evi_norm</span> <span class="o">=</span> <span class="n">evi_norm</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">evi_norm</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
-    <span class="k">if</span> <span class="n">evi_norm</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No valid EVI after scaling -- skipping&#39;</span><span class="p">)</span>
-        <span class="k">return</span>
-
-    <span class="c1"># Pad missing DOY values (e.g. in winter) with 0&#39;s to improve</span>
-    <span class="c1"># spline fit</span>
-    <span class="k">def</span> <span class="nf">make_date</span><span class="p">(</span><span class="n">doy</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">([</span><span class="s1">&#39;2000&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">doy</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;timedelta64[D]&#39;</span><span class="p">)</span>
-    <span class="n">pad_start</span> <span class="o">=</span> <span class="n">make_date</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">evi_norm</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">dayofyear</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="n">pad_end</span> <span class="o">=</span> <span class="n">make_date</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">evi_norm</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">dayofyear</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">365</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-
-    <span class="n">pad_evi_norm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span>
-        <span class="n">evi_norm</span><span class="p">,</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">pad_start</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">pad_start</span><span class="p">),</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">pad_end</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">pad_end</span><span class="p">)</span>
-    <span class="p">))</span>
-
-    <span class="c1"># Fit spline and predict EVI</span>
-    <span class="n">spl_pred</span> <span class="o">=</span> <span class="n">CRAN_spline</span><span class="p">(</span><span class="n">pad_evi_norm</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">dayofyear</span><span class="p">,</span> <span class="n">pad_evi_norm</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                           <span class="n">spar</span><span class="o">=</span><span class="mf">0.55</span><span class="p">)</span>
-    <span class="c1"># 366 to include leap years</span>
-    <span class="n">evi_smooth</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">spl_pred</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">367</span><span class="p">)),</span>
-                           <span class="n">index</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">367</span><span class="p">))</span>
-
-    <span class="c1"># Check correlation</span>
-    <span class="n">pheno_cor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">evi_smooth</span><span class="p">[</span><span class="n">evi_norm</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">dayofyear</span><span class="p">],</span>
-                            <span class="n">evi_norm</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-
-    <span class="c1"># Separate into spring / autumn</span>
-    <span class="n">peak_doy</span> <span class="o">=</span> <span class="n">evi_smooth</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
-    <span class="n">peak_evi</span> <span class="o">=</span> <span class="n">evi_smooth</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-    <span class="n">evi_smooth_spring</span> <span class="o">=</span> <span class="n">evi_smooth</span><span class="p">[:</span><span class="n">peak_doy</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">evi_smooth_autumn</span> <span class="o">=</span> <span class="n">evi_smooth</span><span class="p">[</span><span class="n">peak_doy</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
-
-    <span class="c1"># Compute half-maximum of spring logistic for &quot;ruling in&quot; image dates</span>
-    <span class="c1"># (points) for anomaly calculation</span>
-    <span class="c1"># Note: we add + 1 to go from index (on 0) to day of year (on 1)</span>
-    <span class="k">if</span> <span class="n">evi_smooth_spring</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">ltm_spring</span> <span class="o">=</span> <span class="n">halfmax</span><span class="p">(</span><span class="n">evi_smooth_spring</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ltm_spring</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">if</span> <span class="n">evi_smooth_autumn</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">ltm_autumn</span> <span class="o">=</span> <span class="n">halfmax</span><span class="p">(</span><span class="n">evi_smooth_autumn</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ltm_autumn</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">return</span> <span class="n">LongTermMeanPhenologyResults</span><span class="p">(</span>
-        <span class="n">springDOY</span><span class="o">=</span><span class="n">ltm_spring</span><span class="p">,</span> <span class="n">autumnDOY</span><span class="o">=</span><span class="n">ltm_autumn</span><span class="p">,</span> <span class="n">peakEVIDOY</span><span class="o">=</span><span class="n">peak_doy</span><span class="p">,</span>
-        <span class="n">peakEVI</span><span class="o">=</span><span class="n">peak_evi</span><span class="p">,</span> <span class="n">corrcoef</span><span class="o">=</span><span class="n">pheno_cor</span><span class="p">,</span> <span class="n">smoothEVI</span><span class="o">=</span><span class="n">evi_smooth</span>
-    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="LongTermMeanPhenology"><a class="viewcode-back" href="../../../yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenology">[docs]</a><span class="k">class</span> <span class="nc">LongTermMeanPhenology</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -462,6 +410,59 @@
             <span class="p">(</span><span class="s1">&#39;pheno_nobs&#39;</span><span class="p">,</span> <span class="s1">&#39;u2&#39;</span><span class="p">)</span>
         <span class="p">])</span>
 
+    <span class="k">def</span> <span class="nf">_fit_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evi</span><span class="p">,</span> <span class="n">yeardoy</span><span class="p">,</span> <span class="n">year_interval</span><span class="p">,</span> <span class="n">q_min</span><span class="p">,</span> <span class="n">q_max</span><span class="p">):</span>
+        <span class="c1"># Calculate year-to-year groupings for EVI normalization</span>
+        <span class="n">periods</span> <span class="o">=</span> <span class="n">group_years</span><span class="p">(</span><span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">year_interval</span><span class="p">)</span>
+        <span class="n">evi_norm</span> <span class="o">=</span> <span class="n">scale_EVI</span><span class="p">(</span><span class="n">evi</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span> <span class="n">qmin</span><span class="o">=</span><span class="n">q_min</span><span class="p">,</span> <span class="n">qmax</span><span class="o">=</span><span class="n">q_max</span><span class="p">)</span>
+
+        <span class="c1"># Mask out np.nan</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">evi_norm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">valid</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No valid EVI in segment -- skipping&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">yeardoy</span> <span class="o">=</span> <span class="n">yeardoy</span><span class="p">[</span><span class="n">valid</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">evi_norm</span> <span class="o">=</span> <span class="n">evi_norm</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+
+        <span class="c1"># Pad missing DOY values (e.g. in winter) with 0&#39;s to improve</span>
+        <span class="c1"># spline fit</span>
+        <span class="n">pad_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">pad_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">365</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">pad_doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pad_start</span><span class="p">,</span> <span class="n">pad_end</span><span class="p">))</span>
+        <span class="n">pad_evi_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span>
+            <span class="n">evi_norm</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">pad_start</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">evi</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">pad_end</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">evi</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="p">))</span>
+
+        <span class="c1"># Fit spline and predict EVI</span>
+        <span class="n">spl_pred</span> <span class="o">=</span> <span class="n">CRAN_spline</span><span class="p">(</span><span class="n">pad_doy</span><span class="p">,</span> <span class="n">pad_evi_norm</span><span class="p">,</span> <span class="n">spar</span><span class="o">=</span><span class="mf">0.55</span><span class="p">)</span>
+        <span class="n">evi_smooth</span> <span class="o">=</span> <span class="n">spl_pred</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">367</span><span class="p">))</span>  <span class="c1"># 366 to include leap years</span>
+
+        <span class="c1"># Check correlation</span>
+        <span class="n">pheno_cor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">evi_smooth</span><span class="p">[</span><span class="n">yeardoy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">evi_norm</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Separate into spring / autumn</span>
+        <span class="n">peak_doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">evi_smooth</span><span class="p">)</span>
+        <span class="n">peak_evi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">evi_smooth</span><span class="p">)</span>
+        <span class="n">evi_smooth_spring</span> <span class="o">=</span> <span class="n">evi_smooth</span><span class="p">[:</span><span class="n">peak_doy</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">evi_smooth_autumn</span> <span class="o">=</span> <span class="n">evi_smooth</span><span class="p">[</span><span class="n">peak_doy</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+
+        <span class="c1"># Compute half-maximum of spring logistic for &quot;ruling in&quot; image dates</span>
+        <span class="c1"># (points) for anomaly calculation</span>
+        <span class="c1"># Note: we add + 1 to go from index (on 0) to day of year (on 1)</span>
+        <span class="k">if</span> <span class="n">evi_smooth_spring</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ltm_spring</span> <span class="o">=</span> <span class="n">halfmax</span><span class="p">(</span><span class="n">evi_smooth_spring</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ltm_spring</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">evi_smooth_autumn</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ltm_autumn</span> <span class="o">=</span> <span class="n">halfmax</span><span class="p">(</span><span class="n">evi_smooth_autumn</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">peak_doy</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ltm_autumn</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">ltm_spring</span><span class="p">,</span> <span class="n">ltm_autumn</span><span class="p">,</span> <span class="n">pheno_cor</span><span class="p">,</span>
+                <span class="n">peak_evi</span><span class="p">,</span> <span class="n">peak_doy</span><span class="p">,</span> <span class="n">evi_smooth</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LongTermMeanPhenology.fit"><a class="viewcode-back" href="../../../yatsm/yatsm.phenology.longtermmean.html#yatsm.phenology.longtermmean.LongTermMeanPhenology.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fit phenology metrics for each time segment within a YATSM model</span>
@@ -489,7 +490,6 @@
             <span class="n">_evi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evi</span><span class="p">[</span><span class="n">rec_range</span><span class="p">]</span>
             <span class="n">_yeardoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yeardoy</span><span class="p">[</span><span class="n">rec_range</span><span class="p">,</span> <span class="p">:]</span>
 
-            <span class="c1"># TODO</span>
             <span class="c1"># Fit and save results</span>
             <span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_record</span><span class="p">(</span><span class="n">_evi</span><span class="p">,</span> <span class="n">_yeardoy</span><span class="p">,</span>
                                        <span class="bp">self</span><span class="o">.</span><span class="n">year_interval</span><span class="p">,</span>
@@ -522,7 +522,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -544,7 +544,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -554,7 +554,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

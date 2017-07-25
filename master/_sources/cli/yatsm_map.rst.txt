@@ -1,4 +1,4 @@
-.. _yatsm_cli_map:
+.. _yatsm_map:
 
 `yatsm map`
 -----------

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>Overview: module code &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -161,52 +172,37 @@
            <div itemprop="articleBody">
             
   <h1>All modules for which code is available</h1>
-<ul><li><a href="affine.html">affine</a></li>
-<li><a href="rasterio/coords.html">rasterio.coords</a></li>
-<li><a href="rasterio/crs.html">rasterio.crs</a></li>
-<li><a href="shapely/geometry/polygon.html">shapely.geometry.polygon</a></li>
-<li><a href="yatsm/accel.html">yatsm.accel</a></li>
-<li><a href="yatsm/algorithms/_core.html">yatsm.algorithms._core</a></li>
+<ul><li><a href="yatsm/accel.html">yatsm.accel</a></li>
 <li><a href="yatsm/algorithms/ccdc.html">yatsm.algorithms.ccdc</a></li>
 <li><a href="yatsm/algorithms/postprocess.html">yatsm.algorithms.postprocess</a></li>
-<li><a href="yatsm/api.html">yatsm.api</a></li>
-<li><a href="yatsm/classification/roi.html">yatsm.classification.roi</a></li>
-<li><a href="yatsm/cli/batch.html">yatsm.cli.batch</a></li>
+<li><a href="yatsm/algorithms/yatsm.html">yatsm.algorithms.yatsm</a></li>
+<li><a href="yatsm/cache.html">yatsm.cache</a></li>
+<li><a href="yatsm/classifiers.html">yatsm.classifiers</a></li>
+<ul><li><a href="yatsm/classifiers/diagnostics.html">yatsm.classifiers.diagnostics</a></li>
+</ul><li><a href="yatsm/cli/classify.html">yatsm.cli.classify</a></li>
+<li><a href="yatsm/cli/console.html">yatsm.cli.console</a></li>
 <li><a href="yatsm/cli/main.html">yatsm.cli.main</a></li>
 <li><a href="yatsm/cli/options.html">yatsm.cli.options</a></li>
-<li><a href="yatsm/config/_parse.html">yatsm.config._parse</a></li>
-<li><a href="yatsm/config/_util.html">yatsm.config._util</a></li>
+<li><a href="yatsm/cli/pixel.html">yatsm.cli.pixel</a></li>
+<li><a href="yatsm/config_parser.html">yatsm.config_parser</a></li>
 <li><a href="yatsm/errors.html">yatsm.errors</a></li>
-<li><a href="yatsm/executor.html">yatsm.executor</a></li>
-<li><a href="yatsm/gis/conventions.html">yatsm.gis.conventions</a></li>
-<li><a href="yatsm/gis/convert.html">yatsm.gis.convert</a></li>
-<li><a href="yatsm/gis/core.html">yatsm.gis.core</a></li>
-<li><a href="yatsm/gis/projections.html">yatsm.gis.projections</a></li>
-<li><a href="yatsm/gis/tilespec.html">yatsm.gis.tilespec</a></li>
-<li><a href="yatsm/gis/utils.html">yatsm.gis.utils</a></li>
-<li><a href="yatsm/io/_api.html">yatsm.io._api</a></li>
-<li><a href="yatsm/io/backends/_gdal.html">yatsm.io.backends._gdal</a></li>
-<li><a href="yatsm/io/utils.html">yatsm.io.utils</a></li>
-<li><a href="yatsm/mapping/core.html">yatsm.mapping.core</a></li>
+<li><a href="yatsm/io/helpers.html">yatsm.io.helpers</a></li>
+<li><a href="yatsm/io/readers.html">yatsm.io.readers</a></li>
+<li><a href="yatsm/mapping/changes.html">yatsm.mapping.changes</a></li>
+<li><a href="yatsm/mapping/classification.html">yatsm.mapping.classification</a></li>
+<li><a href="yatsm/mapping/phenology.html">yatsm.mapping.phenology</a></li>
+<li><a href="yatsm/mapping/prediction.html">yatsm.mapping.prediction</a></li>
+<li><a href="yatsm/mapping/utils.html">yatsm.mapping.utils</a></li>
 <li><a href="yatsm/masking.html">yatsm.masking</a></li>
 <li><a href="yatsm/phenology/longtermmean.html">yatsm.phenology.longtermmean</a></li>
-<li><a href="yatsm/pipeline/_pipeline.html">yatsm.pipeline._pipeline</a></li>
-<li><a href="yatsm/pipeline/tasks/_validation.html">yatsm.pipeline.tasks._validation</a></li>
-<li><a href="yatsm/pipeline/tasks/change.html">yatsm.pipeline.tasks.change</a></li>
-<li><a href="yatsm/pipeline/tasks/preprocess.html">yatsm.pipeline.tasks.preprocess</a></li>
-<li><a href="yatsm/pipeline/tasks/stash.html">yatsm.pipeline.tasks.stash</a></li>
-<li><a href="yatsm/regression/_recresid.html">yatsm.regression._recresid</a></li>
-<li><a href="yatsm/regression/cran.html">yatsm.regression.cran</a></li>
+<li><a href="yatsm/plots.html">yatsm.plots</a></li>
 <li><a href="yatsm/regression/design.html">yatsm.regression.design</a></li>
 <li><a href="yatsm/regression/diagnostics.html">yatsm.regression.diagnostics</a></li>
+<li><a href="yatsm/regression/packaged.html">yatsm.regression.packaged</a></li>
+<li><a href="yatsm/regression/pickles/serialize.html">yatsm.regression.pickles.serialize</a></li>
+<li><a href="yatsm/regression/recresid.html">yatsm.regression.recresid</a></li>
 <li><a href="yatsm/regression/robust_fit.html">yatsm.regression.robust_fit</a></li>
 <li><a href="yatsm/regression/transforms.html">yatsm.regression.transforms</a></li>
-<li><a href="yatsm/results/_pytables.html">yatsm.results._pytables</a></li>
-<li><a href="yatsm/results/utils.html">yatsm.results.utils</a></li>
-<li><a href="yatsm/structural_break/_core.html">yatsm.structural_break._core</a></li>
-<li><a href="yatsm/structural_break/_cusum.html">yatsm.structural_break._cusum</a></li>
-<li><a href="yatsm/structural_break/_ewma.html">yatsm.structural_break._ewma</a></li>
-<li><a href="yatsm/tslib.html">yatsm.tslib</a></li>
 <li><a href="yatsm/utils.html">yatsm.utils</a></li>
 <li><a href="yatsm/vegetation_indices.html">yatsm.vegetation_indices</a></li>
 </ul>
@@ -224,7 +220,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -246,7 +242,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -256,7 +252,7 @@
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

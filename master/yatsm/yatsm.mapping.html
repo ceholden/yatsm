@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>yatsm.mapping package &mdash; YATSM 0.7.dev0 documentation</title>
+  <title>yatsm.mapping package &mdash; YATSM 0.6.3 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="YATSM 0.7.dev0 documentation" href="../index.html"/> 
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.dev0
+                0.6.3
               </div>
             
           
@@ -92,6 +92,17 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
@@ -166,46 +177,254 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.core.html">yatsm.mapping.core module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.changes.html">yatsm.mapping.changes module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.classification.html">yatsm.mapping.classification module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.phenology.html">yatsm.mapping.phenology module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.prediction.html">yatsm.mapping.prediction module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="yatsm.mapping.utils.html">yatsm.mapping.utils module</a></li>
 </ul>
 </div>
 </div>
 <div class="section" id="module-yatsm.mapping">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-yatsm.mapping" title="Permalink to this headline">¶</a></h2>
 <p>Module for making map products from YATSM results</p>
-<p>Contains functions used in &#8220;map&#8221; command line interface script.</p>
+<p>Contains functions used in “map” command line interface script.</p>
 <dl class="function">
-<dt id="yatsm.mapping.result_map">
-<code class="descclassname">yatsm.mapping.</code><code class="descname">result_map</code><span class="sig-paren">(</span><em>out</em>, <em>results</em>, <em>table</em>, <em>attr_columns</em>, <em>attr_funcs=None</em>, <em>**query_kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/core.html#result_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.result_map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Populate <cite>out</cite> from data queried from saved record model results</p>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Make this dask friendly on 1 result at a time so we can run in parallel</p>
-</div>
+<dt id="yatsm.mapping.get_change_date">
+<code class="descclassname">yatsm.mapping.</code><code class="descname">get_change_date</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>result_location</em>, <em>image_ds</em>, <em>first=False</em>, <em>out_format='%Y%j'</em>, <em>magnitude=False</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/changes.html#get_change_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.get_change_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output raster with changemap</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><span class="target" id="yatsm.mapping.result_map.params.out"></span><strong>out</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.out">¶</a> &#8211; 2D or 3D (nband x nrow x ncol) array to fill result
-data into</li>
-<li><span class="target" id="yatsm.mapping.result_map.params.results"></span><strong>results</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.results">¶</a> &#8211; A list of <code class="xref py py-class docutils literal"><span class="pre">HDF5ResultsStore</span></code> files</li>
-<li><span class="target" id="yatsm.mapping.result_map.params.table"></span><strong>table</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.table">¶</a> &#8211; The table to retrieve the data from</li>
-<li><span class="target" id="yatsm.mapping.result_map.params.attr_columns"></span><strong>attr_columns</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.attr_columns">¶</a> &#8211; Attributes from results table to map. The number
-of attributes given should be the same as the number of bands in
-<cite>out</cite>.</li>
-<li><span class="target" id="yatsm.mapping.result_map.params.attr_funcs"></span><strong>attr_funcs</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.attr_funcs">¶</a> &#8211; Optionally, provide a function to apply to each
-attribute described in <cite>attr_columns</cite>. Please supply <cite>None</cite>, or an
-iterable of either a <cite>callable</cite> object or <cite>None</cite> for each attribute
-in <cite>attr_columns</cite>.</li>
-<li><span class="target" id="yatsm.mapping.result_map.params.query_kwds"></span><strong>query_kwds</strong><a class="paramlink headerlink reference internal" href="#yatsm.mapping.result_map.params.query_kwds">¶</a> &#8211; Additional search terms to pass to
-<code class="xref py py-meth docutils literal"><span class="pre">HDF5ResultsStore.query()</span></code></li>
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Ordinal date for start of map records</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Ordinal date for end of map records</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Location of results</li>
+<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) – Example dataset</li>
+<li><strong>first</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Use first change instead of last</li>
+<li><strong>out_format</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Output date format</li>
+<li><strong>magnitude</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – output magnitude of each change?</li>
+<li><strong>ndv</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – NoDataValue</li>
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – filename pattern of saved record results</li>
+<li><strong>warn_on_empty</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Log warning if result contained no
+result records (default: False)</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt><cite>out</cite>, but with desired result file attributes mapped into</dt>
-<dd><p class="first last">the image</p>
+<dt>A 2D np.ndarray array containing the changes between the</dt>
+<dd><p class="first last">start and end date. Also includes, if specified, a 3D np.ndarray of
+the magnitude of each change plus the indices of these magnitudes</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.mapping.get_change_num">
+<code class="descclassname">yatsm.mapping.</code><code class="descname">get_change_num</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>result_location</em>, <em>image_ds</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/changes.html#get_change_num"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.get_change_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output raster with changemap</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Ordinal date for start of map records</li>
+<li><strong>end</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Ordinal date for end of map records</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Location of results</li>
+<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) – Example dataset</li>
+<li><strong>ndv</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – NoDataValue</li>
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – filename pattern of saved record results</li>
+<li><strong>warn_on_empty</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Log warning if result contained no
+result records (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>2D numpy array containing the number of changes</dt>
+<dd><p class="first last">between the start and end date; list containing band names</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.mapping.get_classification">
+<code class="descclassname">yatsm.mapping.</code><code class="descname">get_classification</code><span class="sig-paren">(</span><em>date</em>, <em>result_location</em>, <em>image_ds</em>, <em>after=False</em>, <em>before=False</em>, <em>qa=False</em>, <em>pred_proba=False</em>, <em>ndv=0</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/classification.html#get_classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.get_classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output raster with classification results</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Location of the results</li>
+<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) – Example dataset</li>
+<li><strong>after</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date intersects a disturbed period, use next
+available time segment</li>
+<li><strong>before</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date does not intersect a model, use
+previous non-disturbed time segment</li>
+<li><strong>qa</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Add QA flag specifying segment type (intersect,
+after, or before)</li>
+<li><strong>pred_proba</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Include additional band with
+classification value probabilities</li>
+<li><strong>ndv</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – NoDataValue</li>
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – filename pattern of saved record results</li>
+<li><strong>warn_on_empty</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Log warning if result contained no
+result records (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>2D numpy array containing the classification map for the</dt>
+<dd><p class="first last">date specified</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.mapping.get_phenology">
+<code class="descclassname">yatsm.mapping.</code><code class="descname">get_phenology</code><span class="sig-paren">(</span><em>date</em>, <em>result_location</em>, <em>image_ds</em>, <em>after=False</em>, <em>before=False</em>, <em>qa=False</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/phenology.html#get_phenology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.get_phenology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output a raster containing phenology information</p>
+<p>Phenology information includes spring_doy, autumn_doy, pheno_cor, peak_evi,
+peak_doy, and pheno_nobs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Location of the results</li>
+<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) – Example dataset</li>
+<li><strong>after</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date intersects a disturbed period, use next
+available time segment</li>
+<li><strong>before</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date does not intersect a model, use
+previous non-disturbed time segment</li>
+<li><strong>qa</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Add QA flag specifying segment type (intersect,
+after, or before)</li>
+<li><strong>ndv</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – NoDataValue</li>
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – filename pattern of saved record results</li>
+<li><strong>warn_on_empty</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Log warning if result contained no
+result records (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A tuple (np.ndarray, list) containing the 3D np.ndarray of the</dt>
+<dd><p class="first last">phenology metrics, and the band names for the output dataset</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.mapping.get_coefficients">
+<code class="descclassname">yatsm.mapping.</code><code class="descname">get_coefficients</code><span class="sig-paren">(</span><em>date</em>, <em>result_location</em>, <em>image_ds</em>, <em>bands</em>, <em>coefs</em>, <em>prefix=''</em>, <em>amplitude=False</em>, <em>after=False</em>, <em>before=False</em>, <em>qa=False</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/prediction.html#get_coefficients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.get_coefficients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output a raster with coefficients from CCDC</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Location of the results</li>
+<li><strong>bands</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Bands to predict</li>
+<li><strong>coefs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of coefficients to output</li>
+<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) – Example dataset</li>
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Use coef/rmse with refit prefix (default: ‘’)</li>
+<li><strong>amplitude</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Map amplitude of seasonality instead of
+individual coefficient estimates for sin/cosine pair
+(default: False)</li>
+<li><strong>after</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date intersects a disturbed period, use next
+available time segment (default: False)</li>
+<li><strong>before</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date does not intersect a model, use
+previous non-disturbed time segment (default: False)</li>
+<li><strong>qa</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Add QA flag specifying segment type (intersect,
+after, or before) (default: False)</li>
+<li><strong>ndv</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – NoDataValue (default: -9999)</li>
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – filename pattern of saved record results</li>
+<li><strong>warn_on_empty</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Log warning if result contained no
+result records (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A tuple (np.ndarray, list) containing the 3D numpy.ndarray of</dt>
+<dd><p class="first last">the coefficients (coefficient x band x pixel), and the band names
+for the output dataset</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.mapping.get_prediction">
+<code class="descclassname">yatsm.mapping.</code><code class="descname">get_prediction</code><span class="sig-paren">(</span><em>date</em>, <em>result_location</em>, <em>image_ds</em>, <em>bands='all'</em>, <em>prefix=''</em>, <em>after=False</em>, <em>before=False</em>, <em>qa=False</em>, <em>ndv=-9999</em>, <em>pattern='yatsm_r*'</em>, <em>warn_on_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/mapping/prediction.html#get_prediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.mapping.get_prediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output a raster with the predictions from model fit for a given date</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>date</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Ordinal date for prediction image</li>
+<li><strong>result_location</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Location of the results</li>
+<li><strong>image_ds</strong> (<em>gdal.Dataset</em>) – Example dataset</li>
+<li><strong>bands</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Bands to predict - ‘all’ for every band, or specify
+a list of bands</li>
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Use coef/rmse with refit prefix (default: ‘’)</li>
+<li><strong>after</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date intersects a disturbed period, use next
+available time segment</li>
+<li><strong>before</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If date does not intersect a model, use
+previous non-disturbed time segment</li>
+<li><strong>qa</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Add QA flag specifying segment type (intersect,
+after, or before)</li>
+<li><strong>ndv</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – NoDataValue</li>
+<li><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – filename pattern of saved record results</li>
+<li><strong>warn_on_empty</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Log warning if result contained no
+result records (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>A 3D numpy.ndarray containing the prediction for each band,</dt>
+<dd><p class="first last">for each pixel</p>
 </dd>
 </dl>
 </p>
@@ -235,7 +454,7 @@ in <cite>attr_columns</cite>.</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Apr 10, 2017, 8:05:27 PM.
+      Last updated on Jul 25, 2017, 10:49:07 AM.
 
     </p>
   </div>
@@ -257,7 +476,7 @@ in <cite>attr_columns</cite>.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.7.dev0',
+            VERSION:'0.6.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -267,7 +486,7 @@ in <cite>attr_columns</cite>.</li>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
