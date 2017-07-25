@@ -36,15 +36,15 @@ dataset:
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:
     algorithm: "CCDCesque"
-    prediction: "GLMNET_Lasso20"
+    prediction: "glmnet_Lasso20"
     design_matrix: "1 + x + harm(x, 1) + harm(x, 2)"
     reverse: False
     commission_alpha:
     # Re-fit each segment, adding new coefficients & RMSE info to record
     refit:
-        prefix: [robust]
-        prediction: [RLM]
-        stay_regularized: [True]
+        prefix:
+        prediction:
+        stay_regularized:
 
 # Parameters for CCDCesque algorithm -- referenced by "algorithm" key in YATSM
 CCDCesque:
@@ -60,28 +60,6 @@ CCDCesque:
         slope_test: False
         remove_noise: True
         dynamic_rmse: False
-
-# Regression estimators
-LassoCV:
-    pickle: "$PICKLES/sklearn_LassoCV_n50.pkl"
-    fit:  # optional arguments to the ``fit`` method of the predictor
-
-Lasso20:
-    pickle: "$PICKLES/sklearn_Lasso20.pkl"
-
-OLS:
-    pickle: "$PICKLES/OLS.pkl"
-
-GLMNET_LassoCV:
-    pickle: "$PICKLES/glmnet_LassoCV_n50.pkl"
-
-GLMNET_Lasso20:
-    pickle: "$PICKLES/glmnet_Lasso20.pkl"
-
-RLM:
-    pickle: "$PICKLES/rlm_maxiter10.pkl"
-    fit:
-        penalties: [1, 0, 1, 1, 1, 1]
 
 # Section for phenology fitting
 phenology:
@@ -102,20 +80,10 @@ phenology:
         q_min: 10
         q_max: 90
 
-# Section for segmentation
-segment:
-    # Segmentation image
-    segmentation:
-    # Resegmentation threshold (0 turns off resegmentation)
-    resegment_crit: 0
-    # Resegmentation size thresholds
-    resegment_minpix: 5
-    resegment_maxpix: 50
-
 # Section for training and classification
 classification:
     # Training data file
-    training_image: "$CONFIG/../training_data.gtif"
+    training_image: "$CONFIG/training_data.gtif"
     # Training data masked values
     roi_mask_values: [0, 255]
     # Date range

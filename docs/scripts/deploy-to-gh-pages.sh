@@ -16,7 +16,6 @@ REPO=$(git config remote.origin.url)
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 REV=$(git rev-parse --short HEAD)
 
-# SRC_BRANCH=$TRAVIS_BRANCH
 SRC_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 DST_BRANCH=gh-pages
 
@@ -27,6 +26,9 @@ if [ "$TRAVIS" == "true" ]; then
         echo "Not building docs for PR"
         exit 0
     fi
+
+    # Override what git says
+    SRC_BRANCH=$TRAVIS_BRANCH
 
     # CONFIGURE GIT
     ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"

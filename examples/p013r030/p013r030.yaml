@@ -36,14 +36,14 @@ dataset:
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:
     algorithm: "CCDCesque"
-    prediction: "GLMNET_Lasso20"
+    prediction: "glmnet_Lasso20"
     design_matrix: "1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3)"
     reverse: False
     commission_alpha:
     # Re-fit each segment, adding new coefficients & RMSE info to record
     refit:
-        prefix: [robust]
-        prediction: [RLM]
+        prefix: [rlm_]
+        prediction: [rlm_maxiter10]
         stay_regularized: [True]
 
 # Parameters for CCDCesque algorithm -- referenced by "algorithm" key in YATSM
@@ -60,29 +60,6 @@ CCDCesque:
         slope_test: False
         remove_noise: True
         dynamic_rmse: False
-
-# Regression estimators
-LassoCV:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_LassoCV_n50.pkl"
-    fit:  # optional arguments to the ``fit`` method of the predictor
-
-Lasso20:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_Lasso20.pkl"
-
-OLS:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/OLS.pkl"
-
-GLMNET_LassoCV:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n50.pkl"
-
-GLMNET_Lasso20:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl"
-    fit:
-        # 8 penalties for 8 coefficients
-        penalties: [1, 0, 1, 1, 1, 1, 1, 1]
-
-RLM:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/rlm_maxiter10.pkl"
 
 # Section for phenology fitting
 phenology:
@@ -102,16 +79,6 @@ phenology:
         # Upper and lower percentiles of EVI used for max/min scaling
         q_min: 10
         q_max: 90
-
-# Section for segmentation
-segment:
-    # Segmentation image
-    segmentation:
-    # Resegmentation threshold (0 turns off resegmentation)
-    resegment_crit: 0
-    # Resegmentation size thresholds
-    resegment_minpix: 5
-    resegment_maxpix: 50
 
 # Section for training and classification
 classification:
