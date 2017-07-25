@@ -49,14 +49,14 @@ after_success:
     # Docs
     - source activate test
     - pip install -r docs/requirements.txt
-    - sphinx-apidoc -f -e -o docs/source/yatsm yatsm/
     - bash docs/scripts/deploy-to-gh-pages.sh
 before_cache:
     # Deactivate conda so we use system 'curl'
     - source deactivate
 env:
     global:
-        - GITHUB_REPO: "github.com/ceholden/yatsm.git"
-        - secure: "eTgBeEOlCAD6z68ARQQV352xYZGzxl29QolGh/j3pycsNbGD1eduGBYWH8BRu6rvqNLMR0TOe2wqX3UWjZEYdeZYwbv3foebKEeGM7QUI2mrAElXBySNFoDdmm1ykVvb3JhCUrc+DFhIHO3MG7LFd0lAeTa46gnQpBCZVJKNtBQ="
+        - ENCRYPTION_LABEL: "f7129f342355"
+        - COMMIT_AUTHOR_EMAIL: "ceholden@gmail.com"
+        - COMMIT_AUTHOR_NAME: "Chris Holden"
 notifications:
     email: false
