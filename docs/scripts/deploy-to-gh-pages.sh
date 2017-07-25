@@ -12,10 +12,10 @@ rev=$(git rev-parse --short HEAD)
 
 cd $(dirname $(readlink -f $0))/../
 
-rm -rf build/
+rm -rf _build/
 
 make html
-cd build/html/
+cd _build/html/
 
 git init
 git config user.email "ceholden@gmail.com"
