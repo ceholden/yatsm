@@ -1,0 +1,529 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.algorithms.postprocess &mdash; YATSM 0.6.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>yatsm.algorithms.postprocess</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/algorithms/postprocess.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.algorithms.postprocess</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Result post-processing utilities</span>
+
+<span class="sd">Includes comission and omission tests and robust linear model result</span>
+<span class="sd">calculations</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.lib.recfunctions</span> <span class="k">as</span> <span class="nn">nprf</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+
+<span class="kn">from</span> <span class="nn">..regression.diagnostics</span> <span class="k">import</span> <span class="n">rmse</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">date2index</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># POST-PROCESSING</span>
+<div class="viewcode-block" id="commission_test"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.commission_test">[docs]</a><span class="k">def</span> <span class="nf">commission_test</span><span class="p">(</span><span class="n">yatsm</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Merge adjacent records based on Chow Tests for nested models</span>
+
+<span class="sd">    Use Chow Test to find false positive, spurious, or unnecessary breaks</span>
+<span class="sd">    in the timeseries by comparing the effectiveness of two separate</span>
+<span class="sd">    adjacent models with one single model that spans the entire time</span>
+<span class="sd">    period.</span>
+
+<span class="sd">    Chow test is described:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\frac{[RSS_r - (RSS_1 + RSS_2)] / k}{(RSS_1 + RSS_2) / (n - 2k)}</span>
+
+<span class="sd">    where:</span>
+
+<span class="sd">        - :math:`RSS_r` is the RSS of the combined, or, restricted model</span>
+<span class="sd">        - :math:`RSS_1` is the RSS of the first model</span>
+<span class="sd">        - :math:`RSS_2` is the RSS of the second model</span>
+<span class="sd">        - :math:`k` is the number of model parameters</span>
+<span class="sd">        - :math:`n` is the number of total observations</span>
+
+<span class="sd">    Because we look for change in multiple bands, the RSS used to compare</span>
+<span class="sd">    the unrestricted versus restricted models is the mean RSS</span>
+<span class="sd">    values from all ``model.test_indices``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        yatsm (YATSM model): fitted YATSM model to check for commission errors</span>
+<span class="sd">        alpha (float): significance level for F-statistic (default: 0.10)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: updated copy of ``yatsm.record`` with spurious models</span>
+<span class="sd">            combined into unified model</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Allocate memory outside of loop</span>
+    <span class="n">m_1_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">m_2_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">m_r_rss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">merged</span><span class="p">:</span>
+            <span class="n">m_1</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m_1</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">m_2</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Unrestricted model starts/ends</span>
+        <span class="n">m_1_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_1</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])</span>
+        <span class="n">m_1_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_1</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">])</span>
+        <span class="n">m_2_start</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_2</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])</span>
+        <span class="n">m_2_end</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">dates</span><span class="p">,</span> <span class="n">m_2</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">])</span>
+        <span class="c1"># Restricted start/end</span>
+        <span class="n">m_r_start</span> <span class="o">=</span> <span class="n">m_1_start</span>
+        <span class="n">m_r_end</span> <span class="o">=</span> <span class="n">m_2_end</span>
+
+        <span class="c1"># Need enough obs to fit models (n &gt; k)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">m_1_end</span> <span class="o">-</span> <span class="n">m_1_start</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span> <span class="ow">or</span> <span class="p">(</span><span class="n">m_2_end</span> <span class="o">-</span> <span class="n">m_2_start</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Too few obs (n &lt;= k) to merge segment&#39;</span><span class="p">)</span>
+            <span class="n">merged</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_1</span><span class="p">)</span>
+            <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_2</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="n">m_r_end</span> <span class="o">-</span> <span class="n">m_r_start</span>
+        <span class="n">F_crit</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">test_indices</span><span class="p">):</span>
+            <span class="n">m_1_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">,</span> <span class="p">:],</span>
+                                           <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_1_start</span><span class="p">:</span><span class="n">m_1_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_2_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">,</span> <span class="p">:],</span>
+                                           <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_2_start</span><span class="p">:</span><span class="n">m_2_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">m_r_rss</span><span class="p">[</span><span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
+                                           <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Collapse RSS across all test indices for F statistic</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">((</span><span class="n">m_r_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="n">m_1_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span> <span class="o">/</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span>
+            <span class="p">((</span><span class="n">m_1_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">+</span> <span class="n">m_2_rss</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">F</span> <span class="o">&gt;</span> <span class="n">F_crit</span><span class="p">:</span>
+            <span class="c1"># Reject H0 and retain change</span>
+            <span class="c1"># Only add in previous model if first model</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_1</span><span class="p">)</span>
+            <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_2</span><span class="p">)</span>
+            <span class="n">merged</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Fail to reject H0 -- ignore change and merge</span>
+            <span class="n">m_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">record_template</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Remove last previously added model from list to merge</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">models</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">m_new</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_1</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
+            <span class="n">m_new</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_2</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span>
+            <span class="n">m_new</span><span class="p">[</span><span class="s1">&#39;break&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_2</span><span class="p">[</span><span class="s1">&#39;break&#39;</span><span class="p">]</span>
+
+            <span class="c1"># Re-fit models and copy over attributes</span>
+            <span class="n">yatsm</span><span class="o">.</span><span class="n">fit_models</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">,</span> <span class="p">:],</span>
+                             <span class="n">yatsm</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">m_r_start</span><span class="p">:</span><span class="n">m_r_end</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i_m</span><span class="p">,</span> <span class="n">_m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yatsm</span><span class="o">.</span><span class="n">models</span><span class="p">):</span>
+                <span class="n">m_new</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">i_m</span><span class="p">]</span> <span class="o">=</span> <span class="n">_m</span><span class="o">.</span><span class="n">coef</span>
+                <span class="n">m_new</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">][</span><span class="n">i_m</span><span class="p">]</span> <span class="o">=</span> <span class="n">_m</span><span class="o">.</span><span class="n">rmse</span>
+
+            <span class="k">if</span> <span class="s1">&#39;magnitude&#39;</span> <span class="ow">in</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+                <span class="c1"># Preserve magnitude from 2nd model that was merged</span>
+                <span class="n">m_new</span><span class="p">[</span><span class="s1">&#39;magnitude&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_2</span><span class="p">[</span><span class="s1">&#39;magnitude&#39;</span><span class="p">]</span>
+
+            <span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m_new</span><span class="p">)</span>
+
+            <span class="n">merged</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">models</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="omission_test"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.omission_test">[docs]</a><span class="k">def</span> <span class="nf">omission_test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">behavior</span><span class="o">=</span><span class="s1">&#39;ANY&#39;</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Add omitted breakpoint into records based on residual stationarity</span>
+
+<span class="sd">    Uses recursive residuals within a CUMSUM test to check if each model</span>
+<span class="sd">    has omitted a &quot;structural change&quot; (e.g., land cover change). Returns</span>
+<span class="sd">    an array of True or False for each timeseries segment record depending</span>
+<span class="sd">    on result from `statsmodels.stats.diagnostic.breaks_cusumolsresid`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        crit (float, optional): Critical p-value for rejection of null</span>
+<span class="sd">            hypothesis that data contain no structural change</span>
+<span class="sd">        behavior (str, optional): Method for dealing with multiple</span>
+<span class="sd">            `test_indices`. `ANY` will return True if any one test index</span>
+<span class="sd">            rejects the null hypothesis. `ALL` will only return True if ALL</span>
+<span class="sd">            test indices reject the null hypothesis.</span>
+<span class="sd">        indices (np.ndarray, optional): Array indices to test. User provided</span>
+<span class="sd">            indices must be a subset of `model.test_indices`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: Array of True or False for each record where</span>
+<span class="sd">            True indicates omitted break point</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;any&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`behavior` must be &quot;any&quot; or &quot;all&quot;&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_indices</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">test_indices</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`indices` must be a subset of &#39;</span>
+                         <span class="s1">&#39;`model.test_indices`&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="o">.</span><span class="n">ran</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">omission</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">):</span>
+        <span class="c1"># Skip if no model fit</span>
+        <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c1"># Find matching X and Y in data</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]))</span> <span class="o">&amp;</span>
+            <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Grab matching X and Y</span>
+        <span class="n">_X</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">_Y</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Y</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i_b</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+            <span class="c1"># Create OLS regression</span>
+            <span class="n">ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">_Y</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="p">:],</span> <span class="n">_X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+            <span class="c1"># Perform CUMSUM test on residuals</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">diagnostic</span><span class="o">.</span><span class="n">breaks_cusumolsresid</span><span class="p">(</span>
+                <span class="n">ols</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">_X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">crit</span><span class="p">:</span>
+                <span class="n">omission</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">omission</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i_b</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Collapse band answers according to `behavior`</span>
+    <span class="k">if</span> <span class="n">behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;any&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">omission</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">omission</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="refit_record"><a class="viewcode-back" href="../../../yatsm/yatsm.algorithms.postprocess.html#yatsm.algorithms.postprocess.refit_record">[docs]</a><span class="k">def</span> <span class="nf">refit_record</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span>
+                 <span class="n">fitopt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_regularized</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Refit YATSM model segments with a new estimator and update record</span>
+
+<span class="sd">    YATSM class model must be ran and contain at least one record before this</span>
+<span class="sd">    function is called.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (YATSM model): YATSM model to refit</span>
+<span class="sd">        prefix (str): prefix for refitted coefficient and RMSE (don&#39;t include</span>
+<span class="sd">            underscore as it will be added)</span>
+<span class="sd">        estimator (object): instance of a scikit-learn compatible estimator</span>
+<span class="sd">            object</span>
+<span class="sd">        fitopt (dict, optional): dict of options for the ``fit`` method of the</span>
+<span class="sd">            ``estimator`` provided (default: None)</span>
+<span class="sd">        keep_regularized (bool, optional): do not use features with coefficient</span>
+<span class="sd">            estimates that are fit to 0 (i.e., if using L1 regularization)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.array: updated model.record NumPy structured array with refitted</span>
+<span class="sd">            coefficients and RMSE</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">fitopt</span> <span class="o">=</span> <span class="n">fitopt</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="n">refit_coef</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_coef&#39;</span>
+    <span class="n">refit_rmse</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_rmse&#39;</span>
+
+    <span class="c1"># Create new array for robust coefficients and RMSE</span>
+    <span class="n">n_coef</span><span class="p">,</span> <span class="n">n_series</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">refit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">refit_coef</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_coef</span><span class="p">,</span> <span class="n">n_series</span><span class="p">)),</span>
+        <span class="p">(</span><span class="n">refit_rmse</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">n_series</span><span class="p">)),</span>
+    <span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">i_rec</span><span class="p">,</span> <span class="n">rec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">):</span>
+        <span class="c1"># Find matching X and Y in data</span>
+        <span class="c1"># start/end dates are considered in case ran backward</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]))</span> <span class="o">&amp;</span>
+                         <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">dates</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">])))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Refit each band</span>
+        <span class="k">for</span> <span class="n">i_y</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Y</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">keep_regularized</span><span class="p">:</span>
+                <span class="c1"># Find nonzero in case of regularized regression</span>
+                <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="s1">&#39;coef&#39;</span><span class="p">][:,</span> <span class="n">i_y</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">nonzero</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_rmse</span><span class="p">][:]</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;rmse&#39;</span><span class="p">]</span>
+                    <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_series</span><span class="p">)</span>
+
+            <span class="c1"># Fit</span>
+            <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">nonzero</span><span class="p">],</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">fitopt</span><span class="p">)</span>
+            <span class="c1"># Store updated coefficients</span>
+            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_coef</span><span class="p">][</span><span class="n">nonzero</span><span class="p">,</span> <span class="n">i_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">coef_</span>
+            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_coef</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">i_y</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">getattr</span><span class="p">(</span>
+                <span class="n">estimator</span><span class="p">,</span> <span class="s1">&#39;intercept_&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="c1"># Update RMSE</span>
+            <span class="n">refit</span><span class="p">[</span><span class="n">i_rec</span><span class="p">][</span><span class="n">refit_rmse</span><span class="p">][</span><span class="n">i_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">rmse</span><span class="p">(</span>
+                <span class="n">y</span><span class="p">,</span> <span class="n">estimator</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="n">nonzero</span><span class="p">]))</span>
+
+    <span class="c1"># Merge</span>
+    <span class="n">refit</span> <span class="o">=</span> <span class="n">nprf</span><span class="o">.</span><span class="n">merge_arrays</span><span class="p">((</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">,</span> <span class="n">refit</span><span class="p">),</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">refit</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Jul 25, 2017, 2:55:42 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

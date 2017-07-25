@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Batch Interface &mdash; YATSM 0.6.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../index.html"/>
+        <link rel="next" title="Mapping Derived Information" href="map_static.html"/>
+        <link rel="prev" title="Model Configuration" href="configuration.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sun-grid-engine">Sun Grid Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Batch Interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/batch_interface.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="batch-interface">
+<span id="guide-batch-interface"></span><h1>Batch Interface<a class="headerlink" href="#batch-interface" title="Permalink to this headline">¶</a></h1>
+<p>The default method for running image stacks is to run each line, or row,
+separately from other lines. In a multiprocessing situation, the total
+number of lines can be broken up among the <code class="docutils literal"><span class="pre">n</span></code> available CPUs. Before
+using the batch interface, make sure you already have a parameter file
+generated as described by <a class="reference internal" href="configuration.html#guide-model-config"><span class="std std-ref">Model Configuration</span></a>.</p>
+<p>The batch interface which runs each line separately is
+<a class="reference internal" href="../cli/yatsm_line.html#yatsm-line"><span class="std std-ref">yatsm line</span></a>. It’s usage is:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ yatsm line --help
+Usage: yatsm line <span class="o">[</span>OPTIONS<span class="o">]</span> &lt;config&gt; &lt;job_number&gt; &lt;total_jobs&gt;
+
+Options:
+  --check_cache  Check that cache file contains matching data
+  --resume       Do not overwrite preexisting results
+  --do-not-run   Do not run YATSM <span class="o">(</span>useful <span class="k">for</span> just caching data<span class="o">)</span>
+  --help         Show this message and exit.
+</pre></div>
+</div>
+<p>Let’s say our image stack contains 1,000 rows. If we use 50 total CPUs
+to process the image stack, then each CPU will be responsible for only
+20 lines. To evenly distribute the number of pixels that contain
+timeseries (e.g., to ignore any NODATA buffers around the images), the
+lines are divided up in sequence. Thus, job 5 of 50 total jobs would
+work on the lines:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">job</span><span class="o">=</span><span class="m">5</span>
+$ <span class="nv">n</span><span class="o">=</span><span class="m">50</span>
+$ seq -s , <span class="nv">$job</span> <span class="nv">$n</span> <span class="m">1000</span>
+<span class="m">5</span>,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
+</pre></div>
+</div>
+<div class="section" id="sun-grid-engine">
+<h2>Sun Grid Engine<a class="headerlink" href="#sun-grid-engine" title="Permalink to this headline">¶</a></h2>
+<p>In the example of the compute cluster at Boston University which
+utilizes the Sun Grid Engine scheduler, one could run an image stack as
+follows:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span><span class="m">200</span>
+$ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+    qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span><span class="m">24</span>:00:00 -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
+        yatsm -v line --resume config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
+  <span class="k">done</span>
+</pre></div>
+</div>
+<p>By setting the environment variable, <code class="docutils literal"><span class="pre">PYTHONUNBUFFERED</span></code>, to a nonzero and
+non-empty value, Python will keep stdout and stderr unbuffered. This is handy
+to use when trying to diagnose a problem or when trying to guage the progress
+of YATSM when logging to a file (e.g., in a <code class="docutils literal"><span class="pre">qsub</span></code> job) because unbuffered
+output is flushed or written immediately to the log file. Be aware that the
+constant writing to the log file may incur a penalty cost. You can run
+YATSM jobs with unbuffered output as follows in the example for <code class="docutils literal"><span class="pre">yatsm</span> <span class="pre">line</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span><span class="m">24</span>:00:00 -N yatsm -b y <span class="se">\</span>
+    <span class="nv">PYTHONUNBUFFERED</span><span class="o">=</span><span class="m">1</span> yatsm -v line --resume config.ini <span class="m">1</span> <span class="m">1</span>
+</pre></div>
+</div>
+<p>One useful tip is to optimize the use of the CPU nodes by first transforming the
+dataset from an image based format to a timeseries format by saving all
+observations for each row in a separate file. The transformed dataset will be
+much easier to read as a timeseries because each processor only needs to read
+in one file instead of finding, opening, seeking through, and reading from
+many individual image files.</p>
+<p>To accomplish this approach, the <code class="docutils literal"><span class="pre">--do-not-run</span></code> flag can be combined with a
+specific request for computer nodes with fast ethernet speeds,
+<code class="docutils literal"><span class="pre">-l</span> <span class="pre">eth_speed</span> <span class="pre">10</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nv">njob</span><span class="o">=</span><span class="m">16</span>
+$ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$njob</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+    qsub -j y -V -l <span class="nv">h_rt</span><span class="o">=</span><span class="m">24</span>:00:00 -l <span class="nv">eth_speed</span><span class="o">=</span><span class="m">10</span> -N yatsm_<span class="nv">$job</span> -b y <span class="se">\</span>
+        yatsm -v line --resume --do-not-run config.ini <span class="nv">$job</span> <span class="nv">$njob</span>
+  <span class="k">done</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="map_static.html" class="btn btn-neutral float-right" title="Mapping Derived Information" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="configuration.html" class="btn btn-neutral" title="Model Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Jul 25, 2017, 2:55:42 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.6.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

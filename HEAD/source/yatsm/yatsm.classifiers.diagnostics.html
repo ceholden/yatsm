@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.classifiers.diagnostics module &mdash; YATSM 0.6.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="YATSM 0.6.3 documentation" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.classifiers.diagnostics module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/source/yatsm/yatsm.classifiers.diagnostics.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-yatsm.classifiers.diagnostics">
+<span id="yatsm-classifiers-diagnostics-module"></span><h1>yatsm.classifiers.diagnostics module<a class="headerlink" href="#module-yatsm.classifiers.diagnostics" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="yatsm.classifiers.diagnostics.SpatialKFold">
+<em class="property">class </em><code class="descclassname">yatsm.classifiers.diagnostics.</code><code class="descname">SpatialKFold</code><span class="sig-paren">(</span><em>y</em>, <em>row</em>, <em>col</em>, <em>n_folds=3</em>, <em>shuffle=False</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/classifiers/diagnostics.html#SpatialKFold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.classifiers.diagnostics.SpatialKFold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Spatial cross validation iterator</p>
+<p>Training data samples physically located next to test samples are likely to
+be strongly related due to spatial autocorrelation. This violation of
+independence will artificially inflate crossvalidated measures of
+algorithm performance.</p>
+<p>Provides training and testing indices to split data into training and
+testing sets. Splits a “Region of Interest” image into k consecutive
+folds. Each fold is used as a validation set once while k - 1 remaining
+folds form the training set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>y</strong> (<em>np.ndarray</em>) – Labeled features</li>
+<li><strong>row</strong> (<em>np.ndarray</em>) – Row (y) pixel location for each <cite>y</cite></li>
+<li><strong>col</strong> (<em>np.ndarray</em>) – Column (x) pixel location for each <cite>x</cite></li>
+<li><strong>n_folds</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of folds (default: 3)</li>
+<li><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Shuffle the unique training data regions before
+splitting into batches (default: False)</li>
+<li><strong>random_state</strong> (<a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, or </em><em>np.random.RandomState</em>) – Pseudo-random number
+generator to use for random sampling. If None, default to numpy RNG
+for shuffling</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="yatsm.classifiers.diagnostics.SpatialKFold.shuffle">
+<code class="descname">shuffle</code><em class="property"> = False</em><a class="headerlink" href="#yatsm.classifiers.diagnostics.SpatialKFold.shuffle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yatsm.classifiers.diagnostics.SpatialKFold_ROI">
+<em class="property">class </em><code class="descclassname">yatsm.classifiers.diagnostics.</code><code class="descname">SpatialKFold_ROI</code><span class="sig-paren">(</span><em>roi, n_folds=3, mask_values=[0], shuffle=False, random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/classifiers/diagnostics.html#SpatialKFold_ROI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.classifiers.diagnostics.SpatialKFold_ROI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Spatial cross validation iterator on ROI images</p>
+<p>Training data samples physically located next to test samples are likely to
+be strongly related due to spatial autocorrelation. This violation of
+independence will artificially inflate crossvalidated measures of
+algorithm performance.</p>
+<p>Provides training and testing indices to split data into training and
+testing sets. Splits a “Region of Interest” image into k consecutive
+folds. Each fold is used as a validation set once while k - 1 remaining
+folds form the training set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>roi</strong> (<em>np.ndarray</em>) – “Region of interest” matrix providing training data
+samples of some class</li>
+<li><strong>n_folds</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of folds (default: 3)</li>
+<li><strong>mask_values</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, or </em><em>np.ndarray</em><em>, </em><em>optional</em>) – one or more
+values within roi to ignore from sampling (default: [0])</li>
+<li><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Shuffle the unique training data regions before
+splitting into batches (default: False)</li>
+<li><strong>random_state</strong> (<a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.7)"><em>None</em></a><em>, </em><a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, or </em><em>np.random.RandomState</em>) – Pseudo-random number
+generator to use for random sampling. If None, default to numpy RNG
+for shuffling</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="yatsm.classifiers.diagnostics.SpatialKFold_ROI.shuffle">
+<code class="descname">shuffle</code><em class="property"> = False</em><a class="headerlink" href="#yatsm.classifiers.diagnostics.SpatialKFold_ROI.shuffle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.classifiers.diagnostics.kfold_scores">
+<code class="descclassname">yatsm.classifiers.diagnostics.</code><code class="descname">kfold_scores</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>algo</em>, <em>kf_generator</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/classifiers/diagnostics.html#kfold_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.classifiers.diagnostics.kfold_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs KFold crossvalidation and reports mean/std of scores</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>np.ndarray</em>) – X feature input used in classification</li>
+<li><strong>y</strong> (<em>np.ndarray</em>) – y labeled examples</li>
+<li><strong>algo</strong> (<em>sklean classifier</em>) – classifier used from scikit-learn</li>
+<li><strong>kf_generator</strong> (<em>sklearn crossvalidation generator</em>) – generator for indices
+used in crossvalidation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mean and standard deviation of crossvalidation scores</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(mean, std)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Jul 25, 2017, 2:55:42 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
