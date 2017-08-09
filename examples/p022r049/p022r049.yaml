@@ -9,11 +9,11 @@ version: "0.6.0"
 
 dataset:
     # Text file containing dates and images
-    input_file: "/home/ceholden/Documents/yatsm/examples/p022r049/images.csv"
+    input_file: "examples/p022r049/images.csv"
     # Input date format
     date_format: "%Y%j"
     # Output location
-    output: "/home/ceholden/Documents/landsat_stack/p022r049/images/YATSM"
+    output: "landsat_stack/p022r049/images/YATSM"
     # Output file prefix (e.g., [prefix]_[line].npz)
     output_prefix: "yatsm_r"
     # Total number of bands
@@ -32,7 +32,7 @@ dataset:
     # Use BIP image reader? If not, use GDAL to read in
     use_bip_reader: true
     # Directory location for caching dataset lines
-    cache_line_dir: "/home/ceholden/Documents/landsat_stack/p022r049/images/.yatsm_cache"
+    cache_line_dir: "landsat_stack/p022r049/images/cache"
 
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:

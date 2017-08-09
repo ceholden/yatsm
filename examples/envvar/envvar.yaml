@@ -12,7 +12,7 @@ dataset:
     # Input date format
     date_format: "%Y%j"
     # Output location
-    output: "$ROOTDIR/YATSM"
+    output: "$ROOT/YATSM"
     # Output file prefix (e.g., [prefix]_[line].npz)
     output_prefix: "yatsm_r"
     # Total number of bands
@@ -31,7 +31,7 @@ dataset:
     # Use BIP image reader? If not, use GDAL to read in
     use_bip_reader: False
     # Directory location for caching dataset lines
-    cache_line_dir: "$ROOTDIR/cache"
+    cache_line_dir: "$ROOT/cache"
 
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:

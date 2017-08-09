@@ -8,8 +8,10 @@ environment variables in configuration files.
 ## Example:
 
 ``` bash
+# Config location inside "yatsm" respository
 export CONFIG=$HOME/Documents/yatsm/examples/envvar
-export ROOTDIR=$HOME/Documents/landsat_stack/p013r030/images
-export PICKLES=$HOME/Documents/yatsm/yatsm/regression/pickles
+# Cloned and unzipped "landsat_stack" example data
+export ROOT=$HOME/Documents/yatsm/landsat_stack/p013r030/images
+# Look at a pixel
 yatsm -v pixel $CONFIG/envvar.yaml 25 25
 ```
