@@ -55,7 +55,7 @@ before_cache:
     - source deactivate
 env:
     global:
-        - ENCRYPTION_LABEL: "f7129f342355"
+        - ENCRYPTION_LABEL: "e56a8a33a954"
         - COMMIT_AUTHOR_EMAIL: "ceholden@gmail.com"
         - COMMIT_AUTHOR_NAME: "Chris Holden"
 notifications:
