@@ -189,14 +189,12 @@
 <span class="sd">statsmodels and can reach ~4x faster if Numba is available to accelerate.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="c1"># Don&#39;t alias to ``np`` until fix is implemented</span>
-<span class="c1"># https://github.com/numba/numba/issues/1559</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sklearn</span>
 
 <span class="kn">from</span> <span class="nn">yatsm.accel</span> <span class="k">import</span> <span class="n">try_jit</span>
 
-<span class="n">EPS</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+<span class="n">EPS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
 
 
 <span class="c1"># Weight scaling methods</span>
@@ -216,7 +214,7 @@
 <span class="sd">        http://statsmodels.sourceforge.net/stable/generated/statsmodels.robust.norms.TukeyBiweight.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Weight where abs(resid) &lt; c; otherwise 0</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">resid</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">resid</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">resid</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span></div>
 
 
 <div class="viewcode-block" id="mad"><a class="viewcode-back" href="../../../yatsm/yatsm.regression.robust_fit.html#yatsm.regression.mad">[docs]</a><span class="nd">@try_jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -236,14 +234,14 @@
 <span class="sd">        http://en.wikipedia.org/wiki/Median_absolute_deviation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Return median absolute deviation adjusted sigma</span>
-    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">resid</span><span class="p">))</span> <span class="o">/</span> <span class="n">c</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">resid</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">resid</span><span class="p">)))</span> <span class="o">/</span> <span class="n">c</span></div>
 
 
 <span class="c1"># UTILITY FUNCTIONS</span>
 <span class="c1"># np.any prevents nopython</span>
 <span class="nd">@try_jit</span><span class="p">()</span>
 <span class="k">def</span> <span class="nf">_check_converge</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
-    <span class="k">return</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">))</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">))</span>
 
 
 <span class="c1"># Broadcast on sw prevents nopython</span>
@@ -262,14 +260,14 @@
 <span class="sd">        tuple: coefficients and residual vector</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">sw</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">sw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 
     <span class="n">Xw</span> <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">sw</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">yw</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">sw</span>
 
-    <span class="n">beta</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">Xw</span><span class="p">,</span> <span class="n">yw</span><span class="p">)</span>
+    <span class="n">beta</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">Xw</span><span class="p">,</span> <span class="n">yw</span><span class="p">)</span>
 
-    <span class="n">resid</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">resid</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">beta</span><span class="p">,</span> <span class="n">resid</span>
 
@@ -332,7 +330,7 @@
 <span class="sd">                chaining</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">resid</span> <span class="o">=</span> <span class="n">_weight_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">resid</span> <span class="o">=</span> <span class="n">_weight_fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_est</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale_constant</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">&lt;</span> <span class="n">EPS</span><span class="p">:</span>
@@ -362,14 +360,14 @@
 <span class="sd">            np.ndarray: 1D yhat prediction</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">((</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
                  <span class="s2">&quot; * Coefficients: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span>
                  <span class="s2">&quot; * Intercept = </span><span class="si">%.5f</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span>
                 <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                 <span class="n">numpy</span><span class="o">.</span><span class="n">array_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+                 <span class="n">np</span><span class="o">.</span><span class="n">array_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
                  <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span><span class="p">))</span>
 </pre></div>
 
@@ -386,7 +384,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Sep 13, 2017, 9:01:13 AM.
+      Last updated on Sep 14, 2017, 1:21:22 PM.
 
     </p>
   </div>
