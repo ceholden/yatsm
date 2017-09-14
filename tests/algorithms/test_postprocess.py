@@ -52,9 +52,9 @@ def test_refit_nochange_rlm(sim_nochange):
     assert 'rlm_coef' in refit.dtype.names
     assert 'rlm_rmse' in refit.dtype.names
 
-    coef = np.array([[-3.84164779e+03, -3.84164779e+03],
-                     [5.26200993e-03, 5.26200993e-03]])
-    rmse = np.array([0.96866816, 0.96866816])
+    coef = np.array([[-3.842592e+03, -3.842592e+03],
+                     [5.263297e-03, 5.263297e-03]])
+    rmse = np.array([0.96880561,  0.96880561])
     np.testing.assert_allclose(refit[0]['rlm_coef'], coef)
     np.testing.assert_allclose(refit[0]['rlm_rmse'], rmse)
 

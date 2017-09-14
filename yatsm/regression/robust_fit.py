@@ -12,14 +12,12 @@ Run this file to test performance gains. Implementation is ~3x faster than
 statsmodels and can reach ~4x faster if Numba is available to accelerate.
 
 """
-# Don't alias to ``np`` until fix is implemented
-# https://github.com/numba/numba/issues/1559
-import numpy
+import numpy as np
 import sklearn
 
 from yatsm.accel import try_jit
 
-EPS = numpy.finfo('float').eps
+EPS = np.finfo('float').eps
 
 
 # Weight scaling methods
@@ -39,7 +37,7 @@ def bisquare(resid, c=4.685):
         http://statsmodels.sourceforge.net/stable/generated/statsmodels.robust.norms.TukeyBiweight.html
     """
     # Weight where abs(resid) < c; otherwise 0
-    return (numpy.abs(resid) < c) * (1 - (resid / c) ** 2) ** 2
+    return (np.abs(resid) < c) * (1 - (resid / c) ** 2) ** 2
 
 
 @try_jit(nopython=True)
@@ -59,14 +57,14 @@ def mad(resid, c=0.6745):
         http://en.wikipedia.org/wiki/Median_absolute_deviation
     """
     # Return median absolute deviation adjusted sigma
-    return numpy.median(numpy.fabs(resid)) / c
+    return np.median(np.fabs(resid - np.median(resid))) / c
 
 
 # UTILITY FUNCTIONS
 # np.any prevents nopython
 @try_jit()
 def _check_converge(x0, x, tol=1e-8):
-    return not numpy.any(numpy.fabs(x0 - x > tol))
+    return not np.any(np.fabs(x0 - x > tol))
 
 
 # Broadcast on sw prevents nopython
@@ -85,14 +83,14 @@ def _weight_fit(X, y, w):
         tuple: coefficients and residual vector
 
     """
-    sw = numpy.sqrt(w)
+    sw = np.sqrt(w)
 
     Xw = X * sw[:, None]
     yw = y * sw
 
-    beta, _, _, _ = numpy.linalg.lstsq(Xw, yw)
+    beta, _, _, _ = np.linalg.lstsq(Xw, yw)
 
-    resid = y - numpy.dot(X, beta)
+    resid = y - np.dot(X, beta)
 
     return beta, resid
 
@@ -155,7 +153,7 @@ class RLM(sklearn.base.BaseEstimator):
                 chaining
 
         """
-        self.coef_, resid = _weight_fit(X, y, numpy.ones_like(y))
+        self.coef_, resid = _weight_fit(X, y, np.ones_like(y))
         self.scale = self.scale_est(resid, c=self.scale_constant)
 
         if self.scale < EPS:
@@ -185,12 +183,12 @@ class RLM(sklearn.base.BaseEstimator):
             np.ndarray: 1D yhat prediction
 
         """
-        return numpy.dot(X, self.coef_) + self.intercept_
+        return np.dot(X, self.coef_) + self.intercept_
 
     def __str__(self):
         return (("%s:\n"
                  " * Coefficients: %s\n"
                  " * Intercept = %.5f\n") %
                 (self.__class__.__name__,
-                 numpy.array_str(self.coef_, precision=4),
+                 np.array_str(self.coef_, precision=4),
                  self.intercept_))

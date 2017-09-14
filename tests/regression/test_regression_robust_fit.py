@@ -6,16 +6,12 @@ import pytest
 import yatsm.regression.robust_fit as rf
 
 
-@pytest.fixture
-def X_y_intercept_slope(request):
-    np.random.seed(0)
-    slope, intercept = 2., 5.
-    X = np.c_[np.ones(10), np.arange(10)]
-    y = slope * X[:, 1] + intercept
-
-    # Add noise
-    y[9] = 0
-    return X, y, intercept, slope
+@pytest.mark.parametrize(('array', 'ans', ), [
+    (np.array([1, 1, 2, 2, 4, 6, 9, ]), 1.4825796)  # from Wikipedia example
+])
+def test_mad(array, ans):
+    mad = rf.mad(array)
+    assert mad == ans
 
 
 def test_RLM(X_y_intercept_slope):
@@ -24,7 +20,6 @@ def test_RLM(X_y_intercept_slope):
                scale_est=rf.mad, scale_constant=0.6745, update_scale=True,
                maxiter=50, tol=1e-8)
     m.fit(X, y)
-    print(m)
 
     np.testing.assert_allclose(m.coef_, [intercept, slope])
     np.testing.assert_allclose(m.predict(X), X[:, 1] * slope + intercept)
@@ -44,5 +39,16 @@ def test_RLM_issue88(X, y):
                scale_est=rf.mad, scale_constant=0.6745, update_scale=True,
                maxiter=50, tol=1e-8)
     m.fit(X, y)
-    print(m)
     m.predict(X)
+
+
+@pytest.fixture
+def X_y_intercept_slope(request):
+    np.random.seed(0)
+    slope, intercept = 2., 5.
+    X = np.c_[np.ones(10), np.arange(10)]
+    y = slope * X[:, 1] + intercept
+
+    # Add noise
+    y[9] = 0
+    return X, y, intercept, slope
