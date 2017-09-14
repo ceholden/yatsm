@@ -11,7 +11,7 @@ import yatsm.regression.robust_fit as rf
 ])
 def test_mad(array, ans):
     mad = rf.mad(array)
-    assert mad == ans
+    assert (mad - ans) < 1e-7
 
 
 def test_RLM(X_y_intercept_slope):
