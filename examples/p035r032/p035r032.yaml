@@ -36,7 +36,7 @@ dataset:
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:
     algorithm: "CCDCesque"
-    prediction: "LassoCV"
+    prediction: "sklearn_Lasso20"
     design_matrix: "1 + x + harm(x, 1) + harm(x, 2)"
     reverse: False
     commission_alpha:
@@ -61,29 +61,6 @@ CCDCesque:
         remove_noise: True
         dynamic_rmse: False
 
-# Regression estimators
-LassoCV:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_LassoCV_n50.pkl"
-    fit:  # optional arguments to the ``fit`` method of the predictor
-
-Lasso20:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/sklearn_Lasso20.pkl"
-
-OLS:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/OLS.pkl"
-
-GLMNET_LassoCV:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_LassoCV_n50.pkl"
-
-GLMNET_Lasso20:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/glmnet_Lasso20.pkl"
-    fit:
-        # 6 penalties for 6 coefficients
-        penalties: [1, 0, 1, 1, 1, 1]
-
-RLM:
-    pickle: "/home/ceholden/Documents/yatsm/yatsm/regression/pickles/rlm_maxiter10.pkl"
-
 # Section for phenology fitting
 phenology:
     enable: False
@@ -106,7 +83,7 @@ phenology:
 # Section for training and classification
 classification:
     # Training data file
-    training_image: "/home/ceholden/Documents/yatsm/examples/training_data.gtif"
+    training_image: "training_data.gtif"
     # Training data masked values
     roi_mask_values: [0, 255]
     # Date range

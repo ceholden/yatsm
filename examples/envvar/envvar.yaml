@@ -36,7 +36,7 @@ dataset:
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:
     algorithm: "CCDCesque"
-    prediction: "glmnet_Lasso20"
+    prediction: "sklearn_Lasso20"
     design_matrix: "1 + x + harm(x, 1) + harm(x, 2)"
     reverse: False
     commission_alpha:

@@ -36,7 +36,7 @@ dataset:
 # Parameters common to all timeseries analysis models within YATSM package
 YATSM:
     algorithm: "CCDCesque"
-    prediction: "glmnet_Lasso20"
+    prediction: "sklearn_Lasso20"
     design_matrix: "1 + x + harm(x, 1) + harm(x, 2) + harm(x, 3)"
     reverse: False
     commission_alpha:
@@ -83,7 +83,7 @@ phenology:
 # Section for training and classification
 classification:
     # Training data file
-    training_image: "/home/ceholden/Documents/yatsm/examples/training_data.gtif"
+    training_image: "training_data.gtif"
     # Training data masked values
     roi_mask_values: [0, 255]
     # Date range
