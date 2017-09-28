@@ -26,7 +26,7 @@ def test_classify_pass_1(example_timeseries, example_results, modify_config):
         # Try opening & check that classes are in the files
         for result in os.listdir(example_results['results_dir']):
             z = np.load(os.path.join(example_results['results_dir'], result))
-            assert 'classes' in z
+            assert 'classes' in z.files
             assert 'class' in z['record'].dtype.names
 
 
@@ -50,5 +50,5 @@ def test_classify_pass_2(example_timeseries, example_results, modify_config):
         for result in os.listdir(example_results['results_dir']):
             z = np.load(os.path.join(
                 example_results['results_dir_classified'], result))
-            assert 'classes' in z
+            assert 'classes' in z.files
             assert 'class' in z['record'].dtype.names
