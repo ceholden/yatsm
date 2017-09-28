@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.io.helpers &mdash; YATSM 0.6.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="YATSM 0.6.4 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>yatsm.io.helpers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/io/helpers.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.io.helpers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Collection of helper functions that ease common filesystem operations</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">errno</span>
+<span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">scandir</span> <span class="k">import</span> <span class="n">walk</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># Py3.5+ and incorporated or Py2/&lt;Py3.5</span>
+    <span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">walk</span>
+
+
+<div class="viewcode-block" id="mkdir_p"><a class="viewcode-back" href="../../../yatsm/yatsm.io.helpers.html#yatsm.io.mkdir_p">[docs]</a><span class="k">def</span> <span class="nf">mkdir_p</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Make a directory, ignoring error if it exists (i.e., ``mkdir -p``)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        d (str): directory path to create</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        OSError: Raise OSError if cannot create directory for reasons other</span>
+<span class="sd">            than it existing already (errno 13 &quot;EEXIST&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="c1"># File exists</span>
+        <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">err</span></div>
+
+
+<div class="viewcode-block" id="find_stack_images"><a class="viewcode-back" href="../../../yatsm/yatsm.io.helpers.html#yatsm.io.find_stack_images">[docs]</a><span class="k">def</span> <span class="nf">find_stack_images</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">folder_pattern</span><span class="o">=</span><span class="s1">&#39;L*&#39;</span><span class="p">,</span> <span class="n">image_pattern</span><span class="o">=</span><span class="s1">&#39;L*stack&#39;</span><span class="p">,</span>
+                      <span class="n">date_index_start</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">date_index_end</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+                      <span class="n">date_format</span><span class="o">=</span><span class="s1">&#39;%Y%j&#39;</span><span class="p">,</span>
+                      <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot; Find and identify dates and filenames of Landsat image stacks</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        location (str): Stacked image dataset location</span>
+<span class="sd">        folder_pattern (str, optional): Filename pattern for stack image</span>
+<span class="sd">            folders located within `location` (default: &#39;L*&#39;)</span>
+<span class="sd">        image_pattern (str, optional): Filename pattern for stacked images</span>
+<span class="sd">            located within each folder (default: &#39;L*stack&#39;)</span>
+<span class="sd">        date_index_start (int, optional): Starting index of image date string</span>
+<span class="sd">            within folder name (default: 9)</span>
+<span class="sd">        date_index_end (int, optional): Ending index of image date string</span>
+<span class="sd">            within folder name (default: 16)</span>
+<span class="sd">        date_format (str, optional): String format of date within folder names</span>
+<span class="sd">            (default: &#39;%Y%j&#39;)</span>
+<span class="sd">        ignore (list, optional): List of folder names within `location` to</span>
+<span class="sd">            ignore from search (default: [&#39;YATSM&#39;])</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Tuple of lists containing the dates and filenames of all stacked</span>
+<span class="sd">            images located</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ignore</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">ignore</span> <span class="o">=</span> <span class="p">[</span><span class="n">ignore</span><span class="p">]</span>
+
+    <span class="n">folder_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">image_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Populate - only checking one directory down</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+    <span class="n">num_sep</span> <span class="o">=</span> <span class="n">location</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dnames</span><span class="p">,</span> <span class="n">fnames</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="c1"># Remove results folder</span>
+        <span class="n">dnames</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dnames</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ignore</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+
+        <span class="c1"># Force only 1 level</span>
+        <span class="n">num_sep_this</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_sep</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">num_sep_this</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">dnames</span><span class="p">[:]</span>
+
+        <span class="c1"># Directory names as image IDs</span>
+        <span class="k">for</span> <span class="n">dname</span> <span class="ow">in</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">dnames</span><span class="p">,</span> <span class="n">folder_pattern</span><span class="p">):</span>
+            <span class="n">folder_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dname</span><span class="p">)</span>
+
+        <span class="c1"># Add file name and paths</span>
+        <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">fnames</span><span class="p">,</span> <span class="n">image_pattern</span><span class="p">):</span>
+            <span class="n">image_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">fname</span><span class="p">))</span>
+
+    <span class="c1"># Check to see if we found anything</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">folder_names</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">image_filenames</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Zero stack images found with image &#39;</span>
+                        <span class="s1">&#39;and folder patterns: </span><span class="si">{0}</span><span class="s1">, </span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">folder_pattern</span><span class="p">,</span> <span class="n">image_pattern</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_filenames</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s1">&#39;Inconsistent number of stacks folders and stack images located&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Extract dates</span>
+    <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folder_names</span><span class="p">:</span>
+        <span class="n">dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">folder</span><span class="p">[</span><span class="n">date_index_start</span><span class="p">:</span><span class="n">date_index_end</span><span class="p">],</span> <span class="n">date_format</span><span class="p">))</span>
+
+    <span class="c1"># Sort images by date</span>
+    <span class="n">dates</span><span class="p">,</span> <span class="n">image_filenames</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">image_filenames</span><span class="p">)))</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">image_filenames</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Sep 28, 2017, 8:28:56 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
