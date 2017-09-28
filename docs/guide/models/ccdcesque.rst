@@ -3,8 +3,14 @@
 CCDCesque
 =========
 
-A guide for the YATSM implementation of Continuous Classification and Change Detection (CCDC) :cite:`Zhu2014152`
+The YATSM implementation of Continuous Classification and Change Detection (CCDC) :cite:`Zhu2014152`
 
+
+.. autoclass:: yatsm.algorithms.ccdc.CCDCesque
+
+
+Algorithm Logic
+---------------
 
 .. graphviz:: ccdcesque.dot
 
