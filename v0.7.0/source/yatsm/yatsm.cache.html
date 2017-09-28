@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.cache module &mdash; YATSM 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="YATSM 0.7.0 documentation" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>yatsm.cache module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/source/yatsm/yatsm.cache.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-yatsm.cache">
+<span id="yatsm-cache-module"></span><h1>yatsm.cache module<a class="headerlink" href="#module-yatsm.cache" title="Permalink to this headline">¶</a></h1>
+<p>Functions related to writing to and retrieving from cache files</p>
+<dl class="function">
+<dt id="yatsm.cache.get_line_cache_name">
+<code class="descclassname">yatsm.cache.</code><code class="descname">get_line_cache_name</code><span class="sig-paren">(</span><em>dataset_config</em>, <em>n_images</em>, <em>row</em>, <em>nbands</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/cache.html#get_line_cache_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.get_line_cache_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns cache filename for specified config and line number</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset_config</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – configuration information about the dataset</li>
+<li><strong>n_images</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of images in dataset</li>
+<li><strong>row</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – line of the dataset for output</li>
+<li><strong>nbands</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of bands in dataset</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">filename of cache file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.cache.get_line_cache_pattern">
+<code class="descclassname">yatsm.cache.</code><code class="descname">get_line_cache_pattern</code><span class="sig-paren">(</span><em>row</em>, <em>nbands</em>, <em>regex=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/cache.html#get_line_cache_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.get_line_cache_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pattern for a cache file from a certain row</p>
+<p>This function is useful for finding all cache files from a line, ignoring
+the number of images in the file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – line of the dataset for output</li>
+<li><strong>nbands</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of bands in dataset</li>
+<li><strong>regex</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – return a regular expression instead of glob
+style (default: False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">filename pattern for cache files from line <code class="docutils literal"><span class="pre">row</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.cache.read_cache_file">
+<code class="descclassname">yatsm.cache.</code><code class="descname">read_cache_file</code><span class="sig-paren">(</span><em>cache_filename</em>, <em>image_IDs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/cache.html#read_cache_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.read_cache_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns image data from a cache file</p>
+<p>If <code class="docutils literal"><span class="pre">image_IDs</span></code> is not None this function will try to ensure data from
+cache file come from the list of image IDs provided. If cache file does not
+contain a list of image IDs, it will skip the check and return cache data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cache_filename</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – cache filename</li>
+<li><strong>image_IDs</strong> (<em>iterable</em><em>, </em><em>optional</em>) – list of image IDs corresponding to data
+in cache file. If not specified, function will not check for
+correspondence (default: None)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>Return Y as np.ndarray if possible and if the</dt>
+<dd><p class="first last">cache file passes the consistency check specified by <code class="docutils literal"><span class="pre">image_IDs</span></code>,
+else None</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray, or <a class="reference external" href="https://docs.python.org/dev/library/constants.html#None" title="(in Python v3.7)">None</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.cache.test_cache">
+<code class="descclassname">yatsm.cache.</code><code class="descname">test_cache</code><span class="sig-paren">(</span><em>dataset_config</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/cache.html#test_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.test_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test cache directory for ability to read from or write to</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dataset_config</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – dictionary of dataset configuration options</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>tuple of bools describing ability to read from and write to</dt>
+<dd>cache directory</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.cache.update_cache_file">
+<code class="descclassname">yatsm.cache.</code><code class="descname">update_cache_file</code><span class="sig-paren">(</span><em>images</em>, <em>image_IDs</em>, <em>old_cache_filename</em>, <em>new_cache_filename</em>, <em>line</em>, <em>reader</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/cache.html#update_cache_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.update_cache_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify an existing cache file to contain data within <cite>images</cite></p>
+<p>This should be useful for updating a set of cache files to reflect
+modifications to the timeseries dataset without completely reading the
+data into another cache file.</p>
+<p>For example, the cache file could be updated to reflect the deletion of
+a misregistered or cloudy image. Another common example would be for
+updating cache files to include newly acquired observations.</p>
+<p>Note that this updater will not handle updating cache files to include
+new bands.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>images</strong> (<em>iterable</em>) – list of new image filenames</li>
+<li><strong>image_IDs</strong> (<em>iterable</em>) – list of new image identifying strings</li>
+<li><strong>old_cache_filename</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – filename of cache file to update</li>
+<li><strong>new_cache_filename</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – filename of new cache file which includes
+modified data</li>
+<li><strong>line</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – the line of data to be updated</li>
+<li><strong>reader</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#callable" title="(in Python v3.7)"><em>callable</em></a>) – GDAL or BIP image reader function from
+<a class="reference internal" href="../../yatsm/yatsm.io.stack_line_readers.html#module-yatsm.io.stack_line_readers" title="yatsm.io.stack_line_readers"><code class="xref py py-mod docutils literal"><span class="pre">yatsm.io.stack_line_readers</span></code></a></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/dev/library/exceptions.html#ValueError" title="(in Python v3.7)"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code></a> – Raise error if old cache file does not record <code class="docutils literal"><span class="pre">image_IDs</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.cache.write_cache_file">
+<code class="descclassname">yatsm.cache.</code><code class="descname">write_cache_file</code><span class="sig-paren">(</span><em>cache_filename</em>, <em>Y</em>, <em>image_IDs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/cache.html#write_cache_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.cache.write_cache_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes data to a cache file using np.savez_compressed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cache_filename</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – cache filename</li>
+<li><strong>Y</strong> (<em>np.ndarray</em>) – data to write to cache file</li>
+<li><strong>image_IDs</strong> (<em>iterable</em>) – list of image IDs corresponding to data in cache
+file. If not specified, function will not check for correspondence</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Sep 28, 2017, 8:35:59 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.7.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

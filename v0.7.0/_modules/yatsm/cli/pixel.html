@@ -1,0 +1,604 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.cli.pixel &mdash; YATSM 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="YATSM 0.7.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>yatsm.cli.pixel</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/pixel.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.cli.pixel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Command line interface for running YATSM algorithms on individual pixels</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span>  <span class="c1"># noqa</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">patsy</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">options</span><span class="p">,</span> <span class="n">console</span>
+<span class="kn">from</span> <span class="nn">..algorithms</span> <span class="k">import</span> <span class="n">postprocess</span>
+<span class="kn">from</span> <span class="nn">..config_parser</span> <span class="k">import</span> <span class="n">convert_config</span><span class="p">,</span> <span class="n">parse_config_file</span>
+<span class="kn">from</span> <span class="nn">..io</span> <span class="k">import</span> <span class="n">read_pixel_timeseries</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">csvfile_to_dataframe</span><span class="p">,</span> <span class="n">get_image_IDs</span>
+<span class="kn">from</span> <span class="nn">..regression.transforms</span> <span class="k">import</span> <span class="n">harm</span>  <span class="c1"># noqa</span>
+
+<span class="n">avail_plots</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TS&#39;</span><span class="p">,</span> <span class="s1">&#39;DOY&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">]</span>
+
+<span class="n">SEASONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;winter&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+    <span class="s1">&#39;spring&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+    <span class="s1">&#39;summer&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,),</span>
+    <span class="s1">&#39;fall&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">_DEFAULT_PLOT_CMAP</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="s1">&#39;cubehelix&#39;</span><span class="p">,</span> <span class="s1">&#39;jet&#39;</span><span class="p">)</span>
+<span class="n">PLOT_CMAP</span> <span class="o">=</span> <span class="n">_DEFAULT_PLOT_CMAP</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">_cmap</span> <span class="ow">in</span> <span class="n">_DEFAULT_PLOT_CMAP</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">_cmap</span> <span class="ow">in</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">cmap_d</span><span class="p">:</span>
+        <span class="n">PLOT_CMAP</span> <span class="o">=</span> <span class="n">_cmap</span>
+        <span class="k">break</span>
+
+<span class="n">plot_styles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mpl</span><span class="p">,</span> <span class="s1">&#39;style&#39;</span><span class="p">):</span>
+    <span class="n">plot_styles</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">available</span>
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plt</span><span class="p">,</span> <span class="s1">&#39;xkcd&#39;</span><span class="p">):</span>
+    <span class="n">plot_styles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;xkcd&#39;</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;yatsm&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s1">&#39;Run YATSM algorithm on individual pixels&#39;</span><span class="p">)</span>
+<span class="nd">@options</span><span class="o">.</span><span class="n">arg_config_file</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;px&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;px&gt;&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;py&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;py&gt;&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--band&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;n&gt;&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+              <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Band to plot&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--plot&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;TS&#39;</span><span class="p">,),</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">(</span><span class="n">avail_plots</span><span class="p">),</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Plot type&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--ylim&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;min&gt; &lt;max&gt;&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+              <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Y-axis limits&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--style&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;style&gt;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;ggplot&#39;</span><span class="p">,</span>
+              <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">(</span><span class="n">plot_styles</span><span class="p">),</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Plot style&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--cmap&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;&lt;cmap&gt;&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">PLOT_CMAP</span><span class="p">,</span>
+              <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;DOY/VAL plot colormap&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--embed&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Drop to (I)Python interpreter at various points&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--seed&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Set NumPy RNG seed value&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--algo_kw&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">callback_dict</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Algorithm parameter overrides&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--result_prefix&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Plot coef/rmse from refit that used this prefix&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--seasons&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Plot using seasonal symbology&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<span class="k">def</span> <span class="nf">pixel</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">ylim</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span>
+          <span class="n">embed</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">algo_kw</span><span class="p">,</span> <span class="n">result_prefix</span><span class="p">,</span> <span class="n">seasons</span><span class="p">):</span>
+    <span class="c1"># Set seed</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="c1"># Convert band to index</span>
+    <span class="n">band</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="c1"># Format result prefix</span>
+    <span class="k">if</span> <span class="n">result_prefix</span><span class="p">:</span>
+        <span class="n">result_prefix</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">_pref</span> <span class="k">if</span> <span class="n">_pref</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;_&#39;</span> <span class="k">else</span> <span class="n">_pref</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">_pref</span> <span class="ow">in</span> <span class="n">result_prefix</span><span class="p">)</span>
+        <span class="n">result_prefix</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>  <span class="c1"># add in no prefix to show original fit</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result_prefix</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">)</span>
+
+    <span class="c1"># Get colormap</span>
+    <span class="k">if</span> <span class="n">cmap</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">cmap_d</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">ClickException</span><span class="p">(</span><span class="s1">&#39;Cannot find specified colormap (</span><span class="si">{}</span><span class="s1">) in &#39;</span>
+                                   <span class="s1">&#39;matplotlib&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmap</span><span class="p">))</span>
+
+    <span class="c1"># Parse config</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">parse_config_file</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="c1"># Apply algorithm overrides</span>
+    <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">algo_kw</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">algo_kw</span><span class="p">[</span><span class="n">kw</span><span class="p">])</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">trawl_replace_keys</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">kw</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">algo_kw</span><span class="p">:</span>  <span class="c1"># revalidate configuration</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">convert_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="c1"># Dataset information</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">csvfile_to_dataframe</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">][</span><span class="s1">&#39;input_file&#39;</span><span class="p">],</span>
+                              <span class="n">date_format</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">][</span><span class="s1">&#39;date_format&#39;</span><span class="p">])</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;image_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_image_IDs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">])</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Initialize timeseries model</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;algorithm_object&#39;</span><span class="p">]</span>
+    <span class="n">algo_cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;algorithm&#39;</span><span class="p">]]</span>
+    <span class="n">yatsm</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;estimator&#39;</span><span class="p">],</span>
+                  <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="n">yatsm</span><span class="o">.</span><span class="n">px</span> <span class="o">=</span> <span class="n">px</span>
+    <span class="n">yatsm</span><span class="o">.</span><span class="n">py</span> <span class="o">=</span> <span class="n">py</span>
+
+    <span class="c1"># Setup algorithm and create design matrix (if needed)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">design_info</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s1">&#39;design_info&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Read pixel data</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">read_pixel_timeseries</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">][</span><span class="s1">&#39;n_bands&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">ClickException</span><span class="p">(</span>
+            <span class="s1">&#39;Number of bands in image </span><span class="si">{f}</span><span class="s1"> (</span><span class="si">{nf}</span><span class="s1">) do not match number in &#39;</span>
+            <span class="s1">&#39;configuration file (</span><span class="si">{nc}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">f</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">nf</span><span class="o">=</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">nc</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">][</span><span class="s1">&#39;n_bands&#39;</span><span class="p">]))</span>
+
+    <span class="c1"># Preprocess pixel data</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span> <span class="o">=</span> <span class="n">yatsm</span><span class="o">.</span><span class="n">preprocess</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="o">**</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">])</span>
+
+    <span class="c1"># Convert ordinal to datetime</span>
+    <span class="n">dt_dates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
+
+    <span class="c1"># Plot before fitting</span>
+    <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span> <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s1">&#39;xkcd&#39;</span> <span class="k">else</span> <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">style</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_plot</span> <span class="ow">in</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_plot</span> <span class="o">==</span> <span class="s1">&#39;TS&#39;</span><span class="p">:</span>
+                <span class="n">plot_TS</span><span class="p">(</span><span class="n">dt_dates</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="n">seasons</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">_plot</span> <span class="o">==</span> <span class="s1">&#39;DOY&#39;</span><span class="p">:</span>
+                <span class="n">plot_DOY</span><span class="p">(</span><span class="n">dt_dates</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">_plot</span> <span class="o">==</span> <span class="s1">&#39;VAL&#39;</span><span class="p">:</span>
+                <span class="n">plot_VAL</span><span class="p">(</span><span class="n">dt_dates</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">ylim</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Timeseries: px=</span><span class="si">{px}</span><span class="s1"> py=</span><span class="si">{py}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">px</span><span class="o">=</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="n">py</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Band </span><span class="si">{b}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">band</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="c1"># Fit model</span>
+    <span class="n">yatsm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fit&#39;</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">stay_reg</span><span class="p">,</span> <span class="n">fitopt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;refit&#39;</span><span class="p">][</span><span class="s1">&#39;prefix&#39;</span><span class="p">],</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;refit&#39;</span><span class="p">][</span><span class="s1">&#39;prediction_object&#39;</span><span class="p">],</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;refit&#39;</span><span class="p">][</span><span class="s1">&#39;stay_regularized&#39;</span><span class="p">],</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;refit&#39;</span><span class="p">][</span><span class="s1">&#39;fit&#39;</span><span class="p">]):</span>
+        <span class="n">yatsm</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">postprocess</span><span class="o">.</span><span class="n">refit_record</span><span class="p">(</span>
+            <span class="n">yatsm</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span>
+            <span class="n">fitopt</span><span class="o">=</span><span class="n">fitopt</span><span class="p">,</span> <span class="n">keep_regularized</span><span class="o">=</span><span class="n">stay_reg</span><span class="p">)</span>
+
+    <span class="c1"># Plot after predictions</span>
+    <span class="k">with</span> <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span> <span class="k">if</span> <span class="n">style</span> <span class="o">==</span> <span class="s1">&#39;xkcd&#39;</span> <span class="k">else</span> <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">context</span><span class="p">(</span><span class="n">style</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">_plot</span> <span class="ow">in</span> <span class="n">plot</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">_plot</span> <span class="o">==</span> <span class="s1">&#39;TS&#39;</span><span class="p">:</span>
+                    <span class="n">plot_TS</span><span class="p">(</span><span class="n">dt_dates</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="n">seasons</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">_plot</span> <span class="o">==</span> <span class="s1">&#39;DOY&#39;</span><span class="p">:</span>
+                    <span class="n">plot_DOY</span><span class="p">(</span><span class="n">dt_dates</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">_plot</span> <span class="o">==</span> <span class="s1">&#39;VAL&#39;</span><span class="p">:</span>
+                    <span class="n">plot_VAL</span><span class="p">(</span><span class="n">dt_dates</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">band</span><span class="p">,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">ylim</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Timeseries: px=</span><span class="si">{px}</span><span class="s1"> py=</span><span class="si">{py}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">px</span><span class="o">=</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="o">=</span><span class="n">py</span><span class="p">))</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Band </span><span class="si">{b}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">band</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+                <span class="k">for</span> <span class="n">_prefix</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">result_prefix</span><span class="p">):</span>
+                    <span class="n">plot_results</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">yatsm</span><span class="p">,</span> <span class="n">design_info</span><span class="p">,</span>
+                                 <span class="n">result_prefix</span><span class="o">=</span><span class="n">_prefix</span><span class="p">,</span>
+                                 <span class="n">plot_type</span><span class="o">=</span><span class="n">_plot</span><span class="p">)</span>
+
+                <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">embed</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">open_interpreter</span><span class="p">(</span>
+            <span class="n">yatsm</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Additional functions:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                     <span class="s2">&quot;plot_TS, plot_DOY, plot_VAL, plot_results&quot;</span><span class="p">),</span>
+            <span class="n">variables</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="n">cfg</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">funcs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;plot_TS&#39;</span><span class="p">:</span> <span class="n">plot_TS</span><span class="p">,</span> <span class="s1">&#39;plot_DOY&#39;</span><span class="p">:</span> <span class="n">plot_DOY</span><span class="p">,</span>
+                <span class="s1">&#39;plot_VAL&#39;</span><span class="p">:</span> <span class="n">plot_VAL</span><span class="p">,</span> <span class="s1">&#39;plot_results&#39;</span><span class="p">:</span> <span class="n">plot_results</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="plot_TS"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_TS">[docs]</a><span class="k">def</span> <span class="nf">plot_TS</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">seasons</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a standard timeseries plot</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dates (iterable): sequence of datetime</span>
+<span class="sd">        y (np.ndarray): variable to plot</span>
+<span class="sd">        seasons (bool): Plot seasonal symbology</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Plot data</span>
+    <span class="k">if</span> <span class="n">seasons</span><span class="p">:</span>
+        <span class="n">months</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">month</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">season_months</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">SEASONS</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">season_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">months</span><span class="p">,</span> <span class="n">season_months</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="n">season_idx</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">season_idx</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span>
+                     <span class="n">mec</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_DOY"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_DOY">[docs]</a><span class="k">def</span> <span class="nf">plot_DOY</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mpl_cmap</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a DOY plot</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dates (iterable): sequence of datetime</span>
+<span class="sd">        y (np.ndarray): variable to plot</span>
+<span class="sd">        mpl_cmap (colormap): matplotlib colormap</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">year</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
+
+    <span class="n">sp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">doy</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">year</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl_cmap</span><span class="p">,</span>
+                     <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+
+    <span class="n">months</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">MonthLocator</span><span class="p">()</span>  <span class="c1"># every month</span>
+    <span class="n">months_fmrt</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%b&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">months</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_formatter</span><span class="p">(</span><span class="n">months_fmrt</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">366</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Day of Year&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_VAL"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_VAL">[docs]</a><span class="k">def</span> <span class="nf">plot_VAL</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mpl_cmap</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a &quot;Valerie Pasquarella&quot; plot (repeated DOY plot)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dates (iterable): sequence of datetime</span>
+<span class="sd">        y (np.ndarray): variable to plot</span>
+<span class="sd">        mpl_cmap (colormap): matplotlib colormap</span>
+<span class="sd">        reps (int, optional): number of additional repetitions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">year</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dates</span><span class="p">])</span>
+
+    <span class="c1"># Replicate `reps` times</span>
+    <span class="n">_doy</span> <span class="o">=</span> <span class="n">doy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">reps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">_doy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">_doy</span><span class="p">,</span> <span class="n">doy</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="mi">366</span><span class="p">))</span>
+    <span class="n">_year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">reps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">reps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">sp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">_doy</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">_year</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl_cmap</span><span class="p">,</span>
+                     <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">35</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Day of Year&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_results"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.plot_results">[docs]</a><span class="k">def</span> <span class="nf">plot_results</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">design_info</span><span class="p">,</span>
+                 <span class="n">result_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;TS&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Plot model results</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        band (int): plot results for this band</span>
+<span class="sd">        cfg (dict): YATSM configuration dictionary</span>
+<span class="sd">        model (YATSM model): fitted YATSM timeseries model</span>
+<span class="sd">        design_info (patsy.DesignInfo): patsy design information</span>
+<span class="sd">        result_prefix (str): Prefix to &#39;coef&#39; and &#39;rmse&#39;</span>
+<span class="sd">        plot_type (str): type of plot to add results to (TS, DOY, or VAL)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Results prefix</span>
+    <span class="n">result_k</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+    <span class="n">coef_k</span> <span class="o">=</span> <span class="n">result_prefix</span> <span class="o">+</span> <span class="s1">&#39;coef&#39;</span>
+    <span class="n">rmse_k</span> <span class="o">=</span> <span class="n">result_prefix</span> <span class="o">+</span> <span class="s1">&#39;rmse&#39;</span>
+    <span class="k">if</span> <span class="n">coef_k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result_k</span> <span class="ow">or</span> <span class="n">rmse_k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result_k</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Cannot find result prefix &quot;</span><span class="si">{}</span><span class="s1">&quot; in results&#39;</span>
+                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result_prefix</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">result_prefix</span><span class="p">:</span>
+        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s1">&#39;Using &quot;</span><span class="si">{}</span><span class="s1">&quot; re-fitted results&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result_prefix</span><span class="p">))</span>
+
+    <span class="c1"># Handle reverse</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;reverse&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="c1"># Remove categorical info from predictions</span>
+    <span class="n">design</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[\+\-][\ ]+C\(.*\)&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;design_matrix&#39;</span><span class="p">])</span>
+
+    <span class="n">i_coef</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">design_info</span><span class="o">.</span><span class="n">column_name_indexes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;C\(.*\)&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+            <span class="n">i_coef</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">i_coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">i_coef</span><span class="p">))</span>
+
+    <span class="n">_prefix</span> <span class="o">=</span> <span class="n">result_prefix</span> <span class="ow">or</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;YATSM&#39;</span><span class="p">][</span><span class="s1">&#39;prediction&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">record</span><span class="p">):</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Model </span><span class="si">{i}</span><span class="s1"> (</span><span class="si">{prefix}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">_prefix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s1">&#39;TS&#39;</span><span class="p">:</span>
+            <span class="c1"># Prediction</span>
+            <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span> <span class="n">step</span><span class="p">)</span>
+            <span class="n">mX</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">mx</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">coef_k</span><span class="p">][</span><span class="n">i_coef</span><span class="p">,</span> <span class="n">band</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
+            <span class="n">mx_date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">_x</span><span class="p">))</span> <span class="k">for</span> <span class="n">_x</span> <span class="ow">in</span> <span class="n">mx</span><span class="p">])</span>
+            <span class="c1"># Break</span>
+            <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;break&#39;</span><span class="p">]:</span>
+                <span class="n">bx</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;break&#39;</span><span class="p">])</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">bx</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">plot_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;DOY&#39;</span><span class="p">,</span> <span class="s1">&#39;VAL&#39;</span><span class="p">):</span>
+            <span class="n">yr_end</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+            <span class="n">yr_start</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">year</span>
+            <span class="n">yr_mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">yr_end</span> <span class="o">-</span> <span class="p">(</span><span class="n">yr_end</span> <span class="o">-</span> <span class="n">yr_start</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">mx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">yr_mid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">(),</span>
+                           <span class="n">dt</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">yr_mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">toordinal</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">mX</span> <span class="o">=</span> <span class="n">patsy</span><span class="o">.</span><span class="n">dmatrix</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">mx</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="n">my</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">coef_k</span><span class="p">][</span><span class="n">i_coef</span><span class="p">,</span> <span class="n">band</span><span class="p">],</span> <span class="n">mX</span><span class="p">)</span>
+            <span class="n">mx_date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span><span class="o">.</span><span class="n">tm_yday</span>
+                                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">mx</span><span class="p">])</span>
+
+            <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Model </span><span class="si">{i}</span><span class="s1"> - </span><span class="si">{yr}</span><span class="s1"> (</span><span class="si">{prefix}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">yr</span><span class="o">=</span><span class="n">yr_mid</span><span class="p">,</span>
+                                                         <span class="n">prefix</span><span class="o">=</span><span class="n">_prefix</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mx_date</span><span class="p">,</span> <span class="n">my</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">leg</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">leg</span><span class="o">.</span><span class="n">draggable</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<span class="c1"># UTILITY FUNCTIONS</span>
+<div class="viewcode-block" id="trawl_replace_keys"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.pixel.html#yatsm.cli.pixel.trawl_replace_keys">[docs]</a><span class="k">def</span> <span class="nf">trawl_replace_keys</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return modified dictionary ``d``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">md</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_key</span> <span class="ow">in</span> <span class="n">md</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">md</span><span class="p">[</span><span class="n">_key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="c1"># Recursively replace</span>
+            <span class="n">md</span><span class="p">[</span><span class="n">_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">trawl_replace_keys</span><span class="p">(</span><span class="n">md</span><span class="p">[</span><span class="n">_key</span><span class="p">],</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span>
+                                          <span class="n">s</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">[</span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">_key</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_key</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;[</span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_key</span><span class="p">)</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s1">&#39;Replacing d</span><span class="si">{k}</span><span class="s1">=</span><span class="si">{ov}</span><span class="s1"> with </span><span class="si">{nv}</span><span class="s1">&#39;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">ov</span><span class="o">=</span><span class="n">md</span><span class="p">[</span><span class="n">_key</span><span class="p">],</span> <span class="n">nv</span><span class="o">=</span><span class="n">value</span><span class="p">))</span>
+                <span class="n">md</span><span class="p">[</span><span class="n">_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">md</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Sep 28, 2017, 8:35:59 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
