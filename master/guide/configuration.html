@@ -101,7 +101,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Model Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-file">Configuration File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dataset-parameters">Dataset Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model-parameters">Model Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yatsm-analysis-parameters">YATSM Analysis Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yatsm-algorithm-parameters">YATSM Algorithm Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#phenology">Phenology</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#classification">Classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
@@ -191,10 +192,15 @@ documentation section. Please see <a class="reference external" href="https://gi
 file</a> to
 parameterize the run. The YAML file uses several sections:</p>
 <ol class="arabic simple">
-<li><code class="docutils literal"><span class="pre">dataset</span></code> describes dataset attributes common to all analysis</li>
-<li><code class="docutils literal"><span class="pre">YATSM</span></code> describes model parameters common to all analysis and declares what change detection algorithm should be run</li>
-<li><code class="docutils literal"><span class="pre">classification</span></code> describes classification training data inputs</li>
-<li><code class="docutils literal"><span class="pre">phenology</span></code> describes phenology fitting parameters</li>
+<li><code class="docutils literal"><span class="pre">dataset</span></code>: Describes dataset attributes common to all analysis</li>
+<li><code class="docutils literal"><span class="pre">YATSM</span></code>: Contains model parameters common to all analysis and
+declares what change detection algorithm should be run. The algorithm
+specified should be a section within the configuration file.</li>
+<li><code class="docutils literal"><span class="pre">${ALGORITHM}</span></code>: The section referenced as <code class="docutils literal"><span class="pre">algorithm</span></code> in <code class="docutils literal"><span class="pre">YATSM</span></code>
+describing how the time series analysis should be run (e.g.,
+a section <code class="docutils literal"><span class="pre">CCDCesque</span></code> when <code class="docutils literal"><span class="pre">algorithm:</span> <span class="pre">&quot;CCDCesque&quot;</span></code>)</li>
+<li><code class="docutils literal"><span class="pre">phenology</span></code>: Describes phenology fitting parameters</li>
+<li><code class="docutils literal"><span class="pre">classification</span></code>: Describes classification training data inputs</li>
 </ol>
 <p>The following tables describes the meanings of the parameter and values used
 in the configuration file used in YATSM. Any parameters left blank will be
@@ -209,16 +215,25 @@ interpreted as <code class="docutils literal"><span class="pre">None</span></cod
 <p><strong>Note</strong>: you can use <code class="docutils literal"><span class="pre">scripts/gen_date_file.sh</span></code> to generate the CSV
 file for <code class="docutils literal"><span class="pre">input_file</span></code>.</p>
 </div>
-<div class="section" id="model-parameters">
-<h2>Model Parameters<a class="headerlink" href="#model-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="yatsm-analysis-parameters">
+<h2>YATSM Analysis Parameters<a class="headerlink" href="#yatsm-analysis-parameters" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This section is out of date for <cite>v0.5.0</cite> and requires re-writing</p>
 </div>
 </div>
+<div class="section" id="yatsm-algorithm-parameters">
+<h2>YATSM Algorithm Parameters<a class="headerlink" href="#yatsm-algorithm-parameters" title="Permalink to this headline">¶</a></h2>
+<p>This section will differ depending on what algorithm is used and specified
+in the <code class="docutils literal"><span class="pre">algorithm</span></code> key in the <code class="docutils literal"><span class="pre">YATSM</span></code> section. For more information,
+visit the <a class="reference internal" href="models/models.html#guide-models"><span class="std std-ref">science models guide section</span></a> for
+information the available algorithms.</p>
+</div>
 <div class="section" id="phenology">
 <h2>Phenology<a class="headerlink" href="#phenology" title="Permalink to this headline">¶</a></h2>
-<p>The option for long term mean phenology calculation is an optional addition to <cite>YATSM</cite>. As such, visit <a class="reference internal" href="phenology.html#guide-phenology"><span class="std std-ref">the phenology guide page</span></a> for configuration options.</p>
+<p>The option for long term mean phenology calculation is an optional addition to
+YATSM. As such, visit <a class="reference internal" href="phenology.html#guide-phenology"><span class="std std-ref">the phenology guide page</span></a> for
+configuration options.</p>
 </div>
 <div class="section" id="classification">
 <h2>Classification<a class="headerlink" href="#classification" title="Permalink to this headline">¶</a></h2>
@@ -394,7 +409,7 @@ options include:</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Sep 15, 2017, 3:32:22 PM.
+      Last updated on Sep 28, 2017, 3:29:46 PM.
 
     </p>
   </div>

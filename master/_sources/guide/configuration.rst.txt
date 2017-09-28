@@ -14,10 +14,16 @@ The batch running script uses an `YAML
 file <https://en.wikipedia.org/wiki/YAML>`_ to
 parameterize the run. The YAML file uses several sections:
 
-1. ``dataset`` describes dataset attributes common to all analysis
-2. ``YATSM`` describes model parameters common to all analysis and declares what change detection algorithm should be run
-3. ``classification`` describes classification training data inputs
-4. ``phenology`` describes phenology fitting parameters
+1. ``dataset``: Describes dataset attributes common to all analysis    
+2. ``YATSM``: Contains model parameters common to all analysis and 
+   declares what change detection algorithm should be run. The algorithm
+   specified should be a section within the configuration file.
+3. ``${ALGORITHM}``: The section referenced as ``algorithm`` in ``YATSM``
+   describing how the time series analysis should be run (e.g.,
+   a section ``CCDCesque`` when ``algorithm: "CCDCesque"``)
+4. ``phenology``: Describes phenology fitting parameters                 
+5. ``classification``: Describes classification training data inputs
+
 
 The following tables describes the meanings of the parameter and values used
 in the configuration file used in YATSM. Any parameters left blank will be
@@ -33,17 +39,27 @@ Dataset Parameters
 **Note**: you can use ``scripts/gen_date_file.sh`` to generate the CSV
 file for ``input_file``.
 
-Model Parameters
-----------------
+YATSM Analysis Parameters
+-------------------------
 
 .. note::
 
     This section is out of date for `v0.5.0` and requires re-writing
 
+YATSM Algorithm Parameters
+--------------------------
+
+This section will differ depending on what algorithm is used and specified
+in the ``algorithm`` key in the ``YATSM`` section. For more information,
+visit the :ref:`science models guide section <guide_models>` for
+information the available algorithms.
+
 Phenology
 ---------
 
-The option for long term mean phenology calculation is an optional addition to `YATSM`. As such, visit :ref:`the phenology guide page <guide_phenology>` for configuration options.
+The option for long term mean phenology calculation is an optional addition to
+YATSM. As such, visit :ref:`the phenology guide page <guide_phenology>` for
+configuration options.
 
 Classification
 --------------

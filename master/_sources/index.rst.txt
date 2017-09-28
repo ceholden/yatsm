@@ -10,6 +10,15 @@ Yet Another Timeseries Model (YATSM) is a Python package for utilizing a
 collection of timeseries algorithms and methods designed to monitor the land
 surface using remotely sensed imagery.
 
+YATSM can be thought of as three components:
+
+1. A library of functions and other objects useful for performing time series
+   analysis, including various statistics and input/output helpers.
+2. Time series analysis algorithm implementations
+3. The command line interface (CLI) provides a set of programs that facilitate
+   the running of time series algorithms on "time series stacks" and the
+   analysis of the results.
+
 User Guide
 ----------
 
