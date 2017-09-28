@@ -300,7 +300,7 @@ def plot_results(band, cfg, model, design_info,
                     cfg['YATSM']['design_matrix'])
 
     i_coef = []
-    for k, v in design_info.column_name_indexes.iteritems():
+    for k, v in design_info.column_name_indexes.items():
         if not re.match('C\(.*\)', k):
             i_coef.append(v)
     i_coef = np.sort(np.asarray(i_coef))
