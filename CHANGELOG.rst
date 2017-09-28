@@ -5,6 +5,24 @@ All notable changes will appear in this log that begins with the release of ``v0
 
 For information on the style of this change log, see `keepachangelog.com <http://keepachangelog.com/>`__.
 
+`v0.6.4 <https://github.com/ceholden/yatsm/compare/v0.6.3...v0.6.4>`__ - 2017-09-28
+
+
+Fixed
+~~~~~
+
+- Fix error in calcualtion of Mean Absolute Deviation (MAD) used in RLM
+  (:commit:`d350309ef117d8ad18c696389bb49f81df03f94d`)
+- Removed problematic pickled objects saved in test data result files
+  (:commit:`c7186ded1672c5bb82637e8296f05fc3e2d5a1f8`)
+- Various Py3 fixes. Python 3.5 now passes tests.
+
+Changed
+~~~~~~~
+
+- Updates to documentation and deployment.
+
+
 `v0.6.3 <https://github.com/ceholden/yatsm/compare/v0.6.2...v0.6.3>`__ - 2017-07-24
 -----------------------------------------------------------------------------------
 
