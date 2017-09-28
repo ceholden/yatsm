@@ -5,6 +5,20 @@ All notable changes will appear in this log that begins with the release of ``v0
 
 For information on the style of this change log, see `keepachangelog.com <http://keepachangelog.com/>`__.
 
+`v0.7.0 <https://github.com/ceholden/yatsm/compare/v0.6.4...v0.7.0>`__ - 2017-09-28
+
+This release is basically `v0.6.4`, but the changes warrant a minor release
+because the configuration file examples have changed to correctly specify the
+green/swir1 bands (used by CCDC's "Tmask"). This also marks the first minor
+release in a long time.
+
+Fixed
+~~~~~
+
+- Fix location of green/swir1 spec in cfg file
+  (:commit:`f12b1099cd6007ae7400757f2186e6620b70ac38`)
+
+
 `v0.6.4 <https://github.com/ceholden/yatsm/compare/v0.6.3...v0.6.4>`__ - 2017-09-28
 
 
