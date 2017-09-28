@@ -4,7 +4,7 @@
 # run
 
 # Version of config
-version: "0.6.0"
+version: "0.7.0"
 
 dataset:
     # Text file containing dates and images
@@ -25,9 +25,6 @@ dataset:
     # specify 1 range for all bands, or specify ranges for each band
     min_values: 0
     max_values: 10000
-    # Indices for multi-temporal cloud masking (indexed on 1)
-    green_band: 2
-    swir1_band: 5
     # Use BIP image reader? If not, use GDAL to read in
     use_bip_reader: False
     # Directory location for caching dataset lines
@@ -60,6 +57,9 @@ CCDCesque:
         slope_test: False
         remove_noise: True
         dynamic_rmse: False
+        # Indices for multi-temporal cloud masking (indexed on 1)
+        green_band: 2
+        swir1_band: 5
 
 # Section for phenology fitting
 phenology:
