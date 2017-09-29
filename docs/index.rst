@@ -25,9 +25,10 @@ User Guide
 To get started with YATSM, please follow this user guide:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    guide/install
+   guide/example
    guide/dataset
    guide/exploration
    guide/model_specification
