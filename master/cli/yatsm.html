@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm &mdash; YATSM 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="YATSM 0.7.0 documentation" href="../index.html"/>
+        <link rel="up" title="Command Line Utilities" href="scripts.html"/>
+        <link rel="next" title="yatsm pixel" href="yatsm_pixel.html"/>
+        <link rel="prev" title="Command Line Utilities" href="scripts.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/example.html">Example Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Command Line Utilities</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><cite>yatsm</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_pixel.html"><cite>yatsm pixel</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_line.html"><cite>yatsm line</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_cache.html"><cite>yatsm cache</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_train.html"><cite>yatsm train</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_classify.html"><cite>yatsm classify</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_changemap.html"><cite>yatsm changemap</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="yatsm_map.html"><cite>yatsm map</cite></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gen_date_file.html"><cite>gen_date_file.sh</cite></a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="scripts.html">Command Line Utilities</a> &raquo;</li>
+        
+      <li><cite>yatsm</cite></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/cli/yatsm.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="yatsm">
+<span id="yatsm-cli"></span><h1><cite>yatsm</cite><a class="headerlink" href="#yatsm" title="Permalink to this headline">¶</a></h1>
+<p>YATSM Command Line Interface and Subcommands:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ yatsm --help
+Usage: yatsm <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+
+  YATSM <span class="nb">command</span> line interface
+
+Options:
+  --version                Show the version and exit.
+  --num_threads &lt;threads&gt;  Number of threads <span class="k">for</span> OPENBLAS/MKL/OMP used in
+                           NumPy  <span class="o">[</span>default: <span class="m">1</span><span class="o">]</span>
+  -v, --verbose            Be verbose
+  --verbose-yatsm          Show verbose debugging messages in YATSM algorithm
+  -q, --quiet              Be quiet
+  -h, --help               Show this message and exit.
+
+Commands:
+  cache      Create or update cached timeseries data <span class="k">for</span> YATSM
+  changemap  Map change found by YATSM algorithm over <span class="nb">time</span> period
+  classify   Classify entire images using trained algorithm
+  line       Run YATSM on an entire image line by line
+  map        Make map of YATSM output <span class="k">for</span> a given date
+  pixel      Run YATSM algorithm on individual pixels
+  segment    † Warning: could not load plugin. See <span class="sb">`</span>build_cli_docs.py segment
+             --help<span class="sb">`</span>.
+  train      Train classifier on YATSM output
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="yatsm_pixel.html" class="btn btn-neutral float-right" title="yatsm pixel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="scripts.html" class="btn btn-neutral" title="Command Line Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Sep 29, 2017, 8:17:15 AM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.7.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

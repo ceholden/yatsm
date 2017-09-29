@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.cli.console &mdash; YATSM 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="YATSM 0.7.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/example.html">Example Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>yatsm.cli.console</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/cli/console.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.cli.console</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Functions for interpreter access in YATSM CLI</span>
+
+<span class="sd">Function ``open_interpreter`` can be called to open up a Python or IPython</span>
+<span class="sd">interpreter with access to a variety of objects in local memory.</span>
+
+<span class="sd">TODO:</span>
+<span class="sd">    * Add more useful functions for exploring data</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">code</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..version</span> <span class="k">import</span> <span class="n">__version__</span>
+
+<span class="n">_funcs</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="open_interpreter"><a class="viewcode-back" href="../../../yatsm/yatsm.cli.console.html#yatsm.cli.console.open_interpreter">[docs]</a><span class="k">def</span> <span class="nf">open_interpreter</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">funcs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Opens an (I)Python interpreter</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (YATSM model): Pass YATSM model to work with</span>
+<span class="sd">        message (str, optional): Additional message to pass to user in banner</span>
+<span class="sd">        variables (dict of objects, optional): Variables available in (I)Python</span>
+<span class="sd">            session</span>
+<span class="sd">        funcs (dict of callable, optional): Functions available in (I)Python</span>
+<span class="sd">            session</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">local</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">_funcs</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">np</span><span class="o">=</span><span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="o">=</span><span class="n">plt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">local</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">funcs</span><span class="p">:</span>
+        <span class="n">local</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span>
+
+    <span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">        YATSM </span><span class="si">{yver}</span><span class="s2"> Interactive Interpreter (Python </span><span class="si">{pver}</span><span class="s2">)</span>
+<span class="s2">        Type &quot;help(model)&quot; for info on YATSM model methods.</span>
+<span class="s2">        NumPy and matplotlib.pyplot are already imported as &quot;np&quot; and &quot;plt&quot;.</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">yver</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span>
+        <span class="n">pver</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">3</span><span class="p">])),</span>
+        <span class="n">funcs</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">local</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">banner</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">banner</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">banner</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">message</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">IPython</span>
+        <span class="n">IPython</span><span class="o">.</span><span class="n">InteractiveShell</span><span class="o">.</span><span class="n">banner1</span> <span class="o">=</span> <span class="n">banner</span>
+        <span class="n">IPython</span><span class="o">.</span><span class="n">start_ipython</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[],</span> <span class="n">user_ns</span><span class="o">=</span><span class="n">local</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">code</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">banner</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="n">local</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Sep 29, 2017, 8:17:15 AM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.7.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

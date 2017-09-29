@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Example Workflow &mdash; YATSM 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="YATSM 0.7.0 documentation" href="../index.html"/>
+        <link rel="next" title="Dataset Preparation" href="dataset.html"/>
+        <link rel="prev" title="Installation" href="install.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pixel-plotter">Pixel Plotter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#batch-change-detection-processing">Batch Change Detection Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#change-detection-visualization">Change Detection Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classification-training">Classification Training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classification-prediction">Classification Prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#land-cover-mapping">Land Cover Mapping</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Example Workflow</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/guide/example.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="example-workflow">
+<span id="example-p013r030"></span><h1>Example Workflow<a class="headerlink" href="#example-workflow" title="Permalink to this headline">¶</a></h1>
+<p>This section of the guide covers the process of running of the CCDC
+implementation (<a class="reference internal" href="../yatsm/yatsm.algorithms.ccdc.html#yatsm.algorithms.ccdc.CCDCesque" title="yatsm.algorithms.ccdc.CCDCesque"><code class="xref py py-class docutils literal"><span class="pre">yatsm.algorithms.ccdc.CCDCesque</span></code></a>), including
+the change detection and classification steps of the process, on
+an example dataset centered on Harvard Forest in Masssachusetts.</p>
+<p>It assumes you have already installed YATSM.</p>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p>The data used in this example are part of the collection of time series
+subsets described in the <a class="reference external" href="https://github.com/ceholden/landsat_stack">landsat_stack</a> repository.</p>
+<script src="https://embed.github.com/view/geojson/ceholden/landsat_stack/master/p013r030_bbox.geojson"></script><p>Download at least the <cite>p013r030_images.tar.bz2</cite> as described in the repository
+instructions. Place all downloads in the directory you want to work in
+(preferably a new directory), and then unzip the files. The directory structure
+created should look similar to the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ tree
+├── p013r030
+│   ├── images
+│   │   ├── example_img
+│   │   ├── example_img.aux.xml
+│   │   ├── example_img.hdr
+│   │   ├── LE70130301999211EDC00
+│   │   │   ├── LE70130301999211EDC00_MTL.txt
+│   │   │   ├── LE70130301999211EDC00_stack
+│   │   │   ├── LE70130301999211EDC00_stack.aux.xml
+│   │   │   └── LE70130301999211EDC00_stack.hdr
+...
+│   │   ├── LT50130302011316GNC01
+│   │   │   ├── LT50130302011316GNC01_MTL.txt
+│   │   │   ├── LT50130302011316GNC01_stack
+│   │   │   ├── LT50130302011316GNC01_stack.aux.xml
+│   │   │   └── LT50130302011316GNC01_stack.hdr
+│   │   └── YATSM
+│   │       ├── yatsm_r0.npz
+│   │       ├── yatsm_r100.npz
+...
+│   └── maps
+│       ├── p013r030_HF_change_first_1985-2016.gtif
+│       ├── p013r030_HF_change_first_1985-2016.gtif.aux.xml
+│       ├── p013r030_HF_change_last_1985-2016.gtif
+│       ├── p013r030_HF_change_last_1985-2016.gtif.aux.xml
+...
+│       └── p013r030_maps.qgs
+├── p013r030_images.tar.bz2
+├── p013r030_maps.tar.gz
+└── p013r030_results.tar.gz
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>To use any of the built-in programs that facilitate running time series
+analysis, we need to describe the time series data using a CSV file and
+we need to provide our analysis parameters using a configuration file
+(specified in the YAML format).</p>
+<p>To begin, copy the example configuration file located within this repository
+as <code class="docutils literal"><span class="pre">examples/p013r030/p013r030.yaml</span></code>, or by downloading it from Github
+(<a class="reference external" href="https://raw.githubusercontent.com/ceholden/yatsm/master/examples/p013r030/p013r030.yaml">p013r030.yaml</a>).</p>
+<p>Next, we will use the helper script located at <code class="docutils literal"><span class="pre">scripts/gen_date_file.sh</span></code>
+to generate a CSV file with the columns <code class="docutils literal"><span class="pre">date</span></code> and <code class="docutils literal"><span class="pre">filename</span></code>
+and rows for each image we want to include in our analysis. For example,</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>date,filename
+<span class="m">1984162</span>,images/LT50130301984162XXX08/LT50130301984162XXX08_stack
+<span class="m">1984274</span>,images/LT50130301984274PAC08/LT50130301984274PAC08_stack
+<span class="m">1984290</span>,images/LT50130301984290PAC16/LT50130301984290PAC16_stack
+</pre></div>
+</div>
+<p>You can use the Bash helper script, located in the repository as
+<code class="docutils literal"><span class="pre">scripts/gen_date_file.sh</span></code>, to create this CSV file. If this script
+doesn’t work for your data, or you can’t run Bash scripts, generate
+this information using some other means.</p>
+<p>Next, open the configuration file with a text editor and make some changes
+under the <code class="docutils literal"><span class="pre">dataset:</span></code> section to point to this newly generated <code class="docutils literal"><span class="pre">images.csv</span></code>
+file (adjust this name if you named the CSV file something different). Change
+the value of the <code class="docutils literal"><span class="pre">input_file</span></code> parameter. You will also want to change the
+values for <code class="docutils literal"><span class="pre">output</span></code> and <code class="docutils literal"><span class="pre">cache_line_dir</span></code>, which control the location
+of output result files and “cached data” files, respectively.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">dataset</span><span class="p p-Indicator">:</span>
+    <span class="c1"># Text file containing dates and images</span>
+<span class="hll">    <span class="l l-Scalar l-Scalar-Plain">input_file</span><span class="p p-Indicator">:</span> <span class="s">&quot;images.csv&quot;</span>
+</span>    <span class="c1"># Input date format</span>
+    <span class="l l-Scalar l-Scalar-Plain">date_format</span><span class="p p-Indicator">:</span> <span class="s">&quot;%Y%j&quot;</span>
+    <span class="c1"># Output location</span>
+<span class="hll">    <span class="l l-Scalar l-Scalar-Plain">output</span><span class="p p-Indicator">:</span> <span class="s">&quot;images/YATSM&quot;</span>
+</span>    <span class="c1"># Output file prefix (e.g., [prefix]_[line].npz)</span>
+    <span class="l l-Scalar l-Scalar-Plain">output_prefix</span><span class="p p-Indicator">:</span> <span class="s">&quot;yatsm_r&quot;</span>
+    <span class="c1"># Total number of bands</span>
+    <span class="l l-Scalar l-Scalar-Plain">n_bands</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+    <span class="c1"># Mask band (e.g., Fmask)</span>
+    <span class="l l-Scalar l-Scalar-Plain">mask_band</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+    <span class="c1"># List of integer values to mask within the mask band</span>
+    <span class="l l-Scalar l-Scalar-Plain">mask_values</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span> <span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">4</span><span class="p p-Indicator">,</span> <span class="nv">255</span><span class="p p-Indicator">]</span>
+    <span class="c1"># Valid range of band data</span>
+    <span class="c1"># specify 1 range for all bands, or specify ranges for each band</span>
+    <span class="l l-Scalar l-Scalar-Plain">min_values</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+    <span class="l l-Scalar l-Scalar-Plain">max_values</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10000</span>
+    <span class="c1"># Use BIP image reader? If not, use GDAL to read in</span>
+    <span class="l l-Scalar l-Scalar-Plain">use_bip_reader</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+    <span class="c1"># Directory location for caching dataset lines</span>
+<span class="hll">    <span class="l l-Scalar l-Scalar-Plain">cache_line_dir</span><span class="p p-Indicator">:</span> <span class="s">&quot;cache&quot;</span>
+</span></pre></div>
+</div>
+</div>
+<div class="section" id="pixel-plotter">
+<h2>Pixel Plotter<a class="headerlink" href="#pixel-plotter" title="Permalink to this headline">¶</a></h2>
+<p>A good first test to make sure your dataset configuration was successful,
+as well as a good place to start for experimenting with different runtime
+parameters, is using the <code class="docutils literal"><span class="pre">yatsm</span> <span class="pre">pixel</span></code> command</p>
+<p><a class="reference external" href="../cli/yatsm_pixel">yatsm pixel</a></p>
+</div>
+<div class="section" id="batch-change-detection-processing">
+<h2>Batch Change Detection Processing<a class="headerlink" href="#batch-change-detection-processing" title="Permalink to this headline">¶</a></h2>
+<p>The next step in the process is to run the change detection on all
+pixels in your dataset.</p>
+<p><a class="reference internal" href="../cli/yatsm_line.html#yatsm-line"><span class="std std-ref">yatsm line</span></a></p>
+</div>
+<div class="section" id="change-detection-visualization">
+<h2>Change Detection Visualization<a class="headerlink" href="#change-detection-visualization" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../cli/yatsm_changemap.html#yatsm-changemap"><span class="std std-ref">yatsm changemap</span></a></p>
+</div>
+<div class="section" id="classification-training">
+<h2>Classification Training<a class="headerlink" href="#classification-training" title="Permalink to this headline">¶</a></h2>
+<p>Find training data, remembering to record the range of time for which
+the training data is accurate or relevant for so we will know which
+time series segment attributes (<code class="docutils literal"><span class="pre">X</span></code>) to match with the training data
+labels (<code class="docutils literal"><span class="pre">y</span></code>).</p>
+<p><a class="reference internal" href="../cli/yatsm_train.html#yatsm-train"><span class="std std-ref">yatsm train</span></a></p>
+</div>
+<div class="section" id="classification-prediction">
+<h2>Classification Prediction<a class="headerlink" href="#classification-prediction" title="Permalink to this headline">¶</a></h2>
+<p>Using the trained classifier, classify the time series segments identified
+in the change detection step.</p>
+<p><a class="reference internal" href="../cli/yatsm_classify.html#yatsm-classify"><span class="std std-ref">yatsm classify</span></a></p>
+</div>
+<div class="section" id="land-cover-mapping">
+<h2>Land Cover Mapping<a class="headerlink" href="#land-cover-mapping" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../cli/yatsm_map.html#yatsm-map"><span class="std std-ref">yatsm map</span></a></p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dataset.html" class="btn btn-neutral float-right" title="Dataset Preparation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2017, Chris Holden.
+      Last updated on Sep 29, 2017, 8:17:15 AM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.7.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
