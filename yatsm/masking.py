@@ -1,7 +1,7 @@
 from __future__ import division
 
 import numpy as np
-import statsmodels.api as sm
+from statsmodels.nonparametric import smoothers_lowess
 
 from .accel import try_jit
 from .regression import robust_fit as rlm
@@ -102,9 +102,9 @@ def smooth_mask(x, Y, span, crit=400, green=1, swir1=4,
     green_lowess, swir1_lowess = np.nan, np.nan
     while (np.any(np.isnan(green_lowess)) or
            np.any(np.isnan(swir1_lowess))) and i < maxiter:
-        green_lowess = sm.nonparametric.lowess(Y[green, :], x,
+        green_lowess = smoothers_lowess.lowess(Y[green, :], x,
                                                frac=frac, delta=delta)
-        swir1_lowess = sm.nonparametric.lowess(Y[swir1, :], x,
+        swir1_lowess = smoothers_lowess.lowess(Y[swir1, :], x,
                                                frac=frac, delta=delta)
         span += 1
         frac = span / x.shape[0]

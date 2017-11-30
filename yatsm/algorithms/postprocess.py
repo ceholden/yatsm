@@ -8,7 +8,8 @@ import logging
 import numpy as np
 import numpy.lib.recfunctions as nprf
 import scipy.stats
-import statsmodels.api as sm
+from statsmodels.regression import linear_model
+from statsmodels.stats import diagnostic
 
 from ..regression.diagnostics import rmse
 from ..utils import date2index
@@ -193,9 +194,9 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
 
         for i_b, b in enumerate(indices):
             # Create OLS regression
-            ols = sm.OLS(_Y[b, :], _X).fit()
+            ols = linear_model.OLS(_Y[b, :], _X).fit()
             # Perform CUMSUM test on residuals
-            test = sm.stats.diagnostic.breaks_cusumolsresid(
+            test = diagnostic.breaks_cusumolsresid(
                 ols.resid, _X.shape[1])
 
             if test[1] < crit:
