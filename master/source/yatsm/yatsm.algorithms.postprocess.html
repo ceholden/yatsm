@@ -172,137 +172,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-yatsm.algorithms.postprocess">
-<span id="yatsm-algorithms-postprocess-module"></span><h1>yatsm.algorithms.postprocess module<a class="headerlink" href="#module-yatsm.algorithms.postprocess" title="Permalink to this headline">¶</a></h1>
-<p>Result post-processing utilities</p>
-<p>Includes comission and omission tests and robust linear model result
-calculations</p>
-<dl class="function">
-<dt id="yatsm.algorithms.postprocess.commission_test">
-<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">commission_test</code><span class="sig-paren">(</span><em>yatsm</em>, <em>alpha=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/algorithms/postprocess.html#commission_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.commission_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge adjacent records based on Chow Tests for nested models</p>
-<p>Use Chow Test to find false positive, spurious, or unnecessary breaks
-in the timeseries by comparing the effectiveness of two separate
-adjacent models with one single model that spans the entire time
-period.</p>
-<p>Chow test is described:</p>
-<div class="math">
-\[\frac{[RSS_r - (RSS_1 + RSS_2)] / k}{(RSS_1 + RSS_2) / (n - 2k)}\]</div>
-<p>where:</p>
-<blockquote>
-<div><ul class="simple">
-<li><span class="math">\(RSS_r\)</span> is the RSS of the combined, or, restricted model</li>
-<li><span class="math">\(RSS_1\)</span> is the RSS of the first model</li>
-<li><span class="math">\(RSS_2\)</span> is the RSS of the second model</li>
-<li><span class="math">\(k\)</span> is the number of model parameters</li>
-<li><span class="math">\(n\)</span> is the number of total observations</li>
-</ul>
-</div></blockquote>
-<p>Because we look for change in multiple bands, the RSS used to compare
-the unrestricted versus restricted models is the mean RSS
-values from all <code class="docutils literal"><span class="pre">model.test_indices</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>yatsm</strong> (<em>YATSM model</em>) – fitted YATSM model to check for commission errors</li>
-<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – significance level for F-statistic (default: 0.10)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>updated copy of <code class="docutils literal"><span class="pre">yatsm.record</span></code> with spurious models</dt>
-<dd><p class="first last">combined into unified model</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.algorithms.postprocess.omission_test">
-<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">omission_test</code><span class="sig-paren">(</span><em>model</em>, <em>crit=0.05</em>, <em>behavior='ANY'</em>, <em>indices=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/algorithms/postprocess.html#omission_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.omission_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add omitted breakpoint into records based on residual stationarity</p>
-<p>Uses recursive residuals within a CUMSUM test to check if each model
-has omitted a “structural change” (e.g., land cover change). Returns
-an array of True or False for each timeseries segment record depending
-on result from <cite>statsmodels.stats.diagnostic.breaks_cusumolsresid</cite>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Critical p-value for rejection of null
-hypothesis that data contain no structural change</li>
-<li><strong>behavior</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>, </em><em>optional</em>) – Method for dealing with multiple
-<cite>test_indices</cite>. <cite>ANY</cite> will return True if any one test index
-rejects the null hypothesis. <cite>ALL</cite> will only return True if ALL
-test indices reject the null hypothesis.</li>
-<li><strong>indices</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array indices to test. User provided
-indices must be a subset of <cite>model.test_indices</cite>.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>Array of True or False for each record where</dt>
-<dd><p class="first last">True indicates omitted break point</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="yatsm.algorithms.postprocess.refit_record">
-<code class="descclassname">yatsm.algorithms.postprocess.</code><code class="descname">refit_record</code><span class="sig-paren">(</span><em>model</em>, <em>prefix</em>, <em>estimator</em>, <em>fitopt=None</em>, <em>keep_regularized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/algorithms/postprocess.html#refit_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.postprocess.refit_record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Refit YATSM model segments with a new estimator and update record</p>
-<p>YATSM class model must be ran and contain at least one record before this
-function is called.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<em>YATSM model</em>) – YATSM model to refit</li>
-<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – prefix for refitted coefficient and RMSE (don’t include
-underscore as it will be added)</li>
-<li><strong>estimator</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#object" title="(in Python v3.7)"><em>object</em></a>) – instance of a scikit-learn compatible estimator
-object</li>
-<li><strong>fitopt</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a><em>, </em><em>optional</em>) – dict of options for the <code class="docutils literal"><span class="pre">fit</span></code> method of the
-<code class="docutils literal"><span class="pre">estimator</span></code> provided (default: None)</li>
-<li><strong>keep_regularized</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – do not use features with coefficient
-estimates that are fit to 0 (i.e., if using L1 regularization)</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
-<dt>updated model.record NumPy structured array with refitted</dt>
-<dd><p class="first last">coefficients and RMSE</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.array</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="yatsm-algorithms-postprocess-module">
+<h1>yatsm.algorithms.postprocess module<a class="headerlink" href="#yatsm-algorithms-postprocess-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -319,7 +190,7 @@ estimates that are fit to 0 (i.e., if using L1 regularization)</li>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Sep 29, 2017, 8:17:15 AM.
+      Last updated on Nov 30, 2017, 11:21:24 PM.
 
     </p>
   </div>

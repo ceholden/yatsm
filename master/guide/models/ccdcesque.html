@@ -189,57 +189,6 @@
   <div class="section" id="ccdcesque">
 <span id="guide-models-ccdcesque"></span><h1>CCDCesque<a class="headerlink" href="#ccdcesque" title="Permalink to this headline">¶</a></h1>
 <p>The YATSM implementation of Continuous Classification and Change Detection (CCDC) <a class="reference internal" href="../../index.html#zhu2014152" id="id1">[1]</a></p>
-<dl class="class">
-<dt id="yatsm.algorithms.ccdc.CCDCesque">
-<em class="property">class </em><code class="descclassname">yatsm.algorithms.ccdc.</code><code class="descname">CCDCesque</code><span class="sig-paren">(</span><em>test_indices=None</em>, <em>estimator={'object': &lt;MagicMock name='mock.linear_model.Lasso()' id='47855000988880'&gt;</em>, <em>'fit': {}}</em>, <em>consecutive=5</em>, <em>threshold=2.56</em>, <em>min_obs=None</em>, <em>min_rmse=None</em>, <em>retrain_time=365.25</em>, <em>screening='RLM'</em>, <em>screening_crit=400.0</em>, <em>remove_noise=True</em>, <em>green_band=1</em>, <em>swir1_band=4</em>, <em>dynamic_rmse=False</em>, <em>slope_test=False</em>, <em>idx_slope=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yatsm/algorithms/ccdc.html#CCDCesque"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.algorithms.ccdc.CCDCesque" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize a CCDC-like model for data X (spectra) and Y (dates)</p>
-<p>An unofficial and unvalidated port of the Continuous Change Detection and
-Classification (CCDC) algorithm by Zhu and Woodcock, 2014.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>test_indices</strong> (<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><em>numpy.ndarray</em></a>) – Test for changes with these
-indices of <code class="docutils literal"><span class="pre">Y</span></code>. If not provided, all series in <code class="docutils literal"><span class="pre">Y</span></code> will be used
-as test indices</li>
-<li><strong>estimator</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – dictionary containing estimation model from
-<code class="docutils literal"><span class="pre">scikit-learn</span></code> used to fit and predict timeseries and,
-optionally, a dict of options for the estimation model <code class="docutils literal"><span class="pre">fit</span></code>
-method (default: <code class="docutils literal"><span class="pre">{'object':</span> <span class="pre">Lasso(alpha=20),</span> <span class="pre">'fit':</span> <span class="pre">{}}</span></code>)</li>
-<li><strong>consecutive</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Consecutive observations to trigger change</li>
-<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Test statistic threshold for change</li>
-<li><strong>min_obs</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Minimum observations in model</li>
-<li><strong>min_rmse</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Minimum RMSE for models during testing</li>
-<li><strong>retrain_time</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Number of days between model fit updates during
-monitoring period</li>
-<li><strong>screening</strong> (<a class="reference external" href="https://docs.python.org/dev/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Style of prescreening of the timeseries for noise.
-Options are ‘RLM’ or ‘LOWESS’ (default: RLM)</li>
-<li><strong>screening_crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – critical value for multitemporal
-noise screening (default: 400.0)</li>
-<li><strong>remove_noise</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Remove observation if change is not
-detected but first observation is above threshold (if it looks like
-noise) (default: True)</li>
-<li><strong>green_band</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of green band in <code class="docutils literal"><span class="pre">Y</span></code> for
-multitemporal masking (default: 1)</li>
-<li><strong>swir1_band</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Index of first SWIR band in <code class="docutils literal"><span class="pre">Y</span></code> for
-multitemporal masking (default: 4)</li>
-<li><strong>dynamic_rmse</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Vary RMSE as a function of day of year
-(default: False)</li>
-<li><strong>slope_test</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/dev/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Use an additional slope test to
-assess the suitability of the training period. A value of True
-enables the test and uses the <cite>threshold</cite> parameter as the test
-criterion. False turns off the test or a float value enables the
-test but overrides the test criterion threshold. (default: False)</li>
-<li><strong>idx_slope</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – if <code class="docutils literal"><span class="pre">slope_test</span></code> is enabled, provide index of <code class="docutils literal"><span class="pre">X</span></code>
-containing slope term (default: 1)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <div class="section" id="algorithm-logic">
 <h2>Algorithm Logic<a class="headerlink" href="#algorithm-logic" title="Permalink to this headline">¶</a></h2>
 digraph G {
@@ -329,7 +278,7 @@ digraph G {
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Sep 29, 2017, 8:17:15 AM.
+      Last updated on Nov 30, 2017, 11:21:24 PM.
 
     </p>
   </div>
