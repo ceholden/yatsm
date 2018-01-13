@@ -90,7 +90,7 @@ def plot_feature_importance(algo, cfg):
     betas.append('RMSE')  # TODO: check if we used RMSE
 
     # Grab bands
-    bands = range(1, cfg['dataset']['n_bands'] + 1)
+    bands = list(range(1, cfg['dataset']['n_bands'] + 1))
     bands.remove(cfg['dataset']['mask_band'])  # band is now index so + 1
 
     # names = [r'Band %i $\beta_{%s}$' % (b, i)

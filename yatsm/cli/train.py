@@ -1,6 +1,5 @@
 """ Command line interface for training classifiers on YATSM output """
 from datetime import datetime as dt
-from itertools import izip
 import logging
 import os
 
@@ -229,7 +228,7 @@ def get_training_inputs(cfg, exit_on_missing=False):
     out_col = []
 
     _row_previous = None
-    for _row, _col, _y in izip(row, col, y):
+    for _row, _col, _y in zip(row, col, y):
         # Load result
         if _row != _row_previous:
             output_name = utils.get_output_name(cfg['dataset'], _row)

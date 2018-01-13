@@ -8,8 +8,6 @@ import logging
 import numpy as np
 import numpy.lib.recfunctions as nprf
 import scipy.stats
-from statsmodels.regression import linear_model
-from statsmodels.stats import diagnostic
 
 from ..regression.diagnostics import rmse
 from ..utils import date2index
@@ -165,6 +163,9 @@ def omission_test(model, crit=0.05, behavior='ANY', indices=None):
             True indicates omitted break point
 
     """
+    from statsmodels.regression import linear_model
+    from statsmodels.stats import diagnostic
+
     if behavior.lower() not in ['any', 'all']:
         raise ValueError('`behavior` must be "any" or "all"')
 

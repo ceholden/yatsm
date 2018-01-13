@@ -1,7 +1,6 @@
 from __future__ import division
 
 import numpy as np
-from statsmodels.nonparametric import smoothers_lowess
 
 from .accel import try_jit
 from .regression import robust_fit as rlm
@@ -92,6 +91,8 @@ def smooth_mask(x, Y, span, crit=400, green=1, swir1=4,
       mask (ndarray): mask where False indicates values to be masked
 
     """
+    from statsmodels.nonparametric import smoothers_lowess
+
     # Reverse span to get frac
     frac = span / x.shape[0]
     # Estimate delta as "good choice": delta = 0.01 * range(exog)
