@@ -90,6 +90,7 @@ doesn't work for your data, or you can't run Bash scripts, generate
 this information using some other means.
 
 .. code-block:: bash
+
    $ scripts/gen_date_file.sh -v images images.csv
    Searching in images
    Searching for pattern: L*stack
