@@ -30,6 +30,18 @@ work on the lines:
     $ seq -s , $job $n 1000
     5,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
 
+
+GNU Parallel
+------------
+
+.. code-block:: bash
+
+   $ parallel -j 4 echo {%} 4 ::: $(seq 1 4)
+   1 4
+   3 4
+   2 4
+   4 4
+
 Sun Grid Engine
 ---------------
 

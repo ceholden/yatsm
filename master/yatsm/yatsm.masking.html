@@ -172,8 +172,89 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="yatsm-masking-module">
-<h1>yatsm.masking module<a class="headerlink" href="#yatsm-masking-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-yatsm.masking">
+<span id="yatsm-masking-module"></span><h1>yatsm.masking module<a class="headerlink" href="#module-yatsm.masking" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="yatsm.masking.multitemp_mask">
+<code class="descclassname">yatsm.masking.</code><code class="descname">multitemp_mask</code><span class="sig-paren">(</span><em>x</em>, <em>Y</em>, <em>n_year</em>, <em>crit=400</em>, <em>green=1</em>, <em>swir1=4</em>, <em>maxiter=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/masking.html#multitemp_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.multitemp_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multi-temporal masking using RLM</p>
+<p>Taken directly from CCDC (Zhu and Woodcock, 2014). This “temporal masking”
+procedure was ported from CCDC v9.3.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>ndarray</em>) – array of ordinal dates</li>
+<li><strong>Y</strong> (<em>ndarray</em>) – matrix of observed spectra</li>
+<li><strong>n_year</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – “number of years to mask”</li>
+<li><strong>crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – critical value for masking clouds/shadows</li>
+<li><strong>green</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – 0 indexed value for green band in Y
+(default: 1)</li>
+<li><strong>swir1</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – 0 indexed value for SWIR (~1.55-1.75um) band
+in Y (default: 4)</li>
+<li><strong>maxiter</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – maximum iterations for RLM fit</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mask where False indicates values to be masked</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">mask (np.ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="yatsm.masking.smooth_mask">
+<code class="descclassname">yatsm.masking.</code><code class="descname">smooth_mask</code><span class="sig-paren">(</span><em>x</em>, <em>Y</em>, <em>span</em>, <em>crit=400</em>, <em>green=1</em>, <em>swir1=4</em>, <em>maxiter=5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yatsm/masking.html#smooth_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yatsm.masking.smooth_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multi-temporal masking using LOWESS</p>
+<p>Taken directly from newer version of CCDC than Zhu and Woodcock, 2014.
+This “temporal masking” replaced the older method which used robust
+linear models. This version uses a regular LOWESS instead of robust
+LOWESS</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>“span” argument is the inverse of “frac” from statsmodels and is
+actually ‘k’ in their code:</p>
+<p class="last"><cite>n = x.shape[0]</cite>
+<cite>k = int(frac * n + 1e-10)</cite></p>
+</div>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">We need to put the data on a regular period since span changes as
+is right now. Statsmodels will only allow for dropna, so we would
+need to impute missing data somehow…</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>np.ndarray</em>) – array of ordinal dates</li>
+<li><strong>Y</strong> (<em>np.ndarray</em>) – matrix of observed spectra</li>
+<li><strong>span</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – span of LOWESS</li>
+<li><strong>crit</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – critical value for masking clouds/shadows</li>
+<li><strong>green</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – 0 indexed value for green band in Y (default: 1)</li>
+<li><strong>swir1</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – 0 indexed value for SWIR (~1.55-1.75um) band
+in Y (default: 4)</li>
+<li><strong>maxiter</strong> (<a class="reference external" href="https://docs.python.org/dev/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – maximum increases to span when checking for
+NaN in LOWESS results</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mask where False indicates values to be masked</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">mask (ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -189,8 +270,8 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Nov 30, 2017, 11:21:24 PM.
+        &copy; Copyright 2014 - 2018, Chris Holden.
+      Last updated on Jan 12, 2018, 8:39:46 PM.
 
     </p>
   </div>

@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>yatsm.masking &mdash; YATSM 0.7.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="YATSM 0.7.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> YATSM
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/example.html">Example Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/dataset.html">Dataset Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/exploration.html">Model Parameter Exploration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/model_specification.html">Timeseries Model Specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/models/models.html">Science Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/configuration.html">Model Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/batch_interface.html">Batch Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_static.html">Mapping Derived Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/map_changes.html">Mapping Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/classification.html">Classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/phenology.html">Long Term Mean Phenology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/developer/custom_timeseries_algorithms.html">Integration of user-provided time series algorithms</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/scripts.html">Command Line Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">YATSM</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>yatsm.masking</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/ceholden/yatsm/blob/master/docs/_modules/yatsm/masking.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for yatsm.masking</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.accel</span> <span class="k">import</span> <span class="n">try_jit</span>
+<span class="kn">from</span> <span class="nn">.regression</span> <span class="k">import</span> <span class="n">robust_fit</span> <span class="k">as</span> <span class="n">rlm</span>
+
+<span class="n">ndays</span> <span class="o">=</span> <span class="mf">365.25</span>
+
+
+<div class="viewcode-block" id="multitemp_mask"><a class="viewcode-back" href="../../yatsm/yatsm.masking.html#yatsm.masking.multitemp_mask">[docs]</a><span class="nd">@try_jit</span><span class="p">()</span>  <span class="c1"># np.array prevents nopython</span>
+<span class="k">def</span> <span class="nf">multitemp_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">n_year</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+                   <span class="n">green</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">swir1</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                   <span class="n">maxiter</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Multi-temporal masking using RLM</span>
+
+<span class="sd">    Taken directly from CCDC (Zhu and Woodcock, 2014). This &quot;temporal masking&quot;</span>
+<span class="sd">    procedure was ported from CCDC v9.3.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (ndarray): array of ordinal dates</span>
+<span class="sd">        Y (ndarray): matrix of observed spectra</span>
+<span class="sd">        n_year (float): &quot;number of years to mask&quot;</span>
+<span class="sd">        crit (float): critical value for masking clouds/shadows</span>
+<span class="sd">        green (int): 0 indexed value for green band in Y</span>
+<span class="sd">            (default: 1)</span>
+<span class="sd">        swir1 (int): 0 indexed value for SWIR (~1.55-1.75um) band</span>
+<span class="sd">            in Y (default: 4)</span>
+<span class="sd">        maxiter (int): maximum iterations for RLM fit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        mask (np.ndarray): mask where False indicates values to be masked</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">green</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">swir1</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">swir1</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="n">n_year</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_year</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">ndays</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">n_year</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">n_year</span> <span class="o">*</span> <span class="n">x</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">green_RLM</span> <span class="o">=</span> <span class="n">rlm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">rlm</span><span class="o">.</span><span class="n">bisquare</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">green</span><span class="p">)</span>
+    <span class="n">swir1_RLM</span> <span class="o">=</span> <span class="n">rlm</span><span class="o">.</span><span class="n">RLM</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">rlm</span><span class="o">.</span><span class="n">bisquare</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">swir1</span><span class="p">)</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">((</span><span class="n">green</span> <span class="o">-</span> <span class="n">green_RLM</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">crit</span><span class="p">)</span> <span class="o">*</span>
+            <span class="p">(</span><span class="n">swir1</span> <span class="o">-</span> <span class="n">swir1_RLM</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">crit</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+
+
+<div class="viewcode-block" id="smooth_mask"><a class="viewcode-back" href="../../yatsm/yatsm.masking.html#yatsm.masking.smooth_mask">[docs]</a><span class="k">def</span> <span class="nf">smooth_mask</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span> <span class="n">crit</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">green</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">swir1</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">maxiter</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Multi-temporal masking using LOWESS</span>
+
+<span class="sd">    Taken directly from newer version of CCDC than Zhu and Woodcock, 2014.</span>
+<span class="sd">    This &quot;temporal masking&quot; replaced the older method which used robust</span>
+<span class="sd">    linear models. This version uses a regular LOWESS instead of robust</span>
+<span class="sd">    LOWESS</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        &quot;span&quot; argument is the inverse of &quot;frac&quot; from statsmodels and is</span>
+<span class="sd">        actually &#39;k&#39; in their code:</span>
+
+<span class="sd">        `n = x.shape[0]`</span>
+<span class="sd">        `k = int(frac * n + 1e-10)`</span>
+
+<span class="sd">    .. todo::</span>
+
+<span class="sd">        We need to put the data on a regular period since span changes as</span>
+<span class="sd">        is right now. Statsmodels will only allow for dropna, so we would</span>
+<span class="sd">        need to impute missing data somehow...</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (np.ndarray): array of ordinal dates</span>
+<span class="sd">        Y (np.ndarray): matrix of observed spectra</span>
+<span class="sd">        span (int): span of LOWESS</span>
+<span class="sd">        crit (float): critical value for masking clouds/shadows</span>
+<span class="sd">        green (int): 0 indexed value for green band in Y (default: 1)</span>
+<span class="sd">        swir1 (int): 0 indexed value for SWIR (~1.55-1.75um) band</span>
+<span class="sd">            in Y (default: 4)</span>
+<span class="sd">        maxiter (int): maximum increases to span when checking for</span>
+<span class="sd">            NaN in LOWESS results</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      mask (ndarray): mask where False indicates values to be masked</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.nonparametric</span> <span class="k">import</span> <span class="n">smoothers_lowess</span>
+
+    <span class="c1"># Reverse span to get frac</span>
+    <span class="n">frac</span> <span class="o">=</span> <span class="n">span</span> <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># Estimate delta as &quot;good choice&quot;: delta = 0.01 * range(exog)</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">*</span> <span class="mf">0.01</span>
+
+    <span class="c1"># Run LOWESS checking for NaN in output</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">green_lowess</span><span class="p">,</span> <span class="n">swir1_lowess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">green_lowess</span><span class="p">))</span> <span class="ow">or</span>
+           <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">swir1_lowess</span><span class="p">)))</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">maxiter</span><span class="p">:</span>
+        <span class="n">green_lowess</span> <span class="o">=</span> <span class="n">smoothers_lowess</span><span class="o">.</span><span class="n">lowess</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">green</span><span class="p">,</span> <span class="p">:],</span> <span class="n">x</span><span class="p">,</span>
+                                               <span class="n">frac</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">swir1_lowess</span> <span class="o">=</span> <span class="n">smoothers_lowess</span><span class="o">.</span><span class="n">lowess</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">swir1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">x</span><span class="p">,</span>
+                                               <span class="n">frac</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">span</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">frac</span> <span class="o">=</span> <span class="n">span</span> <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(((</span><span class="n">Y</span><span class="p">[</span><span class="n">green</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">green_lowess</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">crit</span><span class="p">)</span> <span class="o">*</span>
+            <span class="p">((</span><span class="n">Y</span><span class="p">[</span><span class="n">swir1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">swir1_lowess</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">crit</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">mask</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2018, Chris Holden.
+      Last updated on Jan 12, 2018, 8:39:46 PM.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.7.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

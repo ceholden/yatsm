@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="models/models.html">Science Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Model Configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Batch Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gnu-parallel">GNU Parallel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sun-grid-engine">Sun Grid Engine</a></li>
 </ul>
 </li>
@@ -208,6 +209,16 @@ $ seq -s , <span class="nv">$job</span> <span class="nv">$n</span> <span class="
 <span class="m">5</span>,55,105,155,205,255,305,355,405,455,505,555,605,655,705,755,805,855,905,955
 </pre></div>
 </div>
+<div class="section" id="gnu-parallel">
+<h2>GNU Parallel<a class="headerlink" href="#gnu-parallel" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ parallel -j <span class="m">4</span> <span class="nb">echo</span> <span class="o">{</span>%<span class="o">}</span> <span class="m">4</span> ::: <span class="k">$(</span>seq <span class="m">1</span> <span class="m">4</span><span class="k">)</span>
+<span class="m">1</span> <span class="m">4</span>
+<span class="m">3</span> <span class="m">4</span>
+<span class="m">2</span> <span class="m">4</span>
+<span class="m">4</span> <span class="m">4</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="sun-grid-engine">
 <h2>Sun Grid Engine<a class="headerlink" href="#sun-grid-engine" title="Permalink to this headline">¶</a></h2>
 <p>In the example of the compute cluster at Boston University which
@@ -272,8 +283,8 @@ $ <span class="k">for</span> job in <span class="k">$(</span>seq <span class="m"
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2014 - 2017, Chris Holden.
-      Last updated on Nov 30, 2017, 11:21:24 PM.
+        &copy; Copyright 2014 - 2018, Chris Holden.
+      Last updated on Jan 12, 2018, 8:39:46 PM.
 
     </p>
   </div>
