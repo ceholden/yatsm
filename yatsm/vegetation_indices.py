@@ -31,3 +31,27 @@ def EVI(red, nir, blue):
 
     """
     return 2.5 * (nir - red) / (nir + 6 * red - 7.5 * blue + 1)
+
+def NDVI(red, nir):
+    """ Return the Normalized Difference Vegetation Index for a set of np.ndarrays
+
+    NDVI is calculated as:
+
+    .. math::
+        \\frac{(NIR - RED)}{(NIR + RED )}
+
+    where:
+        - :math:`RED` is the red band
+        - :math:`NIR` is the near infrared band
+
+    Note: bands must be given in float datatype from [0, 1]
+
+    Args:
+      red (np.ndarray): red band
+      nir (np.ndarray): NIR band
+
+    Returns:
+      np.ndarray: NDVI
+
+    """
+    return (nir - red) / (nir + red)
